@@ -1,290 +1,308 @@
-# Codex Ultimate Guide - Project Context
+# Codex 终极指南 - 项目上下文
 
-## Purpose
+## 目的
 
-This repository is the **comprehensive documentation for Codex** (Anthropic's CLI tool). It teaches users how to use Codex effectively through guides, examples, and templates.
+本仓库是 **Codex（Anthropic 的命令行工具）的全面文档**。通过指南、示例和模板，教会用户如何有效使用 Codex。
 
-**Meta-note**: This repo documents Codex, so its own configuration should be exemplary.
+**元说明**：本仓库用于记录 Codex，因此其自身配置应具有示范性。
 
-## Repository Structure
+## 仓库结构
 
 ```
-guide/                    # Core documentation
-├── ultimate-guide.md     # Main guide (~20K lines, the reference)
-├── cheatsheet.md         # 1-page printable summary
-├── cowork.md             # Cowork redirect page
-├── core/                 # Architecture, methodologies, releases, known-issues, visual-reference
-├── security/             # security-hardening, sandbox-isolation, sandbox-native, production-safety, data-privacy
-├── ecosystem/            # ai-ecosystem, mcp-servers-ecosystem, third-party-tools, remarkable-ai
-├── roles/                # ai-roles, adoption-approaches, learning-with-ai, agent-evaluation
-├── ops/                  # devops-sre, observability, ai-traceability
-├── diagrams/             # Mermaid visual diagrams
-└── workflows/            # Step-by-step workflow guides
+guide/                    # 核心文档
+├── ultimate-guide.md     # 主指南（约 2 万行，参考文档）
+├── cheatsheet.md         # 单页可打印摘要
+├── cowork.md             # 协作重定向页面
+├── core/                 # 架构、方法论、发布、已知问题、视觉参考
+├── security/             # 安全加固、沙箱隔离、原生沙箱、生产安全、数据隐私
+├── ecosystem/            # AI 生态系统、MCP 服务器生态系统、第三方工具、Remarkable AI
+├── roles/                # AI 角色、采用方法、AI 学习、智能体评估
+├── ops/                  # DevOps/SRE、可观测性、AI 可追溯性
+├── diagrams/             # Mermaid 可视化图表
+└── workflows/            # 分步工作流指南
 
-examples/                 # Production-ready templates
-├── agents/               # Custom agent templates
-├── commands/             # Slash command templates
-├── hooks/                # Event hook examples (bash/powershell)
-├── skills/               # Skill module templates
-└── scripts/              # Utility scripts (audit, health check)
+examples/                 # 生产就绪模板
+├── agents/               # 自定义智能体模板
+├── commands/             # 斜杠命令模板
+├── hooks/                # 事件钩子示例（bash + PowerShell）
+├── skills/               # 技能模块模板
+└── scripts/              # 实用脚本（审计、健康检查）
 
-machine-readable/         # For LLM consumption
-├── reference.yaml        # Condensed index (~2K tokens)
-└── llms.txt              # AI indexation file
+machine-readable/         # 供 LLM 使用
+├── reference.yaml        # 精简索引（约 2000 token）
+└── llms.txt              # AI 索引文件
 
-whitepapers/              # Focused whitepapers (FR + EN)
-├── fr/                   # 10 source files in French (.qmd)
-└── en/                   # 10 translated files in English (.qmd)
-# Published at: https://www.florian.bruniaux.com/guides
+whitepapers/              # 专题白皮书（法文 + 英文）
+├── fr/                   # 10 个法文源文件（.qmd）
+└── en/                   # 10 个英文翻译文件（.qmd）
+# 发布于：https://www.florian.bruniaux.com/guides
 
-tools/                    # Interactive utilities
-├── audit-prompt.md       # Setup audit prompt
-└── onboarding-prompt.md  # Personalized learning prompt
+tools/                    # 交互式工具
+├── audit-prompt.md       # 设置审计提示词
+└── onboarding-prompt.md  # 个性化学习提示词
 
-docs/                     # Public documentation (tracked)
-└── resource-evaluations/ # External resource evaluations (151 files)
+docs/                     # 公开文档（已跟踪）
+└── resource-evaluations/ # 外部资源评估（151 个文件）
 
-claudedocs/               # Codex working documents (gitignored)
-├── resource-evaluations/ # Research working docs (prompts, private audits)
-└── *.md                  # Analysis reports, plans, working docs
+claudedocs/               # Codex 工作文档（git 忽略）
+├── resource-evaluations/ # 研究工作文档（提示词、私有审计）
+└── *.md                  # 分析报告、计划、工作文档
 ```
 
-## Key Files
+## 关键文件
 
-| File | Purpose |
-|------|---------|
-| `VERSION` | Single source of truth for version (currently 3.40.0) |
-| `guide/ultimate-guide.md` | The main reference (search here first) |
-| `guide/cheatsheet.md` | Quick reference for daily use |
-| `machine-readable/reference.yaml` | LLM-optimized index with line numbers |
-| `CHANGELOG.md` | All changes with detailed descriptions |
+| 文件                              | 用途                         |
+| --------------------------------- | ---------------------------- |
+| `VERSION`                         | 版本唯一来源（当前 3.40.0）  |
+| `guide/ultimate-guide.md`         | 主要参考文档（优先在此搜索） |
+| `guide/cheatsheet.md`             | 日常使用的快速参考           |
+| `machine-readable/reference.yaml` | LLM 优化的索引，带行号       |
+| `CHANGELOG.md`                    | 所有变更的详细描述           |
 
-## Commands
+## 命令
 
-### Version Management
+### 版本管理
+
 ```bash
-# Check version consistency across all docs
+# 检查所有文档中的版本一致性
 ./scripts/sync-version.sh --check
 
-# Fix version mismatches (updates from VERSION file)
+# 修复版本不匹配（从 VERSION 文件更新）
 ./scripts/sync-version.sh
 
-# Bump version
+# 提升版本
 echo "3.7.0" > VERSION && ./scripts/sync-version.sh
 ```
 
-### Whitepaper, Recap Cards & Guide Export
+### 白皮书、速查卡和指南导出
 
-Full build commands (PDF/EPUB/recap-card), stack details, ebook versioning, and Typst template sync rules:
+完整构建命令（PDF/EPUB/速查卡）、技术栈详情、电子书版本管理以及 Typst 模板同步规则：
 
 @docs/workflows/whitepaper-build.md
 
-### Before Committing
+### 提交前检查
+
 ```bash
-# Verify versions are synchronized
+# 验证版本已同步
 ./scripts/sync-version.sh --check
 ```
 
-### Slash Commands (Maintenance)
+### 斜杠命令（维护）
 
-Custom slash commands available in this project:
+本项目可用的自定义斜杠命令：
 
-| Command | Description |
-|---------|-------------|
-| `/release <bump-type>` | Release guide version (CHANGELOG + VERSION + sync + commit + push) |
-| `/update-infos-release [bump-type]` | Update Codex releases tracking + optional guide version bump |
-| `/version` | Display current guide and Codex versions with stats |
-| `/changelog [count]` | View recent CHANGELOG entries (default: 5) |
-| `/sync` | Check guide/landing synchronization status |
-| `/audit-agents-skills [path]` | Audit quality of agents, skills, and commands in .Codex/ config |
-| `/security-check` | Quick config check against known threats database (~30s) |
-| `/security-audit` | Full 6-phase security audit with score /100 (2-5min) |
-| `/update-threat-db` | Research & update threat intelligence database |
+| 命令                                | 描述                                                     |
+| ----------------------------------- | -------------------------------------------------------- |
+| `/release <bump-type>`              | 发布指南版本（CHANGELOG + VERSION + 同步 + 提交 + 推送） |
+| `/update-infos-release [bump-type]` | 更新 Codex 发布跟踪 + 可选的指南版本提升                 |
+| `/version`                          | 显示当前指南和 Codex 版本及统计信息                      |
+| `/changelog [count]`                | 查看最近的 CHANGELOG 条目（默认：5）                     |
+| `/sync`                             | 检查指南/落地页同步状态                                  |
+| `/audit-agents-skills [path]`       | 审计 .Codex/ 配置中智能体、技能和命令的质量              |
+| `/security-check`                   | 快速配置检查，对比已知威胁数据库（约 30 秒）             |
+| `/security-audit`                   | 完整的 6 阶段安全审计，带分数 /100（2-5 分钟）           |
+| `/update-threat-db`                 | 研究并更新威胁情报数据库                                 |
 
-**Examples:**
+**示例：**
+
 ```
-/release patch                 # Bump patch + release (3.20.4 → 3.20.5)
-/release minor                 # Bump minor + release (3.20.4 → 3.21.0)
-/update-infos-release          # Update CC releases only
-/update-infos-release patch    # Update CC + bump guide (3.9.11 → 3.9.12)
-/update-infos-release minor    # Update CC + bump guide (3.9.11 → 3.10.0)
-/version                       # Show versions and content stats
-/changelog 10                  # Last 10 CHANGELOG entries
-/sync                          # Check guide/landing sync status
-/audit-agents-skills           # Audit current project
-/audit-agents-skills --fix     # Audit + fix suggestions
-/audit-agents-skills ~/other   # Audit another project
-/security-check                # Quick scan config vs known threats
-/security-audit                # Full audit with posture score /100
-/update-threat-db              # Research + update threat-db.yaml
+/release patch                 # 提升补丁版本 + 发布（3.20.4 → 3.20.5）
+/release minor                 # 提升次要版本 + 发布（3.20.4 → 3.21.0）
+/update-infos-release          # 仅更新 Codex 发布信息
+/update-infos-release patch    # 更新 Codex + 提升指南版本（3.9.11 → 3.9.12）
+/update-infos-release minor    # 更新 Codex + 提升指南版本（3.9.11 → 3.10.0）
+/version                       # 显示版本和内容统计
+/changelog 10                  # 最后 10 条 CHANGELOG 条目
+/sync                          # 检查指南/落地页同步状态
+/audit-agents-skills           # 审计当前项目
+/audit-agents-skills --fix     # 审计 + 修复建议
+/audit-agents-skills ~/other   # 审计另一个项目
+/security-check                # 快速扫描配置，对比已知威胁
+/security-audit                # 完整审计，带安全态势分数 /100
+/update-threat-db              # 研究 + 更新 threat-db.yaml
 ```
 
-These commands are defined in `.Codex/commands/` and automate:
-- Codex releases tracking (YAML + Markdown + Landing badge)
-- Guide version management (VERSION file + sync across all docs)
-- CHANGELOG updates
-- Landing site synchronization verification
-- Git commit and push to both repositories
+这些命令定义在 `.Codex/commands/` 中，自动化以下任务：
 
-### Command Naming Conventions
+- Codex 发布跟踪（YAML + Markdown + 落地页徽章）
+- 指南版本管理（VERSION 文件 + 所有文档同步）
+- CHANGELOG 更新
+- 落地站同步验证
+- Git 提交并推送到两个仓库
 
-Implicit prefixes used in `.Codex/commands/`:
+### 命令命名约定
 
-| Prefix | Pattern | Examples |
-|--------|---------|---------|
-| `audit-*` | Quality checks with scored output | `audit-agents-skills`, `audit-deps` |
-| `update-*` | Sync or refresh data from external source | `update-infos-release`, `update-threat-db` |
-| `security-*` | Security scans, ascending depth | `security-check` (quick), `security-audit` (full) |
-| *(no prefix)* | Core guide workflow commands | `release`, `sync`, `version`, `changelog` |
+`.Codex/commands/` 中使用的隐式前缀：
 
-When adding a new command, pick the prefix that matches the action type. Avoid creating new prefix categories unless the existing four don't fit.
+| 前缀         | 模式                   | 示例                                               |
+| ------------ | ---------------------- | -------------------------------------------------- |
+| `audit-*`    | 带评分输出的质量检查   | `audit-agents-skills`、`audit-deps`                |
+| `update-*`   | 从外部源同步或刷新数据 | `update-infos-release`、`update-threat-db`         |
+| `security-*` | 安全扫描，深度递增     | `security-check`（快速）、`security-audit`（完整） |
+| _（无前缀）_ | 核心指南工作流命令     | `release`、`sync`、`version`、`changelog`          |
 
-## Behavioral Rules
+添加新命令时，选择与操作类型匹配的前缀。除非现有四个类别不适用，否则避免创建新的前缀类别。
 
-These rules come from observed friction patterns in actual sessions on this repo.
+## 行为规则
 
-### Always update CHANGELOG.md
-After any file modification or feature implementation, update `CHANGELOG.md` under `[Unreleased]`. Never skip this step unless explicitly told to. This is the most common missed step.
+这些规则来自本仓库实际会话中观察到的摩擦模式。
 
-### Be exhaustive on first pass
-When asked to analyze, audit, or review anything — read every relevant file. Do not do a superficial scan. If unsure of scope, ask rather than delivering shallow results. This applies to resource evaluations, doc audits, and codebase reviews.
+### 始终更新 CHANGELOG.md
 
-### Use absolute paths
-When referencing files in documentation, reports, or resource evaluations, always use full absolute paths. Never relative paths.
+任何文件修改或功能实现后，在 `[Unreleased]` 下更新 `CHANGELOG.md`。除非明确告知，否则绝不跳过此步骤。这是最常见的遗漏步骤。
 
-### Closing checklist
-After completing all requested tasks, always confirm unprompted:
-1. Files changed (list them)
-2. CHANGELOG.md updated
-3. Committed and pushed (if applicable) — include the commit hash
+### 首次检查要详尽
 
-### Bias toward action
-Do not spend extended time in exploration or planning loops. Produce files and concrete output early, then iterate. If stuck for more than 2 attempts on any step, explain the blocker instead of looping.
+当要求分析、审计或审查时——阅读每个相关文件。不要进行表面扫描。如果不确定范围，先询问而不是提供肤浅的结果。这适用于资源评估、文档审计和代码库审查。
 
-## Conventions
+### 使用绝对路径
 
-### Documentation Style
-- **Accuracy over marketing**: No invented percentages or unverified claims
-- **Practical examples**: Every concept has a concrete example
-- **Source attribution**: Credit community contributions with links
-- **Version alignment**: All version numbers must match `VERSION` file
+在文档、报告或资源评估中引用文件时，始终使用完整绝对路径。绝不使用相对路径。
 
-### File Organization
-- New guides → `guide/`
-- New templates → `examples/{agents,commands,hooks,skills}/`
-- Navigation updates → Update both `README.md` and `guide/README.md`
+### 收尾清单
 
-### Versioning
-- `VERSION` file is the single source of truth
-- Run `./scripts/sync-version.sh` after changing version
-- Files that contain version: README.md, cheatsheet.md, ultimate-guide.md, reference.yaml
+完成所有请求的任务后，始终主动确认：
 
-## Current Focus
+1. 已更改的文件（列出它们）
+2. CHANGELOG.md 已更新
+3. 已提交并推送（如适用）——包含提交哈希
 
-Check `IDEAS.md` for planned improvements and `CHANGELOG.md [Unreleased]` for work in progress.
+### 偏向行动
 
-## Model Configuration
+不要在探索或规划循环中花费过多时间。尽早产生文件和具体输出，然后迭代。如果任何步骤卡住超过 2 次尝试，解释阻塞点而不是循环。
 
-**Recommended mode**: `/model opusplan`
+## 约定
 
-**Rationale**: This documentation repository benefits from hybrid intelligence:
-- **Planning phase** (Opus + thinking): Architecture decisions, research synthesis, multi-file analysis
-- **Execution phase** (Sonnet): Doc updates, version syncing, template edits, formatting
+### 文档风格
 
-**OpusPlan workflow**:
-1. `/model opusplan` → Set hybrid mode
-2. `/plan` or `Shift+Tab × 2` → Plan with Opus (thinking enabled)
-3. `Shift+Tab` → Execute with Sonnet (faster, cheaper)
+- **准确性优于营销**：不编造百分比或未经验证的声明
+- **实用示例**：每个概念都有具体示例
+- **来源归属**：通过链接注明社区贡献
+- **版本对齐**：所有版本号必须与 `VERSION` 文件匹配
 
-**Typical task breakdown**:
-| Task Type | Model | Justification |
-|-----------|-------|---------------|
-| Doc edits, typo fixes | Sonnet | Straightforward, no deep reasoning |
-| Version sync, formatting | Sonnet | Mechanical pattern matching |
-| Guide restructuring | Opus (plan) → Sonnet (execute) | Needs architecture thinking first |
-| Research synthesis | Opus (plan) → Sonnet (write) | Complex analysis, then clear writing |
-| Multi-file consistency checks | Opus (plan) → Sonnet (fix) | Dependency analysis, then edits |
+### 文件组织
 
-**Cost optimization**: OpusPlan pays Opus only for planning (typically 10-20% of tokens), Sonnet handles 80-90% of execution work.
+- 新指南 → `guide/`
+- 新模板 → `examples/{agents,commands,hooks,skills}/`
+- 导航更新 → 同时更新 `README.md` 和 `guide/README.md`
 
-## Landing Site Synchronization
+### 版本管理
 
-Sync workflow, trigger conditions, guide reader rebuild, RSS feed, sitemap, and announcement banner:
+- `VERSION` 文件是版本唯一来源
+- 更改版本后运行 `./scripts/sync-version.sh`
+- 包含版本的文件：README.md、cheatsheet.md、ultimate-guide.md、reference.yaml
+
+## 当前重点
+
+查看 `IDEAS.md` 了解计划改进，查看 `CHANGELOG.md [Unreleased]` 了解进行中的工作。
+
+## 模型配置
+
+**推荐模式**：`/model opusplan`
+
+**理由**：此文档仓库受益于混合智能：
+
+- **规划阶段**（Opus + 思考）：架构决策、研究综合、多文件分析
+- **执行阶段**（Sonnet）：文档更新、版本同步、模板编辑、格式化
+
+**OpusPlan 工作流**：
+
+1. `/model opusplan` → 设置混合模式
+2. `/plan` 或 `Shift+Tab × 2` → 用 Opus 规划（启用思考）
+3. `Shift+Tab` → 用 Sonnet 执行（更快、更便宜）
+
+**典型任务分解**：
+
+| 任务类型 | 模型 | 理由 |
+|----------|------|------|
+| 文档编辑、拼写修正 | Sonnet | 直接，无需深度推理 |
+| 版本同步、格式化 | Sonnet | 机械模式匹配 |
+| 指南重构 | Opus（规划）→ Sonnet（执行） | 需要先进行架构思考 |
+| 研究综合 | Opus（规划）→ Sonnet（撰写） | 复杂分析，然后清晰撰写 |
+| 多文件一致性检查 | Opus（规划）→ Sonnet（修复） | 依赖分析，然后编辑 |
+
+**成本优化**：OpusPlan 仅对规划支付 Opus 费用（通常占 token 的 10-20%），Sonnet 处理 80-90% 的执行工作。
+
+## 落地站同步
+
+同步工作流、触发条件、指南阅读器重建、RSS 订阅源、站点地图和公告横幅：
 
 @docs/workflows/landing-sync.md
 
-## Ecosystem (4 Repositories)
+## 生态系统（4 个仓库）
 
-Architecture, repo details, cross-repo sync triggers, relations between repos, and history:
+架构、仓库详情、跨仓库同步触发器、仓库间关系及历史：
 
 @docs/ecosystem.md
 
-## Research Resources
+## 研究资源
 
-**Perplexity Pro disponible**: Pour toute recherche nécessitant des sources fiables ou des informations récentes sur Codex, Anthropic, ou les pratiques de développement assisté par IA:
-- Demande-moi de faire une recherche Perplexity (plus efficace que WebSearch basique)
-- Je te fournirai les résultats avec les sources
-- Utile pour: nouvelles features Codex, best practices communauté, comparaisons d'outils, documentation officielle mise à jour
+**Perplexity Pro 可用**：对于需要关于 Codex、Anthropic 或 AI 辅助开发实践的可靠来源或最新信息的任何研究：
 
-## Codex Releases Tracking
+- 请我进行 Perplexity 搜索（比基本 WebSearch 更有效）
+- 我将提供带来源的结果
+- 适用于：Codex 新功能、社区最佳实践、工具比较、更新的官方文档
 
-Files, update workflow, and YAML entry format:
+## Codex 发布跟踪
+
+文件、更新工作流和 YAML 条目格式：
 
 @docs/workflows/releases-tracking.md
 
-## Resource Evaluation Workflow
+## 资源评估工作流
 
-External resources (articles, videos, discussions) are evaluated before integration into the guide.
+外部资源（文章、视频、讨论）在集成到指南前会进行评估。
 
-### Process
+### 流程
 
-1. **Research**: Initial Perplexity search → Save prompt + results in `claudedocs/resource-evaluations/` (private)
-1b. **Cross-reference**: Si ressource liée à Codex, vérifier les claims contre `https://code.Codex.com/docs/llms-full.txt` (source officielle ~98KB)
-2. **Evaluation**: Systematic scoring (1-5) → Create evaluation file in `docs/resource-evaluations/` (tracked)
-3. **Challenge**: Technical review by agent to ensure objectivity
-4. **Decision**: Integrate (score 3+), mention (score 2), or reject (score 1)
+1. **研究**：初始 Perplexity 搜索 → 将提示词 + 结果保存在 `claudedocs/resource-evaluations/`（私有）
+   1b. **交叉引用**：如果资源与 Codex 相关，验证声明与 `https://code.Codex.com/docs/llms-full.txt` 对比（官方来源约 98KB）
+2. **评估**：系统评分（1-5）→ 在 `docs/resource-evaluations/` 中创建评估文件（已跟踪）
+3. **挑战**：智能体进行技术审查以确保客观性
+4. **决策**：集成（评分 3+）、提及（评分 2）或拒绝（评分 1）
 
-### File Organization
+### 文件组织
 
-| Location | Content | Tracking |
-|----------|---------|----------|
-| `docs/resource-evaluations/` | Final evaluations (151 files) | ✅ Git tracked (public) |
-| `claudedocs/resource-evaluations/` | Working docs, prompts, private audits | ❌ Gitignored (private) |
+| 位置                               | 内容                       | 跟踪状态            |
+| ---------------------------------- | -------------------------- | ------------------- |
+| `docs/resource-evaluations/`       | 最终评估（151 个文件）     | ✅ Git 跟踪（公开） |
+| `claudedocs/resource-evaluations/` | 工作文档、提示词、私有审计 | ❌ Git 忽略（私有） |
 
-### Scoring Grid
+### 评分网格
 
-| Score | Action |
-|-------|--------|
-| 5 | Critical - Integrate immediately (<24h) |
-| 4 | High Value - Integrate within 1 week |
-| 3 | Moderate - Integrate when time available |
-| 2 | Marginal - Minimal mention or skip |
-| 1 | Low - Reject |
+| 评分 | 操作                        |
+| ---- | --------------------------- |
+| 5    | 关键 - 立即集成（<24 小时） |
+| 4    | 高价值 - 一周内集成         |
+| 3    | 中等 - 有时间时集成         |
+| 2    | 边缘 - 最小提及或跳过       |
+| 1    | 低 - 拒绝                   |
 
-See full methodology: [`docs/resource-evaluations/README.md`](docs/resource-evaluations/README.md)
+完整方法论见：[`docs/resource-evaluations/README.md`](docs/resource-evaluations/README.md)
 
-## Quick Lookups
+## 快速查找
 
-For answering questions about Codex:
-0. **Doc officielle Anthropic (LLM-optimized)**: `https://code.Codex.com/docs/llms.txt` (index ~65 pages) ou `https://code.Codex.com/docs/llms-full.txt` (doc complète ~98KB) pour les faits officiels
-1. Search `machine-readable/reference.yaml` first (has line numbers to full guide)
-2. Use those line numbers to read relevant sections from `guide/ultimate-guide.md`
-3. Check `examples/` for ready-to-use templates
-4. Check `guide/core/Codex-releases.md` for recent features/changes
-5. Si info manquante ou incertaine → demander une recherche Perplexity (communauté, comparaisons, retours)
+回答关于 Codex 的问题时：0. **官方 Anthropic 文档（LLM 优化）**：`https://code.Codex.com/docs/llms.txt`（索引约 65 页）或 `https://code.Codex.com/docs/llms-full.txt`（完整文档约 98KB）用于官方事实
 
+1. 先搜索 `machine-readable/reference.yaml`（有指向完整指南的行号）
+2. 使用这些行号从 `guide/ultimate-guide.md` 读取相关部分
+3. 检查 `examples/` 获取即用模板
+4. 检查 `guide/core/Codex-releases.md` 获取最新功能/变更
+5. 如果信息缺失或不确定 → 请求 Perplexity 搜索（社区、比较、反馈）
 
 <claude-mem-context>
-# Memory Context
+## 记忆上下文
 
-# [claude-code-ultimate-guide] recent context, 2026-05-17 10:31am GMT+2
+## [claude-code-ultimate-guide] 最近上下文，2026-05-17 10:31am GMT+2
 
-No previous sessions found.
+未找到之前的会话。
 </claude-mem-context>
 
 <!-- lean-ctx -->
+
 ## lean-ctx
 
-Prefer lean-ctx MCP tools over native equivalents for token savings.
-Full rules: @LEAN-CTX.md
+相比原生等效工具，更推荐使用 lean-ctx MCP 工具以节省 token。
+完整规则：@LEAN-CTX.md
+
 <!-- /lean-ctx -->
