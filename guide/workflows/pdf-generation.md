@@ -9,7 +9,7 @@ tags: [workflow, guide, integration]
 
 > **可信度**：第 2 层 — 基于 Quarto/Typst 技术栈的生产测试工作流。
 
-使用 Claude Code 和现代排版设计生成专业 PDF（文档、白皮书、报告）。
+用 Claude Code 和现代排版设计生成专业 PDF（文档、白皮书、报告）。
 
 ---
 

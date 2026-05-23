@@ -9,7 +9,7 @@ tags: [workflow, ci-cd, github-actions, automation]
 
 > **可信度**：第 1 层 — 官方 Anthropic action（`anthropics/claude-code-action`，6.2k stars，v1.0）。
 
-通过将 Claude 直接连接到你的 GitHub 工作流来自动化代码评审、问题分类和质量门禁。两种触发模式：`@claude` 提及（人工发起）和预定/事件自动化（完全自主）。
+把 Claude 直接接入 GitHub 工作流，自动化代码评审、问题分类和质量门禁。两种触发模式：`@claude` 提及（人工发起）和预定/事件自动化（完全自主）。
 
 ---
 

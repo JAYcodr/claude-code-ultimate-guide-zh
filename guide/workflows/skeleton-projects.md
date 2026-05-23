@@ -7,7 +7,7 @@ tags: [workflow, architecture, template]
 
 # 脚手架项目工作流
 
-使用已有的、经过实战检验的仓库作为新项目的脚手架，而不是从零开始。
+用已有的、经过实战检验的仓库作新项目的脚手架，而不是从零开始。
 
 ---
 
@@ -153,14 +153,14 @@ User: Update CLAUDE.md with:
 ## 脚手架扩展时间线
 
 ```
-Skeleton (Day 1)     →    MVP (Week 1)      →    Production (Month 1)
-──────────────────────────────────────────────────────────────────────
-1 example route      →    5 real routes      →    20+ routes
-1 example test       →    30 tests           →    200+ tests
-Basic config         →    Env-based config   →    Multi-env + secrets
-SQLite/local DB       →    Docker PostgreSQL   →    Managed DB + migrations
-No CI                 →    Basic CI            →    Full CI/CD pipeline
-README only           →    CLAUDE.md + ADRs     →    Full documentation
+Day 1                Week 1               Month 1
+──────────────────────────────────────────────────
+1 示例路由            5 真实路由            20+ 路由
+1 示例测试            30 测试              200+ 测试
+基础配置              基于 Env 的配置        多环境 + 密钥
+SQLite/本地 DB        Docker PostgreSQL     托管 DB + 迁移
+无 CI                 基础 CI               完整 CI/CD 管道
+仅有 README           CLAUDE.md + ADR       完整文档
 ```
 
 ---

@@ -28,7 +28,7 @@ tags: [workflow, skills, planning, review, shipping, browser-automation]
 /retro            → 这周我们发布得怎么样？
 ```
 
-一个关键洞见是：计划、评审和发布需要根本不同的认知姿态——而一个保持在通用模式的单一助手会把它们搞砸。
+关键洞见：计划、评审和发布需要根本不同的认知姿态——一个保持在通用模式的助手会把它们搞砸。
 
 ---
 

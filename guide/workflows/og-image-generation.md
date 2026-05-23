@@ -7,13 +7,13 @@ tags: [workflow, astro, og-image, static-generation]
 
 # Astro 动态 OG 图片生成
 
-在构建时自动生成社交预览图片，而不是维护过时的静态 PNG。每次在 Twitter/X、LinkedIn 或 Slack 上分享都会显示准确、最新的数据。
+在构建时自动生成社交预览图片，告别过时的静态 PNG。每次在 Twitter/X、LinkedIn 或 Slack 上分享都显示准确、最新的数据。
 
 ## 为什么要麻烦
 
-静态 OG 图片会过时。当你添加第 200 个模板或达到 1k GitHub stars 时，你的社交预览仍然显示旧数字。动态生成一劳永逸地解决这个问题，并保持准确。
+静态 OG 图片会过时。当你添加第 200 个模板或达到 1k GitHub stars 时，社交预览仍然显示旧数字。动态生成一劳永逸解决这个问题。
 
-下面的模式使用 Satori（Vercel）将类似 React 的树渲染为 SVG，然后用 resvg 转换为 PNG。它在 Astro 构建时运行 — 零运行时成本，无外部服务。
+下面的模式使用 Satori（Vercel）将类似 React 的树渲染为 SVG，然后用 resvg 转换为 PNG。它在 Astro 构建时运行——零运行时成本，无外部服务。
 
 ## 技术栈
 

@@ -9,7 +9,7 @@ tags: [workflow, team, claude-md, configuration]
 
 跨团队管理 AI 指令（CLAUDE.md、.cursorrules）而不碎片化。
 
-**模式**：基于配置文件的模块组装 — 共享模块 + 每开发者配置 + 自动化组装器。
+**模式**：基于配置文件的模块组装——共享模块 + 每开发者配置 + 自动化组装器。
 
 **何时使用**：5 人以上开发团队、多个 AI 工具（Claude Code + Cursor/Windsurf）、混合操作系统。
 **跳过如果**：独立开发者、同质团队（相同工具、相同操作系统）、短项目（<3 个月）。
