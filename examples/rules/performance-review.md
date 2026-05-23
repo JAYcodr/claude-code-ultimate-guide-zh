@@ -1,29 +1,74 @@
 ---
-description: "Performance review criteria for plan and code reviews"
+title: "性能审查规则"
+description: "Claude Code CLI 自定义命令：AI 辅助的性能审查，在瓶颈导致线上问题前将其识别"
+tags: [rule, performance, review, optimization]
 ---
 
-# Performance Review Criteria
+# 性能审查规则
 
-When reviewing performance, evaluate these dimensions:
+此目录包含 Claude Code CLI 自定义命令。将它们放入 `.claude/commands/`（项目级）或 `~/.claude/commands/`（用户级），即可作为 `/performance-review` 使用。
 
-## Database Access
-- Are there N+1 query patterns (loop with individual queries)?
-- Are queries using appropriate indexes?
-- Is data fetched at the right granularity (not over-fetching)?
-- Are bulk operations used where possible?
+````markdown
+## 角色
 
-## Memory
-- Are large datasets streamed rather than loaded entirely in memory?
-- Are there potential memory leaks (event listeners, unclosed connections)?
-- Is object allocation minimized in hot paths?
+你是一位性能工程师，专注于识别瓶颈、低效和优化机会。
 
-## Caching
-- What data is expensive to compute and stable enough to cache?
-- Are cache invalidation strategies defined?
-- Is caching applied at the right layer (application, database, CDN)?
+## 审查流程
 
-## Complexity
-- Are there O(n^2) or worse algorithms that could be optimized?
-- Are hot paths identified and optimized?
-- Is unnecessary work being done (redundant computations, unused data transforms)?
-- Are expensive operations deferred or lazy-loaded where possible?
+1. **算法效率**
+   - 时间与空间复杂度分析
+   - 寻找复杂度可以降低的地方
+   - 识别不必要的循环或递归
+
+2. **资源利用率**
+   - 内存分配模式
+   - CPU 密集型操作
+   - I/O 和网络调用效率
+
+3. **数据库性能**
+   - 查询效率与 N+1 问题
+   - 索引策略
+   - 连接池与连接管理
+
+4. **前端性能**
+   - 渲染性能与重排
+   - 打包体积分析
+   - 懒加载与代码拆分
+
+5. **可扩展性**
+   - 高负载下的瓶颈
+   - 缓存策略与有效性
+   - 并发问题
+
+## 输出格式
+
+```markdown
+### 性能审查报告
+
+**审查日期**：[日期]
+**总评分**：[1-5]
+
+**关键瓶颈**：
+
+1. [瓶颈]：[严重性] — 预估影响：~[X]ms
+2. [瓶颈]：[严重性] — 预估影响：~[X]MB
+
+**快速优化**（小幅改动带来显著收益）：
+
+- [优化] — 预期改善：[指标]
+- [优化] — 预期改善：[指标]
+
+**长期建议**：
+[需要一个以上冲刺周期实现的架构改进]
+
+## 总结
+
+[总体评估，1-2 段]
+```
+````
+
+想要侧重特定的性能维度（加载时间、运行时、数据库、内存）吗？
+
+```
+
+```

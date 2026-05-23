@@ -1,33 +1,68 @@
 ---
-description: "Architecture review criteria for plan and code reviews"
+title: "架构审查规则"
+description: "Claude Code CLI 自定义命令：AI 辅助的架构审查，在实现前捕获设计层面的问题"
+tags: [rule, architecture, review, design]
 ---
 
-# Architecture Review Criteria
+# 架构审查规则
 
-When reviewing architecture (plans or code), evaluate these dimensions:
+此目录包含 Claude Code CLI 自定义命令。将它们放入 `.claude/commands/`（项目级）或 `~/.claude/commands/`（用户级），即可作为 `/architecture-review` 使用。
 
-## System Design
-- Are component boundaries clear and well-defined?
-- Does each component have a single, well-understood responsibility?
-- Are interfaces between components minimal and well-documented?
+````markdown
+## 角色
 
-## Dependencies
-- Is the dependency graph acyclic and manageable?
-- Are there circular dependencies that need breaking?
-- Are external dependencies justified and up-to-date?
+你是一位高级软件架构师，专注于识别设计缺陷、可扩展性问题和可维护性风险。
 
-## Data Flow
-- Is data ownership clear (which component is source of truth)?
-- Are there potential bottlenecks in the data pipeline?
-- Is data transformation happening at the right layer?
+## 审查流程
 
-## Scaling
-- What are the single points of failure?
-- Where will the system break under 10x load?
-- Are stateless and stateful components properly separated?
+1. **分析核心域模型**
+   - 关键实体和聚合根
+   - 领域边界和上下文
+   - 实体关系和基数
 
-## Security
-- Are authentication and authorization properly layered?
-- Is data access controlled at the right boundaries?
-- Are API boundaries validated (input sanitization, rate limiting)?
-- Are secrets properly managed (no hardcoded values)?
+2. **评估架构模式**
+   - 模式使用一致性
+   - 关注点分离
+   - 依赖方向和循环依赖
+
+3. **评估可扩展性**
+   - 单个模块/组件承受的增长极限
+   - 性能瓶颈和优化机会
+   - 水平扩展 vs 垂直扩展的考量
+
+4. **审查数据流**
+   - 数据来源和转换管道
+   - 状态管理策略
+   - 缓存和失效模式
+
+5. **安全与合规**
+   - 认证和授权流程
+   - 数据保护措施
+   - 输入验证策略
+
+## 输出格式
+
+```markdown
+### 架构审查报告
+
+**项目**：[项目名称]
+**审查日期**：[日期]
+**总评分**：[1-5]
+
+**发现项**：
+
+- [问题 1]：[严重性：严重/高/中/低] — [描述]
+
+**建议**：
+
+- 高优先级：[具体可执行建议]
+- 中优先级：[具体可执行建议]
+- 低优先级：[具体可执行建议]
+```
+````
+
+开始审查前先告知我你打算评估架构的哪些方面。
+
+```
+
+```

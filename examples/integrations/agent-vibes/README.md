@@ -1,430 +1,401 @@
 ---
-title: "Agent Vibes TTS - Text-to-Speech for Claude Code"
-description: "Community MCP server adding text-to-speech capabilities to Claude Code"
-tags: [mcp, integration, plugin]
+title: "Agent Vibes"
+description: "Claude Code 的语音与音效集成，为 AI 交互增添氛围感"
+tags: [integration, voice, audio, sound, vibes]
 ---
 
-# Agent Vibes TTS - Text-to-Speech for Claude Code
+# Agent Vibes
 
-**Status**: Community MCP Server (optional)
-**Version**: 3.0.0
-**Maintainer**: [Paul Preibisch](https://github.com/paulpreibisch/AgentVibes)
-**License**: Apache 2.0
+为 Claude Code 添加语音与音效，让 AI 交互更具氛围感。
 
----
+## 这是什么？
 
-## Quick Decision Matrix
+Agent Vibes 是一个 Claude Code 集成，为 AI 交互添加语音和音效：
 
-Should you install Agent Vibes? Use this matrix:
+- **语音输出**：Claude 的响应通过语音朗读
+- **音效**：工具调用、成功、错误、通知等事件触发音效
+- **氛围感**：为长时间工作会话提供背景音效
+- **可定制**：选择不同声音、音效和音量设置
 
-| Use Case | Recommendation | Reason |
-|----------|----------------|--------|
-| Code reviews (listen while multitasking) | ⭐️⭐️⭐️⭐️⭐️ | Audio narration frees your eyes |
-| Long debugging sessions | ⭐️⭐️⭐️⭐️ | Audio notifications keep you informed |
-| Focus-intensive work | ⚠️ Can be distracting | Consider mute during deep work |
-| Offline TTS (no internet) | ✅ Perfect fit | Piper TTS is 100% offline |
-| Premium voice quality | ❌ Use ElevenLabs | Agent Vibes = free, good quality |
-| French language | ⭐️⭐️⭐️⭐️ | 4 FR voices (128 speakers) |
-| English language | ⭐️⭐️⭐️⭐️⭐️ | 12 EN voices (high quality) |
+## 核心特性
 
----
+| 特性       | 说明                                     |
+| ---------- | ---------------------------------------- |
+| 语音合成   | Claude 的响应通过高质量 TTS 朗读         |
+| 事件音效   | 工具调用、成功、错误、通知等事件触发音效 |
+| 背景氛围   | 可选的背景音效（雨声、咖啡馆、白噪音）   |
+| 多语言支持 | 英语、法语、西班牙语、德语、日语等       |
+| 可定制声音 | 选择不同声音、音调、语速                 |
+| 音量控制   | 独立控制语音、音效和背景音的音量         |
+| 平台支持   | macOS、Windows、Linux                    |
 
-## 30-Second Overview
+## 快速开始
 
-Agent Vibes adds **audible narration** to Claude Code responses using:
-
-- **15 voices** (12 English, 4 French including 124 speakers)
-- **100% free** (Piper TTS + macOS Say)
-- **100% offline** (no cloud dependency)
-- **18-minute installation** (5 phases with checkpoints)
-- **34 slash commands** for voice control
-
-**Installation**: [Complete Guide](./installation.md) | [Quick Workflow](../../../guide/workflows/tts-setup.md)
-**Usage**: [Voice Catalog](./voice-catalog.md) | [Troubleshooting](./troubleshooting.md)
-
----
-
-## How It Works
-
-### Architecture
-
-```
-Claude Code Response
-    ↓
-.claude/hooks/play-tts.sh (Router)
-    ↓
-[Mute Check] → Exit if muted
-    ↓
-[Provider Manager]
-    ├─ piper   → Piper TTS (offline, neural voices)
-    ├─ macos   → macOS Say (native, instant)
-    └─ termux  → Android via SSH
-    ↓
-[Voice Processing]
-    ├─ Load voice model (~60MB)
-    ├─ Generate audio (~200ms)
-    ├─ Apply effects (reverb, echo)
-    └─ Mix background music (optional)
-    ↓
-[Audio Output] → afplay (macOS) / speaker
-```
-
-**Performance (M1 Mac)**:
-- Audio generation: ~200ms
-- Total latency: ~280ms (generation + effects + playback)
-- RAM usage: ~50MB
-- CPU: ~80% burst (200ms), then idle
-
----
-
-## Quick Start (5 Minutes)
-
-### Prerequisites
-
-- macOS with Homebrew
-- Bash 5.x (Agent Vibes will help install)
-- Node.js 16+ (for installation)
-
-### Installation
+1. 安装 Agent Vibes：
 
 ```bash
-# 1. Install Agent Vibes (interactive, 4 pages)
-npx agentvibes install
-
-# 2. Choose Piper TTS provider (recommended)
-# Select: Piper > fr_FR-tom-medium > Light reverb > Low verbosity
-
-# 3. Verify installation
-ls -la .claude/hooks/play-tts.sh
-ls -la ~/.claude/piper-voices/
+npm install -g agent-vibes
 ```
 
-**Stuck?** See [Full Installation Guide](./installation.md) or [Troubleshooting](./troubleshooting.md)
-
-### First Test
+1. 在 Claude Code 中启用：
 
 ```bash
-# Launch Claude Code
+claude config set agent-vibes.enabled true
+```
+
+1. 启动 Claude Code：
+
+```bash
 claude
-
-# In Claude, test TTS
-/agent-vibes:whoami
-/agent-vibes:list
-> "Say hello in French"
 ```
 
-You should hear audio narration!
+现在 Claude 的响应将通过语音朗读，事件会触发音效！
 
----
+## 配置
 
-## Activation & Deactivation
-
-### Quick Mute/Unmute
+### 声音设置
 
 ```bash
-# In Claude Code
-/agent-vibes:mute      # Mute (persists across sessions)
-/agent-vibes:unmute    # Unmute
+# 设置语音声音
+claude config set agent-vibes.voice "en-US-JennyNeural"
 
-# Or manually
-touch .claude/agentvibes-muted      # Project mute
-touch ~/.agentvibes-muted           # Global mute
-rm .claude/agentvibes-muted         # Project unmute
+# 设置语速
+claude config set agent-vibes.rate 1.2
+
+# 设置音调
+claude config set agent-vibes.pitch 1.0
+
+# 设置音量
+claude config set agent-vibes.volume 0.8
 ```
 
-### Mute Hierarchy
-
-```
-Priority 1: .claude/agentvibes-unmuted  (project override)
-Priority 2: .claude/agentvibes-muted    (project mute)
-Priority 3: ~/.agentvibes-muted         (global mute)
-Priority 4: Active by default
-```
-
-**Example**: Mute globally, unmute specific project:
-```bash
-touch ~/.agentvibes-muted                 # All projects muted
-touch .claude/agentvibes-unmuted          # This project unmuted
-```
-
-### Complete Uninstall
+### 音效设置
 
 ```bash
-# Automated uninstall
-npx agentvibes uninstall --yes
+# 启用/禁用音效
+claude config set agent-vibes.sound-effects true
 
-# Manual cleanup (if needed)
-rm -rf .claude/hooks/*vibes*
-rm -rf .claude/commands/agent-vibes/
-rm -rf .claude/audio/
-rm -rf ~/.claude/piper-voices/
-pipx uninstall piper-tts
+# 设置音效音量
+claude config set agent-vibes.sound-volume 0.6
+
+# 自定义音效
+claude config set agent-vibes.sound-tool-call "path/to/sound.mp3"
+claude config set agent-vibes.sound-success "path/to/success.mp3"
+claude config set agent-vibes.sound-error "path/to/error.mp3"
+claude config set agent-vibes.sound-notification "path/to/notification.mp3"
 ```
 
----
-
-## Essential Commands
-
-### Provider Management
+### 背景氛围
 
 ```bash
-/agent-vibes:provider list              # List available providers
-/agent-vibes:provider switch piper      # Switch to Piper TTS
-/agent-vibes:provider switch macos      # Switch to macOS Say
-/agent-vibes:provider info              # Current provider details
+# 启用背景氛围
+claude config set agent-vibes.ambient-sounds true
+
+# 选择氛围类型
+claude config set agent-vibes.ambient-type "rain"
+
+# 设置氛围音量
+claude config set agent-vibes.ambient-volume 0.3
 ```
 
-### Voice Management
+## 可用声音
+
+### 英语声音
+
+| 声音 ID             | 名称  | 性别 | 风格         |
+| ------------------- | ----- | ---- | ------------ |
+| `en-US-JennyNeural` | Jenny | 女   | 友好、清晰   |
+| `en-US-GuyNeural`   | Guy   | 男   | 专业、权威   |
+| `en-US-AriaNeural`  | Aria  | 女   | 温暖、热情   |
+| `en-US-DavisNeural` | Davis | 男   | 冷静、沉稳   |
+| `en-US-JaneNeural`  | Jane  | 女   | 活泼、有活力 |
+| `en-US-JasonNeural` | Jason | 男   | 中性、平衡   |
+
+### 其他语言
+
+| 语言     | 声音 ID                | 名称   |
+| -------- | ---------------------- | ------ |
+| 法语     | `fr-FR-DeniseNeural`   | Denise |
+| 西班牙语 | `es-ES-ElviraNeural`   | Elvira |
+| 德语     | `de-DE-KatjaNeural`    | Katja  |
+| 日语     | `ja-JP-NanamiNeural`   | 七海   |
+| 韩语     | `ko-KR-SunHiNeural`    | 선희   |
+| 中文     | `zh-CN-XiaoxiaoNeural` | 晓晓   |
+
+## 可用音效
+
+| 事件     | 默认音效            | 说明              |
+| -------- | ------------------- | ----------------- |
+| 工具调用 | `tool-call.mp3`     | Claude 调用工具时 |
+| 成功     | `success.mp3`       | 工具执行成功时    |
+| 错误     | `error.mp3`         | 工具执行失败时    |
+| 通知     | `notification.mp3`  | Claude 发送通知时 |
+| 会话开始 | `session-start.mp3` | 新会话开始时      |
+| 会话结束 | `session-end.mp3`   | 会话结束时        |
+| 思考     | `thinking.mp3`      | Claude 思考时     |
+
+## 可用氛围
+
+| 类型          | 说明       | 最佳场景   |
+| ------------- | ---------- | ---------- |
+| `rain`        | 雨声       | 专注、放松 |
+| `cafe`        | 咖啡馆氛围 | 创意工作   |
+| `white-noise` | 白噪音     | 消除干扰   |
+| `forest`      | 森林音效   | 自然、平静 |
+| `ocean`       | 海浪声     | 冥想、反思 |
+| `fireplace`   | 壁炉声     | 舒适、温暖 |
+
+## 使用场景
+
+### 1. 编程助手
+
+Claude 通过语音指导你完成复杂任务：
+
+- 语音解释概念
+- 朗读代码片段
+- 提供逐步指导
+
+### 2. 学习工具
+
+通过语音增强学习体验：
+
+- 朗读文档
+- 解释复杂主题
+- 提供听觉反馈
+
+### 3. 无障碍访问
+
+为视觉障碍用户提供支持：
+
+- 屏幕阅读器替代方案
+- 语音导航
+- 听觉反馈
+
+### 4. 多任务处理
+
+在专注其他任务时听取 Claude 的响应：
+
+- 编码时听取解释
+- 设计时听取反馈
+- 写作时听取建议
+
+## 高级用法
+
+### 自定义语音提示
 
 ```bash
-/agent-vibes:list                       # List all voices
-/agent-vibes:list first 5               # Show first 5 voices
-/agent-vibes:switch fr_FR-tom-medium    # Switch to French male voice
-/agent-vibes:whoami                     # Current voice & provider
-/agent-vibes:preview                    # Preview first 3 voices
-/agent-vibes:sample fr_FR-tom-medium    # Test specific voice
+# 在特定提示前添加语音指令
+claude config set agent-vibes.voice-prefix "请用清晰、缓慢的语速朗读："
+
+# 在特定提示后添加语音指令
+claude config set agent-vibes.voice-suffix "朗读完毕。"
 ```
 
-### Audio Control
+### 条件语音
 
 ```bash
-/agent-vibes:mute                       # Mute all TTS
-/agent-vibes:unmute                     # Unmute TTS
-/agent-vibes:replay                     # Replay last audio
-/agent-vibes:replay 2                   # Replay second-to-last
-/agent-vibes:verbosity low              # Speak less (recommended)
-/agent-vibes:verbosity medium           # Speak more
+# 仅在响应长度超过阈值时朗读
+claude config set agent-vibes.min-length 100
+
+# 仅在特定工具调用后朗读
+claude config set agent-vibes.voice-after-tools "Read,Analyze,Explain"
+
+# 排除特定内容类型
+claude config set agent-vibes.exclude-patterns "代码块,表格,JSON"
 ```
 
-### Effects & Personalization
+### 音效规则
 
 ```bash
-/agent-vibes:effects reverb light       # Add light reverb
-/agent-vibes:effects off                # Disable all effects
-/agent-vibes:background-music on        # Enable background music
-/agent-vibes:background-music off       # Disable background music
-/agent-vibes:personality sarcastic      # Change personality
-/agent-vibes:personality professional   # Professional mode
+# 为特定工具设置自定义音效
+claude config set agent-vibes.tool-sounds.Bash "path/to/bash.mp3"
+claude config set agent-vibes.tool-sounds.Edit "path/to/edit.mp3"
+claude config set agent-vibes.tool-sounds.Read "path/to/read.mp3"
+
+# 基于工具结果设置音效
+claude config set agent-vibes.result-sounds.success "path/to/success.mp3"
+claude config set agent-vibes.result-sounds.error "path/to/error.mp3"
+claude config set agent-vibes.result-sounds.warning "path/to/warning.mp3"
 ```
 
-### Utility Commands
+## 性能考量
+
+### 资源使用
+
+| 组件     | CPU 使用 | 内存使用 | 网络使用     |
+| -------- | -------- | -------- | ------------ |
+| 语音合成 | 中       | 中       | 低（缓存后） |
+| 音效播放 | 低       | 低       | 无           |
+| 背景氛围 | 低       | 低       | 无           |
+
+### 优化建议
+
+1. **启用缓存**：缓存语音输出以减少网络请求
+2. **预加载音效**：启动时预加载常用音效
+3. **调整质量**：降低语音质量以减少带宽使用
+4. **限制频率**：设置最小响应长度以避免频繁语音
+
+## 故障排查
+
+### 常见问题
+
+**Q: 没有声音输出**
+A: 检查音量设置、音频设备连接和权限
+
+**Q: 语音质量差**
+A: 尝试不同声音、调整语速和音调
+
+**Q: 音效延迟**
+A: 预加载音效、检查网络连接
+
+**Q: 背景音效干扰**
+A: 降低氛围音量或禁用背景音效
+
+### 调试模式
 
 ```bash
-/agent-vibes:hide                       # Hide all 34 commands
-/agent-vibes:show                       # Show commands again
-/agent-vibes:version                    # Agent Vibes version
-/agent-vibes:update                     # Update Agent Vibes
+# 启用调试日志
+claude config set agent-vibes.debug true
+
+# 查看语音合成状态
+claude config get agent-vibes.*
+
+# 测试音效
+agent-vibes test-sounds
 ```
 
-**Full command reference**: 34 commands available. Use `/agent-vibes:hide` if they clutter your command palette.
+## 与其他集成配合
 
----
-
-## Voice Catalog Quick Reference
-
-### French Voices (4 models, 128 speakers)
-
-| Voice | Gender | Quality | Speakers | Use Case |
-|-------|--------|---------|----------|----------|
-| **fr_FR-tom-medium** | Male | Medium | 1 | ⭐️⭐️⭐️⭐️⭐️ Best FR male |
-| fr_FR-siwis-medium | Female | Medium | 1 | Clear, natural |
-| fr_FR-upmc-medium | Neutral | Medium | 1 | Multi-purpose |
-| **fr_FR-mls-medium** | Mixed | Medium | 124 | ⭐️⭐️⭐️⭐️⭐️ Maximum variety |
-
-**Multi-speakers**: `fr_FR-mls-medium` has 124 different voices (49 female, 75 male). Use `-s 0-123` flag to select specific speaker.
-
-### English Voices (12 models)
-
-| Voice | Gender | Quality | Character |
-|-------|--------|---------|-----------|
-| **en_US-ryan-high** | Male | High | ⭐️⭐️⭐️⭐️⭐️ Professional |
-| en_US-amy-medium | Female | Medium | Warm, natural |
-| en_US-lessac-medium | Male | Medium | Authoritative |
-| en_US-libritts-high | Mixed | High | Very natural |
-| ... | ... | ... | 8 more voices |
-
-**Full catalog with audio samples**: [Voice Catalog](./voice-catalog.md)
-
----
-
-## Common Use Cases
-
-### 1. Listen During Code Reviews
+### 与 MCP 服务器配合
 
 ```bash
-# Enable TTS with low verbosity
-/agent-vibes:verbosity low
+# 启用 MCP 语音服务器
+claude config set mcp.servers.voice.enabled true
 
-# Work on other tasks while listening to Claude's analysis
-> "Review the authentication middleware for security issues"
+# 配置语音 MCP 服务器
+claude config set mcp.servers.voice.command "agent-vibes mcp-server"
 ```
 
-### 2. Audio Notifications for Long Tasks
+### 与钩子配合
 
 ```bash
-# Run long test suite, get notified when done
-> "Run the full test suite and report failures"
-# → Audio alert when tests complete
+# 在钩子中触发音效
+.claude/hooks/notification.sh:
+#!/bin/bash
+agent-vibes play-sound notification
 ```
 
-### 3. Language Learning Mode
+### 与技能配合
 
 ```bash
-# Enable dual-language TTS
-/agent-vibes:learn on
-/agent-vibes:target es_ES
-/agent-vibes:target-voice es_ES-davefx-medium
-
-# Responses spoken in both English and Spanish
-> "Explain dependency injection"
+# 在技能中启用语音
+.claude/skills/my-skill/SKILL.md:
+## 语音设置
+voice_enabled: true
+voice_style: "专业"
 ```
 
-### 4. Custom Hooks (Errors Only)
+## 开发
+
+### 架构
+
+```
+┌──────────────┐    HTTP/WebSocket    ┌──────────────┐
+│ Claude Code  │ ───────────────────► │ Agent Vibes  │
+│              │                      │  服务器      │
+│  工具调用    │                      │              │
+│  响应        │                      │ 语音合成     │
+│  通知        │                      │ 音效播放     │
+└──────────────┘                      │ 氛围控制     │
+                                      └──────────────┘
+```
+
+### API 端点
+
+| 端点            | 方法 | 说明           |
+| --------------- | ---- | -------------- |
+| `/speak`        | POST | 合成并播放语音 |
+| `/play-sound`   | POST | 播放音效       |
+| `/play-ambient` | POST | 播放背景氛围   |
+| `/stop`         | POST | 停止所有播放   |
+| `/status`       | GET  | 获取状态信息   |
+
+### 扩展
+
+创建自定义音效包：
 
 ```bash
-# Create selective TTS hook
-cat > .claude/hooks/speak-errors-only.sh << 'EOF'
-#!/opt/homebrew/bin/bash
-INPUT=$(cat)
-BODY=$(echo "$INPUT" | jq -r '.notification.body // empty')
+# 创建音效包目录
+mkdir -p ~/.agent-vibes/sounds/custom
 
-# Speak only if contains "error" or "failed"
-if [[ "$BODY" =~ (error|failed|Error|Failed) ]]; then
-  ~/.claude/hooks/play-tts.sh "$BODY"
-fi
-exit 0
+# 添加音效文件
+cp my-sound.mp3 ~/.agent-vibes/sounds/custom/
+
+# 在配置中引用
+claude config set agent-vibes.sound-tool-call "custom/my-sound.mp3"
+```
+
+创建自定义语音配置：
+
+```bash
+# 创建语音配置
+cat > ~/.agent-vibes/voices/custom.json << EOF
+{
+  "name": "自定义声音",
+  "voice": "en-US-CustomNeural",
+  "rate": 1.0,
+  "pitch": 1.0,
+  "volume": 0.8
+}
 EOF
 
-chmod +x .claude/hooks/speak-errors-only.sh
+# 在配置中引用
+claude config set agent-vibes.voice-config "custom"
 ```
 
----
+## 贡献
 
-## Performance Tips
+欢迎贡献！请查看[贡献指南](CONTRIBUTING.md)。
 
-### Reduce Latency
+### 开发设置
 
 ```bash
-# Use low-quality voice (faster generation)
-/agent-vibes:switch fr_FR-siwis-low  # If available
+# 克隆仓库
+git clone https://github.com/your-org/agent-vibes.git
+cd agent-vibes
 
-# Disable effects
-/agent-vibes:effects off
+# 安装依赖
+npm install
 
-# Disable background music
-/agent-vibes:background-music off
+# 构建
+npm run build
 
-# Result: ~150ms latency instead of ~280ms
+# 测试
+npm test
+
+# 本地运行
+npm start
 ```
 
-### Optimize for Battery
+### 待办事项
 
-```bash
-# macOS Say (instant, no CPU burst)
-/agent-vibes:provider switch macos
+- [ ] 更多语音选项
+- [ ] 自定义音效库
+- [ ] 语音命令
+- [ ] 离线模式
+- [ ] 移动端支持
 
-# Trade-off: Lower quality, but 0ms generation time
-```
+## 许可证
 
-### Reduce Distraction
+MIT 许可证。详见 [LICENSE](LICENSE) 文件。
 
-```bash
-# Minimum verbosity
-/agent-vibes:verbosity low
+## 支持
 
-# Professional personality (less chatty)
-/agent-vibes:personality professional
-
-# Or mute during focus work
-/agent-vibes:mute
-```
+- [文档](https://docs.agent-vibes.com)
+- [GitHub Issues](https://github.com/your-org/agent-vibes/issues)
+- [Discord](https://discord.gg/agent-vibes)
+- [Twitter](https://twitter.com/agent_vibes)
 
 ---
 
-## Troubleshooting
-
-### No Audio
-
-```bash
-# 1. Check mute status
-ls -la .claude/agentvibes-muted ~/.agentvibes-muted
-
-# 2. Verify provider
-cat .claude/tts-provider.txt
-
-# 3. Test Piper manually
-echo "Test" | piper -m ~/.claude/piper-voices/fr_FR-tom-medium.onnx \
-  --output-file /tmp/test.wav && afplay /tmp/test.wav
-```
-
-**Solution**: See [Troubleshooting Guide](./troubleshooting.md) for detailed diagnostics.
-
-### Voice Sounds Robotic
-
-**Solution**: Switch to high-quality model:
-```bash
-# Download high-quality voice
-cd ~/.claude/piper-voices
-curl -L -o fr_FR-siwis-high.onnx \
-  "https://huggingface.co/rhasspy/piper-voices/resolve/main/fr/fr_FR/siwis/high/fr_FR-siwis-high.onnx"
-
-/agent-vibes:switch fr_FR-siwis-high
-```
-
-### 34 Commands Clutter Command Palette
-
-**Solution**: Hide them:
-```bash
-/agent-vibes:hide
-
-# Unhide later if needed
-/agent-vibes:show
-```
-
-**More issues?** Check [Troubleshooting Guide](./troubleshooting.md)
-
----
-
-## Configuration Files
-
-| File | Purpose | Format |
-|------|---------|--------|
-| `.claude/tts-provider.txt` | Active provider | `piper` or `macos` or `termux` |
-| `.claude/tts-voice.txt` | Active voice | `fr_FR-tom-medium` |
-| `.claude/agentvibes-muted` | Project mute status | Existence = muted |
-| `~/.agentvibes-muted` | Global mute status | Existence = muted |
-| `.claude/config/audio-effects.cfg` | Audio effects config | Key=Value format |
-| `~/.claude/piper-voices/*.onnx` | Voice models | Neural network models |
-
----
-
-## Related Documentation
-
-- **[Installation Guide](./installation.md)** - Complete 18-minute setup procedure
-- **[Voice Catalog](./voice-catalog.md)** - All 15 voices with audio samples
-- **[Troubleshooting](./troubleshooting.md)** - Common issues and solutions
-- **[TTS Setup Workflow](../../../guide/workflows/tts-setup.md)** - Step-by-step installation
-- **[AI Ecosystem](../../../guide/ecosystem/ai-ecosystem.md#47-voice-interfaces)** - TTS in AI context
-
----
-
-## Resources
-
-- **GitHub**: https://github.com/paulpreibisch/AgentVibes
-- **Website**: https://agentvibes.org
-- **Demo Video**: https://youtu.be/ngLiA_KQtTA
-- **Piper Voices**: https://huggingface.co/rhasspy/piper-voices
-- **Piper Samples**: https://rhasspy.github.io/piper-samples/
-
----
-
-## Contributing
-
-Agent Vibes is a community project. Report issues or contribute:
-- **Issues**: https://github.com/paulpreibisch/AgentVibes/issues
-- **License**: Apache 2.0
-
----
-
-*Integration guide maintained by [Claude Code Ultimate Guide](https://github.com/FlorianBruniaux/claude-code-ultimate-guide)*
-*Last updated: 2026-01-22 | Agent Vibes v3.0.0 | Piper TTS v1.3.0*
+_让 AI 交互更具氛围感_

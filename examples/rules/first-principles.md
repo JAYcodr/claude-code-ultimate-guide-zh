@@ -1,151 +1,82 @@
 ---
-description: "Session invariant template - hard constraints, quality thresholds, and anti-patterns that Claude must respect throughout a session"
+title: "第一性原理解题规则"
+description: "Claude Code CLI 自定义命令：从基本原理出发解决问题，而非依靠类比或表面方案"
+tags: [rule, problem-solving, reasoning, critical-thinking, architecture]
 ---
 
-# First Principles: Session Invariants
+# 第一性原理解题规则
 
-This is a template for the "Contract" layer of your Claude Code rules. These are constraints that must hold true for the entire session, regardless of which task is active or how much context has accumulated.
+此目录包含 Claude Code CLI 自定义命令。将它们放入 `.claude/commands/`（项目级）或 `~/.claude/commands/`（用户级），即可作为 `/first-principles` 使用。
 
-Customize the sections below to match your team's standards. Replace the example values with your own thresholds.
+## 激活指令
 
-> **Why this matters**: As conversation context grows, earlier instructions lose influence on Claude's behavior. This is called "context decay." Session invariants placed in CLAUDE.md or rules files act as compression anchors that resist this decay, because they're injected at the start of every context window.
-
-## Hard Constraints
-
-These rules never have exceptions. If Claude is about to violate one, it must stop and flag the conflict rather than proceeding.
-
-```markdown
-# Hard Constraints (never-break rules)
-
-## Data Safety
-- Never delete production data without explicit user confirmation in the same message
-- Never store secrets (API keys, passwords, tokens) in code files or commit them
-- Never run DROP, TRUNCATE, or DELETE without WHERE on production databases
-
-## Code Safety
-- Never disable TypeScript strict mode or ESLint rules to make code compile
-- Never catch errors silently (empty catch blocks, swallowed promises)
-- Never use `any` type in TypeScript except in test fixtures
-
-## Process Safety
-- Never force-push to main/master
-- Never skip pre-commit hooks (no --no-verify)
-- Never amend a commit that has been pushed to a shared branch
-
-## Scope Safety
-- Never modify files outside the directories specified in the current task
-- Never add dependencies without stating the reason and checking bundle size impact
-- Never refactor code that isn't part of the current task (note it for later instead)
-```
-
-## Quality Thresholds
-
-Thresholds beat vague adjectives. "Good coverage" means different things to different people; "80% line coverage" is unambiguous. Define your numbers here.
-
-```markdown
-# Quality Thresholds
-
-## Testing
-- Minimum test coverage: 80% line coverage for new code
-- Every public function must have at least one test
-- Every bug fix must include a regression test
-- Integration tests required for any endpoint that touches the database
-
-## Performance
-- API response time: p95 < 200ms for read endpoints, < 500ms for writes
-- Bundle size: Total JS < 250KB gzipped (check with `npx bundlesize`)
-- No N+1 queries (use DataLoader or equivalent for batch fetching)
-- Database queries: no query > 100ms in development (enable slow query log)
-
-## Code Quality
-- Cyclomatic complexity: no function > 15 (enforce via ESLint rule)
-- File length: no file > 400 lines (split when approaching limit)
-- Function length: no function > 50 lines
-- Nesting depth: no code > 4 levels of indentation
-
-## Dependencies
-- No dependency with known critical CVE
-- No dependency abandoned > 2 years (check last publish date)
-- Maximum 3 direct dependencies per feature module
-```
-
-## Workflow Invariants
-
-Process constraints that ensure consistency across the session, especially when switching between tasks or when sub-agents are involved.
-
-```markdown
-# Workflow Invariants
-
-## Commit Discipline
-- Every commit must pass all existing tests before being created
-- Commit messages follow Conventional Commits format (feat:, fix:, docs:, etc.)
-- One logical change per commit (don't mix refactor with feature)
-
-## Review Before Action
-- Read a file before modifying it (no blind edits)
-- Run tests after every significant change (not just at the end)
-- Verify imports after adding/removing dependencies
-
-## Communication
-- When uncertain between two approaches, present both with trade-offs (don't pick silently)
-- When a task will take more than 5 tool calls, outline the plan first
-- When hitting an unexpected error, diagnose before retrying
-```
-
-## Anti-Patterns to Detect
-
-Patterns Claude should flag when it encounters them in the codebase or in its own output. These work like automated code review rules, but for the AI's behavior during a session.
-
-```markdown
-# Anti-Patterns to Detect
-
-## Code Smells to Flag
-- God objects: classes with >10 public methods or >5 injected dependencies
-- Feature envy: a function that references another module's internals more than its own
-- Primitive obsession: passing >3 related primitives instead of a typed object
-- Temporal coupling: functions that must be called in a specific order without enforcement
-
-## Process Smells to Flag
-- Yak shaving: spending >3 tool calls on something tangential to the task
-- Gold plating: adding features, abstractions, or error handling not requested
-- Shotgun surgery: a single change requiring edits in >5 files (suggests missing abstraction)
-- Copy-paste programming: duplicating >5 lines instead of extracting a function
-
-## AI-Specific Anti-Patterns
-- Hallucinated APIs: calling a method that doesn't exist in the current version
-- Stale context: referencing file contents from earlier in the conversation that may have changed
-- Over-apology: spending tokens on apologies instead of fixing the issue
-- Premature optimization: adding caching, lazy loading, or memoization without evidence of a perf problem
-```
-
-## Mitigating Context Decay
-
-Three practical strategies to keep these invariants effective across long sessions:
-
-1. **Place in CLAUDE.md**: Rules in CLAUDE.md are injected at the start of every context window, surviving auto-compaction. This is the strongest position for invariants.
-
-2. **Use rules files for domain-specific constraints**: Put testing thresholds in `.claude/rules/testing.md`, security rules in `.claude/rules/security.md`. They load with CLAUDE.md but keep each file focused.
-
-3. **LEARNINGS.md hook pattern**: Configure a hook that injects accumulated session learnings into sub-agents, so constraints discovered mid-session propagate to delegated work:
-
-```json
-// .claude/settings.json (hooks section)
-{
-  "hooks": {
-    "PreToolUse": [{
-      "matcher": "Task",
-      "command": "cat .claude/LEARNINGS.md 2>/dev/null || true"
-    }]
-  }
-}
-```
-
-This ensures that when Claude spawns sub-agents via the Task tool, they receive the same session-specific learnings and constraints.
+当用户说"用第一性原理思考"、"从基本原理出发推理"、"一层层分析这个"、"/first-principles"或类似短语时，Claude 必须遵循以下规则。没有这些触发词时，Claude 默认标准的问题解决方式。
 
 ---
 
-**Sources**:
-- 3-layer context model (Contract / Working Set / Noise): codeaholicguy.com (Feb 2026)
-- CLAUDE.md as "context compression anchors": Craig Johnston (imti.co)
-- "Thresholds, not vibes" pattern: specific numbers over vague adjectives
-- LEARNINGS.md hook pattern: community practice for propagating context to sub-agents
+```markdown
+## 模式：第一性原理（在提示开头加载）
+
+目标：将任何问题剥离至其基本事实，并从头开始重建解决方案。
+
+核心约束：决不假设现有解决方案是有效的、最优的或必要的。已有的不一定对。
+
+## 求解框架
+
+### 第 1 步：挑战每一个假设（"为什么？"循环）
+
+对问题的每个方面，从问题陈述自身开始，发起"为什么？"循环：
+
+- 这种约束本身是否真的存在？
+- 当前做法存在的唯一理由是否只是"一直这么做的"？
+- "有总比没有好"是否在暗中驱动某些设计决策？
+
+对于技术问题：挑战框架、编程语言、架构、模式的选择。每个选择都必须根据当前的具体需求、而非过往习惯重新论证。
+
+### 第 2 步：剥离至基本原理
+
+将问题拆解为：
+
+1. **不可再分的事实**：物理、数学或逻辑上为真的陈述。
+2. **硬约束**：不可协商的限制（物理定律、用户需求、业务需求）。软约束（偏好、习惯、现有基础设施）必须与硬约束分开标记。
+3. **核心目标**：我们要优化的唯一目标到底是什么？从第一性原理推导出的解决方案往往只做这一件事。
+
+测试"显而易见"的部分。它们通常承载着被忽视的假设。
+
+### 第 3 步：从头开始构建
+
+在剥离约束之后，设计一个极其精简的解决方案：
+
+- 去掉所有非必需的部分——不仅仅是不必要的部分，而是从零开始添加，只添加那些有明确论证、别无选择的组件。
+- 同时质疑"什么"和"如何做"。
+- 对比：将你的方案与主流方案对比。你的方案因为主流方案的哪些假设而有所不同？
+
+### 第 4 步：展示你的推导过程
+
+清晰地展示每一步——构建一张逻辑地图，从基本原理通向你的方案：
+[基本原理 1] → [推导 1] → [设计决策 1]
+[基本原理 2] → [推导 2] → [设计决策 2]
+
+与"类比"方案做对比（如果有的话）：主流方案始于哪些假设，而你选择了忽略？
+
+## 何时使用
+
+在以下情况下使用：
+
+- 优化现有解决方案感觉像在打地鼠（反复出现同类问题）
+- 解决方案似乎过于复杂，但没人能指出为什么
+- "一直这么做"或"行业标准"是任何设计选择的主要理由
+- 增强功能、重写还是替换的决策
+
+## 通用陷阱
+
+- **反模式 1：在重新发明轮子**——挑战假设并不总是等于从零开始。如果某个标准组件确实符合所有约束，就使用它。第一性原理的目的不是与众不同，而是正确。
+- **反模式 2：忽视真实世界的约束**——交付期限和预算也是约束。第一性原理和最简方案在代码行数上可能最优，但在实现时间上未必。必须将截止日期等视为第一类约束。
+- **反模式 3：认为解决方案为零**——有时候，最好的答案是"什么都不做"。始终考虑这个选项。
+
+## 输出格式
+
+- 将整个回答放在一个代码块中。
+- 使用要点和清晰的推理链。
+- 结论可以是讨论的形式；提出你的方案并询问是否有其他约束。
+```

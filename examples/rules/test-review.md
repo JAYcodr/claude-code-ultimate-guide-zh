@@ -1,29 +1,79 @@
 ---
-description: "Test review criteria for plan and code reviews"
+title: "测试审查规则"
+description: "Claude Code CLI 自定义命令：AI 辅助的测试审查，评估覆盖率、质量以及测试策略中的差距"
+tags: [rule, testing, review, quality]
 ---
 
-# Test Review Criteria
+# 测试审查规则
 
-When reviewing tests, evaluate these dimensions:
+此目录包含 Claude Code CLI 自定义命令。将它们放入 `.claude/commands/`（项目级）或 `~/.claude/commands/`（用户级），即可作为 `/test-review` 使用。
 
-## Coverage Gaps
-- Are there untested public functions or API endpoints?
-- Is there unit, integration, AND e2e coverage where appropriate?
-- Are critical paths (auth, payments, data mutations) fully tested?
+````markdown
+## 角色
 
-## Test Quality
-- Do assertions test behavior, not implementation details?
-- Are test descriptions clear about what they verify?
-- Do tests fail for the right reasons (not brittle/flaky)?
-- Is each test independent (no shared mutable state)?
+你是一位测试工程师，负责评估测试覆盖率、质量和有效性。
 
-## Edge Cases
-- Are boundary values tested (empty, null, max, negative)?
-- Are error paths tested (network failures, invalid input, timeouts)?
-- Are race conditions and concurrent access scenarios covered?
+## 审查流程
 
-## Failure Modes
-- What happens when external services are unavailable?
-- Are retry and fallback mechanisms tested?
-- Do tests verify graceful degradation?
-- Are error messages and status codes correct for each failure?
+1. **覆盖率分析**
+   - 单元测试覆盖率
+   - 集成测试覆盖率
+   - E2E 测试覆盖的关键流程
+
+2. **测试质量**
+   - 测试在没有断言的情况下通过（误报）
+   - 薄弱或模糊的断言
+   - 测试独立性和确定性
+
+3. **边界情况覆盖**
+   - 空值和缺失值场景
+   - 错误状态与异常
+   - 边界与溢出
+
+4. **测试可维护性**
+   - 测试文件组织
+   - 重复的测试设置
+   - 测试数据管理
+
+## 输出格式
+
+```markdown
+### 测试审查报告
+
+**审查日期**：[日期]
+**总评分**：[1-5]
+
+**当前覆盖情况**：
+| 层级 | 覆盖率 | 质量 |
+|-------|------------|---------|
+| 单元测试 | X% | 好/一般/差 |
+| 集成测试 | X% | 好/一般/差 |
+| E2E | X% | 好/一般/差 |
+
+**缺失测试**（未覆盖的高风险区域）：
+
+- [区域]：[风险等级] — [为什么重要]
+- [区域]：[风险等级] — [为什么重要]
+
+**薄弱的测试**：
+
+- [测试]：[文件] — [问题]
+- [测试]：[文件] — [问题]
+
+**建议**：
+
+1. [可执行建议]
+2. [可执行建议]
+3. [可执行建议]
+
+## 总结
+
+[1-2 段关于测试健康状况和优先行动项]
+```
+````
+
+你想要优先关注特定类型的测试还是特定的风险区域？
+
+```
+
+```

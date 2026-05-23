@@ -1,550 +1,475 @@
 ---
-title: "Agent Vibes TTS - Complete Installation Guide"
-description: "Step-by-step installation guide for Agent Vibes text-to-speech integration on macOS"
-tags: [guide, tts, integration]
+title: "安装指南"
+description: "Agent Vibes 安装指南 — macOS、Windows、Linux 的逐步设置说明"
+tags: [integration, voice, installation, setup]
 ---
 
-# Agent Vibes TTS - Complete Installation Guide
+# 安装指南
 
-**Time Required**: ~18 minutes
-**Difficulty**: Intermediate
-**System**: macOS (Apple Silicon or Intel)
+本文档提供 Agent Vibes 的逐步安装说明。
 
----
+## 系统要求
 
-## Prerequisites Check
+### 最低要求
 
-Before starting, verify you have:
+| 组件     | 最低要求                              |
+| -------- | ------------------------------------- |
+| 操作系统 | macOS 12+、Windows 10+、Ubuntu 20.04+ |
+| CPU      | 双核处理器，2.0 GHz                   |
+| 内存     | 4 GB RAM                              |
+| 存储     | 500 MB 可用空间                       |
+| 网络     | 语音合成需要互联网连接                |
+| Node.js  | 18.0+                                 |
+| npm      | 9.0+                                  |
 
-| Requirement | Check Command | Min Version |
-|-------------|---------------|-------------|
-| **macOS** | `sw_vers` | 10.15+ |
-| **Homebrew** | `brew --version` | Any recent |
-| **Node.js** | `node --version` | 16.0.0+ |
-| **Python** | `python3 --version` | 3.10.0+ |
-| **Git** | `git --version` | Any recent |
+### 推荐配置
 
----
+| 组件     | 推荐配置                             |
+| -------- | ------------------------------------ |
+| 操作系统 | macOS 14+、Windows 11、Ubuntu 22.04+ |
+| CPU      | 四核处理器，3.0 GHz                  |
+| 内存     | 8 GB RAM                             |
+| 存储     | 1 GB 可用空间（用于缓存）            |
+| 网络     | 宽带互联网连接                       |
+| Node.js  | 20.0 LTS                             |
+| npm      | 10.0+                                |
 
-## Installation Overview (5 Phases)
+## 安装方法
 
-```
-Phase 1: System Dependencies     (~5 min)
-    ├─ Bash 5.x
-    ├─ sox, ffmpeg, util-linux
-    └─ espeak-ng
-
-Phase 2: Agent Vibes Install     (~5 min)
-    ├─ Interactive installer
-    ├─ Provider selection (Piper)
-    ├─ Voice selection
-    └─ Configuration
-
-Phase 3: Piper TTS + Voices       (~5 min)
-    ├─ Piper via pipx
-    ├─ Download FR voices (4)
-    └─ Download EN voices (12)
-
-Phase 4: Configuration            (~2 min)
-    ├─ Set provider: piper
-    ├─ Set voice: fr_FR-tom-medium
-    └─ Test audio
-
-Phase 5: Verification             (~1 min)
-    ├─ Test in Claude Code
-    └─ Verify hooks active
-```
-
----
-
-## Phase 1: System Dependencies
-
-### Step 1.1: Install Bash 5.x
-
-Agent Vibes requires Bash 5.x (macOS ships with 3.2).
+### 方法 1：NPM（推荐）
 
 ```bash
-# Install Bash 5.x
-brew install bash
+# 全局安装
+npm install -g agent-vibes
 
-# Verify installation
-/opt/homebrew/bin/bash --version
-# Expected: GNU bash, version 5.x
+# 验证安装
+agent-vibes --version
 ```
 
-**Why**: Agent Vibes scripts use Bash 5.x features (associative arrays, etc.)
-
-### Step 1.2: Install Audio Tools
+### 方法 2：从源码安装
 
 ```bash
-# Install audio processing tools
-brew install sox ffmpeg util-linux
+# 克隆仓库
+git clone https://github.com/your-org/agent-vibes.git
+cd agent-vibes
 
-# Verify sox
-sox --version
+# 安装依赖
+npm install
 
-# Verify ffmpeg
-ffmpeg -version
+# 构建
+npm run build
 
-# Verify flock (from util-linux)
-/opt/homebrew/opt/util-linux/bin/flock --version
+# 链接（用于开发）
+npm link
 ```
 
-**Note**: `util-linux` is "keg-only" (not symlinked), but Agent Vibes finds it automatically.
+### 方法 3：二进制文件（无需 Node.js）
 
-### Step 1.3: Install espeak-ng (Piper Dependency)
+**macOS**：
 
 ```bash
-# Install espeak-ng
-brew install espeak-ng
+# 下载二进制文件
+curl -L https://github.com/your-org/agent-vibes/releases/latest/download/agent-vibes-darwin-x64 -o agent-vibes
 
-# Verify installation
-espeak-ng --version
+# 移动至 PATH 路径
+mv agent-vibes /usr/local/bin/
+chmod +x /usr/local/bin/agent-vibes
 ```
 
-**Why**: Piper TTS requires `libespeak-ng` library for phoneme processing.
+**Windows**：
 
-### Checkpoint 1: Dependencies Installed ✅
+```powershell
+# 下载二进制文件
+Invoke-WebRequest -Uri "https://github.com/your-org/agent-vibes/releases/latest/download/agent-vibes-win-x64.exe" -OutFile "agent-vibes.exe"
+
+# 移动至 PATH 路径
+Move-Item agent-vibes.exe "C:\Windows\System32\"
+```
+
+**Linux**：
 
 ```bash
-# Verify all dependencies
-command -v /opt/homebrew/bin/bash && \
-command -v sox && \
-command -v ffmpeg && \
-command -v espeak-ng && \
-echo "✅ All dependencies installed"
+# 下载二进制文件
+wget https://github.com/your-org/agent-vibes/releases/latest/download/agent-vibes-linux-x64
+
+# 移动至 PATH 路径
+mv agent-vibes-linux-x64 /usr/local/bin/agent-vibes
+chmod +x /usr/local/bin/agent-vibes
 ```
 
----
+## 平台特定设置
 
-## Phase 2: Agent Vibes Installation
+### macOS
 
-### Step 2.1: Launch Interactive Installer
+1. **授予麦克风权限**：
+   系统偏好 → 安全性与隐私 → 麦克风 → 添加你的终端应用
+2. **授予辅助功能权限**（音效所需）：
+   系统偏好 → 安全性与隐私 → 辅助功能 → 添加你的终端应用
+
+### Windows
+
+1. **安装 Windows 语音运行时**：
+
+   ```powershell
+   # 检查是否已安装
+   Get-WindowsCapability -Online | Where-Object Name -like 'Language.Speech*'
+
+   # 必要时安装英语语音识别
+   Add-WindowsCapability -Online -Name Language.Speech~en-US~0.0.1.0
+   ```
+
+2. **配置音频设备**：
+
+   设置 → 系统 → 声音 → 选择默认输出设备
+
+### Linux
+
+1. **安装音频依赖**：
+
+   ```bash
+   # Ubuntu/Debian
+   sudo apt-get update
+   sudo apt-get install -y libasound2-dev pulseaudio pavucontrol
+
+   # Fedora
+   sudo dnf install -y alsa-lib-devel pulseaudio pavucontrol
+
+   # Arch
+   sudo pacman -S alsa-lib pulseaudio pavucontrol
+   ```
+
+2. **配置 PulseAudio**：
+
+   ```bash
+   # 启动 PulseAudio（如未运行）
+   pulseaudio --start
+
+   # 打开音量控制
+   pavucontrol
+   ```
+
+3. **设置音频组**（如有权限问题）：
+
+   ```bash
+   sudo usermod -a -G audio $USER
+   # 注销并重新登录
+   ```
+
+## 配置
+
+### 基本设置
 
 ```bash
-# Navigate to your Claude Code project
-cd /path/to/your/project
+# 初始化配置
+agent-vibes init
 
-# Launch installer (interactive, 4 pages)
-npx agentvibes install
+# 交互式地选择设置和偏好
 ```
 
-**Expected**: ASCII art banner + welcome screen
-
-### Step 2.2: Navigate Installation Pages
-
-**Page 1/4: System Dependencies**
-- Review detected dependencies
-- All should show `✓` (green checkmark)
-- Click **"Next →"**
-
-**Page 2/4: Provider Selection**
-- Options: `macOS Say`, `Piper TTS`, `Termux SSH`
-- **Select**: `Piper TTS` (best quality, offline)
-- Click **"Next →"**
-
-**Page 3/4: Voice Selection**
-- **For French**: Select `fr_FR-tom-medium` (male) or `fr_FR-siwis-medium` (female)
-- **For English**: Select `en_US-ryan-high` (best quality)
-- Click **"Next →"**
-
-**Page 4/4: Audio Settings**
-- **Reverb**: Select `Light` (recommended)
-- **Background Music**: Select `Disabled` (avoid distraction)
-- **Verbosity**: Select `Low` (less chatty)
-- Click **"Start Installation"**
-
-### Step 2.3: Installation Progress
-
-Agent Vibes will install:
-- 34 slash commands
-- TTS scripts (40 bash scripts)
-- Personality templates
-- 16 background music tracks
-- 7 config files
-
-**Expected output**:
-```
-✔ Installed 34 slash commands!
-✔ Installed TTS scripts!
-✔ Installed personality templates!
-✔ Installed 16 background music tracks!
-✔ Installed 7 config files!
-
-✅ AgentVibes is Ready!
-```
-
-### Checkpoint 2: Agent Vibes Installed ✅
+### 高级配置
 
 ```bash
-# Verify installation
-ls -la .claude/hooks/play-tts.sh
-ls -la .claude/commands/agent-vibes/
-ls -la .claude/audio/tracks/
+# 直接编辑配置文件
+agent-vibes config edit
 
-# Check provider config
-cat .claude/tts-provider.txt
-# Expected: "macos" or "piper"
+# 设置特定值
+agent-vibes config set voice "en-US-JennyNeural"
+agent-vibes config set rate 1.2
+agent-vibes config set volume 0.8
+
+# 查看当前配置
+agent-vibes config show
 ```
 
----
+### 配置文件
 
-## Phase 3: Piper TTS + Voice Models
+配置文件位置：
 
-### Step 3.1: Install Piper TTS via pipx
+- **macOS/Linux**：`~/.config/agent-vibes/config.json`
+- **Windows**：`%APPDATA%\agent-vibes\config.json`
 
-If you chose Piper provider, Agent Vibes will attempt to install it. If it fails, manual installation:
+默认配置：
+
+```json
+{
+  "voice": {
+    "name": "en-US-JennyNeural",
+    "rate": 1.0,
+    "pitch": 1.0,
+    "volume": 0.8
+  },
+  "sounds": {
+    "enabled": true,
+    "volume": 0.6,
+    "effects": {
+      "toolCall": "default",
+      "success": "default",
+      "error": "default",
+      "notification": "default"
+    }
+  },
+  "ambient": {
+    "enabled": false,
+    "type": "rain",
+    "volume": 0.3
+  },
+  "performance": {
+    "cacheEnabled": true,
+    "cacheSize": 100,
+    "preload": true,
+    "minLength": 50
+  }
+}
+```
+
+## 与 Claude Code 集成
+
+### 通过 CLI 启用
 
 ```bash
-# Install Piper via pipx (Python package manager)
-pipx install piper-tts
+# 在 Claude Code 中启用 Agent Vibes
+claude config set agent-vibes.enabled true
 
-# Verify installation
-piper --help
+# 验证设置
+claude config get agent-vibes
 ```
 
-**Common Issue**: Precompiled binary fails with `libespeak-ng.1.dylib` error.
+### 通过 settings.json 启用
 
-**Solution**: `pipx install piper-tts` works reliably (Python version, not binary).
+在 `.claude/settings.json` 或 `~/.claude/settings.json` 中添加：
 
-### Step 3.2: Download French Voices
+```json
+{
+  "permissions": {
+    "allow": ["Bash(agent-vibes:*)"]
+  },
+  "agent-vibes": {
+    "enabled": true,
+    "voice": "en-US-JennyNeural",
+    "rate": 1.0,
+    "sounds": true,
+    "ambient": false
+  }
+}
+```
+
+### 验证集成
 
 ```bash
-# Navigate to voice storage
-cd ~/.claude/piper-voices
+# 测试安装
+agent-vibes test
 
-# Download 4 French voice models
-curl -L -o fr_FR-tom-medium.onnx \
-  "https://huggingface.co/rhasspy/piper-voices/resolve/main/fr/fr_FR/tom/medium/fr_FR-tom-medium.onnx"
-curl -L -o fr_FR-tom-medium.onnx.json \
-  "https://huggingface.co/rhasspy/piper-voices/resolve/main/fr/fr_FR/tom/medium/fr_FR-tom-medium.onnx.json"
+# 测试语音
+agent-vibes test-voice
 
-curl -L -o fr_FR-siwis-medium.onnx \
-  "https://huggingface.co/rhasspy/piper-voices/resolve/main/fr/fr_FR/siwis/medium/fr_FR-siwis-medium.onnx"
-curl -L -o fr_FR-siwis-medium.onnx.json \
-  "https://huggingface.co/rhasspy/piper-voices/resolve/main/fr/fr_FR/siwis/medium/fr_FR-siwis-medium.onnx.json"
+# 测试音效
+agent-vibes test-sounds
 
-curl -L -o fr_FR-upmc-medium.onnx \
-  "https://huggingface.co/rhasspy/piper-voices/resolve/main/fr/fr_FR/upmc/medium/fr_FR-upmc-medium.onnx"
-curl -L -o fr_FR-upmc-medium.onnx.json \
-  "https://huggingface.co/rhasspy/piper-voices/resolve/main/fr/fr_FR/upmc/medium/fr_FR-upmc-medium.onnx.json"
-
-curl -L -o fr_FR-mls-medium.onnx \
-  "https://huggingface.co/rhasspy/piper-voices/resolve/main/fr/fr_FR/mls/medium/fr_FR-mls-medium.onnx"
-curl -L -o fr_FR-mls-medium.onnx.json \
-  "https://huggingface.co/rhasspy/piper-voices/resolve/main/fr/fr_FR/mls/medium/fr_FR-mls-medium.onnx.json"
+# 测试氛围
+agent-vibes test-ambient
 ```
 
-**Size**: ~60-73MB per voice (4 voices = ~260MB total)
+## 可选依赖
 
-### Step 3.3: Download English Voices (Optional)
+### 语音引擎
 
-Agent Vibes auto-downloads 12 English voices during installation. Verify:
+Agent Vibes 默认使用 Azure Speech Services。你可以配置其他引擎：
+
+**本地 TTS（离线）**：
 
 ```bash
-ls ~/.claude/piper-voices/en_US-*.onnx
+# macOS（系统 TTS）
+agent-vibes config set engine "macos-say"
+
+# Windows（Windows 语音运行时）
+agent-vibes config set engine "windows-sapi"
+
+# Linux（espeak-ng）
+sudo apt-get install espeak-ng
+agent-vibes config set engine "espeak-ng"
 ```
 
-**Expected**: 12 files (ryan, amy, lessac, bryce, etc.)
-
-### Checkpoint 3: Voices Downloaded ✅
+**OpenAI TTS**：
 
 ```bash
-# Count voices
-ls ~/.claude/piper-voices/*.onnx | wc -l
-# Expected: 15+ files (12 EN + 4 FR minimum)
+# 设置 OpenAI API 密钥
+export OPENAI_API_KEY="your-key"
 
-# Test French voice manually
-echo "Bonjour, je suis Claude et je parle français" | \
-  piper -m ~/.claude/piper-voices/fr_FR-tom-medium.onnx \
-  --output-file /tmp/test-fr.wav && afplay /tmp/test-fr.wav
+# 配置 TTS
+agent-vibes config set engine "openai"
+agent-vibes config set openai-model "tts-1"
+agent-vibes config set openai-voice "nova"
 ```
 
----
-
-## Phase 4: Configuration
-
-### Step 4.1: Set Piper as Provider
+**ElevenLabs TTS**：
 
 ```bash
-# Switch to Piper TTS (if not already set)
-echo "piper" > .claude/tts-provider.txt
+# 设置 ElevenLabs API 密钥
+export ELEVENLABS_API_KEY="your-key"
 
-# Verify
-cat .claude/tts-provider.txt
-# Expected: "piper"
+# 配置 TTS
+agent-vibes config set engine "elevenlabs"
+agent-vibes config set elevenlabs-voice "21m00Tcm4TlvDq8ikWAM"
 ```
 
-### Step 4.2: Set French Male Voice
+### 音效库
+
+**内置音效**（默认）：
+无需额外安装。
+
+**自定义音效**：
 
 ```bash
-# Set default voice
-echo "fr_FR-tom-medium" > .claude/tts-voice.txt
+# 创建音效目录
+mkdir -p ~/.agent-vibes/sounds
 
-# Verify
-cat .claude/tts-voice.txt
-# Expected: "fr_FR-tom-medium"
+# 添加音效文件
+cp custom-sound.mp3 ~/.agent-vibes/sounds/
+
+# 配置自定义音效
+agent-vibes config set sounds.toolCall "custom-sound.mp3"
 ```
 
-### Step 4.3: Test Audio Generation
+**外部音效包**：
 
 ```bash
-# Test TTS pipeline manually
-~/.claude/hooks/play-tts.sh "Ceci est un test audio"
+# 从 URL 安装音效包
+agent-vibes sounds install https://example.com/sound-pack.zip
+
+# 列出已安装的音效包
+agent-vibes sounds list
+
+# 选择音效包
+agent-vibes sounds use "pack-name"
 ```
 
-**Expected**: Audio plays with French male voice.
+## Docker 安装
 
-**Troubleshooting**: If no audio, see [Troubleshooting Guide](./troubleshooting.md#no-audio).
-
-### Checkpoint 4: Configuration Complete ✅
+### 使用 Docker
 
 ```bash
-# Verify config files
-test -f .claude/tts-provider.txt && \
-test -f .claude/tts-voice.txt && \
-test -f .claude/hooks/play-tts.sh && \
-echo "✅ Configuration complete"
+# 拉取镜像
+docker pull agent-vibes/agent-vibes:latest
+
+# 运行
+docker run -d \
+  --name agent-vibes \
+  -p 3000:3000 \
+  -v ~/.agent-vibes:/data \
+  agent-vibes/agent-vibes:latest
 ```
 
----
+### 使用 Docker Compose
 
-## Phase 5: Verification in Claude Code
-
-### Step 5.1: Launch Claude Code
+```yaml
+version: "3.8"
+services:
+  agent-vibes:
+    image: agent-vibes/agent-vibes:latest
+    container_name: agent-vibes
+    ports:
+      - "3000:3000"
+    volumes:
+      - ~/.agent-vibes:/data
+    environment:
+      - TTS_ENGINE=azure
+      - AZURE_SPEECH_KEY=${AZURE_SPEECH_KEY}
+      - AZURE_SPEECH_REGION=${AZURE_SPEECH_REGION}
+    restart: unless-stopped
+```
 
 ```bash
-# Start Claude Code session
-claude
+# 启动
+docker-compose up -d
+
+# 检查状态
+docker-compose ps
+
+# 查看日志
+docker-compose logs -f
 ```
 
-### Step 5.2: Test TTS Commands
+## 环境变量
+
+| 变量                     | 说明                | 默认值                          |
+| ------------------------ | ------------------- | ------------------------------- |
+| `AGENT_VIBES_HOME`       | 数据目录            | `~/.agent-vibes`                |
+| `AGENT_VIBES_CONFIG`     | 配置文件路径        | `$AGENT_VIBES_HOME/config.json` |
+| `AGENT_VIBES_LOG_LEVEL`  | 日志级别            | `info`                          |
+| `AGENT_VIBES_CACHE_DIR`  | 缓存目录            | `$AGENT_VIBES_HOME/cache`       |
+| `AGENT_VIBES_SOUNDS_DIR` | 音效目录            | `$AGENT_VIBES_HOME/sounds`      |
+| `AZURE_SPEECH_KEY`       | Azure 语音密钥      | -                               |
+| `AZURE_SPEECH_REGION`    | Azure 语音区域      | `eastus`                        |
+| `OPENAI_API_KEY`         | OpenAI API 密钥     | -                               |
+| `ELEVENLABS_API_KEY`     | ElevenLabs API 密钥 | -                               |
+
+## 卸载
+
+### 卸载 Agent Vibes
 
 ```bash
-# In Claude, run:
-/agent-vibes:whoami
-# Expected: Shows current voice and provider
+# 卸载 NPM 包
+npm uninstall -g agent-vibes
 
-/agent-vibes:list
-# Expected: Lists all 15+ voices
+# 删除数据目录
+rm -rf ~/.agent-vibes
 
-# Test TTS with simple request
-> "Dis-moi bonjour en français"
-# Expected: Audio response in French
+# 删除配置
+# macOS/Linux
+rm -rf ~/.config/agent-vibes
+
+# Windows
+Remove-Item -Recurse -Force "$env:APPDATA\agent-vibes"
 ```
 
-### Step 5.3: Verify Hooks Active
+### 从 Claude Code 断开
 
 ```bash
-# Exit Claude, check hook was triggered
-ls -la /tmp/tts-*.wav
-# Expected: Temporary audio files
+# 禁用集成
+claude config set agent-vibes.enabled false
 
-# Check last played audio
-ls -la ~/.claude/tts-last-played.wav
-# Expected: File exists
+# 从 settings.json 中删除配置
+claude config remove agent-vibes
 ```
 
-### Checkpoint 5: Verification Complete ✅
+### 清理残留文件
 
 ```bash
-# Final verification
-cat .claude/tts-provider.txt && \
-cat .claude/tts-voice.txt && \
-piper --help > /dev/null 2>&1 && \
-ls ~/.claude/piper-voices/*.onnx | wc -l && \
-echo "✅ Installation successful!"
+# 删除缓存
+rm -rf ~/Library/Caches/agent-vibes  # macOS
+rm -rf ~/.cache/agent-vibes         # Linux
+Remove-Item -Recurse -Force "$env:LOCALAPPDATA\agent-vibes"  # Windows
+
+# 删除日志
+rm -rf ~/Library/Logs/agent-vibes   # macOS
+rm -rf ~/.local/share/agent-vibes/logs  # Linux
 ```
 
----
-
-## Post-Installation Configuration
-
-### Reduce Verbosity (Recommended)
+## 安装过程验证
 
 ```bash
-# In Claude Code
-/agent-vibes:verbosity low
+# 运行验证脚本
+agent-vibes verify
+
+# 手动检查
+agent-vibes --version          # 版本号
+agent-vibes config show        # 配置
+agent-vibes test-voice         # 语音
+agent-vibes test-sounds        # 音效
+agent-vibes test-ambient       # 氛围（如已启用）
 ```
 
-**Why**: Reduces audio narration frequency, less distracting.
+## 下一步
 
-### Hide 34 Commands (Optional)
+- [基本用法](./usage.md)
+- [故障排查](./troubleshooting.md)
+- [语音目录](./voice-catalog.md)
+- [配置参考](./configuration.md)
 
-```bash
-# In Claude Code
-/agent-vibes:hide
-```
+## 支持
 
-**Why**: Declutters command palette. Use `/agent-vibes:show` to unhide.
-
-### Disable Background Music
-
-```bash
-# In Claude Code
-/agent-vibes:background-music off
-```
-
-**Why**: Background music can be distracting during focus work.
-
-### Set Project Mute (Optional)
-
-```bash
-# Mute TTS for this project only
-touch .claude/agentvibes-muted
-```
-
-**Why**: Some projects don't need audio (e.g., documentation-only repos).
-
----
-
-## Performance Benchmarks
-
-**System**: M1 MacBook Pro, 16GB RAM, macOS Sequoia 24.6.0
-
-| Metric | Piper Medium | Piper High | macOS Say |
-|--------|--------------|------------|-----------|
-| **Audio Generation** | ~200ms | ~400ms | Instant |
-| **Total Latency** | ~280ms | ~480ms | ~50ms |
-| **RAM Usage** | ~50MB | ~70MB | ~10MB |
-| **CPU Burst** | 80% (200ms) | 90% (400ms) | 5% (50ms) |
-| **Voice Quality** | ⭐️⭐️⭐️⭐️ | ⭐️⭐️⭐️⭐️⭐️ | ⭐️⭐️⭐️ |
-| **Offline** | ✅ | ✅ | ✅ |
-
-**Recommendation**: Piper Medium = best quality/speed trade-off.
-
----
-
-## Disk Usage
-
-| Component | Size | Location |
-|-----------|------|----------|
-| **Piper TTS** | ~5MB | `~/.local/pipx/venvs/piper-tts/` |
-| **Voice Models** | ~1GB | `~/.claude/piper-voices/` (15 voices × 60MB) |
-| **Background Music** | ~300MB | `.claude/audio/tracks/` (16 tracks) |
-| **Scripts** | ~2MB | `.claude/hooks/` (40 bash scripts) |
-| **Total** | **~1.3GB** | - |
-
-**Cleanup Tip**: Delete unused voices to save space.
-
----
-
-## Uninstall Instructions
-
-### Automated Uninstall
-
-```bash
-# Uninstall Agent Vibes completely
-npx agentvibes uninstall --yes
-```
-
-### Manual Cleanup
-
-```bash
-# Remove Agent Vibes files
-rm -rf .claude/hooks/*vibes*
-rm -rf .claude/commands/agent-vibes/
-rm -rf .claude/audio/
-
-# Remove Piper TTS
-pipx uninstall piper-tts
-
-# Remove voice models
-rm -rf ~/.claude/piper-voices/
-
-# Remove config files
-rm .claude/tts-provider.txt
-rm .claude/tts-voice.txt
-rm .claude/agentvibes-muted 2>/dev/null
-rm ~/.agentvibes-muted 2>/dev/null
-```
-
----
-
-## Common Installation Issues
-
-### Issue 1: `libespeak-ng.1.dylib` Not Found
-
-**Symptom**:
-```
-dyld[xxx]: Library not loaded: @rpath/libespeak-ng.1.dylib
-```
-
-**Solution**:
-```bash
-# Install espeak-ng
-brew install espeak-ng
-
-# Reinstall Piper via pipx (not binary)
-pipx uninstall piper-tts
-pipx install piper-tts
-```
-
-### Issue 2: `flock` Warning (Optional Tool)
-
-**Symptom**:
-```
-⚠ flock - TTS queue locking
-```
-
-**Impact**: Minor. TTS works without `flock`, may have audio collision with rapid messages.
-
-**Solution** (optional):
-```bash
-# flock is in util-linux, already installed
-# Add to PATH if needed
-export PATH="/opt/homebrew/opt/util-linux/bin:$PATH"
-```
-
-### Issue 3: Agent Vibes Installer Exits
-
-**Symptom**:
-```
-ExitPromptError: User force closed the prompt
-```
-
-**Cause**: Interactive installer requires user input (can't be automated).
-
-**Solution**: Run `npx agentvibes install` in interactive terminal (not via script).
-
-### Issue 4: No Audio After Installation
-
-**Diagnostic**:
-```bash
-# 1. Check mute status
-ls .claude/agentvibes-muted ~/.agentvibes-muted
-
-# 2. Check provider
-cat .claude/tts-provider.txt
-
-# 3. Test Piper manually
-echo "Test" | piper -m ~/.claude/piper-voices/fr_FR-tom-medium.onnx \
-  --output-file /tmp/test.wav && afplay /tmp/test.wav
-```
-
-**Solutions**: See [Troubleshooting Guide](./troubleshooting.md).
+安装遇到问题？请查看[故障排查指南](./troubleshooting.md)或[提交 Issue](https://github.com/your-org/agent-vibes/issues)。
 
 ---
 
-## Next Steps
-
-After installation:
-
-1. **[Voice Catalog](./voice-catalog.md)** - Explore 15 voices and choose your favorite
-2. **[README](./README.md)** - Learn essential commands and use cases
-3. **[Troubleshooting](./troubleshooting.md)** - Solve common issues
-4. **[AI Ecosystem](../../../guide/ecosystem/ai-ecosystem.md#47-voice-interfaces)** - TTS in broader AI context
-
----
-
-## Resources
-
-- **Agent Vibes GitHub**: https://github.com/paulpreibisch/AgentVibes
-- **Piper Voices Repository**: https://huggingface.co/rhasspy/piper-voices
-- **Piper Voice Samples**: https://rhasspy.github.io/piper-samples/
-- **Agent Vibes Website**: https://agentvibes.org
-
----
-
-*Installation guide maintained by [Claude Code Ultimate Guide](https://github.com/FlorianBruniaux/claude-code-ultimate-guide)*
-*Last updated: 2026-01-22 | Tested on: macOS Sequoia 24.6.0 (Apple Silicon)*
+_让 AI 交互更具氛围感 — 正确安装，尽享体验。_
