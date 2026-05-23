@@ -1,20 +1,20 @@
 ---
-title: "Claude Code — Context Engineering Diagrams"
-description: "3-layer context system, adherence degradation, modular architecture, rule placement decision tree"
+title: "Claude Code — 上下文工程图解"
+description: "三层上下文系统、遵循度衰减、模块化架构、规则放置决策树"
 tags: [context-engineering, configuration, architecture, modular, adherence]
 ---
 
-# Context Engineering
+# 上下文工程
 
-How to fill Claude's context window with the right information at the right time — and how architectural choices determine whether Claude consistently follows your conventions.
+如何在正确的时间用正确的信息填充 Claude 的上下文窗口——以及架构选择如何决定 Claude 能否始终遵循你的约定。
 
-> "Context engineering is the art of filling the context window with the right information at the right time." — Andrej Karpathy
+> "上下文工程是在正确的时间用正确的信息填充上下文窗口的艺术。" — Andrej Karpathy
 
 ---
 
-### The 3-Layer Context System
+### 三层上下文系统
 
-Context engineering operates across 3 distinct layers with different scopes and persistence. Understanding which layer to use prevents the most common mistake: cramming everything into one file.
+上下文工程在三个不同的层面运作，各自具有不同的范围和持久性。了解使用哪个层面可以防止最常见的错误：把所有内容塞进一个文件。
 
 ```mermaid
 flowchart TD
@@ -89,9 +89,9 @@ More specific beats less specific at the same level
 
 ---
 
-### Context Budget & Adherence Degradation
+### 上下文预算与遵循度衰减
 
-Adherence to CLAUDE.md rules degrades predictably as file size grows. Beyond ~150 rules, models begin selectively ignoring instructions. Path-scoping is the primary fix — it reduces always-on context by 40-50% without losing coverage.
+对 CLAUDE.md 规则的遵循度会随着文件体积增长而可预测地衰减。超过约 150 条规则后，模型开始选择性忽略指令。路径作用域是主要的修复手段——它能将始终在线的上下文减少 40-50% 而不损失覆盖面。
 
 ```mermaid
 flowchart LR
@@ -148,9 +148,9 @@ Result: 40-50% always-on context reduction, adherence back in green zone
 
 ---
 
-### Monolithic vs. Modular Architecture
+### 单体 vs 模块化架构
 
-The monolithic CLAUDE.md is the most common failure mode in team contexts. Path-scoped modules fix it by loading only what's relevant for the current task.
+单体 CLAUDE.md 是团队环境下最常见的失败模式。路径作用域模块通过在运行时仅加载与当前任务相关的内容来解决这一问题。
 
 ```mermaid
 flowchart TD
@@ -215,9 +215,9 @@ Result: 40-50% reduction in always-on tokens, full coverage per subsystem
 
 ---
 
-### Rule Placement Decision Tree
+### 规则放置决策树
 
-Every new instruction or convention needs to land in the right layer. Wrong placement wastes tokens (too global) or loses coverage (too scoped). This tree makes the decision explicit.
+每个新的指令或约定都需要落在正确的层面。放置错误会浪费 Token（太全局）或损失覆盖面（太局部）。本决策树让决策明确化。
 
 ```mermaid
 flowchart TD

@@ -1,18 +1,18 @@
 ---
-title: "Claude Code — Architecture Internals Diagrams"
-description: "Master loop, tool categories, system prompt assembly, sub-agent isolation"
+title: "Claude Code — 架构内部原理图解"
+description: "主循环、工具分类、系统提示组装、子代理隔离"
 tags: [architecture, internals, master-loop, tools]
 ---
 
-# Architecture Internals
+# 架构内部原理
 
-What happens under the hood when Claude Code runs.
+Claude Code 运行时底层发生了什么。
 
 ---
 
-### The Master Loop
+### 主循环
 
-Claude Code's core execution is two nested loops: an **inner agent loop** that keeps calling the API as long as tool calls are returned, and an **outer conversation loop** that starts a new turn when the user responds.
+Claude Code 的核心执行是两个嵌套循环：**内部代理循环**——只要返回工具调用就持续调用 API；**外部对话循环**——当用户响应时开始新一轮。
 
 ```mermaid
 flowchart TD
@@ -83,9 +83,9 @@ Build prompt (system + context + tools)
 
 ---
 
-### Tool Categories & Selection
+### 工具分类与选择
 
-Claude Code has 6 tool categories, each optimized for different operations. Understanding which tool Claude chooses (and why) helps you write instructions that guide better tool selection.
+Claude Code 有 6 个工具类别，每个类别针对不同的操作进行了优化。了解 Claude 选择哪个工具（以及为什么）有助于你编写指令以引导更好的工具选择。
 
 ```mermaid
 flowchart TD
@@ -188,9 +188,9 @@ CONTROL:  EnterPlanMode/ExitPlanMode, EnterWorktree/ExitWorktree, AskUserQuestio
 
 ---
 
-### System Prompt Assembly
+### 系统提示组装
 
-Before every API call, Claude Code assembles a system prompt from multiple sources in a specific order. The prompt is split into two cache zones separated by a boundary marker.
+每次 API 调用前，Claude Code 会按特定顺序从多个来源组装系统提示。提示被分成两个缓存区域，由一个边界标记隔开。
 
 ```mermaid
 sequenceDiagram
@@ -243,9 +243,9 @@ DYNAMIC zone (per-session cache):
 
 ---
 
-### Sub-Agent Context Isolation
+### 子代理上下文隔离
 
-Sub-agents are completely isolated from the parent — they can't read the parent's conversation or modify parent state. This isolation is a feature (safety) and a constraint (intentional design).
+子代理与父代理完全隔离——它们无法读取父代理的对话或修改父代理状态。这种隔离既是一个特性（安全性），也是一个约束（有意设计）。
 
 ```mermaid
 sequenceDiagram

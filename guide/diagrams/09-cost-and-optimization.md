@@ -1,20 +1,20 @@
 ---
-title: "Claude Code — Cost & Optimization Diagrams"
-description: "Model selection, cost optimization, subscription tiers, token reduction strategies"
+title: "Claude Code — 成本与优化图解"
+description: "模型选择、成本优化、订阅层级、Token 缩减策略"
 tags: [cost, optimization, models, tokens, subscription]
 ---
 
-# Cost & Optimization
+# 成本与优化
 
-How to get maximum value from Claude Code while controlling token consumption and costs.
+如何在控制 Token 消耗和成本的同时，从 Claude Code 中获得最大价值。
 
 ---
 
-### Model Selection Decision Flow
+### 模型选择决策流程
 
-Not all tasks need the most powerful model. Using the right model for the right task cuts costs by 5-10x without sacrificing quality.
+并非所有任务都需要最强大的模型。为合适的任务选择合适的模型，可在不牺牲质量的前提下将成本降低 5-10 倍。
 
-> **This diagram assumes an unconstrained budget (Max/API).** On tighter plans (Pro, Teams Standard), apply the budget modifier below.
+> **此图解假定预算不受限制（Max/API）。** 在预算较为紧张的计划（Pro、Teams Standard）中，请应用下方的预算调整器。
 
 ```mermaid
 flowchart TD
@@ -56,18 +56,18 @@ flowchart TD
     click J href "https://github.com/FlorianBruniaux/claude-code-ultimate-guide/blob/main/guide/ultimate-guide.md#25-model-selection--thinking-guide" "Large but clear tasks"
 ```
 
-> **Pricing**: Relative costs shown — check current rates at [anthropic.com/pricing](https://www.anthropic.com/pricing).
+> **定价**：展示的是相对成本 — 请查阅 [anthropic.com/pricing](https://www.anthropic.com/pricing) 了解当前费率。
 
-**Budget modifier** — On constrained plans, downgrade one tier per phase:
+**预算调整器** — 在受限计划中，每个阶段降级一层：
 
-| Plan | Planning phase | Implementation phase |
+| 计划 | 规划阶段 | 实施阶段 |
 |------|---------------|---------------------|
 | **Max / API unconstrained (xhigh)** | Opus 4.7 | Sonnet |
 | **Max / API unconstrained** | Opus 4.6 | Sonnet |
 | **Pro / Teams Standard** | Sonnet | Haiku (mechanical tasks) |
 | **API tight budget** | Sonnet | Haiku |
 
-> *Community pattern (Teams Standard $25/mo): Sonnet for Plan → Haiku for Implementation. Same quality output on mechanical tasks at a fraction of the cost.*
+> *社区实践模式（Teams Standard $25/月）：Sonnet 用于规划 → Haiku 用于实施。在机械性任务上以极低成本获得相同质量的输出。*
 
 <details>
 <summary>ASCII version</summary>
@@ -92,9 +92,9 @@ Budget modifier (downgrade one tier on constrained plans):
 
 ---
 
-### Cost Optimization Decision Tree
+### 成本优化决策树
 
-High token costs are usually fixable. This systematic tree identifies the root cause and points to the right fix for each waste pattern.
+高 Token 成本通常是可以解决的。本系统化决策树帮助识别根本原因，并为每种浪费模式指出正确的修复方法。
 
 ```mermaid
 flowchart TD
@@ -167,15 +167,15 @@ High costs?
 
 </details>
 
-> **Effort slider** — `/effort xlow/low/default/high/xhigh` (v2.1.111) lets you tune thinking depth per task. Lower effort = fewer tokens consumed on thinking. Combine with model selection for fine-grained cost control.
+> **努力程度滑块** — `/effort xlow/low/default/high/xhigh`（v2.1.111）可让你按任务调整思考深度。努力程度越低，思考消耗的 Token 越少。与模型选择结合使用，实现细粒度的成本控制。
 
 > **Source**: [Cost Optimization](../ultimate-guide.md#cost-optimization) — Line ~8878
 
 ---
 
-### Subscription Tiers — What Each Unlocks
+### 订阅层级 — 各层解锁能力
 
-Different tiers unlock different Claude Code capabilities. Knowing the limits helps you plan usage and justify upgrades.
+不同层级解锁不同的 Claude Code 功能。了解各层限制有助于规划使用量并合理论证升级需求。
 
 ```mermaid
 flowchart LR
@@ -259,9 +259,9 @@ No CLI       Personal use     Parallel ✓       Analytics
 
 ---
 
-### Token Reduction Strategies Pipeline
+### Token 缩减策略管道
 
-Multiple strategies stack for cumulative token savings. Apply them in order from highest impact to lowest effort.
+多项策略可叠加使用，实现累积的 Token 节省。按从最高收益到最低投入的顺序依次应用。
 
 ```mermaid
 flowchart LR
@@ -341,6 +341,6 @@ Model selection (Haiku for simple)    → -50-90% on simple tasks
 
 </details>
 
-> **Track usage** — Use `/usage` to monitor token consumption and costs (replaces `/cost` as of v2.1.118; `/cost` remains a valid alias).
+> **跟踪用量** — 使用 `/usage` 监控 Token 消耗和成本（自 v2.1.118 起替代 `/cost`；`/cost` 仍为有效别名）。
 
 > **Source**: [Token Optimization](../ultimate-guide.md#token-optimization) — Line ~13355

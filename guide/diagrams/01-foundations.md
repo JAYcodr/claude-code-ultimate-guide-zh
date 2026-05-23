@@ -1,18 +1,13 @@
 ---
-title: "Claude Code — Foundations Diagrams"
-description: "Core concepts: 4-layer model, workflow pipeline, decision tree, 5 permission modes"
+title: "Claude Code — 基础原理图解"
+description: "核心概念：四层模型、工作流管道、决策树、五种权限模式"
 tags: [foundations, architecture, getting-started]
 ---
-
-# Foundations
-
-Core concepts that explain what Claude Code is and how it fundamentally operates.
-
+# 基础原理
+Claude Code 的核心概念：它是什么，以及如何运作。
 ---
-
-### "Chatbot to Context System" — 4-Layer Model
-
-Claude Code isn't a chatbot — it's a context system that transforms your message into a rich multi-layer prompt before calling the API. This diagram shows the 4-layer augmentation that happens invisibly with every request.
+### "从聊天机器人到上下文系统"——四层模型
+Claude Code 不是聊天机器人——它是一个上下文系统，在调用 API 之前将你的消息转换成一个丰富的多层提示。这张图展示了每次请求背后无形中发生的四层增强。
 
 ```mermaid
 flowchart TD
@@ -80,9 +75,9 @@ User Message
 
 ---
 
-### 9-Step Workflow Pipeline
+### 九步工作流管道
 
-Every request to Claude Code goes through this pipeline — from parsing your intent to displaying the final response. Understanding this loop helps you write better instructions and diagnose issues faster.
+每次向 Claude Code 发出的请求都会经过这条管道——从解析你的意图到显示最终响应。理解这个循环可以帮助你写出更好的指令并更快地排查问题。
 
 ```mermaid
 flowchart LR
@@ -142,9 +137,9 @@ User Message → Parse Intent → Load Context → Plan Actions
 
 ---
 
-### Quick Decision Tree — "Should I use Claude Code?"
+### 快速决策树——"我该用 Claude Code 吗？"
 
-Not every task needs Claude Code. This decision tree helps you route the right tasks to the right tool — Claude Code CLI vs Claude.ai vs clipboard-based approaches.
+并非所有任务都需要 Claude Code。这个决策树帮你把合适的任务分配给合适的工具——Claude Code CLI、Claude.ai，还是基于剪贴板的方式。
 
 ```mermaid
 flowchart TD
@@ -206,9 +201,9 @@ Task involves codebase?
 
 ---
 
-### Permission Modes Comparison
+### 权限模式对比
 
-Claude Code has 5 permission modes that control what it can do automatically vs. what requires your approval. Choosing the wrong mode is the #1 safety mistake.
+Claude Code 有五种权限模式，控制它可以自动做什么以及什么需要你的批准。选错模式是排名第一的安全错误。
 
 ```mermaid
 flowchart TD

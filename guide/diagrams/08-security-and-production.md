@@ -1,18 +1,18 @@
 ---
-title: "Claude Code — Security & Production Diagrams"
-description: "3-layer defense, sandbox decision, verification paradox, CI/CD pipeline"
+title: "Claude Code — 安全与生产环境图"
+description: "三层防御、沙箱决策、验证悖论、CI/CD 管线"
 tags: [security, production, sandbox, ci-cd, defense]
 ---
 
-# Security & Production
+# 安全与生产环境
 
-Patterns for safely running Claude Code in sensitive and production environments.
+在敏感和生产环境中安全运行 Claude Code 的模式。
 
 ---
 
-### Security 3-Layer Defense Model
+### 安全三层防御模型
 
-Defense in depth for Claude Code: prevention stops most threats, detection catches what slips through, and response limits blast radius. No single layer is sufficient.
+Claude Code 的纵深防御：预防阻止大多数威胁，检测捕获漏网之鱼，响应限制爆炸半径。单一层级是不够的。
 
 ```mermaid
 flowchart LR
@@ -92,9 +92,9 @@ Contained
 
 ---
 
-### Sandbox Decision Tree
+### 沙箱决策树
 
-Sandboxing adds overhead. Use this tree to decide when it's mandatory, recommended, or optional for your situation.
+沙箱化会带来额外开销。使用这棵树来决定在你的场景中何时是强制性的、推荐性的或可选的。
 
 ```mermaid
 flowchart TD
@@ -167,9 +167,9 @@ Rule: When in doubt, sandbox it.
 
 ---
 
-### The Verification Paradox
+### 验证悖论
 
-Asking Claude to verify its own work is circular. The same model that produced the bug will often miss it during review. This anti-pattern causes production incidents.
+让 Claude 验证自己的工作是一种循环。产生 bug 的同一模型在审查时往往也会忽略它。这种反模式会导致生产事故。
 
 ```mermaid
 flowchart TD
@@ -233,9 +233,9 @@ GOOD: Claude writes → Human reviews (critical sections)
 
 ---
 
-### CI/CD Integration Pipeline
+### CI/CD 集成管线
 
-Claude Code can run in non-interactive mode inside CI/CD pipelines for automated code review, documentation, and quality checks on every PR.
+Claude Code 可以在 CI/CD 管线中以非交互模式运行，用于对每个 PR 进行自动代码审查、文档编写和质量检查。
 
 ```mermaid
 flowchart LR

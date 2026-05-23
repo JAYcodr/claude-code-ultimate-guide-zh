@@ -1,18 +1,18 @@
 ---
-title: "Claude Code — Multi-Agent Patterns Diagrams"
-description: "Agent topologies, worktrees, dual-instance planning, horizontal scaling, decision matrix"
+title: "Claude Code — 多智能体模式图"
+description: "智能体拓扑、工作树、双实例规划、水平扩展、决策矩阵"
 tags: [multi-agent, patterns, worktrees, orchestration, scaling]
 ---
 
-# Multi-Agent Patterns
+# 多智能体模式
 
-Patterns for coordinating multiple Claude instances for parallel and complex work.
+协调多个 Claude 实例进行并行和复杂工作的模式。
 
 ---
 
-### Agent Teams — 3 Orchestration Topologies
+### 智能体团队——3 种编排拓扑
 
-Three proven topologies for multi-agent coordination. Choose based on task independence, ordering requirements, and specialization needs.
+三种经过验证的多智能体协调拓扑。根据任务独立性、顺序要求和专业需求进行选择。
 
 ```mermaid
 flowchart TD
@@ -88,9 +88,9 @@ W1    W2     W3              Agent B (implement)   Code Test Docs
 
 ---
 
-### Git Worktree Multi-Instance Pattern
+### Git 工作树多实例模式
 
-Git worktrees enable true parallel development: each Claude instance works in an isolated branch with its own working tree. No conflicts, no context mixing.
+Git 工作树实现了真正的并行开发：每个 Claude 实例在独立的分支中工作，拥有自己的工作树。无冲突，无上下文混杂。
 
 ```mermaid
 flowchart LR
@@ -152,9 +152,9 @@ All merge back to main when done
 
 ---
 
-### Dual-Instance Planning Pattern (Jon Williams)
+### 双实例规划模式（Jon Williams）
 
-Separating planning from execution using two Claude instances prevents costly mistakes: the planner Claude has no tools, so it can't accidentally execute anything during analysis.
+使用两个 Claude 实例将规划与执行分离可防止代价高昂的错误：规划者 Claude 没有工具，因此在分析期间不会意外执行任何操作。
 
 ```mermaid
 sequenceDiagram
@@ -202,9 +202,9 @@ Executor → User: results
 
 ---
 
-### Boris Cherny Horizontal Scaling Pattern
+### Boris Cherny 水平扩展模式
 
-When tasks can be parallelized, spawn N Claude instances simultaneously instead of running them sequentially. The speedup is proportional to task independence.
+当任务可以并行化时，同时启动 N 个 Claude 实例，而不是顺序运行。加速比与任务独立性成正比。
 
 ```mermaid
 flowchart LR
@@ -270,9 +270,9 @@ Aggregate → Integration review
 
 ---
 
-### Multi-Instance Decision Matrix
+### 多实例决策矩阵
 
-Not every task needs multiple instances. This decision tree guides you to the right pattern based on task characteristics.
+并非每个任务都需要多个实例。这个决策树可以根据任务特征引导你找到合适的模式。
 
 ```mermaid
 flowchart TD

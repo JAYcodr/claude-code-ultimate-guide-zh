@@ -1,20 +1,20 @@
 ---
-title: "Claude Code — Enterprise Governance Diagrams"
-description: "Governance risk tiers, MCP approval workflow, guardrail tier selection"
+title: "Claude Code — 企业治理图解"
+description: "治理风险层级、MCP 审批工作流、护栏层级选择"
 tags: [security, enterprise, governance, compliance, mcp]
 ---
 
-# Enterprise Governance
+# 企业治理
 
-Org-level patterns for teams deploying Claude Code at scale — usage tiers, MCP approval workflows, and guardrail configurations.
+团队大规模部署 Claude Code 的组织级模式——使用层级、MCP 审批工作流和护栏配置。
 
-> **Audience**: Tech leads, engineering managers, security officers. For individual dev security see [Security & Production](./08-security-and-production.md).
+> **目标读者**：技术负责人、工程经理、安全负责人。个人开发者安全请参阅[安全与生产](./08-security-and-production.md)。
 
 ---
 
-### Governance Risk Tiers — What to Control and When
+### 治理风险层级 — 控制什么以及何时控制
 
-Not everything needs heavy governance. This decision tree routes your context to the right control level based on actual risk — from personal dev workflow (minimal) to regulated environments (full compliance stack).
+并非所有内容都需要严格治理。本决策树根据实际风险将你的上下文引导至正确的控制级别——从个人开发者工作流（最少控制）到受管控环境（完整合规堆栈）。
 
 ```mermaid
 flowchart TD
@@ -77,9 +77,9 @@ You CANNOT control: personal ~/.claude, personal API key model choice, personal 
 
 ---
 
-### MCP Governance Workflow
+### MCP 治理工作流
 
-Individual MCP vetting takes 5 minutes. Organizational MCP governance is the 5-step pipeline that ensures approved servers stay approved, versions are pinned, and risk is classified before deployment.
+单个 MCP 审查只需 5 分钟。组织级 MCP 治理是一个 5 步流水线，确保已批准的服务器保持批准状态、版本被锁定、风险在部署前已分类。
 
 ```mermaid
 sequenceDiagram
@@ -142,9 +142,9 @@ Monitor every 30 days:
 
 ---
 
-### Data Classification & Claude Code Access Rules
+### 数据分类与 Claude Code 访问规则
 
-Data classification determines what Claude Code is allowed to read and process. Getting this wrong is the highest-impact governance failure. Four levels, clear rules, no exceptions for RESTRICTED.
+数据分类决定了允许 Claude Code 读取和处理哪些内容。在这方面犯错是影响最大的治理失败。四个级别，明确规则，RESTRICTED 级别无例外。
 
 ```mermaid
 flowchart LR

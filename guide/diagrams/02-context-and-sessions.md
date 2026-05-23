@@ -1,18 +1,18 @@
 ---
-title: "Claude Code — Context & Sessions Diagrams"
-description: "Context zones, memory hierarchy, session management, and fresh context patterns"
+title: "Claude Code — 上下文与会话图解"
+description: "上下文区域、内存层次结构、会话管理以及新上下文模式"
 tags: [context, sessions, memory, optimization]
 ---
 
-# Context & Sessions
+# 上下文与会话
 
-How Claude Code manages context, memory, and sessions across your work.
+Claude Code 如何在你的工作中管理上下文、内存和会话。
 
 ---
 
-### Context Management Zones
+### 上下文管理区域
 
-Your context window has 4 distinct zones, each requiring different strategies. Knowing which zone you're in prevents context bloat and maintains response quality throughout long sessions.
+你的上下文窗口有 4 个不同的区域，每个区域需要不同的策略。了解你所处的区域可以防止上下文膨胀，并在长时间会话中保持响应质量。
 
 ```mermaid
 flowchart LR
@@ -87,9 +87,9 @@ flowchart LR
 
 ---
 
-### Memory Hierarchy — 6 Types
+### 内存层次结构 — 6 种类型
 
-Claude Code has 6 distinct memory types with different scopes and persistence. Knowing which memory type to use for each piece of information is key to effective sessions.
+Claude Code 有 6 种不同的内存类型，各有不同的作用域和持久性。针对每条信息使用正确的内存类型是实现高效会话的关键。
 
 ```mermaid
 flowchart TD
@@ -158,9 +158,9 @@ Auto-Memory = persists cross-session, scoped per project
 
 ---
 
-### Session Continuity — Saving and Resuming State
+### 会话连续性 — 保存与恢复状态
 
-Sessions don't automatically persist context between terminals. This diagram shows how to save state and resume it in a new session or terminal, enabling async workflows.
+会话不会在终端之间自动持久化上下文。此图展示了如何保存状态并在新会话或终端中恢复它，从而实现异步工作流。
 
 ```mermaid
 sequenceDiagram
@@ -204,9 +204,9 @@ Save progress ──────────────► Write             Lo
 
 ---
 
-### Fresh Context Anti-Pattern vs. Best Practice
+### 新上下文的反模式与最佳实践
 
-Long sessions accumulate noise that degrades response quality. This diagram shows the degradation pattern and the recommended "focused sessions" approach that maintains performance.
+长时间会话会积累噪声，降低响应质量。此图展示了退化模式以及推荐的"专注会话"方法，该方法能保持性能。
 
 ```mermaid
 flowchart TD

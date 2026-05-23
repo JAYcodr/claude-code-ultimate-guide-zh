@@ -1,18 +1,18 @@
 ---
-title: "Claude Code — Configuration System Diagrams"
-description: "Config precedence, skills vs commands vs agents, agent lifecycle, hooks pipeline"
+title: "Claude Code — 配置系统图解"
+description: "配置优先级、技能与命令与代理、代理生命周期、钩子管道"
 tags: [configuration, hooks, agents, skills, commands]
 ---
 
-# Configuration System
+# 配置系统
 
-How Claude Code loads settings, resolves conflicts, and orchestrates extensibility.
+Claude Code 如何加载设置、解决冲突以及编排可扩展性。
 
 ---
 
-### Configuration Precedence (5 Levels)
+### 配置优先级（5 个层级）
 
-Claude Code resolves settings through a strict priority hierarchy. Higher layers override lower ones. Knowing this prevents "why isn't my config working?" bugs.
+Claude Code 通过严格的优先级层次结构解析设置。较高层级会覆盖较低层级。了解这一点可以防止"为什么我的配置不生效？"这类错误。
 
 ```mermaid
 flowchart TD
@@ -60,9 +60,9 @@ PRIORITY (highest to lowest)
 
 ---
 
-### Skills vs. Commands vs. Agents — When to Use Each
+### 技能 vs 命令 vs 代理 — 何时使用
 
-Three extensibility mechanisms with different purposes and tradeoffs. Choosing the wrong abstraction leads to over-engineering or under-powered automation.
+三种可扩展性机制各有不同的目的和权衡。选择错误的抽象会导致过度工程化或自动化能力不足。
 
 ```mermaid
 flowchart LR
@@ -132,9 +132,9 @@ Use when:      Reusable caps       Quick shortcuts    Complex tasks
 
 ---
 
-### Agent Lifecycle & Scope Isolation
+### 代理生命周期与作用域隔离
 
-Sub-agents run in complete isolation from the parent. They receive a copy of context but share no state. Understanding this prevents "why can't my sub-agent see X?" confusion.
+子代理与父代理完全隔离运行。它们会收到上下文副本，但不共享任何状态。理解这一点可以避免"为什么我的子代理看不到 X？"的困惑。
 
 ```mermaid
 sequenceDiagram
@@ -182,9 +182,9 @@ Parent ◄───── text result ──────────┘
 
 ---
 
-### Hooks Event Pipeline
+### 钩子事件管道
 
-Hooks let you run custom code at key points in Claude Code's lifecycle — for security scanning, logging, enforcement, or notifications. The execution order matters.
+钩子让你在 Claude Code 生命周期的关键点运行自定义代码——用于安全扫描、日志记录、执行策略或通知。执行顺序很重要。
 
 ```mermaid
 flowchart TD

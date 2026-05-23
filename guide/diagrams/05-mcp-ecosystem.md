@@ -1,18 +1,18 @@
 ---
-title: "Claude Code — MCP Ecosystem Diagrams"
-description: "MCP server map, architecture, rug pull attack chain, config hierarchy"
+title: "Claude Code — MCP 生态系统图"
+description: "MCP 服务器地图、架构、Rug Pull 攻击链、配置层级"
 tags: [mcp, security, architecture, configuration]
 ---
 
-# MCP Ecosystem
+# MCP 生态系统
 
-The Model Context Protocol (MCP) extends Claude Code with external tool servers.
+模型上下文协议（MCP）通过外部工具服务器扩展 Claude Code 的能力。
 
 ---
 
-### MCP Server Ecosystem Map
+### MCP 服务器生态系统图
 
-The MCP ecosystem has 4 categories of servers — official, community-dev, community-ops, and local. Knowing what's available prevents building what already exists.
+MCP 生态系统包含 4 类服务器——官方、社区开发、社区运维和本地。了解已有资源可以避免重复造轮子。
 
 ```mermaid
 flowchart TD
@@ -97,9 +97,9 @@ Claude Code
 
 ---
 
-### MCP Architecture — Client-Server Protocol
+### MCP 架构——客户端-服务器协议
 
-MCP is a JSON-RPC protocol running over stdio or SSE. Claude Code acts as the client, MCP servers as tool providers. This shows the full request-response cycle.
+MCP 是一种运行在 stdio 或 SSE 之上的 JSON-RPC 协议。Claude Code 作为客户端，MCP 服务器作为工具提供者。下图展示了完整的请求-响应周期。
 
 ```mermaid
 flowchart LR
@@ -166,9 +166,9 @@ Use result       ←  JSON-RPC Response  ←  Return result
 
 ---
 
-### MCP Rug Pull Attack Chain
+### MCP Rug Pull 攻击链
 
-The most dangerous MCP attack vector: malicious tool descriptions containing hidden prompt injection. This is why you should only install vetted MCP servers.
+最危险的 MCP 攻击向量：恶意工具描述中包含隐藏的提示注入。这就是为什么你应该只安装经过审查的 MCP 服务器。
 
 ```mermaid
 sequenceDiagram
@@ -213,9 +213,9 @@ DEFENSE: Read MCP source before installing. Especially check tool descriptions.
 
 ---
 
-### MCP Config Hierarchy
+### MCP 配置层级
 
-MCP server configurations can live in 4 priority levels (3 actual files). The resolution order determines which servers are available and who can override what.
+MCP 服务器配置分布在 4 个优先级级别（对应 3 个实际文件）。解析顺序决定了哪些服务器可用以及谁可以覆盖什么。
 
 ```mermaid
 flowchart TD

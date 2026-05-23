@@ -1,18 +1,18 @@
 ---
-title: "Claude Code — Adoption & Learning Diagrams"
-description: "Onboarding paths, UVAL learning protocol, trust calibration matrix"
+title: "Claude Code — 采用与学习图解"
+description: "上手路径、UVAL 学习协议、信任校准矩阵"
 tags: [adoption, learning, onboarding, teams, trust]
 ---
 
-# Adoption & Learning
+# 采用与学习
 
-How individuals and teams successfully adopt Claude Code without losing skills or control.
+个人与团队如何在保持技能和掌控力的同时成功采用 Claude Code。
 
 ---
 
-### Onboarding Adaptive Learning Paths
+### 自适应上手学习路径
 
-Different backgrounds require different onboarding approaches. Forcing developers through a beginner path wastes time; dropping non-technical users into advanced features causes frustration.
+不同背景需要不同的上手方式。让开发者从头走新手路线浪费时间；让非技术用户直接面对高级功能则令人沮丧。
 
 ```mermaid
 flowchart TD
@@ -87,9 +87,9 @@ Your background?
 
 ---
 
-### UVAL Learning Protocol
+### UVAL 学习协议
 
-The UVAL protocol prevents the "copy-paste trap" — where you use Claude Code without understanding what it did. Each cycle builds real competency that survives tool unavailability.
+UVAL 协议可防止"复制粘贴陷阱"——即你在不理解 Claude Code 做了什么的情况下直接使用它。每个周期都能建立真正的能力，即使在工具不可用时也能应对自如。
 
 ```mermaid
 flowchart LR
@@ -143,9 +143,9 @@ Anti-pattern (AVOID): Accept output → Deploy → Bug → "Claude broke it"
 
 ---
 
-### Trust Calibration Matrix
+### 信任校准矩阵
 
-Knowing when to trust Claude's output and when to verify is the most important skill in AI-assisted development. Over-trust causes bugs; under-trust eliminates productivity gains.
+知道何时信任 Claude 的输出、何时进行验证，是 AI 辅助开发中最重要的技能。过度信任导致 Bug；信任不足则消除效率提升。
 
 ```mermaid
 flowchart TD
@@ -223,4 +223,4 @@ Can I test it?
 
 ---
 
-*Back to [diagrams/README.md](./README.md) | Next: [Cost Optimization](./09-cost-and-optimization.md)*
+*返回 [diagrams/README.md](./README.md) | 下一篇：[成本与优化](./09-cost-and-optimization.md)*

@@ -1,18 +1,18 @@
 ---
-title: "Claude Code — Development Workflows Diagrams"
-description: "TDD cycle, spec-first pipeline, plan-driven workflow, iterative refinement loop"
+title: "Claude Code — 开发工作流程图"
+description: "TDD 周期、规范优先管线、计划驱动工作流、迭代优化循环"
 tags: [workflows, tdd, spec-first, plan-driven, iterative]
 ---
 
-# Development Workflows
+# 开发工作流
 
-Proven patterns for structuring AI-assisted development sessions.
+组织 AI 辅助开发会话的成熟模式。
 
 ---
 
-### TDD Red-Green-Refactor with Claude
+### 与 Claude 一起 TDD 红-绿-重构
 
-Test-Driven Development adapted for Claude Code: write the failing test first, then ask Claude to implement only what's needed to pass it. This prevents over-engineering and ensures tests actually verify behavior.
+为 Claude Code 调整的测试驱动开发：先编写失败测试，然后让 Claude 仅实现通过测试所需的代码。这可以防止过度工程化，并确保测试真正验证了行为。
 
 ```mermaid
 flowchart TD
@@ -87,9 +87,9 @@ Write failing test (RED)
 
 ---
 
-### Spec-First Development Pipeline
+### 规范优先开发管线
 
-Write the specification before the code. Claude uses the spec as the single source of truth — preventing drift between what was planned and what was built.
+先写规范再写代码。Claude 以规范为唯一真理来源——防止计划与实际构建之间的偏差。
 
 ```mermaid
 flowchart LR
@@ -158,9 +158,9 @@ Idea → Write spec.md → Claude reviews
 
 ---
 
-### Plan-Driven Workflow with Annotation
+### 带标注的计划驱动工作流
 
-Complex tasks benefit from plan mode: Claude explores the codebase, proposes a plan, you annotate it, then Claude executes only what was approved. Prevents surprises on large refactors.
+复杂任务受益于计划模式：Claude 探索代码库、提出计划、你进行标注、然后 Claude 仅执行批准的内容。避免大型重构中的意外。
 
 ```mermaid
 flowchart TD
@@ -238,9 +238,9 @@ Complete ✓
 
 ---
 
-### Iterative Refinement Loop
+### 迭代优化循环
 
-Output rarely hits the mark on the first try. This loop gives you a systematic way to improve results through targeted feedback rather than "make it better" vague instructions.
+输出很少能在第一次尝试时就达到目标。这个循环提供了一种系统性的方法，通过有针对性的反馈来改进结果，而不是依赖「做得更好」这种模糊指令。
 
 ```mermaid
 flowchart TD
@@ -317,9 +317,9 @@ Prompt → Output → Evaluate → Good? ──Yes──► Done
 
 ---
 
-### AI Fluency — High vs Low Fluency Paths
+### AI 流畅度——高流畅度与低流畅度路径
 
-When Claude produces a polished-looking output, a cognitive bias kicks in: the more complete the output appears, the less critically most users evaluate it. This is the Artifact Paradox, documented by Anthropic across 9,830 conversations. The diagram shows what separates the 30% of high-fluency users from the 70% who accept first outputs — and the measurable difference in outcome quality.
+当 Claude 生成看似完美的输出时，一种认知偏差就会起作用：输出看起来越完整，大多数用户就越少批判性地评估它。这就是「工件悖论」，经 Anthropic 在 9,830 次对话中记录验证。该图展示了将 30% 的高流畅度用户与 70% 接受首次输出的用户区分开来的因素——以及结果质量上可衡量的差异。
 
 ```mermaid
 flowchart TD
