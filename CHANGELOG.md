@@ -14,6 +14,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **优化翻译工作流 SKILL.md** (`.agents/skills/zh-translation-workflow/SKILL.md`): 补充 frontmatter metadata（allowed-tools、effort）、更新进度表、精简流程、更新提交策略。
 
 ### Fixed
+- **清理 CI**: 删除上游英文版专属的 trigger-landing-deploy.yml 和 rebuild-guide-exports.yml，保留 link-check.yml。
+
 
 - **润色 P0 译文多处**：§3 标题 `Memory & Settings` → `记忆与设置`；`武器库` → `工具集`；`Founding Engineer` → `创始工程师`；`直接继承` → `会被直接继承`；`的团队` → `团队`。
 - **TRANSLATION_STATUS.md**：更新 P1 实际状态（❌ → 🔄），追加工作日志。
@@ -35,6 +37,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **YouTube Skills for Claude Code** (`README.md`, `guide/ultimate-guide.md`): Added [youtube-skills](https://github.com/ZeroPointRepo/youtube-skills) to the community resources and Awesome Lists sections — 12 skills for YouTube search, transcripts, chapters, and content analysis.
 
 ### Fixed
+- **清理 CI**: 删除上游英文版专属的 trigger-landing-deploy.yml 和 rebuild-guide-exports.yml，保留 link-check.yml。
+
 
 - **`scripts/generate-guide-exports.sh` — PDF build fails with Typst 0.14+** (`font fallback list must not be empty`). Pandoc's default Typst template leaves `mainfont`/`monofont` empty unless they are set via metadata, and Typst 0.14 made an empty font list a hard error (it was tolerated in 0.13, which is the version bundled with current Quarto on macOS). Added `-V mainfont="Libertinus Serif"` and `-V monofont="DejaVu Sans Mono"` to the `pandoc` invocation — both fonts are available out of the box on macOS and on Ubuntu (`fonts-libertinus` is pulled in by the `pandoc` apt package, `fonts-dejavu` is preinstalled). Verified end-to-end on Ubuntu 25.10 with pandoc 3.1.11 + standalone Typst 0.14.2: PDF builds successfully (556 pages, 8.4 MB) from `guide/ultimate-guide.md` v3.40.0.
 
@@ -74,6 +78,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **`tools/onboarding-prompt.md` guide line count corrected**: "22K+ lines" → "25K+ lines" to match current `guide/ultimate-guide.md` size.
 
 ### Fixed
+- **清理 CI**: 删除上游英文版专属的 trigger-landing-deploy.yml 和 rebuild-guide-exports.yml，保留 link-check.yml。
+
 
 - **Mass broken-link repair across guide and examples** (`guide/ultimate-guide.md`, `guide/ultimate-guide.fr.md`, `guide/security/security-hardening.md`, `guide/cowork.md`, `guide/ops/observability.md`, `guide/ops/ai-traceability.md`, `guide/ops/devops-sre.md`, `examples/CATALOG.md`, and 15+ additional example files): Fixed 230+ broken internal relative paths caused by guide reorganization from flat structure to nested subdirectories (`guide/roles/`, `guide/core/`, `guide/ecosystem/`, `guide/security/`, `guide/ops/`). Fixes applied: `../core/` refs in `guide/`-root files corrected to `core/`; `../examples/` in `guide/security/` and `guide/ops/` corrected to `../../examples/`; `../../examples/` in `guide/ultimate-guide.md` corrected to `../examples/`; bare `ai-ecosystem.md`, `observability.md`, `production-safety.md`, `sandbox-isolation.md` refs prefixed with their subdirectory; `../guide/` in `examples/agents/` and `examples/plugins/` corrected to `../../guide/`; all 181 CATALOG.md links had `examples/` prefix stripped (file lives in `examples/`); corrupted `](` in `security-hardening.md` MCP safe list footer repaired. Added `https://quarto.org` to `.lycheeignore` to suppress CI network flakiness. Staged `docs/resource-evaluations/2026-05-18-skillsight-packmind.md` to resolve dead internal reference in `third-party-tools.md`.
 
@@ -479,6 +485,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **`tools/audit-prompt.md` v5.0 — orchestrator architecture** (`tools/audit-prompt.md`): Rewrote from a flat 130+ checkbox checklist into an 8-dimension weighted orchestrator (100 pts). The prompt now delegates each domain to a specialized skill or command if installed (eval-skills, eval-rules, token-audit, audit-agents-skills, security-check), with inline bash fallback when not available. New dimensions: Memory & Context (20 pts, delegates to `/token-audit`), Rules Hygiene (10 pts, delegates to `/eval-rules`), Skills Quality (10 pts, delegates to `/eval-skills`), Agents/Commands Quality (10 pts, delegates to `/audit-agents-skills`), Security Posture (20 pts, delegates to `/security-check`), MCP Ecosystem (10 pts), Workflow Commands (10 pts), Freshness & Best Practices (10 pts). Phase 1 replaces 3 separate bash blocks with one unified inventory scan. Phase 3 produces an 8-row scorecard instead of a flat findings table. Added `--include-global` scope flag, "Deepen Your Audit" section with install commands for all delegated skills, and 10 new glossary terms (Context Budget, Rules auto-loaded, paths: frontmatter, effort: field, argument-hint, Hook Profiles, Threat Database, Cache Bug #40524, managed-settings.d/, Routines). Version updated from 4.0 (guide v3.37.6) to 5.0 (guide v3.38.17+).
 
 ### Fixed
+- **清理 CI**: 删除上游英文版专属的 trigger-landing-deploy.yml 和 rebuild-guide-exports.yml，保留 link-check.yml。
+
 
 - **Architecture.md broken image** (`guide/core/architecture.md`): Replaced missing `./images/claude-code-architecture-overview.jpeg` (file never committed) with a Mermaid flowchart showing Claude Code as an orchestration layer over Claude models and the development environment. Attribution to Mohamed Ali Ben Salem preserved as a text link. Fixes [#25](https://github.com/FlorianBruniaux/claude-code-ultimate-guide/issues/25).
 
@@ -657,6 +665,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [3.38.4] - 2026-04-03
 
 ### Fixed
+- **清理 CI**: 删除上游英文版专属的 trigger-landing-deploy.yml 和 rebuild-guide-exports.yml，保留 link-check.yml。
+
 
 - **`guide/diagrams/04-architecture-internals.md` — Master Loop rendering bug**: Two backward edges (`G --> C` and `J --> A`) were creating giant black arrow artifacts in Mermaid renderers (dagre layout engine routes long cycle-breaking edges around the entire diagram). Fixed by enclosing the inner tool-execution loop inside a `subgraph AGENT_LOOP` so `F --> C` renders as a contained cycle within the box. Outer conversation loop now routes `J -->|Yes| B` (rebuild prompt) instead of `J -->|Yes| A`, which is also semantically more accurate. Removed the separate "Parse tool calls" node by merging into "Execute tools in parallel" (reflects `StreamingToolExecutor` reality). Description updated to explicitly name the two nested loops.
 
@@ -697,6 +707,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **README.md stats updated**: Templates count 225 → 228, guide lines 22K+/23K+ → 24K+ (24,734 lines), date badge synced to Apr 2, 2026.
 
 ### Fixed
+- **清理 CI**: 删除上游英文版专属的 trigger-landing-deploy.yml 和 rebuild-guide-exports.yml，保留 link-check.yml。
+
 
 - **Hooks documentation gaps (fact-checked vs official docs)**: Added missing `defer` value to `permissionDecision` options, added multi-hook precedence rule (`deny > defer > ask > allow`, v2.1.89+), clarified that exit code 2 silently discards stdout/JSON (only stderr is forwarded to Claude), and added a dedicated `defer` semantics block explaining its headless-only usage with `stop_reason: "tool_deferred"` and `--resume`.
 
@@ -748,6 +760,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **`/audit-whitepapers` command**: New diagnostic command that audits all whitepapers (FR + EN) and recap cards (FR + EN) for version freshness, FR/EN parity, and metadata quality. Scores each document out of 100 across 4 phases (version gap 40pts, content staleness 20pts, parity 20pts, metadata 20pts) with A-F grading. Supports `--fix` (frontmatter patch suggestions), `--verbose` (all criteria), `--wp-only`, `--cards-only`. Feeds into `/update-whitepapers` for systematic updates.
 
 ### Fixed
+- **清理 CI**: 删除上游英文版专属的 trigger-landing-deploy.yml 和 rebuild-guide-exports.yml，保留 link-check.yml。
+
 
 - **Cache bugs audit — Bug 2 root cause corrected** (2026-04-01): JSONL writer strips DTD records before write (not position mismatch on restore); severity upgraded HIGH with concrete session data (87-118K tokens/resume, 300-400K/session at 3-4 resumes). Engineering fix redirected to the writer. Updated in `check-cache-bugs.md`, `known-issues.md`, `claudedocs/cache-bugs-audit-2026-03-31.md`.
 - **ultimate-guide.md — prompt caching section**: Added "Known cache bugs (v2.1.69+)" callout with workarounds for Bug 2 (avoid --resume) and Bug 3 (CLAUDE_CODE_ATTRIBUTION_HEADER=false), link to known-issues.md and /check-cache-bugs.
@@ -834,6 +848,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - `guide/ultimate-guide.md` §1.4: added Permission Fatigue anti-pattern section with decision table (right mode per situation). Community signals confirm this is a top friction point: users approve prompts without reading then reach for `--dangerously-skip-permissions` on non-sandboxed machines.
 
 ### Fixed
+- **清理 CI**: 删除上游英文版专属的 trigger-landing-deploy.yml 和 rebuild-guide-exports.yml，保留 link-check.yml。
+
 - `guide/ultimate-guide.md` §Subscription Plans: removed expired Spring Break promotion note (ran March 13-27, 2026).
 
 - `guide/workflows/agent-teams.md` §8 Best Practices: added AGENTS.md for Compound Learning section covering what to document, the empirical case for human-curated vs LLM-generated files (Gloaguen et al., 2026: -3% success / +20% cost for LLM-generated, +4% for developer-written), and maintenance rules. Added Loop Guardrails section (MAX_ITERATIONS=8, mandatory reflection prompt, kill/reassign criteria). Added Dedicated Reviewer Teammate section (Opus 4.6, read-only, auto-trigger on TaskCompleted, 1:4 ratio). Added token budgeting per agent to Cost Optimization (hard limits, 85% pause threshold). Credit: Addy Osmani — O'Reilly AI CodeCon, March 2026.
@@ -846,6 +862,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - `examples/commands/resources/threat-db.yaml`: updated to v2.10.0 (2026-03-27). New entries: CVE-2026-27825 (mcp-atlassian unrestricted file write, chains with CVE-2026-27826 for MCPwnfluence RCE, CVSS 9.1), CVE-2025-59834 (ADB MCP Server command injection, critical). New attack techniques: T019 (Marketplace Ranking Manipulation — ClawHub Convex public mutation exploit reached 3,900 executions across 50+ cities), T020 (Agentic Tool Chain Reasoning Layer Attack — CrowdStrike). New scanning tools: Cisco DefenseClaw (open-source, Skills Scanner + MCP Scanner + a2a-scanner + CodeGuard + AI BoM, 2026-03-27), hackmyagent (community red-team toolkit), ClawNet (Silverfort OpenClaw plugin), ESET AI Skills Checker. New defensive resources: TrueFoundry MCP Gateway, Cisco DefenseClaw. 7 new sources added. Updated CVE-2026-27826 notes with MCPwnfluence chain context.
 
 ### Fixed
+- **清理 CI**: 删除上游英文版专属的 trigger-landing-deploy.yml 和 rebuild-guide-exports.yml，保留 link-check.yml。
+
 - Fixed 52 broken links across 22 guide files: all `./ultimate-guide.md#anchor` and `../ultimate-guide.md#anchor` patterns converted to bare `#anchor` format so the landing build script resolves them to the correct split chapter. 20 anchors also corrected (stale section numbers, renamed headings, double-hyphens). Fixed `/en/github-actions` → `./github-actions.md` and `/en/gitlab-ci-cd` → plain text in `workflows/code-review.md`. Fixed malformed link text in `workflows/design-to-code.md`. Files: core/ (architecture, methodologies), ecosystem/ (ai-ecosystem, context-engineering-tools, third-party-tools), ops/ (ai-traceability, devops-sre, observability), roles/ (agent-evaluation, learning-with-ai), security/ (production-safety, security-hardening), workflows/ (agent-teams, code-review, design-to-code, dual-instance-planning, github-actions, search-tools-mastery, skeleton-projects, task-management, team-ai-instructions).
 
 ## [3.38.0] - 2026-03-27
@@ -924,6 +942,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **Claude Code Releases**: Updated tracking to v2.1.83 — `managed-settings.d/` drop-in directory, `CwdChanged`/`FileChanged` hook events, transcript search in Ctrl+O, `CLAUDE_CODE_SUBPROCESS_ENV_SCRUB=1`, fixed `--mcp-config` bypassing managed policy, fixed macOS exit hang, `sandbox.failIfUnavailable`.
 
 ### Fixed
+- **清理 CI**: 删除上游英文版专属的 trigger-landing-deploy.yml 和 rebuild-guide-exports.yml，保留 link-check.yml。
+
 
 - **"Slop" attribution** (`guide/ultimate-guide.md`): added Simon Willison attribution (2024) before the Desloppify section.
 - **Glossary corrections** (`guide/core/glossary.md`): fixed Config hierarchy direction, Boris Cherny title, Desloppify author, BMAD expansion, Ralph Wiggum Loop attribution, auto-compaction threshold values, 4 alphabetical ordering issues.
@@ -938,6 +958,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **Threat database updated to v2.9.0** (`examples/commands/resources/threat-db.yaml`): 1 new malicious author (`sakaen736jih`, 199 automated skills, Bitdefender/Particula), 5 new CVEs (CVE-2026-4192 quip-mcp-server RCE, CVE-2026-4198 mcp-server-auto-commit injection, CVE-2026-33252 MCP Go SDK CSRF, CVE-2026-4270 AWS API MCP path traversal, CVE-2026-27826 MCP Atlassian SSRF), 2 new campaigns (ClickFix OpenClaw, Fake CLI Prerequisites via openclawcli.vercel.app), 2 new IOCs (malicious domains), 1 new scanning tool (AquilaX), 1 new defensive resource (42crunch), 9 new sources. ClawHavoc stats updated (341 → 1,184+ malicious skills by March 1, 2026).
 
 ### Fixed
+- **清理 CI**: 删除上游英文版专属的 trigger-landing-deploy.yml 和 rebuild-guide-exports.yml，保留 link-check.yml。
+
 - **`eval-skills` skill — removed non-official `tags` frontmatter criterion**: `tags` is not a supported field in the Claude Code skill spec. The skill was incorrectly scoring it as a quality criterion (1pt) and listing it in the parse step. Removed `tags` from frontmatter, scoring table, and parse instructions. Scoring total adjusted from 15 to 14 pts with updated thresholds (≥80% = ≥11/14, 60-79% = 8-10/14). Added an explicit note warning against using `tags`. Reported by community via Alexandre Aubert.
 
 ## [3.37.4] - 2026-03-23
@@ -1101,6 +1123,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **External support section — clarified positioning** (`docs/for-cto.md`, `docs/for-tech-leads.md`, `docs/for-cio-ceo.md`): Brown Bag Lunch, talks, and speaker/panelist slots (1-3h) explicitly marked as free and done for networking/challenge purposes. Training/consulting missions framed as open-but-not-actively-sought with "contact for availability and potentially pricing" wording. Contact link updated to `florian.bruniaux.com` across all three files.
 
 ### Fixed
+- **清理 CI**: 删除上游英文版专属的 trigger-landing-deploy.yml 和 rebuild-guide-exports.yml，保留 link-check.yml。
+
 
 - **`/release` skill — 3 correctness gaps** (`.claude/commands/release.md` Step 4): (1) Quiz count command fixed: `grep -c '  - id:'` was returning per-file counts and taking only the last file's value — replaced with `grep -r '  - id:' quiz/questions/ | wc -l` to sum across the entire directory. (2) `llms-full.txt` now documents all 4 occurrences requiring update (Metadata block, "For Learning" URL text, "Template Library" section heading, repo tree comment) — previously only Metadata fields were listed, causing silent drift. (3) Verification gate added after Step 4: bash block prints all three llms files' key fields side-by-side against expected values before the commit, making any mismatch visible immediately.
 
@@ -1328,6 +1352,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [3.33.0] - 2026-03-10
 
 ### Fixed
+- **清理 CI**: 删除上游英文版专属的 trigger-landing-deploy.yml 和 rebuild-guide-exports.yml，保留 link-check.yml。
+
 
 - **`guide/security/enterprise-governance.md` — Accuracy review pass** — 6 correctness issues fixed after adversarial critique: (1) Non-existent hooks removed from all tier `settings.json` configs (`dependency-guard.sh`, `compliance-pre-check.sh`, `pii-detector.sh`, `compliance-session-init.sh` were referenced but never existed in `examples/hooks/bash/`); (2) `compliance-audit-logger.sh` in Regulated tier replaced with real `session-logger.sh`; (3) Fabricated Claude Code API removed — `CLAUDE_SETTINGS` env var and `claude run-headless` subcommand don't exist; replaced with an honest CI pipeline validation pattern; (4) `date -d '30 days ago'` (GNU coreutils only) fixed to cross-platform with macOS/Linux `$OSTYPE` check; (5) Customer PII reclassified from CONFIDENTIAL to RESTRICTED — Enterprise plan (ZDR) alone doesn't satisfy GDPR/CCPA; (6) All `// comment` lines inside JSON code blocks removed (invalid JSON, breaks copy-paste).
 
@@ -1449,6 +1475,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **OpenClaw security hardening — personal documentation (boldguy/obsidian)** — 4 files created after security audit (score 5/10 → target 8+/10). (1) `securisation-openclaw.md`: complete 5-level guide — gateway bind loopback + 32-char token, exec allowlist + filesystem denied paths, memory-lancedb reconfigured with local Ollama (nomic-embed-text, `dimensions: 768` required because `config.ts:66-72` throws for non-OpenAI model without this field), Cloudflare Access Zero Trust on `webhook.bruniaux.com`, iMessage DM Policy (pairing or allowlist), hardened docker-compose. (2) `checklist-openclaw.md`: 5 checkable sections (pre-install, network, sandbox, memory/data, channels) + monthly monitoring. (3) `scripts/verify-openclaw-security.sh`: bash script with 8 automated checks (port binding, JSON config, Ollama, active OpenAI connections, injection session scan, built-in audit, FileVault). (4) `rapport-audit-openclaw.md`: Addendum section with additional findings (Ollama local support verified in `config.ts:10,147`, community 3-tier guide, DM Policy modes). Key audit finding: `memory-lancedb` sends embeddings to OpenAI by default — reconfigure with `baseUrl: "http://localhost:11434/v1"` + `dimensions: 768` to stay 100% local.
 
 ### Fixed
+- **清理 CI**: 删除上游英文版专属的 trigger-landing-deploy.yml 和 rebuild-guide-exports.yml，保留 link-check.yml。
+
 
 - **Remote Control §9.22 — iOS bugs documented and workarounds** (`guide/ultimate-guide.md:20075`) — troubleshooting enriched following field testing (iPhone, March 2026). Confirmed bug: QR code scan opens the Claude app but the session does not appear in the list (Research Preview, reproducible on iOS, documented by MacStories). Two reliable workarounds added: (1) `claude.ai/code` in Safari — session visible directly, (2) URL copied from terminal and pasted in Safari. Explanatory note added in troubleshooting table with MacStories reference.
 
@@ -1599,6 +1627,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `070-claude-code-best-practice-dot-claude-eval.md` — Evaluation of `.claude/` config from the same repo (score 4/5): self-evolving agent pattern, Command→Agent→Skills architecture, `allowed-tools` wildcard scoping
 
 ### Fixed
+- **清理 CI**: 删除上游英文版专属的 trigger-landing-deploy.yml 和 rebuild-guide-exports.yml，保留 link-check.yml。
+
 
 - **MCP Server v1.0.3 — content path bug** (`mcp-server/src/lib/content.ts`)
   - ENOENT at production startup: `CONTENT_DIR` resolved `../../content` from `dist/` (2 levels), landing in `node_modules/` instead of the package root
@@ -2102,6 +2132,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - `cheatsheet.pdf`: updated binary
 
 ### Fixed
+- **清理 CI**: 删除上游英文版专属的 trigger-landing-deploy.yml 和 rebuild-guide-exports.yml，保留 link-check.yml。
+
 - Beta header corrected: `interleaved-thinking-2025-05-14` → `context-1m-2025-08-07` (different feature, deprecated on Opus 4.6)
 - Sonnet 4.6 long-context pricing: added premium tier ($3→$6 / $15→$22.50 above 200K — applies to all models)
 - Cost estimates recalculated: Sonnet 4.6 @ 1M ~$4.13 (was $2.25), Opus 4.6 @ 1M ~$6.88 (was $8.75)
@@ -2210,6 +2242,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **Exports deprecated** — Moved `kimi.pdf` and `notebooklm.pdf` to `exports/deprecated/` (generated from ~9K line v1.x era, guide now ~19K lines)
 
 ### Fixed
+- **清理 CI**: 删除上游英文版专属的 trigger-landing-deploy.yml 和 rebuild-guide-exports.yml，保留 link-check.yml。
+
 
 - **Fact-check corrections across 22 files** (866 insertions, 308 deletions)
   - CVEs: 22→18 (7 files: README, CHANGELOG, SECURITY, competitive-analysis, etc.)
@@ -2251,6 +2285,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - Formal resource evaluation created (docs/resource-evaluations/entire-cli.md) with 5/5 critical scoring
 
 ### Fixed
+- **清理 CI**: 删除上游英文版专属的 trigger-landing-deploy.yml 和 rebuild-guide-exports.yml，保留 link-check.yml。
+
 
 - **Corrected git-ai references** (ai-traceability.md section 5.1) - repo is 404, replaced with Entire CLI
 
@@ -2300,6 +2336,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - Red Flags Checklist, Productivity Reality, UVAL Protocol sections updated
 
 ### Fixed
+- **清理 CI**: 删除上游英文版专属的 trigger-landing-deploy.yml 和 rebuild-guide-exports.yml，保留 link-check.yml。
+
 
 - **Extended Thinking Documentation**: Corrected `effort` parameter documentation based on [official Anthropic docs](https://platform.claude.com/docs/en/build-with-claude/effort)
   - API syntax, scope clarification, official descriptions, control table, effort and tool use subsection
@@ -2434,6 +2472,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - **Example agents** (5 files in examples/agents/): All refactored to use functional language instead of role-based personas
 
 ### Fixed
+- **清理 CI**: 删除上游英文版专属的 trigger-landing-deploy.yml 和 rebuild-guide-exports.yml，保留 link-check.yml。
+
 
 - **Methodologies**: Added clarification note to BMAD description about role-based naming (guide/core/methodologies.md line 49)
 
@@ -2754,6 +2794,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - **Credits**: Anthropic (official server), technical-writer agent (challenge phase: 3/5 → 5/5 score revision, placement critique, decision matrix requirement), fact-check validation (100% verified: 12 tools, installation methods, date filtering, IDE integrations, early development status, MIT license)
 
 ### Fixed
+- **清理 CI**: 删除上游英文版专属的 trigger-landing-deploy.yml 和 rebuild-guide-exports.yml，保留 link-check.yml。
+
 
 - **Ctrl+R Keybinding Documentation** — Corrected incorrect "Retry" label to accurate "Search command history" in 5 locations
   - **Guide corrections** (`guide/cheatsheet.md:39`, `guide/ultimate-guide.md:358,15508,15521,16032`) — Updated from "Retry last operation"/"Retry last"/"Retry" to "Search command history"/"Search history"/"Search" reflecting official `history:search` action (Global context) and `historySearch:next` (HistorySearch context)
@@ -3246,6 +3288,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - **Reference**: https://github.com/pszymkowiak/rtk
 
 ### Fixed
+- **清理 CI**: 删除上游英文版专属的 trigger-landing-deploy.yml 和 rebuild-guide-exports.yml，保留 link-check.yml。
+
 
 - **Corrected "mgrep" misattribution in Everything Claude Code evaluation**
   - **Issue**: Incorrectly claimed Everything Claude Code contained "mgrep (50% token reduction)" tool
@@ -4027,6 +4071,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - v2.1.9: Added `auto:N` configuration examples and cross-reference to architecture.md
 
 ### Fixed
+- **清理 CI**: 删除上游英文版专属的 trigger-landing-deploy.yml 和 rebuild-guide-exports.yml，保留 link-check.yml。
+
 
 - **Template count**: Corrected from 83 to 82 (actual count in examples/)
 
@@ -4191,6 +4237,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `multi_instance_decision_matrix`
 
 ### Fixed
+- **清理 CI**: 删除上游英文版专属的 trigger-landing-deploy.yml 和 rebuild-guide-exports.yml，保留 link-check.yml。
+
 
 - **Table of Contents**: Added missing sections 9.12-9.17 (git, cost, methodologies, prompts, teleportation, multi-instance)
 - **Section 9 checklist**: Added multi-instance scaling item to advanced workflows recap
@@ -4206,6 +4254,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **CLAUDE.md: Version reference update** — Updated current version from 3.9.7 to 3.9.9
 
 ### Fixed
+- **清理 CI**: 删除上游英文版专属的 trigger-landing-deploy.yml 和 rebuild-guide-exports.yml，保留 link-check.yml。
+
 
 - **README.md: Template count correction** — Fixed template count from 69 to accurate count of 65
   - Badge (line 9): 69 → 65
@@ -4588,6 +4638,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - Landing site CLAUDE.md created with sync workflow and line numbers
 
 ### Fixed
+- **清理 CI**: 删除上游英文版专属的 trigger-landing-deploy.yml 和 rebuild-guide-exports.yml，保留 link-check.yml。
+
 
 - **Templates count corrected**: 87 → 49 in README.md badges and text
   - Badge count was wrong since original creation
@@ -4724,6 +4776,8 @@ cs --json "test" | jq .     # JSON for scripting
 ## [3.6.1] - 2026-01-15
 
 ### Fixed - Critical Factual Corrections
+- **清理 CI**: 删除上游英文版专属的 trigger-landing-deploy.yml 和 rebuild-guide-exports.yml，保留 link-check.yml。
+
 
 Major audit identifying and correcting factual errors that could mislead users about Claude Code's actual behavior.
 
@@ -5350,6 +5404,8 @@ This release combines learnings from the LLM Engineers Handbook (guardrails, obs
     - Recommendations displayed with 💡 icon
 
 ### Fixed
+- **清理 CI**: 删除上游英文版专属的 trigger-landing-deploy.yml 和 rebuild-guide-exports.yml，保留 link-check.yml。
+
 - **audit-scan.sh** - `ALL_DEPS` unbound variable error when running outside Node.js projects
   - Initialized `ALL_DEPS=""` before conditional blocks
 
@@ -5470,6 +5526,8 @@ quiz/
   - Added integration-aware suggestions in output description
 
 ### Fixed
+- **清理 CI**: 删除上游英文版专属的 trigger-landing-deploy.yml 和 rebuild-guide-exports.yml，保留 link-check.yml。
+
 - **audit-scan.sh** - jq fallback now works for MCP detection in ~/.claude.json
 
 ### Stats
@@ -5492,6 +5550,8 @@ quiz/
 ## [2.9.6] - 2026-01-12
 
 ### Fixed
+- **清理 CI**: 删除上游英文版专属的 trigger-landing-deploy.yml 和 rebuild-guide-exports.yml，保留 link-check.yml。
+
 - **audit-scan.sh** - Count files recursively in subfolders
   - Commands in subfolders (e.g., `commands/tech/`, `commands/product/`) now counted
   - Split into `count_md_files()` for .md and `count_script_files()` for hooks (.sh/.js/.py/.ts)
@@ -5575,6 +5635,8 @@ quiz/
 ## [2.9.1] - 2026-01-12
 
 ### Fixed
+- **清理 CI**: 删除上游英文版专属的 trigger-landing-deploy.yml 和 rebuild-guide-exports.yml，保留 link-check.yml。
+
 - **Cheatsheet completeness audit** (cheatsheet-en.md, ~15 lines modified)
   - **Missing commands added**:
     - `/execute` - Exit Plan Mode (counterpart to `/plan`)
@@ -5603,6 +5665,8 @@ quiz/
 ## [2.9.0] - 2026-01-12
 
 ### Fixed
+- **清理 CI**: 删除上游英文版专属的 trigger-landing-deploy.yml 和 rebuild-guide-exports.yml，保留 link-check.yml。
+
 - **MCP detection bug in audit-scan.sh** (~60 lines modified)
   - **Root cause**: Script searched for `~/.claude/mcp.json` which doesn't exist
   - **Actual location**: Claude Code stores MCP config in `~/.claude.json` under `projects.<path>.mcpServers`
@@ -5836,6 +5900,8 @@ quiz/
   - Fixed document structure coherence
 
 ### Fixed
+- **清理 CI**: 删除上游英文版专属的 trigger-landing-deploy.yml 和 rebuild-guide-exports.yml，保留 link-check.yml。
+
 - Version consistency across documentation (2.4 aligned)
 - Code block balance verification (673 markers, properly balanced)
 - Removed broken internal references to deleted sections
@@ -6167,6 +6233,8 @@ quiz/
   - Footer timestamps in all major files
 
 ### Fixed
+- **清理 CI**: 删除上游英文版专属的 trigger-landing-deploy.yml 和 rebuild-guide-exports.yml，保留 link-check.yml。
+
 - Removed duplicate Claudelog reference from "Frameworks & Tools" section (was in both Key inspirations and Resources)
 - Improved organization of Resources section with clearer categorization
 
