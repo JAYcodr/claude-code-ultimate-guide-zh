@@ -1,107 +1,107 @@
-# Audit Your Claude Code Setup
+# 审计你的 Claude Code 配置
 
-> A self-contained prompt that audits your Claude Code configuration — project memory, rules hygiene, skills, agents/commands, security, MCP, workflow commands, and freshness — in one pass.
+> 一个自包含的提示词，可一站式审计你的 Claude Code 配置 — 项目记忆、规则健康度、技能、代理/命令、安全性、MCP、工作流命令和新鲜度。
 
-**Author**: [Florian BRUNIAUX](https://github.com/FlorianBruniaux) | Founding Engineer [@Méthode Aristote](https://methode-aristote.fr)
+**作者**: [Florian BRUNIAUX](https://github.com/FlorianBruniaux) | 创始工程师 [@Méthode Aristote](https://methode-aristote.fr)
 
-**Reference**: [The Ultimate Claude Code Guide](https://github.com/FlorianBruniaux/claude-code-ultimate-guide/blob/main/guide/ultimate-guide.md)
+**参考**: [The Ultimate Claude Code 指南](https://github.com/FlorianBruniaux/claude-code-ultimate-guide/blob/main/guide/ultimate-guide.md)
 
 ---
 
-## 1. What This Does
+## 1. 功能概述
 
-This prompt turns Claude into an **audit orchestrator** across 8 weighted dimensions (100 pts total). It runs a fast bash inventory, then delegates each domain to a specialized skill or command if one is installed, falling back to inline checks when not.
+此提示词将 Claude 转变为 **审计编排器**，涵盖 8 个加权维度（总计 100 分）。它先快速运行 bash 清单，然后将每个领域委托给已安装的专用技能或命令，否则回退到内联检查。
 
-| What it audits | How |
+| 审计内容 | 方式 |
 |---|---|
-| Memory & Context (CLAUDE.md, rules, token budget) | Delegates to `/token-audit` if installed, otherwise bash estimate |
-| Rules Hygiene (`.claude/rules/`, `paths:` validity) | Delegates to `/eval-rules` if installed, otherwise bash scan |
-| Skills Quality (frontmatter, effort, allowed-tools) | Delegates to `/eval-skills` if installed, otherwise quick check |
-| Agents/Commands Quality (16 criteria, grades A-F) | Delegates to `/audit-agents-skills` if installed, otherwise check |
-| Security Posture (permissions, hooks, sandbox) | Delegates to `/security-check` if installed, otherwise bash check |
-| MCP Ecosystem (servers, DB risk, version safety) | Inline bash (no dedicated skill needed) |
-| Workflow Commands (/investigate, /qa, /canary…) | Inline bash scan |
-| Freshness & Best Practices (stale refs, cache bugs) | Inline bash + pattern checks |
+| 内存和上下文（CLAUDE.md、规则、token 预算） | 若已安装则委托给 `/token-audit`，否则 bash 估算 |
+| 规则健康度（`.claude/rules/`、`paths:` 有效性） | 若已安装则委托给 `/eval-rules`，否则 bash 扫描 |
+| 技能质量（frontmatter、effort、allowed-tools） | 若已安装则委托给 `/eval-skills`，否则快速检查 |
+| 代理/命令质量（16 项标准，A-F 等级） | 若已安装则委托给 `/audit-agents-skills`，否则检查 |
+| 安全态势（权限、钩子、沙箱） | 若已安装则委托给 `/security-check`，否则 bash 检查 |
+| MCP 生态（服务器、数据库风险、版本安全） | 内联 bash（无需专用技能） |
+| 工作流命令（/investigate, /qa, /canary…） | 内联 bash 扫描 |
+| 新鲜度与最佳实践（过时引用、缓存缺陷） | 内联 bash + 模式检查 |
 
-**What this does NOT do**: replace the deep-dive tools it delegates to. Use `/security-audit`, `/token-audit`, `/eval-rules` directly when you want full detail on a specific dimension.
+**本提示词不做的事情**：不替代它所委托的深度工具。若要获取特定维度的完整细节，请直接使用 `/security-audit`、`/token-audit`、`/eval-rules`。
 
-**Time**: ~5-8 min if all audit skills are installed, ~3-4 min in fallback mode.
+**时间**：若已安装所有审计技能约 5-8 分钟，回退模式下约 3-4 分钟。
 
-**Important**: Claude will NOT make any changes without your explicit approval.
+**重要提示**：未经你明确批准，Claude 不会做出任何更改。
 
 ---
 
-## 2. Who This Is For
+## 2. 适用人群
 
-| Level | What You'll Get |
+| 级别 | 你将获得 |
 |-------|-----------------|
-| **Beginner** | Discover what you're missing and get starter templates |
-| **Intermediate** | Identify optimization opportunities and advanced patterns |
-| **Power User** | Validate your setup and find edge cases to polish |
+| **初学者** | 发现你缺少什么并获取入门模板 |
+| **中级用户** | 识别优化机会和进阶模式 |
+| **高级用户** | 验证你的配置并打磨边缘情况 |
 
-**Prerequisites**:
-- Claude Code installed and working
-- A project directory to analyze (or just global config)
-- Bash shell (native on macOS/Linux, WSL on Windows)
+**先决条件**：
+- 已安装可正常使用的 Claude Code
+- 待分析的项目目录（或仅全局配置）
+- Bash shell（macOS/Linux 原生，Windows 使用 WSL）
 
-**Optional** (richer results): `/token-audit`, `/eval-rules`, `/eval-skills`, `/audit-agents-skills`, `/security-check` installed. See Section 8 for install commands.
+**可选**（获得更丰富结果）：安装 `/token-audit`、`/eval-rules`、`/eval-skills`、`/audit-agents-skills`、`/security-check`。安装命令见第 8 节。
 
 ---
 
-## 3. How to Use It
+## 3. 使用方法
 
-### Step 1: Copy the Prompt
+### 步骤 1：复制提示词
 
-Copy everything inside the code block in [Section 4](#4-the-prompt) below.
+复制下方[第 4 节](#4-提示词)中代码块内的所有内容。
 
-### Step 2: Run Claude Code
+### 步骤 2：运行 Claude Code
 
 ```bash
 cd your-project-directory
 claude
 ```
 
-### Step 3: Paste and Execute
+### 步骤 3：粘贴并执行
 
-Paste the prompt and press Enter. To also audit your global `~/.claude/` config, append `--include-global` after the paste.
+粘贴提示词后按回车。若要同时审计全局 `~/.claude/` 配置，请在粘贴后附加 `--include-global`。
 
-### Step 4: Review Results
+### 步骤 4：查看结果
 
-Claude presents the 8-dimension scorecard and asks for validation before making any changes.
+Claude 将呈现 8 维度的评分卡，并在做出任何更改前请求你的确认。
 
-### Platform Note
+### 平台说明
 
-| Platform | Global Config Path |
+| 平台 | 全局配置路径 |
 |----------|-------------------|
 | **macOS/Linux** | `~/.claude/` |
 | **Windows** | `%USERPROFILE%\.claude\` |
 
 ---
 
-## 4. The Prompt
+## 4. 提示词
 
 ````markdown
-# Audit My Claude Code Setup — v5.0
+# 审计我的 Claude Code 配置 — v5.0
 
-## Scope Detection
+## 范围检测
 
-Check if the user appended `--include-global` to this prompt.
-- **Default (project only)**: audit `.` + `.claude/` in the current directory.
-- **With `--include-global`**: also audit `~/.claude/` and `~/.claude.json`.
+检查用户是否在提示词后附加了 `--include-global`。
+- **默认（仅项目）**：审计当前目录下的 `.` + `.claude/`。
+- **包含 `--include-global`**：同时审计 `~/.claude/` 和 `~/.claude.json`。
 
-Set SCOPE accordingly. All bash blocks below note which paths apply per scope.
+据此设置 SCOPE。所有下方的 bash 代码块均会注明每个范围适用的路径。
 
-## Instructions
+## 指令
 
-Do NOT modify any files. Do NOT make any changes. Audit and report only.
+不要修改任何文件。不要做任何更改。仅审计和报告。
 
-Use efficient bash commands for discovery. Only read file content when needed for scoring.
+使用高效的 bash 命令进行发现。仅在需要评分时才读取文件内容。
 
 ---
 
-## Phase 1 — Inventory (30 seconds, bash-only)
+## 阶段 1 — 清单（30 秒，仅 bash）
 
-Run this single block to gather all structural data at once:
+运行以下单个代码块以一次性收集所有结构数据：
 
 ```bash
 bash -c '
@@ -192,25 +192,25 @@ grep -rl "disableSkillShellExecution\|--resume" .claude/ ~/.claude/ 2>/dev/null 
 ' "$@"
 ```
 
-Store this full output. Use it for all dimension scoring below.
+保存此完整输出。用于下方所有维度的评分。
 
 ---
 
-## Phase 2 — Dimension Audit
+## 阶段 2 — 维度审计
 
-Score each dimension. For dimensions with a delegated skill, check if that skill is available (per Phase 1 output). If ✅: invoke the skill and use its output for scoring. If ❌: run the inline fallback bash and apply the simplified heuristic.
+对每个维度进行评分。对于有委托技能的维度，检查该技能是否可用（依据阶段 1 输出）。如果 ✅：调用该技能并使用其输出进行评分。如果 ❌：运行内联回退 bash 并应用简化启发式规则。
 
-### Dimension 1 — Memory & Context (20 pts)
+### 维度 1 — 内存与上下文（20 分）
 
-**Full audit** (if `/token-audit` is available):
-Invoke: `/token-audit`
-Use the Token Audit output:
-- Fixed context <20K tokens → 18-20 pts
-- 20-40K tokens → 12-17 pts
-- 40-60K tokens → 6-11 pts
-- >60K tokens → 0-5 pts. Deduct 2 pts if CLAUDE.md is missing, 3 pts if global CLAUDE.md is missing.
+**完整审计**（如果 `/token-audit` 可用）：
+调用：`/token-audit`
+使用 Token Audit 输出：
+- 固定上下文 <20K tokens → 18-20 分
+- 20-40K tokens → 12-17 分
+- 40-60K tokens → 6-11 分
+- >60K tokens → 0-5 分。如果缺少 CLAUDE.md 扣 2 分，缺少全局 CLAUDE.md 扣 3 分。
 
-**Fallback** (if `/token-audit` is not installed):
+**回退**（如果未安装 `/token-audit`）：
 
 ```bash
 GLOBAL=$(cat ~/.claude/CLAUDE.md ~/.claude/*.md 2>/dev/null | wc -c || echo 0)
@@ -220,19 +220,19 @@ TOTAL=$(( (GLOBAL + PROJECT + RULES) / 4 + 7500 ))
 echo "Estimated fixed context: ~$TOTAL tokens (~$(( TOTAL * 100 / 200000 ))% of 200K window)"
 ```
 
-Fallback scoring (max 14 pts):
-- Global CLAUDE.md exists and non-empty: 3 pts
-- Project CLAUDE.md exists: 3 pts
-- Rules count reasonable (<15 files): 2 pts
-- Token estimate <20K: 6 pts | 20-40K: 3 pts | >40K: 0 pts
+回退评分（最高 14 分）：
+- 全局 CLAUDE.md 存在且非空：3 分
+- 项目 CLAUDE.md 存在：3 分
+- 规则数量合理（<15 个文件）：2 分
+- Token 估算 <20K：6 分 | 20-40K：3 分 | >40K：0 分
 
-### Dimension 2 — Rules Hygiene (10 pts)
+### 维度 2 — 规则健康度（10 分）
 
-**Full audit** (if `/eval-rules` is available):
-Invoke: `/eval-rules`
-Take the average score across all rules files (12 pts each). Map to 10 pts proportionally.
+**完整审计**（如果 `/eval-rules` 可用）：
+调用：`/eval-rules`
+取所有规则文件的平均分（每个 12 分）。按比例映射到 10 分。
 
-**Fallback** (if `/eval-rules` is not installed):
+**回退**（如果未安装 `/eval-rules`）：
 
 ```bash
 RULES_DIR=".claude/rules"
@@ -248,19 +248,19 @@ done
 echo "Total: $total | With frontmatter: $with_front | With paths: $with_paths | Valid patterns: $valid_patterns"
 ```
 
-Fallback scoring (max 8 pts):
-- Rules directory exists: 1 pt
-- All files have YAML frontmatter: 2 pts
-- At least half have `paths:` field: 3 pts
-- No file >150 lines (check with `wc -l`): 2 pts
+回退评分（最高 8 分）：
+- 规则目录存在：1 分
+- 所有文件都有 YAML frontmatter：2 分
+- 至少一半有 `paths:` 字段：3 分
+- 无文件超过 150 行（使用 `wc -l` 检查）：2 分
 
-### Dimension 3 — Skills Quality (10 pts)
+### 维度 3 — 技能质量（10 分）
 
-**Full audit** (if `/eval-skills` is available):
-Invoke: `/eval-skills`
-Take the average score across all skill files (14 pts each). Map to 10 pts proportionally.
+**完整审计**（如果 `/eval-skills` 可用）：
+调用：`/eval-skills`
+取所有技能文件的平均分（每个 14 分）。按比例映射到 10 分。
 
-**Fallback** (if `/eval-skills` is not installed):
+**回退**（如果未安装 `/eval-skills`）：
 
 ```bash
 SKILLS_DIR=".claude/skills"
@@ -272,19 +272,19 @@ with_desc=$(grep -rl "^description:" "$SKILLS_DIR"/*/SKILL.md 2>/dev/null | wc -
 echo "Skills: $total | effort field: $with_effort | allowed-tools: $with_tools | description: $with_desc"
 ```
 
-Fallback scoring (max 8 pts):
-- Skills directory exists: 1 pt
-- All SKILL.md have `description:` field: 2 pts
-- All SKILL.md have `effort:` field: 3 pts
-- All SKILL.md have `allowed-tools:` field: 2 pts
+回退评分（最高 8 分）：
+- 技能目录存在：1 分
+- 所有 SKILL.md 都有 `description:` 字段：2 分
+- 所有 SKILL.md 都有 `effort:` 字段：3 分
+- 所有 SKILL.md 都有 `allowed-tools:` 字段：2 分
 
-### Dimension 4 — Agents/Commands Quality (10 pts)
+### 维度 4 — 代理/命令质量（10 分）
 
-**Full audit** (if `/audit-agents-skills` is available):
-Invoke: `/audit-agents-skills`
-Take the overall score from its report (score/100). Multiply by 0.10 to get pts on 10.
+**完整审计**（如果 `/audit-agents-skills` 可用）：
+调用：`/audit-agents-skills`
+取其报告中的总体得分（score/100）。乘以 0.10 得到 10 分制下的得分。
 
-**Fallback** (if `/audit-agents-skills` is not installed):
+**回退**（如果未安装 `/audit-agents-skills`）：
 
 ```bash
 agents=$(find .claude/agents -name "*.md" 2>/dev/null | wc -l | tr -d " ")
@@ -299,22 +299,22 @@ echo "Agents: $agents | Commands: $commands | Skills: $skills | With frontmatter
 echo "Commands using \$ARGUMENTS: $uses_args | With argument-hint: $with_hint"
 ```
 
-Fallback scoring (max 8 pts):
-- Has agents, commands, or skills: 2 pts
-- All have YAML frontmatter: 2 pts
-- All have `description:` field: 2 pts
-- `argument-hint:` present in all legacy commands that use `$ARGUMENTS`: 2 pts
+回退评分（最高 8 分）：
+- 存在代理、命令或技能：2 分
+- 全部都有 YAML frontmatter：2 分
+- 全部都有 `description:` 字段：2 分
+- 所有使用 `$ARGUMENTS` 的旧版命令都包含 `argument-hint:`：2 分
 
-### Dimension 5 — Security Posture (20 pts)
+### 维度 5 — 安全态势（20 分）
 
-**Full audit** (if `/security-check` is available):
-Invoke: `/security-check`
-Map its findings to 20 pts:
-- No critical findings: 18-20 pts
-- 1-2 medium findings: 12-17 pts
-- 3+ findings or any critical: 0-11 pts
+**完整审计**（如果 `/security-check` 可用）：
+调用：`/security-check`
+将其发现映射到 20 分：
+- 无严重发现：18-20 分
+- 1-2 个中等发现：12-17 分
+- 3+ 个发现或任一严重发现：0-11 分
 
-**Fallback** (if `/security-check` is not installed):
+**回退**（如果未安装 `/security-check`）：
 
 ```bash
 # permissions.deny check
@@ -343,16 +343,16 @@ echo "=== Dangerous Patterns ==="
 grep -rn "sk-\|ghp_\|xox[baprs]-\|AKIA" .claude/ CLAUDE.md 2>/dev/null | grep -v "example\|sample\|template" | head -5 || echo "  No obvious secrets found"
 ```
 
-Fallback scoring (max 17 pts):
-- `.env*` blocked in `permissions.deny`: 4 pts
-- `*.pem` and `credentials*` also blocked: 3 pts
-- At least one `PreToolUse` hook exists: 4 pts
-- Sandbox configured (`failIfUnavailable`): 3 pts
-- No hardcoded secrets in config: 3 pts
+回退评分（最高 17 分）：
+- `.env*` 已在 `permissions.deny` 中阻止：4 分
+- `*.pem` 和 `credentials*` 也已阻止：3 分
+- 至少存在一个 `PreToolUse` 钩子：4 分
+- 已配置沙箱（`failIfUnavailable`）：3 分
+- 配置中无硬编码密钥：3 分
 
-### Dimension 6 — MCP Ecosystem (10 pts)
+### 维度 6 — MCP 生态（10 分）
 
-Inline bash only (no dedicated skill for this dimension):
+仅内联 bash（该维度无专用技能）：
 
 ```bash
 CURRENT_DIR=$(pwd)
@@ -379,13 +379,13 @@ else
 fi
 ```
 
-Scoring (max 10 pts):
-- At least 1 MCP configured: 3 pts
-- Documentation MCP present (Context7 or similar): 2 pts
-- No DB MCP, or DB MCP is clearly scoped to dev/staging: 3 pts
-- Guide MCP installed: 2 pts
+评分（最高 10 分）：
+- 至少配置了 1 个 MCP：3 分
+- 存在文档 MCP（Context7 或类似）：2 分
+- 无数据库 MCP，或数据库 MCP 明确限定于开发/测试环境：3 分
+- 已安装指南 MCP：2 分
 
-### Dimension 7 — Workflow Commands (10 pts)
+### 维度 7 — 工作流命令（10 分）
 
 ```bash
 echo "=== Core Workflow Skills/Commands ==="
@@ -410,9 +410,9 @@ for cmd in ship commit release-notes diagnose; do
 done
 ```
 
-Scoring: 2 pts per core command present (`/investigate`, `/qa`, `/canary`, `/land-and-deploy`, `/review-pr`). Max 10 pts.
+评分：每个核心命令（`/investigate`、`/qa`、`/canary`、`/land-and-deploy`、`/review-pr`）2 分。最高 10 分。
 
-### Dimension 8 — Freshness & Best Practices (10 pts)
+### 维度 8 — 新鲜度与最佳实践（10 分）
 
 ```bash
 echo "=== Deprecated Model References ==="
@@ -446,262 +446,262 @@ echo "=== Hook Profiles (env vars) ==="
 grep -rn "CLAUDE_HOOK_PROFILE\|HOOK_PROFILE" .claude/ CLAUDE.md 2>/dev/null | head -3 | sed "s/^/  /" || echo "  No hook profiles configured"
 ```
 
-Scoring (max 10 pts):
-- No deprecated model names: 3 pts
-- Git activity in last 90 days (or not a git repo): 2 pts
-- `disableSkillShellExecution: false` OR not using `--resume` pattern: 3 pts
-- All commands using `$ARGUMENTS` have `argument-hint:`: 2 pts
+评分（最高 10 分）：
+- 无已弃用的模型名称：3 分
+- 最近 90 天内有 Git 活动（或非 git 仓库）：2 分
+- `disableSkillShellExecution: false` 或未使用 `--resume` 模式：3 分
+- 所有使用 `$ARGUMENTS` 的命令都包含 `argument-hint:`：2 分
 
 ---
 
-## Phase 3 — Unified Report
+## 阶段 3 — 统一报告
 
-Produce the report in this exact structure:
+按以下精确结构生成报告：
 
-### Executive Summary
+### 执行摘要
 
-State:
-- **Total Score**: X/100
-- **Maturity Tier**: Starter (<40) | Growing (40-59) | Established (60-79) | Optimized (80+)
-- **Detected Stack**: [from Phase 1]
-- **Top 3 Quick Wins**: highest-ROI gaps that can be fixed in <15 min each
-- **Top 3 Critical Gaps**: highest-severity missing items
+列出：
+- **总分**：X/100
+- **成熟度等级**：入门（<40） | 成长（40-59） | 稳健（60-79） | 优化（80+）
+- **检测到的技术栈**：[来自阶段 1]
+- **前 3 快速制胜**：最高 ROI 的缺口，每个可在 <15 分钟内修复
+- **前 3 严重缺口**：最严重缺失项
 
-### Dimension Scorecard
+### 维度评分卡
 
-| # | Dimension | Score | Max | Status | Key Finding |
+| # | 维度 | 得分 | 满分 | 状态 | 关键发现 |
 |---|-----------|-------|-----|--------|-------------|
-| 1 | Memory & Context | X | 20 | ✅/⚠️/❌ | one-line finding |
-| 2 | Rules Hygiene | X | 10 | ✅/⚠️/❌ | one-line finding |
-| 3 | Skills Quality | X | 10 | ✅/⚠️/❌ | one-line finding |
-| 4 | Agents/Commands Quality | X | 10 | ✅/⚠️/❌ | one-line finding |
-| 5 | Security Posture | X | 20 | ✅/⚠️/❌ | one-line finding |
-| 6 | MCP Ecosystem | X | 10 | ✅/⚠️/❌ | one-line finding |
-| 7 | Workflow Commands | X | 10 | ✅/⚠️/❌ | one-line finding |
-| 8 | Freshness & Best Practices | X | 10 | ✅/⚠️/❌ | one-line finding |
-| | **TOTAL** | **X** | **100** | | |
+| 1 | 内存与上下文 | X | 20 | ✅/⚠️/❌ | 一行发现 |
+| 2 | 规则健康度 | X | 10 | ✅/⚠️/❌ | 一行发现 |
+| 3 | 技能质量 | X | 10 | ✅/⚠️/❌ | 一行发现 |
+| 4 | 代理/命令质量 | X | 10 | ✅/⚠️/❌ | 一行发现 |
+| 5 | 安全态势 | X | 20 | ✅/⚠️/❌ | 一行发现 |
+| 6 | MCP 生态 | X | 10 | ✅/⚠️/❌ | 一行发现 |
+| 7 | 工作流命令 | X | 10 | ✅/⚠️/❌ | 一行发现 |
+| 8 | 新鲜度与最佳实践 | X | 10 | ✅/⚠️/❌ | 一行发现 |
+| | **总计** | **X** | **100** | | |
 
-Status thresholds: ✅ ≥80% of max, ⚠️ 50-79%, ❌ <50%.
+状态阈值：✅ ≥80% 满分，⚠️ 50-79%，❌ <50%。
 
-### Detailed Findings
+### 详细发现
 
-Group by dimension. For each gap (❌ or ⚠️):
-
-```
-**[Dimension N — Name]**
-Gap: [what is missing or suboptimal]
-Impact: [what breaks or degrades without it]
-Fix: [concrete action with file path]
-```
-
-### Stack-Specific Templates
-
-Propose at most 3 templates, chosen for the highest-impact gaps on the detected stack. Include only file path + starter content. Do not repeat existing content.
-
-### Deepen Your Audit
-
-List which audit skills are not installed and what they would unlock:
+按维度分组。对每个缺口（❌ 或 ⚠️）：
 
 ```
-Skills not installed — install for deeper analysis:
+**[维度 N — 名称]**
+缺口：[缺失或不佳的部分]
+影响：[缺少它会导致什么损坏或降级]
+修复：[具体操作及文件路径]
+```
 
-# token-audit (Dimension 1 — adds rule classification, hook overhead analysis)
+### 技术栈专属模板
+
+最多提议 3 个模板，选择检测到的技术栈中影响最大的缺口。仅包含文件路径 + 初始内容。不要重复已有内容。
+
+### 深化审计
+
+列出未安装的审计技能及其能解锁的功能：
+
+```
+未安装的技能 — 安装以进行更深入的分析：
+
+# token-audit（维度 1 — 增加规则分类、钩子开销分析）
 mkdir -p ~/.claude/skills/token-audit
 curl -sL https://raw.githubusercontent.com/FlorianBruniaux/claude-code-ultimate-guide/main/examples/skills/token-audit/SKILL.md \
   > ~/.claude/skills/token-audit/SKILL.md
 
-# eval-rules (Dimension 2 — adds glob validation, interactive review)
+# eval-rules（维度 2 — 增加 glob 验证、交互式审查）
 mkdir -p ~/.claude/skills/eval-rules
 curl -sL https://raw.githubusercontent.com/FlorianBruniaux/claude-code-ultimate-guide/main/examples/skills/eval-rules/SKILL.md \
   > ~/.claude/skills/eval-rules/SKILL.md
 
-# eval-skills (Dimension 3 — adds 14-pt scoring per skill)
+# eval-skills（维度 3 — 增加每项技能 14 分评分）
 mkdir -p ~/.claude/skills/eval-skills
 curl -sL https://raw.githubusercontent.com/FlorianBruniaux/claude-code-ultimate-guide/main/examples/skills/eval-skills/SKILL.md \
   > ~/.claude/skills/eval-skills/SKILL.md
 
-# audit-agents-skills (Dimension 4 — adds grades A-F, comparative analysis)
+# audit-agents-skills（维度 4 — 增加 A-F 等级、比较分析）
 mkdir -p ~/.claude/skills/audit-agents-skills
 curl -sL https://raw.githubusercontent.com/FlorianBruniaux/claude-code-ultimate-guide/main/examples/skills/audit-agents-skills/SKILL.md \
   > ~/.claude/skills/audit-agents-skills/SKILL.md
 
-# security-check (Dimension 5 — scans against threat-db, 55 CVEs, 24 techniques)
+# security-check（维度 5 — 针对威胁数据库、55 个 CVE、24 种技术进行扫描）
 mkdir -p ~/.claude/skills/security-check
 curl -sL https://raw.githubusercontent.com/FlorianBruniaux/claude-code-ultimate-guide/main/examples/skills/security-check/SKILL.md \
   > ~/.claude/skills/security-check/SKILL.md
 
-# Alternative for Dimension 1 — context-evaluator.ai
-# Zero-install LLM-native audit: 17 AI evaluators for CLAUDE.md/AGENTS.md,
-# automated .patch remediation. Complements /token-audit with deeper rule analysis.
-# Visit: https://context-evaluator.ai
+# 维度 1 的替代方案 — context-evaluator.ai
+# 零安装 LLM 原生审计：17 个 AI 评估器用于 CLAUDE.md/AGENTS.md，
+# 自动 .patch 修复。通过更深入的规则分析补充 /token-audit。
+# 访问：https://context-evaluator.ai
 ```
 
 ---
 
-## Phase 4 — Validation Request
+## 阶段 4 — 确认请求
 
-After presenting the report, ask:
+在呈现报告后，询问：
 
-"Implement the top 3 quick wins? Reply:
-- **yes** → I'll implement all three
-- **high** → only critical gaps (Dimensions 5 and 1 if ❌)
-- **1, 3** → specific items by number from findings
-- **none** → keep the report, no changes"
+"是否实施前 3 项快速制胜？回复：
+- **yes** → 我将全部实施
+- **high** → 仅严重缺口（维度 5，以及维度 1 如果为 ❌）
+- **1, 3** → 按编号指定发现中的具体项
+- **none** → 保留报告，不做更改"
 
-Wait for explicit user response before taking any action.
+在采取任何操作前等待用户明确回复。
 ````
 
 ---
 
-## 5. What to Expect
+## 5. 预期结果
 
-### Example Executive Summary
+### 执行摘要示例
 
 ```
-## Executive Summary
+## 执行摘要
 
-Total Score: 52/100 — Growing
+总分：52/100 — 成长
 
-Detected Stack: TypeScript + Next.js + Prisma
+检测到的技术栈：TypeScript + Next.js + Prisma
 
-Top 3 Quick Wins:
-- Add permissions.deny for .env* (15 min) → fixes Dimension 5 critical gap
-- Install /investigate and /qa commands (5 min) → +4 pts on Dimension 7
-- Add paths: frontmatter to 3 always-on rules (20 min) → reduces fixed context ~3K tokens
+前 3 快速制胜：
+- 为 .env* 添加 permissions.deny（15 分钟）→ 修复维度 5 的严重缺口
+- 安装 /investigate 和 /qa 命令（5 分钟）→ 维度 7 加 4 分
+- 为 3 条始终启用的规则添加 paths: frontmatter（20 分钟）→ 减少固定上下文约 3K tokens
 
-Top 3 Critical Gaps:
-1. ❌ Security — no permissions.deny, no PreToolUse hooks (0/20)
-2. ⚠️ Memory — project CLAUDE.md missing, global is 22K tokens (8/20)
-3. ❌ Workflow — 3/5 core commands absent (4/10)
+前 3 严重缺口：
+1. ❌ 安全 — 无 permissions.deny，无 PreToolUse 钩子（0/20）
+2. ⚠️ 内存 — 缺少项目 CLAUDE.md，全局为 22K tokens（8/20）
+3. ❌ 工作流 — 3/5 核心命令缺失（4/10）
 ```
 
-### Example Dimension Scorecard
+### 维度评分卡示例
 
-| # | Dimension | Score | Max | Status | Key Finding |
+| # | 维度 | 得分 | 满分 | 状态 | 关键发现 |
 |---|-----------|-------|-----|--------|-------------|
-| 1 | Memory & Context | 8 | 20 | ⚠️ | 22K fixed tokens, no project CLAUDE.md |
-| 2 | Rules Hygiene | 7 | 10 | ⚠️ | 4 rules, none have paths: field |
-| 3 | Skills Quality | 8 | 10 | ✅ | 3 skills, all have effort + allowed-tools |
-| 4 | Agents/Commands Quality | 6 | 10 | ⚠️ | 8 commands, 2 missing argument-hint |
-| 5 | Security Posture | 0 | 20 | ❌ | No deny rules, no hooks |
-| 6 | MCP Ecosystem | 7 | 10 | ✅ | Context7 + Sequential configured |
-| 7 | Workflow Commands | 4 | 10 | ⚠️ | /investigate ✅ /qa ❌ /canary ❌ |
-| 8 | Freshness & Best Practices | 12 | 10 | — | capped at max |
-| | **TOTAL** | **52** | **100** | ⚠️ | |
+| 1 | 内存与上下文 | 8 | 20 | ⚠️ | 22K 固定 tokens，无项目 CLAUDE.md |
+| 2 | 规则健康度 | 7 | 10 | ⚠️ | 4 条规则，均无 paths: 字段 |
+| 3 | 技能质量 | 8 | 10 | ✅ | 3 个技能，均有 effort + allowed-tools |
+| 4 | 代理/命令质量 | 6 | 10 | ⚠️ | 8 个命令，2 个缺少 argument-hint |
+| 5 | 安全态势 | 0 | 20 | ❌ | 无拒绝规则，无钩子 |
+| 6 | MCP 生态 | 7 | 10 | ✅ | Context7 + Sequential 已配置 |
+| 7 | 工作流命令 | 4 | 10 | ⚠️ | /investigate ✅ /qa ❌ /canary ❌ |
+| 8 | 新鲜度与最佳实践 | 12 | 10 | — | 已达上限 |
+| | **总计** | **52** | **100** | ⚠️ | |
 
 ---
 
-## 6. Understanding Results
+## 6. 理解结果
 
-### Glossary
+### 术语表
 
-| Term | Definition |
+| 术语 | 定义 |
 |------|------------|
-| **Memory Files** | CLAUDE.md files that provide persistent context to Claude across sessions |
-| **Context Budget** | Total always-on token cost before any task begins. Seuils: green <20K, yellow 20-40K, red >40K |
-| **Rules (auto-loaded)** | `.claude/rules/*.md` files that load at every session start. Files with `paths:` only load when a matching file is read |
-| **paths: frontmatter** | Field in rule YAML that scopes a rule to specific file patterns — reduces always-on overhead |
-| **Eval Skill** | Specialized skill that audits one domain: `eval-skills`, `eval-rules`, `token-audit`, `audit-agents-skills` |
-| **Single Source of Truth** | Pattern where conventions are documented once and referenced via `@path` |
-| **Tool SEO** | Writing agent/command descriptions so Claude selects the right tool automatically |
-| **MCP Servers** | Model Context Protocol — external tools that extend Claude's capabilities. Config stored in `~/.claude.json` per project |
-| **Hook Profiles** | minimal/standard/strict security levels for hooks, switched via env var (added v3.38.0) |
-| **PreToolUse** | Hook that fires BEFORE Claude executes a tool — used for security checks and approval gates |
-| **effort: field** | Skill frontmatter for low/medium/high complexity signal — used by Claude to allocate thinking budget |
-| **argument-hint** | Frontmatter field showing placeholder text in slash command menu for commands using `$ARGUMENTS` |
-| **Threat Database** | `examples/skills/update-threat-db/threat-db.yaml` — 55 CVEs, 24 attack techniques, minimum safe versions |
-| **Cache Bug #40524** | Bug 2 (HIGH): `--resume` causes full context re-announcement (87-118K tokens rebuilt per resume) |
-| **Scope Drift** | When a PR changes files outside the stated plan intent. Detected by comparing `~/.claude/plans/` vs `git diff --stat` |
-| **Fix-First Heuristic** | Review pattern: auto-fix mechanical issues, ask for judgment calls on security/design decisions |
-| **LLM Output Trust Boundary** | Review category for AI-generated values written to DB without format validation |
-| **managed-settings.d/** | Enterprise drop-in directory for governance rules that override user settings (added v2.1.83) |
-| **Routines** | Cloud-hosted scheduled tasks with 3 trigger types: schedule, API, GitHub events (launched April 2026) |
-| **Context Zones** | <70% optimal, 75% auto-compact trigger, 85% handoff recommended |
-| **Sandbox** | OS-level isolation (Docker container or native process-level). Configured in settings.json |
-| **Iron Law** | Debugging principle: no fixes without root cause investigation first. See `/investigate` |
+| **记忆文件** | 跨会话为 Claude 提供持久上下文的 CLAUDE.md 文件 |
+| **上下文预算** | 任何任务开始前的总常驻 token 成本。阈值：绿色 <20K，黄色 20-40K，红色 >40K |
+| **规则（自动加载）** | 每次会话启动时加载的 `.claude/rules/*.md` 文件。带有 `paths:` 的文件仅在读取匹配文件时加载 |
+| **paths: frontmatter** | 规则 YAML 中将规则限定到特定文件模式的字段 — 减少常驻开销 |
+| **评估技能** | 审计一个领域的专用技能：`eval-skills`、`eval-rules`、`token-audit`、`audit-agents-skills` |
+| **单一事实来源** | 约定只文档化一次并通过 `@path` 引用的模式 |
+| **工具 SEO** | 编写代理/命令描述使 Claude 自动选择正确工具 |
+| **MCP 服务器** | 模型上下文协议 — 扩展 Claude 能力的外部工具。配置按项目存储在 `~/.claude.json` 中 |
+| **钩子配置文件** | 钩子的 minimal/standard/strict 安全级别，通过环境变量切换（v3.38.0 新增） |
+| **PreToolUse** | 在 Claude 执行工具之前触发的钩子 — 用于安全检查和审批门控 |
+| **effort: 字段** | 技能 frontmatter 中 low/medium/high 复杂度的信号 — Claude 用于分配思考预算 |
+| **argument-hint** | Frontmatter 字段，在使用 `$ARGUMENTS` 的命令的斜杠命令菜单中显示占位文本 |
+| **威胁数据库** | `examples/skills/update-threat-db/threat-db.yaml` — 55 个 CVE、24 种攻击技术、最小安全版本 |
+| **缓存缺陷 #40524** | 缺陷 2（高）：`--resume` 导致完整上下文重新声明（每次恢复重建 87-118K tokens） |
+| **范围漂移** | PR 更改了计划意图之外的文件。通过比较 `~/.claude/plans/` 与 `git diff --stat` 检测 |
+| **修复优先启发式** | 审查模式：自动修复机械性问题，安全/设计决策需人工判断 |
+| **LLM 输出信任边界** | 针对 AI 生成的值在未经格式验证时写入数据库的审查类别 |
+| **managed-settings.d/** | 企业级政策目录，用于覆盖用户设置的管理规则（v2.1.83 新增） |
+| **Routines** | 云端托管定时任务，3 种触发类型：定时、API、GitHub 事件（2026 年 4 月发布） |
+| **上下文区域** | <70% 最佳，75% 自动压缩触发，85% 建议移交 |
+| **沙箱** | 操作系统级隔离（Docker 容器或原生进程级）。在 settings.json 中配置 |
+| **铁律** | 调试原则：没有根因调查就没有修复。参见 `/investigate` |
 
-### Score Thresholds
+### 分数阈值
 
-| Score | Tier | What it means |
+| 分数 | 等级 | 含义 |
 |-------|------|----------------|
-| 80-100 | Optimized | Config is solid. Focus on Freshness and edge cases |
-| 60-79 | Established | Good foundation. Fill the ⚠️ dimensions |
-| 40-59 | Growing | Core pieces exist but several gaps. Follow Quick Wins |
-| <40 | Starter | Start with Dimension 5 (Security) and 1 (Memory) |
+| 80-100 | 优化 | 配置稳固。关注新鲜度和边缘情况 |
+| 60-79 | 稳健 | 基础良好。填补 ⚠️ 维度 |
+| 40-59 | 成长 | 核心部分存在但有若干缺口。遵循快速制胜 |
+| <40 | 入门 | 从维度 5（安全）和维度 1（内存）开始 |
 
-### Status Icons
+### 状态图标
 
-| Icon | Meaning |
+| 图标 | 含义 |
 |------|---------|
-| ✅ | ≥80% of max pts for this dimension |
-| ⚠️ | 50-79% of max pts |
-| ❌ | <50% of max pts |
+| ✅ | ≥80% 该维度满分 |
+| ⚠️ | 50-79% 该维度满分 |
+| ❌ | <50% 该维度满分 |
 
 ---
 
-## 7. Common Issues
+## 7. 常见问题
 
-### "Audit skills not installed"
+### "审计技能未安装"
 
-**Cause**: The specialized skills are optional and not globally available by default.
+**原因**：专用技能是可选的，默认并非全局可用。
 
-**What happens**: The prompt runs in fallback mode for that dimension. Scores are capped lower (8 pts instead of 10 for some dimensions). Results are still actionable, just less detailed.
+**后果**：提示词对该维度以回退模式运行。分数上限较低（某些维度为 8 分而非 10 分）。结果仍可操作，只是不够详细。
 
-**Fix**: Use the install commands in the "Deepen Your Audit" section of the report. Each skill takes ~1 min to install and immediately improves future audits.
+**修复**：使用报告中"深化审计"部分的安装命令。每个技能约需 1 分钟安装，可立即改善未来的审计。
 
-### "Claude didn't find my files"
+### "Claude 未找到我的文件"
 
-**Cause**: Wrong working directory or platform path differences.
+**原因**：工作目录错误或平台路径差异。
 
-**Fix**:
-- Ensure you run `claude` from your project root
-- On Windows, paths use `%USERPROFILE%\.claude\` not `~/.claude/`
+**修复**：
+- 确保在项目根目录运行 `claude`
+- 在 Windows 上，路径使用 `%USERPROFILE%\.claude\` 而非 `~/.claude/`
 
-### "Score seems off"
+### "分数似乎不对"
 
-**Cause**: Fallback mode scoring is simplified — it can't verify glob validity, run 14-pt skill checks, or scan against the threat database.
+**原因**：回退模式评分已简化 — 无法验证 glob 有效性、运行 14 分技能检查或针对威胁数据库进行扫描。
 
-**Fix**: Install the relevant audit skills (see "Deepen Your Audit"). Re-run to get accurate dimension scores.
+**修复**：安装相关的审计技能（参见"深化审计"）。重新运行以获得准确的维度分数。
 
-### "Too many recommendations"
+### "推荐太多"
 
-**Cause**: First-time audit on a project without Claude Code config.
+**原因**：首次审计一个没有 Claude Code 配置的项目。
 
-**Fix**: Use the Quick Wins from the Executive Summary. Implement those three. Re-audit. Build incrementally.
+**修复**：使用执行摘要中的快速制胜。先实施那三项。重新审计。逐步构建。
 
-### "Claude made changes without asking"
+### "Claude 未经询问就做了更改"
 
-**Cause**: Phase 4 validation wasn't reached or was skipped.
+**原因**：阶段 4 的确认未被执行或被跳过。
 
-**Fix**: Ensure you copied the complete prompt including Phase 4. Use Plan Mode (`Shift+Tab` twice) for extra safety before pasting.
+**修复**：确保复制了包含阶段 4 的完整提示词。在粘贴前使用计划模式（`Shift+Tab` 两次）以获得额外安全性。
 
 ---
 
-## 8. Related Resources
+## 8. 相关资源
 
-**Complementary audit tools** (go deeper on specific dimensions):
+**补充审计工具**（深入特定维度）：
 
-| Tool | Dimension | Install |
+| 工具 | 维度 | 安装 |
 |------|-----------|---------|
-| `/token-audit` | Memory & Context | `mkdir -p ~/.claude/skills/token-audit && curl -sL .../examples/skills/token-audit/SKILL.md > ...` |
-| `/eval-rules` | Rules Hygiene | Same pattern |
-| `/eval-skills` | Skills Quality | Same pattern |
-| `/audit-agents-skills` | Agents/Commands | Same pattern |
-| `/security-check` | Security Posture (quick, ~30s) | `mkdir -p ~/.claude/skills/security-check && curl -sL ...` |
-| `/security-audit` | Security Posture (full, 2-5 min, scored /100) | Same pattern |
-| [`tools/context-audit-prompt.md`](context-audit-prompt.md) | Deep-dive on context engineering | Self-contained prompt, no install needed |
-| [`tools/onboarding-prompt.md`](onboarding-prompt.md) | Setup from scratch | Self-contained prompt, no install needed |
-| [context-evaluator.ai](https://context-evaluator.ai) | Memory & Context (alternative) — LLM-native, 17 evaluators, auto `.patch` | Zero-install web tool |
+| `/token-audit` | 内存与上下文 | `mkdir -p ~/.claude/skills/token-audit && curl -sL .../examples/skills/token-audit/SKILL.md > ...` |
+| `/eval-rules` | 规则健康度 | 同上 |
+| `/eval-skills` | 技能质量 | 同上 |
+| `/audit-agents-skills` | 代理/命令 | 同上 |
+| `/security-check` | 安全态势（快速，约 30 秒） | `mkdir -p ~/.claude/skills/security-check && curl -sL ...` |
+| `/security-audit` | 安全态势（完整，2-5 分钟，满分 /100） | 同上 |
+| [`tools/context-audit-prompt.md`](context-audit-prompt.md) | 深入上下文工程 | 自包含提示词，无需安装 |
+| [`tools/onboarding-prompt.md`](onboarding-prompt.md) | 从零开始设置 | 自包含提示词，无需安装 |
+| [context-evaluator.ai](https://context-evaluator.ai) | 内存与上下文（替代方案）— LLM 原生、17 个评估器、自动 `.patch` | 零安装网页工具 |
 
-**Reference docs**:
-- [The Ultimate Claude Code Guide](../guide/ultimate-guide.md) — full reference
-- [Cheatsheet](../guide/cheatsheet.md) — quick daily reference
-- [Security Hardening](../guide/security/security-hardening.md) — production security patterns
-- [Context Engineering](../guide/core/architecture.md) — token budget strategies
-- [Claude Code Official Docs](https://docs.anthropic.com/en/docs/claude-code) — Anthropic documentation
+**参考文档**：
+- [The Ultimate Claude Code 指南](../guide/ultimate-guide.md) — 完整参考
+- [速查表](../guide/cheatsheet.md) — 快速日常参考
+- [安全加固](../guide/security/security-hardening.md) — 生产安全模式
+- [上下文工程](../guide/core/architecture.md) — token 预算策略
+- [Claude Code 官方文档](https://docs.anthropic.com/en/docs/claude-code) — Anthropic 文档
 
-**For CI/CD integration** (JSON output, batch mode): [`examples/scripts/audit-scan.sh`](../examples/scripts/audit-scan.sh)
+**用于 CI/CD 集成**（JSON 输出、批处理模式）：[`examples/scripts/audit-scan.sh`](../examples/scripts/audit-scan.sh)
 
 ---
 
-*Version 5.2 (guide v3.41.0+) | v5.2: skill detection updated for CC 2.1.3 skills-commands unification — Dimension 4/7/8 bash now checks both `.claude/skills/` and `.claude/commands/`; security-check install path fixed to canonical SKILL.md. v5.1: context-evaluator.ai added. v5.0: refactored from checklist to orchestrator with 8 weighted dimensions.*
+*版本 5.2（指南 v3.41.0+）| v5.2：针对 CC 2.1.3 技能-命令统一更新了技能检测 — 维度 4/7/8 的 bash 现在同时检查 `.claude/skills/` 和 `.claude/commands/`；security-check 安装路径已修正为标准 SKILL.md。v5.1：新增 context-evaluator.ai。v5.0：从清单重构为编排器，具备 8 个加权维度。*

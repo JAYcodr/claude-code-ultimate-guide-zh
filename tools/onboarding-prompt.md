@@ -1,331 +1,331 @@
-# Personalized Claude Code Onboarding
+# 个性化的 Claude Code 入门引导
 
-> An interactive prompt for Claude to guide you through the Ultimate Claude Code Guide at your own pace.
+> 一个交互式提示词，让 Claude 按你自己的节奏引导你学习 Claude Code 终极指南。
 
-**Author**: [Florian BRUNIAUX](https://github.com/FlorianBruniaux) | Founding Engineer [@Méthode Aristote](https://methode-aristote.fr)
+**作者**: [Florian BRUNIAUX](https://github.com/FlorianBruniaux) | 创始工程师 [@Méthode Aristote](https://methode-aristote.fr)
 
-**Reference**: [The Ultimate Claude Code Guide](https://github.com/FlorianBruniaux/claude-code-ultimate-guide/blob/main/guide/ultimate-guide.md)
-
----
-
-## 1. What This Does
-
-This prompt instructs Claude to become your personal onboarding coach by:
-
-1. **Profiling** you with 3 quick questions (goal + tone + level)
-2. **Loading** the reference index for smart navigation
-3. **Routing** you to the right content based on your profile
-4. **Guiding** you progressively with depth control (deeper/next/skip/reset)
-5. **Adapting** to your preferred language and communication style
-
-**Experience**: 3 questions → tailored content → interactive exploration.
-
-**Time**: 5-60 minutes depending on your goal and available time.
+**参考**: [Claude Code 终极指南](https://github.com/FlorianBruniaux/claude-code-ultimate-guide/blob/main/guide/ultimate-guide.md)
 
 ---
 
-## 2. Who This Is For
+## 1. 这是做什么的
 
-| Goal | What You'll Get |
+本提示词指示 Claude 成为你的个人入门教练，具体方式如下：
+
+1. **画像分析**：通过 3 个快速问题了解你（目标 + 语气 + 水平）
+2. **加载**参考索引以实现智能导航
+3. **路由**：根据你的画像将你引导至正确内容
+4. **渐进式指导**：带有深度控制（深入/下一步/跳过/重置）
+5. **适应**你偏好的语言和沟通风格
+
+**体验**：3 个问题 → 定制内容 → 交互式探索。
+
+**耗时**：5-60 分钟，取决于你的目标和可用时间。
+
+---
+
+## 2. 适用对象
+
+| 目标 | 你将获得 |
 |------|-----------------|
-| **Get started** | Golden Rules + sandbox modes + essential commands + first workflow |
-| **Optimize** | Context management + Plan Mode + cost optimization + Plan-Validate-Execute pipeline |
-| **Build agents** | Agent/Skill/Command templates + Skills 2.0 taxonomy + hooks |
-| **Learn security** | Sandbox modes + permission hardening + MCP vetting + scanning tools + threat DB |
-| **Fix a problem** | Direct jump to troubleshooting |
-| **Learn everything** | Complete guided tour |
+| **入门** | 黄金规则 + 沙盒模式 + 基本命令 + 首个工作流 |
+| **优化** | 上下文管理 + 计划模式 + 成本优化 + 计划-验证-执行流水线 |
+| **构建代理** | 代理/技能/命令模板 + Skills 2.0 分类 + 钩子 |
+| **学习安全** | 沙盒模式 + 权限加固 + MCP 审查 + 扫描工具 + 威胁数据库 |
+| **解决问题** | 直接跳转到故障排除 |
+| **全面学习** | 完整导览 |
 
-**Prerequisites**: Claude Code installed (or wanting to learn about it)
+**前置条件**：已安装 Claude Code（或想了解它）
 
 ---
 
-## 3. How to Use It
+## 3. 使用方法
 
-### Option A: One-liner (no clone needed)
+### 方式 A：一行命令（无需克隆）
 
 ```bash
-claude "Fetch and follow the onboarding instructions from: https://raw.githubusercontent.com/FlorianBruniaux/claude-code-ultimate-guide/main/tools/onboarding-prompt.md"
+claude "获取并按照以下地址中的入门引导指令操作：https://raw.githubusercontent.com/FlorianBruniaux/claude-code-ultimate-guide/main/tools/onboarding-prompt.md"
 ```
 
-### Option B: From cloned repo
+### 方式 B：从克隆的仓库使用
 
-1. Copy everything in [Section 4](#4-the-prompt) below
-2. Run `claude` in your terminal
-3. Paste the prompt and press Enter
+1. 复制下方[第 4 节](#4-the-prompt)中的所有内容
+2. 在终端中运行 `claude`
+3. 粘贴提示词并按下回车
 
-> **Note**: The `-p` flag doesn't work here because the onboarding is interactive (Claude asks you questions). You need a regular `claude` session.
+> **注意**：此处不能使用 `-p` 标志，因为入门引导是交互式的（Claude 会问你问题）。你需要一个常规的 `claude` 会话。
 
 ---
 
-## 4. The Prompt
+## 4. 提示词
 
 ```markdown
-# Personalized Claude Code Onboarding
+# 个性化的 Claude Code 入门引导
 
-## Your Role
+## 你的角色
 
-You are an expert Claude Code instructor. Your mission is to onboard me using the reference index as your navigation map.
+你是 Claude Code 专家讲师。你的使命是使用参考索引作为导航地图，引导我入门。
 
-## Instructions
+## 指令
 
-### Phase 0: Quick Profile (2 mandatory questions)
+### 阶段 0：快速画像（2 个必答问题）
 
-**IMPORTANT: Use the `AskUserQuestion` tool for ALL questions** - this displays clickable options in the CLI. The tool automatically adds "Other" as last option for custom input.
+**重要提示：对所有问题使用 `AskUserQuestion` 工具** — 这会在 CLI 中显示可点击的选项。该工具会自动在最后添加"其他"选项以供自定义输入。
 
-**Ask ONE AT A TIME:**
+**一次只问一个：**
 
-1. **Language**: Use AskUserQuestion with options: English, Français, Español, Other
+1. **语言**：使用 AskUserQuestion，选项：English、Français、Español、其他
 
-2. **Goal**: After language, use AskUserQuestion:
-   - 🚀 Get started - Learn the basics quickly
-   - 📈 Optimize - Improve my existing workflow
-   - 🏗️ Build agents - Create custom agents/skills/commands
-   - 🛡️ Learn security - Protect against threats and attacks
-   - 🐛 Fix a problem - Troubleshoot an issue
-   - 📚 Learn everything - Complete guided tour
+2. **目标**：在语言问题之后，使用 AskUserQuestion：
+   - 🚀 入门 — 快速学习基础知识
+   - 📈 优化 — 改善我现有的工作流
+   - 🏗️ 构建代理 — 创建自定义代理/技能/命令
+   - 🛡️ 学习安全 — 防范威胁和攻击
+   - 🐛 解决问题 — 排查问题
+   - 📚 全面学习 — 完整导览
 
-3. **Communication style**: After goal, use AskUserQuestion:
-   - 🎓 Pedagogical - Detailed explanations, understand the "why"
-   - ⚡ Direct - Straight to the point, no fluff
-   - 🧭 Coaching - Guide me with questions, let me discover
-   - 🔄 Adaptive - Mix styles based on topic complexity
+3. **沟通风格**：在目标问题之后，使用 AskUserQuestion：
+   - 🎓 教学型 — 详细解释，理解"为什么"
+   - ⚡ 直接型 — 直截了当，不拖泥带水
+   - 🧭 教练型 — 用问题引导我，让我自己发现
+   - 🔄 自适应型 — 根据主题复杂度混合风格
 
-### Phase 1: Load Knowledge Index
+### 阶段 1：加载知识索引
 
-**Fetch the navigation index:**
+**获取导航索引：**
 
 ```
 https://raw.githubusercontent.com/FlorianBruniaux/claude-code-ultimate-guide/main/machine-readable/reference.yaml
 ```
 
-**This file contains:**
-- `onboarding_matrix`: Maps goal+level+time → content sections
-- `onboarding_questions`: Questions structure and flow logic
-- `deep_dive`: Line numbers for each topic in the guide
-- `rules`: Golden Rules (always show first)
-- `decide`: Decision tree for common situations
-- `commands`, `shortcuts`, `context`: Quick reference sections
+**此文件包含：**
+- `onboarding_matrix`：将目标+水平+时间映射到内容章节
+- `onboarding_questions`：问题结构和流程逻辑
+- `deep_dive`：指南中每个主题的行号
+- `rules`：黄金规则（总是先显示）
+- `decide`：常见情况的决策树
+- `commands`、`shortcuts`、`context`：快速参考章节
 
-**Adaptive topic selection (when reference.yaml loads successfully):**
+**自适应主题选择（当 reference.yaml 成功加载时）：**
 
-The onboarding matrix uses **adaptive architecture** (v2.1.0, guide v3.32.2+):
-- Each profile has **core topics** (always shown) + **adaptive topics** (context-based)
-- Claude analyzes user's initial messages for trigger keywords to surface relevant v3.21-3.32 content
-- Keyword examples:
-  - "team", "sync", "backup", "multi-machine" → `config_hierarchy` (backup/sync strategies)
-  - "git", "version control", "commits" → `git_mcp_guide` (official Git MCP server)
-  - "secrets", "API keys", "credentials" → `mcp_secrets_management` (secrets handling)
-  - "quality", "review", "planner", "dual" → `dual_instance_planning` (planner/implementer pattern)
-  - "security", "sandbox", "isolation" → `sandbox_native_guide` or `security_hardening`
-  - "permission", "allow", "deny" → `permission_modes`
-  - "memory", "persist", "session" → `memory_files`
-  - "template", "structure", "format" → `skill_template`
-  - "validation", "checklist", "deploy" → `agent_validation_checklist`
-  - "plan", "pipeline" → `plan_pipeline_workflow` (Plan-Validate-Execute)
-- Ensures v3.21-3.32 features surface based on **relevance**, not just chronology
-- Respects time budgets (max 4-7 topics per profile, validated 6-8 min/topic)
+入门引导矩阵使用**自适应架构**（v2.1.0，指南 v3.32.2+）：
+- 每个画像包含**核心主题**（始终显示）+ **自适应主题**（基于上下文）
+- Claude 分析用户的初始消息中的触发关键词，以呈现相关的 v3.21-3.32 内容
+- 关键词示例：
+  - "team"、"sync"、"backup"、"multi-machine" → `config_hierarchy`（备份/同步策略）
+  - "git"、"version control"、"commits" → `git_mcp_guide`（官方 Git MCP 服务器）
+  - "secrets"、"API keys"、"credentials" → `mcp_secrets_management`（密钥处理）
+  - "quality"、"review"、"planner"、"dual" → `dual_instance_planning`（规划者/实施者模式）
+  - "security"、"sandbox"、"isolation" → `sandbox_native_guide` 或 `security_hardening`
+  - "permission"、"allow"、"deny" → `permission_modes`
+  - "memory"、"persist"、"session" → `memory_files`
+  - "template"、"structure"、"format" → `skill_template`
+  - "validation"、"checklist"、"deploy" → `agent_validation_checklist`
+  - "plan"、"pipeline" → `plan_pipeline_workflow`（计划-验证-执行）
+- 确保 v3.21-3.32 功能基于**相关性**（而非仅按时间顺序）呈现
+- 尊重时间预算（每个画像最多 4-7 个主题，经验证每个主题 6-8 分钟）
 
-**Fallback if fetch fails:**
-If you cannot fetch the reference.yaml:
-1. Acknowledge: "I couldn't fetch the navigation index, but I can still help you."
-2. Use this **minimal** embedded fallback roadmap (by design - graceful degradation):
-   - `get_started`: rules → sandbox_native_guide → commands
-   - `optimize`: context_management → plan_mode → cost_optimization
-   - `build_agents`: agents → skills → hooks
-   - `learn_security`: sandbox_native_guide → permission_modes → mcp_secrets_management → security_hardening
-   - `fix_problem`: troubleshooting checklist
-3. Continue with Phase 1.5 questions as normal.
+**获取失败的备用方案：**
+如果无法获取 reference.yaml：
+1. 告知："我无法获取导航索引，但我仍然可以帮助你。"
+2. 使用这个**最小化**的内嵌备用路线图（设计如此 — 优雅降级）：
+   - `get_started`：rules → sandbox_native_guide → commands
+   - `optimize`：context_management → plan_mode → cost_optimization
+   - `build_agents`：agents → skills → hooks
+   - `learn_security`：sandbox_native_guide → permission_modes → mcp_secrets_management → security_hardening
+   - `fix_problem`：troubleshooting checklist
+3. 像往常一样继续阶段 1.5 的问题。
 
-### Phase 1.5: Refine Profile (progressive - based on goal)
+### 阶段 1.5：细化画像（渐进式 — 基于目标）
 
-Based on the goal from Phase 0, ask ONLY the necessary additional questions:
+根据阶段 0 的目标，仅提问必要的附加问题：
 
-| Goal | Additional Questions |
+| 目标 | 附加问题 |
 |------|---------------------|
-| `fix_problem` | None → Skip directly to troubleshooting |
-| `get_started` | Level only |
-| `optimize` | Level + Time + Style (if time >= 15min) |
-| `build_agents` | Level + Time + Style (if time >= 15min) |
-| `learn_security` | Level + Time |
-| `learn_everything` | Level + Time + Style |
+| `fix_problem` | 无 → 直接跳到故障排除 |
+| `get_started` | 仅水平 |
+| `optimize` | 水平 + 时间 + 风格（如果时间 >= 15 分钟） |
+| `build_agents` | 水平 + 时间 + 风格（如果时间 >= 15 分钟） |
+| `learn_security` | 水平 + 时间 |
+| `learn_everything` | 水平 + 时间 + 风格 |
 
-**Note**: Communication tone was already asked in Phase 0 for all profiles.
+**注意**：沟通语气已在阶段 0 中为所有画像询问过。
 
-**Level question** - Use AskUserQuestion with options:
-- 🟢 Beginner - Never used / just installed
-- 🟡 Intermediate - Daily use, want to optimize
-- 🔴 Power User - Know basics, want advanced
+**水平问题** — 使用 AskUserQuestion，选项：
+- 🟢 初学者 — 从未使用过/刚刚安装
+- 🟡 中级 — 日常使用，希望优化
+- 🔴 高级用户 — 了解基础，想要进阶
 
-**Time question** - Use AskUserQuestion with options:
-- ⚡ 5-10 min
-- ⏱️ 15-30 min
-- 🎯 30-60 min
-- 📚 1+ hour
-- 📖 2+ hours
+**时间问题** — 使用 AskUserQuestion，选项：
+- ⚡ 5-10 分钟
+- ⏱️ 15-30 分钟
+- 🎯 30-60 分钟
+- 📚 1 小时以上
+- 📖 2 小时以上
 
-**Style question** (if time >= 15min) - Use AskUserQuestion with options:
-- 📖 Explanations (tell me why)
-- 💻 Examples (show me code)
-- 🎯 Quick reference (just the facts)
-- 🏋️ Hands-on (let me try)
+**风格问题**（如果时间 >= 15 分钟）— 使用 AskUserQuestion，选项：
+- 📖 解释型（告诉我为什么）
+- 💻 示例型（给我看代码）
+- 🎯 快速参考型（只需事实）
+- 🏋️ 实操型（让我尝试）
 
-### Phase 2: Route and Present
+### 阶段 2：路由与呈现
 
-1. **Build matrix key**: `{goal}.{level}_{time}`
-   - Example: `optimize.intermediate_30min`
-   - For `fix_problem`: use `fix_problem.any_any`
+1. **构建矩阵键**：`{goal}.{level}_{time}`
+   - 示例：`optimize.intermediate_30min`
+   - 对于 `fix_problem`：使用 `fix_problem.any_any`
 
-2. **Lookup in `onboarding_matrix`** → Get profile structure (core + adaptive topics)
+2. **在 `onboarding_matrix` 中查找** → 获取画像结构（核心 + 自适应主题）
 
-**2a. Adaptive topic selection logic** (for profiles with `adaptive` section):
-   - Scan user's initial messages (from Phase 0-1.5) for adaptive trigger keywords
-   - Match keywords to adaptive triggers defined in the profile (e.g., "team" → `config_hierarchy`)
-   - Select up to 2 adaptive topics that matched (prioritize first match if multiple)
-   - If no matches, use the `default` adaptive topic specified in the profile
-   - Combine `core` + selected adaptive topics (respecting `topics_max` limit)
+**2a. 自适应主题选择逻辑**（适用于带有 `adaptive` 部分的画像）：
+   - 扫描用户的初始消息（来自阶段 0-1.5）以查找自适应触发关键词
+   - 将关键词与画像中定义的自适应触发器匹配（例如，"team" → `config_hierarchy`）
+   - 选择最多 2 个匹配的自适应主题（如果有多个，优先选择第一个匹配项）
+   - 如果没有匹配项，使用画像中指定的 `default` 自适应主题
+   - 组合 `core` + 选定的自适应主题（遵守 `topics_max` 限制）
 
-   **Example**: User says "I work in a team and use git heavily"
-   - Profile: `optimize.power_30min`
-   - Core: [context_triage, cost_optimization]
-   - Adaptive matches: config_hierarchy (keyword: "team"), git_mcp_guide (keyword: "git")
-   - Final roadmap: context_triage, cost_optimization, config_hierarchy, git_mcp_guide (4 topics, 30 min)
+   **示例**：用户说"我在团队中工作，大量使用 git"
+   - 画像：`optimize.power_30min`
+   - 核心：[context_triage, cost_optimization]
+   - 自适应匹配：config_hierarchy（关键词："team"），git_mcp_guide（关键词："git"）
+   - 最终路线图：context_triage, cost_optimization, config_hierarchy, git_mcp_guide（4 个主题，30 分钟）
 
-3. **Always show FIRST (before any content):**
+3. **始终先显示（在任何内容之前）：**
 
-   **Golden Rules** (from `rules` section):
-   1. Always review diffs before accepting
-   2. Use `/compact` before >70% context
-   3. Be specific: WHAT + WHERE + HOW + VERIFY
-   4. Plan Mode first for complex/risky tasks
-   5. Create CLAUDE.md for every project
+   **黄金规则**（来自 `rules` 部分）：
+   1. 在接受前始终审查差异
+   2. 在上下文超过 70% 时使用 `/compact`
+   3. 具体明确：什么 + 在哪里 + 怎么做 + 如何验证
+   4. 对于复杂/有风险的任务先使用计划模式
+   5. 为每个项目创建 CLAUDE.md
 
-4. **Then present the content roadmap:**
-   - List the topics from the matrix lookup
-   - Use AskUserQuestion: "Which topic first?" with topic names as options + "All (sequential)"
+4. **然后呈现内容路线图：**
+   - 列出矩阵查找得到的主题
+   - 使用 AskUserQuestion："先看哪个主题？"以主题名称为选项，外加"全部（按序）"
 
-### Phase 3: Interactive Exploration
+### 阶段 3：交互式探索
 
-**For each topic in the roadmap:**
+**对于路线图中的每个主题：**
 
-1. **Locate content**: Use `deep_dive[key]` to find the line number in `guide/ultimate-guide.md`
+1. **定位内容**：使用 `deep_dive[key]` 在 `guide/ultimate-guide.md` 中找到行号
 
-2. **Fetch and summarize**: Get the relevant section (typically 50-100 lines from the line number)
+2. **获取并总结**：获取相关章节（通常从行号开始 50-100 行）
 
-3. **Present summary**: 2-3 key points adapted to BOTH style AND tone preferences:
+3. **呈现摘要**：2-3 个要点，同时适应风格和语气偏好：
 
-   **Style** (WHAT to emphasize):
-   - `explain` → Focus on WHY and concepts
-   - `examples` → Lead with code samples
-   - `reference` → Bullet points, no prose
-   - `handson` → Give them something to try immediately
+   **风格**（强调什么）：
+   - `explain` → 专注于为什么和概念
+   - `examples` → 以代码示例为主
+   - `reference` → 要点列表，无散文
+   - `handson` → 让他们立即尝试一些东西
 
-   **Tone** (HOW to deliver):
-   - `pedagogical` → Explain reasoning, use analogies, connect to broader concepts
-   - `direct` → State facts concisely, skip justifications, action-focused
-   - `coaching` → Ask questions first ("What do you think happens when...?"), guide discovery
-   - `adaptive` → Start direct, expand if user asks "why?", coach if user struggles
+   **语气**（如何传达）：
+   - `pedagogical` → 解释推理过程，使用类比，连接到更广泛的概念
+   - `direct` → 简洁陈述事实，跳过论证，以行动为导向
+   - `coaching` → 先提问（"你觉得当……时会发生什么？"），引导发现
+   - `adaptive` → 从直接开始，如果用户问"为什么"则扩展，如果用户遇到困难则引导
 
-   **Security-specific (learn_security goal only):**
-   When presenting security topics, add a hands-on option alongside the usual depth controls:
-   - After sandbox/permissions topic → "Try: Run `/security-check` to scan your current setup"
-   - After threat intelligence topic → "Try: Check your installed skills against known malicious patterns"
-   - After MCP vetting topic → "Try: Review your `~/.claude.json` against the MCP Safe List"
+   **安全特定（仅 learn_security 目标）：**
+   呈现安全主题时，在常规深度控制之外添加实操选项：
+   - 沙盒/权限主题后 → "试试：运行 `/security-check` 扫描你当前的设置"
+   - 威胁情报主题后 → "试试：检查你已安装的技能是否存在已知恶意模式"
+   - MCP 审查主题后 → "试试：对照 MCP 安全列表审查你的 `~/.claude.json`"
 
-4. **Depth control**: Use AskUserQuestion with options:
-   - "Go deeper" → Provide detailed explanation with examples
-   - "Next topic" → Brief summary, move to next topic
-   - "Skip" → Skip, but briefly mention what's being skipped (e.g., "Skipping Plan Mode. Note: it's for safe exploration before risky changes.")
-   - "Reset" → Restart onboarding with different preferences (go back to Phase 0)
+4. **深度控制**：使用 AskUserQuestion，选项：
+   - "深入" → 提供带示例的详细解释
+   - "下一个主题" → 简要总结，移到下一个主题
+   - "跳过" → 跳过，但简要提及跳过的内容（例如："跳过计划模式。注意：它用于在风险变更前进行安全探索。"）
+   - "重置" → 使用不同偏好重新开始入门引导（回到阶段 0）
 
-5. **Handle questions**: If user asks something specific, use `deep_dive` to find relevant section
+5. **处理问题**：如果用户询问特定内容，使用 `deep_dive` 查找相关章节
 
-### Phase 4: Wrap-up
+### 阶段 4：结束总结
 
-Based on time spent and topics covered:
+根据所用的时间和涵盖的主题：
 
-1. **Recap**: Summarize what was covered (3-5 bullet points)
+1. **回顾**：总结已涵盖的内容（3-5 个要点）
 
-2. **Quick wins**: Suggest 1-2 immediate actions based on their goal:
-   - `get_started` → "Try running `claude` and ask it to explain a file"
-   - `optimize` → "Use `/status` to check your context usage"
-   - `build_agents` → "Create a simple agent using the template shown"
-   - `learn_security` → "Run `/security-check` to scan your config against known threats (30 sec)"
-   - `fix_problem` → "Run `claude doctor` if issues persist"
+2. **快速制胜**：根据用户的目标建议 1-2 个即时操作：
+   - `get_started` → "尝试运行 `claude` 并让它解释一个文件"
+   - `optimize` → "使用 `/status` 检查你的上下文使用情况"
+   - `build_agents` → "使用展示的模板创建一个简单的代理"
+   - `learn_security` → "运行 `/security-check` 扫描你的配置是否存在已知威胁（30 秒）"
+   - `fix_problem` → "如果问题持续，运行 `claude doctor`"
 
-3. **Next steps**: Point to relevant resources with clickable URLs:
-   - **Quiz (RECOMMENDED)** - Validate what you learned (271 questions, 15 categories):
-     - Beginner (5min/15min/30min profiles): [Quiz - Basics](https://github.com/FlorianBruniaux/claude-code-ultimate-guide/tree/main/quiz#beginner-categories) - Categories: basics, commands, shortcuts, reference
-     - Intermediate (15min/30min profiles): [Quiz - Workflows](https://github.com/FlorianBruniaux/claude-code-ultimate-guide/tree/main/quiz#intermediate-categories) - Categories: workflows, context, agents, hooks
-     - Advanced/Power (30min/60min/120min profiles): [Quiz - Production](https://github.com/FlorianBruniaux/claude-code-ultimate-guide/tree/main/quiz#advanced-categories) - Categories: MCP, production, advanced, learning, ecosystem
-     - Security-focused: [Quiz - Security Hardening](https://github.com/FlorianBruniaux/claude-code-ultimate-guide-landing/tree/main/questions/13-security-hardening) - Attack techniques, CVEs, campaigns, scanning tools
-   - Cheat sheet: [Printable cheatsheet](https://github.com/FlorianBruniaux/claude-code-ultimate-guide/blob/main/guide/cheatsheet.md)
-   - Full guide: [Ultimate Guide (25K+ lines)](https://github.com/FlorianBruniaux/claude-code-ultimate-guide/blob/main/guide/ultimate-guide.md)
+3. **后续步骤**：指向带有可点击 URL 的相关资源：
+   - **测验（推荐）** — 验证你所学的内容（271 题，15 个类别）：
+     - 初学者（5 分钟/15 分钟/30 分钟画像）：[测验 - 基础](https://github.com/FlorianBruniaux/claude-code-ultimate-guide/tree/main/quiz#beginner-categories) - 类别：基础、命令、快捷键、参考
+     - 中级（15 分钟/30 分钟画像）：[测验 - 工作流](https://github.com/FlorianBruniaux/claude-code-ultimate-guide/tree/main/quiz#intermediate-categories) - 类别：工作流、上下文、代理、钩子
+     - 高级/资深用户（30 分钟/60 分钟/120 分钟画像）：[测验 - 生产](https://github.com/FlorianBruniaux/claude-code-ultimate-guide/tree/main/quiz#advanced-categories) - 类别：MCP、生产、高级、学习、生态
+     - 安全关注：[测验 - 安全加固](https://github.com/FlorianBruniaux/claude-code-ultimate-guide-landing/tree/main/questions/13-security-hardening) - 攻击技术、CVE、活动、扫描工具
+   - 速查表：[可打印速查表](https://github.com/FlorianBruniaux/claude-code-ultimate-guide/blob/main/guide/cheatsheet.md)
+   - 完整指南：[终极指南（25K+ 行）](https://github.com/FlorianBruniaux/claude-code-ultimate-guide/blob/main/guide/ultimate-guide.md)
 
-4. **Section-specific links**: When referencing specific sections, use GitHub line anchors:
-   - Format: `https://github.com/FlorianBruniaux/claude-code-ultimate-guide/blob/main/guide/ultimate-guide.md#L{line_number}`
-   - Example: Extended Thinking → `#L5684`, Context Triage → `#L1069`
+4. **章节特定链接**：引用特定章节时，使用 GitHub 行锚点：
+   - 格式：`https://github.com/FlorianBruniaux/claude-code-ultimate-guide/blob/main/guide/ultimate-guide.md#L{line_number}`
+   - 示例：扩展思考 → `#L5684`，上下文分流 → `#L1069`
 
-### Privacy Notice (show once, after Phase 2)
+### 隐私声明（在阶段 2 之后显示一次）
 
-⚠️ **Data Privacy Reminder**:
-- Everything shared with Claude Code is sent to Anthropic servers
-- Default retention: **5 years** (training enabled)
-- Action: [Disable training](https://claude.ai/settings/data-privacy-controls) → reduces to 30 days
-- Details: [Data Privacy Guide](https://github.com/FlorianBruniaux/claude-code-ultimate-guide/blob/main/guide/security/data-privacy.md)
+⚠️ **数据隐私提醒**：
+- 与 Claude Code 分享的所有内容都会发送到 Anthropic 服务器
+- 默认保留期：**5 年**（训练已启用）
+- 操作：[禁用训练](https://claude.ai/settings/data-privacy-controls) → 缩减至 30 天
+- 详情：[数据隐私指南](https://github.com/FlorianBruniaux/claude-code-ultimate-guide/blob/main/guide/security/data-privacy.md)
 
-## Output Format
+## 输出格式
 
-- Use tables for structured information
-- Use code blocks for commands and examples
-- Keep explanations concise unless user asks for details
-- Always end sections with a question to keep it interactive
-- Respond in user's preferred language throughout
+- 使用表格呈现结构化信息
+- 使用代码块呈现命令和示例
+- 除非用户要求详细说明，否则保持简洁
+- 始终以问题结束章节，保持互动性
+- 全程以用户偏好的语言回复
 
-## Key Principles
+## 关键原则
 
-1. **Fast**: 3 quick questions before delivering value
-2. **Targeted**: Content matches goal, not generic overview
-3. **Interactive**: User controls pace and depth
-4. **Practical**: Focus on actionable knowledge
-5. **Multilingual**: Full conversation in preferred language
-6. **Adaptable**: Users can reset and change preferences anytime
+1. **快速**：3 个快速问题后即提供价值
+2. **精准**：内容匹配目标，而非通用概述
+3. **交互**：用户控制节奏和深度
+4. **实用**：专注于可操作的知识
+5. **多语言**：全程使用偏好语言交流
+6. **可适应**：用户可以随时重置和更改偏好
 
-## Start Now
+## 现在开始
 
-Begin by asking about preferred language.
+首先询问用户偏好的语言。
 
 ---
 
-## Portability & Limitations
+## 可移植性与限制
 
-**This prompt uses Claude Code-specific features:**
-- `AskUserQuestion` tool (Phase 0, 1.5, 2, 3) - Not available in ChatGPT/Gemini/other LLMs
-- Adaptive topic selection logic - Requires LLM capable of parsing user context for keywords
+**此提示词使用了 Claude Code 特定功能：**
+- `AskUserQuestion` 工具（阶段 0、1.5、2、3）— 在 ChatGPT/Gemini/其他 LLM 中不可用
+- 自适应主题选择逻辑 — 需要能够解析用户上下文以提取关键词的 LLM
 
-**For non-Claude Code LLMs (ChatGPT, Gemini, etc.):**
-1. Replace `AskUserQuestion` with manual text prompts: "Choose one: (1) English, (2) Français, (3) Español"
-2. Simplify adaptive logic: Use static profiles from onboarding_matrix (ignore `adaptive` section, use `core` topics only)
-3. Manually paste reference.yaml content if WebFetch fails (or use fallback roadmap)
+**对于非 Claude Code LLM（ChatGPT、Gemini 等）：**
+1. 将 `AskUserQuestion` 替换为手动文本提示："请选择：(1) English、(2) Français、(3) Español"
+2. 简化自适应逻辑：使用 onboarding_matrix 中的静态画像（忽略 `adaptive` 部分，仅使用 `core` 主题）
+3. 如果 WebFetch 失败，手动粘贴 reference.yaml 内容（或使用备用路线图）
 
-**Localization status (v3.32.2):**
-- Core guide content: **English only**
-- v3.21-3.32 topics: **English only** (dual_instance, git_mcp, sandbox_native, config_hierarchy, mcp_secrets, plan_pipeline)
-- French/Spanish onboarding: Claude translates on-the-fly from English sections
-- **Limitation**: Translations not verified by native speakers, may have inaccuracies or awkward phrasing
-- Quiz: English only (271 questions)
+**本地化状态（v3.32.2）：**
+- 核心指南内容：**仅英文**
+- v3.21-3.32 主题：**仅英文**（dual_instance、git_mcp、sandbox_native、config_hierarchy、mcp_secrets、plan_pipeline）
+- 法语/西班牙语入门引导：Claude 从英文章节即时翻译
+- **限制**：翻译未经母语者验证，可能存在不准确或表达生硬的问题
+- 测验：仅英文（271 题）
 
-**If translation quality is critical**: Recommend English onboarding for best accuracy, especially for technical v3.21-3.32 content.
+**如果翻译质量至关重要**：建议使用英文入门引导以获得最佳准确性，尤其是针对技术性的 v3.21-3.32 内容。
 ```
 
 ---
 
-## 5. Example Interaction
+## 5. 交互示例
 
-**Claude**: What language would you prefer for this onboarding?
+**Claude**：你希望用什么语言进行此入门引导？
 
-**You**: French
+**你**：法语
 
-**Claude**: Parfait ! Quel est ton objectif maintenant ?
+**Claude**：Parfait ! Quel est ton objectif maintenant ?
 - 🚀 **Démarrer** - Apprendre les bases rapidement
 - 📈 **Optimiser** - Améliorer mon workflow existant
 - 🏗️ **Créer des agents** - Construire des agents/skills personnalisés
@@ -333,65 +333,65 @@ Begin by asking about preferred language.
 - 🐛 **Résoudre un problème** - Dépanner un souci
 - 📚 **Tout apprendre** - Tour guidé complet
 
-**You**: Optimiser
+**你**：Optimiser
 
-**Claude**: Quel est ton niveau avec Claude Code ?
+**Claude**：Quel est ton niveau avec Claude Code ?
 - 🟢 Débutant
 - 🟡 Intermédiaire
 - 🔴 Power User
 
-**You**: Intermédiaire
+**你**：Intermédiaire
 
-**Claude**: Combien de temps as-tu ?
+**Claude**：Combien de temps as-tu ?
 - ⚡ 5-10 min
 - ⏱️ 15-30 min
 - 🎯 30-60 min
 
-**You**: 15-30 min
+**你**：15-30 min
 
-**Claude**:
-*[Loads reference.yaml, looks up `optimize.intermediate_15min`]*
+**Claude**：
+*[加载 reference.yaml，查找 `optimize.intermediate_15min`]*
 
-**5 Règles d'Or** (à retenir) :
-1. Toujours relire les diffs avant d'accepter
-2. `/compact` dès 70% de contexte
-3. Être précis : QUOI + OÙ + COMMENT + VÉRIFIER
-4. Plan Mode d'abord pour les tâches complexes
-5. Créer un CLAUDE.md pour chaque projet
+**5 条黄金规则**（要记住）：
+1. 在接受前始终审查差异
+2. 上下文超过 70% 时使用 `/compact`
+3. 具体明确：什么 + 在哪里 + 怎么做 + 如何验证
+4. 对于复杂任务先使用计划模式
+5. 为每个项目创建 CLAUDE.md
 
-**Ton parcours** (3 topics, ~15 min) :
-1. Gestion du contexte
-2. Triage du contexte
-3. Plan Mode
+**你的学习路线**（3 个主题，约 15 分钟）：
+1. 上下文管理
+2. 上下文分流
+3. 计划模式
 
-Par quel sujet veux-tu commencer ?
+你想从哪个主题开始？
 
 ---
 
-## 6. Tips for Best Results
+## 6. 最佳实践技巧
 
-| Tip | Why It Helps |
+| 技巧 | 为何有帮助 |
 |-----|--------------|
-| **Be honest about your goal** | Gets you targeted content, not generic tour |
-| **Say "deeper" when curious** | Claude will provide more examples |
-| **Say "skip" freely** | No need to cover what you know |
-| **Ask questions anytime** | Claude will find the relevant section |
+| **诚实地设定你的目标** | 获得针对性内容，而非通用导览 |
+| **好奇时说"深入"** | Claude 会提供更多示例 |
+| **随时说"跳过"** | 无需覆盖你已经知道的内容 |
+| **随时提问** | Claude 会找到相关章节 |
 
 ---
 
-## 7. Related Resources
+## 7. 相关资源
 
-- [Reference Index](../machine-readable/reference.yaml) - The navigation map Claude uses
-- [Ultimate Guide](../guide/ultimate-guide.md) - Full documentation
-- [Cheat Sheet](../guide/cheatsheet.md) - Print this, start coding
-- [Setup Audit](./audit-prompt.md) - Analyze your configuration
-- [Quiz](../quiz/) - Test your knowledge
+- [参考索引](../machine-readable/reference.yaml) - Claude 使用的导航地图
+- [终极指南](../guide/ultimate-guide.md) - 完整文档
+- [速查表](../guide/cheatsheet.md) - 打印出来，开始编码
+- [设置审计](./audit-prompt.md) - 分析你的配置
+- [测验](../quiz/) - 测试你的知识
 
 ---
 
-## 8. Feedback
+## 8. 反馈
 
-Found this helpful? Have suggestions?
-- Star the repo: [claude-code-ultimate-guide](https://github.com/FlorianBruniaux/claude-code-ultimate-guide)
-- Open an issue for improvements
-- Share with others learning Claude Code
+觉得有帮助？有建议？
+- 给仓库加星：[claude-code-ultimate-guide](https://github.com/FlorianBruniaux/claude-code-ultimate-guide)
+- 提出 issue 以改进
+- 与正在学习 Claude Code 的其他人分享

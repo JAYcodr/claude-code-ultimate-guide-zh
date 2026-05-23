@@ -1,26 +1,26 @@
-# Spec Completeness Audit for Coding Agents
+# 面向编码AI助手的规范完整性审计
 
-> Self-contained prompt that audits how well a codebase is specified for agent delegation.
-> Based on the 5-layer framework from Hamidreza Saghir's "Your coding agent is under-specified".
+> 一个自包含的提示词，用于审计代码库对AI代理委派的规范完备程度。
+> 基于 Hamidreza Saghir 的"你的编码AI代理缺少规范"中的5层框架。
 
-**Use case**: Run on any project before heavy agent delegation to detect specification gaps that will cause silent architectural drift.
+**用途**：在任何项目进行大规模AI代理委派前运行，以检测会导致无声架构漂移的规范缺口。
 
-**Time**: ~3–5 min. No changes made without explicit approval.
+**耗时**：约3-5分钟。未经明确批准不会做任何更改。
 
 ---
 
-## How to Use
+## 使用方法
 
 ```bash
 cd your-project-directory
 claude
 ```
 
-Paste the prompt below and press Enter.
+粘贴下方的提示词并按回车。
 
 ---
 
-## The Prompt
+## 提示词内容
 
 ````markdown
 # Spec Completeness Audit — v1.0
@@ -333,33 +333,33 @@ Wait for explicit user response before taking any action.
 
 ---
 
-## Understanding Results
+## 理解结果
 
-### Risk Tiers
+### 风险等级
 
-| Score | Tier | Agent delegation posture |
-|-------|------|--------------------------|
-| 80–100 | Safe | Broad delegation OK. Brief architectural reminder per task. |
-| 60–79 | Supervised | Delegate with explicit L3 constraints per task. Review every commit. |
-| 40–59 | Risky | Plan-mode + reviewer agent. Specify arch before each session. |
-| <40 | Unsafe | Code tasks only, never architectural. Exhaust per-task specs. |
+| 分数 | 等级 | AI代理委派姿态 |
+|------|------|---------------|
+| 80–100 | 安全 | 可进行广泛委派。每项任务附带简要架构提醒。 |
+| 60–79 | 受监督 | 每项任务附带显式的L3约束进行委派。审查每次提交。 |
+| 40–59 | 高风险 | 计划模式 + 审查AI代理。每次会话前指定架构。 |
+| <40 | 不安全 | 仅限编码任务，绝不涉及架构。每项任务给出详尽规范。 |
 
-### The Layer That Matters Most
+### 最重要的层级
 
-**Layer 3 (Architectural, 30 pts)** is weighted highest because it's both the most commonly missing and the hardest to detect when wrong. An agent that gets L1 right but fails L3 writes code that works today and rots next month. No test catches it.
+**层级3（架构规范，30分）** 权重最高，因为它既是最常缺失的，也是最难在出错时检测的。一个正确完成L1但失败于L3的AI代理会编写今天能工作但下个月就腐化的代码。没有测试能捕获这种问题。
 
-### What "Safe" Means
+### "安全"意味着什么
 
-A project scoring 80+ still requires layer-specific prompt augmentation for each task. "Safe" means the agent has enough context to avoid the worst silent fills — not that you can delegate and walk away.
-
----
-
-## Related
-
-- [`tools/audit-prompt.md`](audit-prompt.md) — Claude Code setup audit (security, rules, memory, MCP)
-- [`tools/context-audit-prompt.md`](context-audit-prompt.md) — token budget and context engineering
-- Source: Hamidreza Saghir, "Your coding agent is under-specified" (May 2026)
+一个得分80+的项目仍然需要每项任务针对特定层级增强提示词。"安全"意味着AI代理有足够的上下文来避免最糟糕的无声填补——而不是你可以委派后一走了之。
 
 ---
 
-*Version 1.0 — spec-completeness-audit*
+## 相关链接
+
+- [`tools/audit-prompt.md`](audit-prompt.md) — Claude Code 设置审计（安全、规则、记忆、MCP）
+- [`tools/context-audit-prompt.md`](context-audit-prompt.md) — Token 预算与上下文工程
+- 来源：Hamidreza Saghir, "你的编码AI代理缺少规范"（2026年5月）
+
+---
+
+*版本 1.0 — 规范完整性审计*

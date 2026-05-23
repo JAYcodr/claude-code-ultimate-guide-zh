@@ -1,94 +1,94 @@
-# Audit Your Context Engineering Setup
+# 审计你的上下文工程设置
 
-> A self-contained prompt to measure and improve your Claude Code context architecture.
+> 一个独立的提示词，用于衡量和改善你的 Claude Code 上下文架构。
 
-**Author**: [Florian BRUNIAUX](https://github.com/FlorianBruniaux) | Founding Engineer [@Méthode Aristote](https://methode-aristote.fr)
+**作者**: [Florian BRUNIAUX](https://github.com/FlorianBruniaux) | 创始工程师 [@Méthode Aristote](https://methode-aristote.fr)
 
-**Reference**: [The Ultimate Claude Code Guide](https://github.com/FlorianBruniaux/claude-code-ultimate-guide/blob/main/guide/ultimate-guide.md)
-
----
-
-## 1. What This Does
-
-This prompt instructs Claude to audit your context engineering setup by:
-
-1. **Measuring** total always-on context size, CLAUDE.md length, and path-scoping ratio
-2. **Detecting** skills-to-rules balance, redundancy, and negative vs positive instructions
-3. **Flagging** staleness signals (last updated, broken imports, deprecated references)
-4. **Scoring** across 8 dimensions for a total of /100 with prioritized recommendations
-
-**Performance**: Uses bash/grep for efficient scanning. Claude reads files only when specific content analysis is needed.
-
-**Important**: Claude will NOT make any changes without your explicit approval.
+**参考**: [Claude Code 终极指南](https://github.com/FlorianBruniaux/claude-code-ultimate-guide/blob/main/guide/ultimate-guide.md)
 
 ---
 
-## 2. Who This Is For
+## 1. 这是做什么的
 
-| Level | What You Get |
+本提示词指示 Claude 审计你的上下文工程设置，具体包括：
+
+1. **衡量** 总常驻上下文大小、CLAUDE.md 长度和路径作用域比率
+2. **检测** 技能与规则的平衡、冗余度以及负面与正面指令的对比
+3. **标记** 过时信号（最后更新时间、损坏的导入、已弃用的引用）
+4. **评分** 涵盖 8 个维度，总分 /100，附带优先级建议
+
+**性能**：使用 bash/grep 进行高效扫描。Claude 仅在需要特定内容分析时读取文件。
+
+**重要提示**：Claude 不会在未经你明确批准的情况下做任何更改。
+
+---
+
+## 2. 适用对象
+
+| 级别 | 你将获得 |
 |-------|-------------|
-| **Solo developer** | Find quick wins: trim bloat, add missing sections, fix stale imports |
-| **Small team (2-10)** | Identify consistency gaps and opportunities for profile-based assembly |
-| **Large team (10+)** | Systematic context architecture assessment with maturity scoring |
+| **独立开发者** | 快速制胜：精简冗余、补充缺失章节、修复过时导入 |
+| **小团队（2-10人）** | 发现一致性差距和基于配置文件组装的机会 |
+| **大团队（10人以上）** | 系统性的上下文架构评估与成熟度评分 |
 
-**Prerequisites**:
-- Claude Code installed and working
-- A project with at least a CLAUDE.md or `.claude/` directory
-- Bash shell (native on macOS/Linux, WSL on Windows)
+**前置条件**：
+- 已安装并正常运行的 Claude Code
+- 至少包含 CLAUDE.md 或 `.claude/` 目录的项目
+- Bash 终端（macOS/Linux 原生支持，Windows 使用 WSL）
 
-**Time**: ~3-5 minutes
+**耗时**：约 3-5 分钟
 
 ---
 
-## 3. How to Use It
+## 3. 使用方法
 
-### Step 1: Copy the Prompt
+### 步骤 1：复制提示词
 
-Copy everything inside the code block in [Section 4](#4-the-prompt) below.
+复制下方[第 4 节](#4-the-prompt)代码块中的所有内容。
 
-### Step 2: Run Claude Code
+### 步骤 2：运行 Claude Code
 
 ```bash
 cd your-project-directory
 claude
 ```
 
-### Step 3: Paste and Execute
+### 步骤 3：粘贴并执行
 
-Paste the prompt and press Enter. Claude will begin the audit.
+粘贴提示词并按下回车。Claude 将开始审计。
 
-### Step 4: Review Results
+### 步骤 4：查看结果
 
-Claude will present findings, then ask for validation before making any changes.
+Claude 将展示审计结果，然后在进行任何更改前征求你的确认。
 
-### Platform Note
+### 平台说明
 
-| Platform | Global Config Path |
+| 平台 | 全局配置路径 |
 |----------|-------------------|
 | **macOS/Linux** | `~/.claude/` |
 | **Windows** | `%USERPROFILE%\.claude\` |
 
 ---
 
-## 4. The Prompt
+## 4. 提示词
 
 ```markdown
-# Audit My Context Engineering Setup
+# 审计我的上下文工程设置
 
-## Context
+## 上下文
 
-Perform a comprehensive context engineering audit of my Claude Code configuration.
-Focus on context size, structure quality, freshness, and team scalability.
+对我的 Claude Code 配置进行全面上下文工程审计。
+重点关注上下文大小、结构质量、新鲜度和团队可扩展性。
 
-Reference: https://github.com/FlorianBruniaux/claude-code-ultimate-guide/blob/main/guide/ultimate-guide.md
+参考：https://github.com/FlorianBruniaux/claude-code-ultimate-guide/blob/main/guide/ultimate-guide.md
 
-## Instructions
+## 指令
 
-### Phase 1: Discovery (Bash Scan)
+### 阶段 1：发现（Bash 扫描）
 
-**IMPORTANT**: Use bash commands exclusively in this phase. Do NOT read files yet.
+**重要提示**：此阶段仅使用 bash 命令。请勿读取文件。
 
-#### 1.1 Size & Structure Scan
+#### 1.1 大小与结构扫描
 
 ```bash
 bash -c '
@@ -158,9 +158,9 @@ done
 '
 ```
 
-**Store the output** for evaluation.
+**保存输出**，用于后续评估。
 
-#### 1.2 Quality Pattern Scan
+#### 1.2 质量模式扫描
 
 ```bash
 bash -c '
@@ -224,9 +224,9 @@ done
 '
 ```
 
-**Store the output** for evaluation.
+**保存输出**，用于后续评估。
 
-#### 1.3 Freshness & Conflict Scan
+#### 1.3 新鲜度与冲突扫描
 
 ```bash
 bash -c '
@@ -262,283 +262,283 @@ done
 '
 ```
 
-**Store the output** for evaluation.
+**保存输出**，用于后续评估。
 
-### Phase 2: Evaluate Across 8 Dimensions
+### 阶段 2：在 8 个维度上进行评估
 
-Use the scan outputs from Phase 1. Read specific file sections only if content examples are needed for the report.
+使用阶段 1 的扫描输出。仅在报告需要内容示例时读取特定文件章节。
 
-#### Dimension 1: Size & Budget (15 pts)
+#### 维度 1：大小与预算（15 分）
 
 Evaluate based on token estimates from Phase 1:
 
-| Check | Points | Threshold |
+| 检查项 | 分值 | 阈值 |
 |-------|--------|-----------|
-| Total always-on context under 8K tokens | 5 | Sum of all CLAUDE.md + imports |
-| Rule count under 150 instructions | 5 | global + project combined |
-| No single file over 400 lines | 5 | flag if exceeded |
+| 总常驻上下文低于 8K tokens | 5 | 所有 CLAUDE.md + 导入之和 |
+| 规则数量低于 150 条 | 5 | 全局 + 项目合并 |
+| 无单个文件超过 400 行 | 5 | 超出则标记 |
 
-Deduct points proportionally if thresholds are exceeded. A file at 600 lines = 3/5 not 0.
+如果超出阈值则按比例扣分。600 行的文件 = 3/5 而非 0。
 
-#### Dimension 2: Structure (15 pts)
+#### 维度 2：结构（15 分）
 
-| Check | Points | Signal |
+| 检查项 | 分值 | 信号 |
 |-------|--------|--------|
-| Has an overview/purpose section | 4 | h2 with "overview", "purpose", "about", "context" |
-| Has architecture or project-layout section | 3 | h2 with "architecture", "structure", "layout" |
-| Includes anti-patterns or bad examples | 4 | "anti-pattern", "do not", "pitfall" |
-| Section count indicates clear hierarchy | 4 | 3+ distinct h2 sections |
+| 包含概述/目的章节 | 4 | 带有"overview"、"purpose"、"about"、"context"的 h2 |
+| 包含架构或项目布局章节 | 3 | 带有"architecture"、"structure"、"layout"的 h2 |
+| 包含反模式或错误示例 | 4 | "anti-pattern"、"do not"、"pitfall" |
+| 章节数量体现清晰的层级结构 | 4 | 3 个以上不同的 h2 章节 |
 
-#### Dimension 3: Path-Scoping (12 pts)
+#### 维度 3：路径作用域（12 分）
 
-| Check | Points | Signal |
+| 检查项 | 分值 | 信号 |
 |-------|--------|--------|
-| Uses @imports for modular breakdown | 5 | at least 2 @import lines |
-| At least one path-specific or glob-scoped rule | 4 | globs: or file-specific section |
-| Not a monolithic file (all instructions in one block) | 3 | multiple files or sections |
+| 使用 @imports 进行模块化拆分 | 5 | 至少 2 行 @import |
+| 至少一条路径特定或 glob 作用域的规则 | 4 | globs: 或特定文件章节 |
+| 非单一文件（所有指令在一个块中） | 3 | 多个文件或章节 |
 
-#### Dimension 4: Rule Quality (15 pts)
+#### 维度 4：规则质量（15 分）
 
-| Check | Points | Signal |
+| 检查项 | 分值 | 信号 |
 |-------|--------|--------|
-| Ratio positive:negative >= 2:1 | 5 | from negative/positive counts |
-| No vague instructions detected | 5 | zero "be careful", "as needed", etc. |
-| Rules are specific and actionable | 5 | judged from sample during report generation |
+| 正面与负面指令比例 >= 2:1 | 5 | 来自负面/正面计数 |
+| 未检测到模糊指令 | 5 | 零个"be careful"、"as needed"等 |
+| 规则具体且可执行 | 5 | 在报告生成时通过样本判断 |
 
-#### Dimension 5: Freshness (12 pts)
+#### 维度 5：新鲜度（12 分）
 
-| Check | Points | Signal |
+| 检查项 | 分值 | 信号 |
 |-------|--------|--------|
-| CLAUDE.md committed within past 6 months | 5 | git log output |
-| No deprecated tool/model references | 4 | deprecated scan output |
-| No broken @imports | 3 | BROKEN lines in import scan |
+| CLAUDE.md 在过去 6 个月内有提交 | 5 | git log 输出 |
+| 无已弃用的工具/模型引用 | 4 | 弃用扫描输出 |
+| 无损坏的 @imports | 3 | 导入扫描中的 BROKEN 行 |
 
-#### Dimension 6: Team Readiness (10 pts)
+#### 维度 6：团队就绪度（10 分）
 
-| Check | Points | Signal |
+| 检查项 | 分值 | 信号 |
 |-------|--------|--------|
-| Has profile-based or role-based structure | 4 | profile mentions >= 1 |
-| Module imports enable selective assembly | 3 | module-imports >= 3 |
-| Documented update protocol for team | 3 | update-protocol >= 1 |
+| 包含基于配置文件或角色的结构 | 4 | profile 提及次数 >= 1 |
+| 模块导入实现选择性组装 | 3 | module-imports >= 3 |
+| 为团队记录的更新协议 | 3 | update-protocol >= 1 |
 
-#### Dimension 7: Conflict Detection (11 pts)
+#### 维度 7：冲突检测（11 分）
 
-| Check | Points | Signal |
+| 检查项 | 分值 | 信号 |
 |-------|--------|--------|
-| No contradictory rules detected | 5 | no conflicts from scan |
-| No duplicate section headers | 3 | no duplicates found |
-| Session retro or knowledge loop pattern | 3 | session-retro >= 1 |
+| 未检测到矛盾规则 | 5 | 扫描无冲突 |
+| 无重复章节标题 | 3 | 未发现重复 |
+| 会话回顾或知识循环模式 | 3 | session-retro >= 1 |
 
-#### Dimension 8: Knowledge Loop (10 pts)
+#### 维度 8：知识循环（10 分）
 
-| Check | Points | Signal |
+| 检查项 | 分值 | 信号 |
 |-------|--------|--------|
-| Has update/review protocol documented | 4 | update-protocol >= 1 |
-| Has session retro or lesson-learned pattern | 3 | session-retro >= 1 |
-| Context tracked in git (auditable changes) | 3 | git freshness scan shows commits |
+| 具有已文档化的更新/审查协议 | 4 | update-protocol >= 1 |
+| 具有会话回顾或经验教训模式 | 3 | session-retro >= 1 |
+| 上下文在 git 中跟踪（可审计的变更） | 3 | git 新鲜度扫描显示有提交 |
 
-#### Calculate Total Score
+#### 计算总分
 
-`Score = sum of earned points across all 8 dimensions`
+`总分 = 所有 8 个维度得分之和`
 
-### Phase 3: Generate Report
+### 阶段 3：生成报告
 
-Structure your output exactly as:
+请严格按照以下结构输出：
 
 ---
 
-## Context Engineering Audit
+## 上下文工程审计
 
-### Score: [XX]/100
+### 得分：[XX]/100
 
-| Dimension | Score | Notes |
+| 维度 | 得分 | 备注 |
 |-----------|-------|-------|
-| Size & Budget | X/15 | total ~X tokens, X rules |
-| Structure | X/15 | X sections, has/missing overview |
-| Path-Scoping | X/12 | X imports, monolithic/modular |
-| Rule Quality | X/15 | X% positive, X vague found |
-| Freshness | X/12 | last updated X, X broken imports |
-| Team Readiness | X/10 | X profiles, update protocol: yes/no |
-| Conflict Detection | X/11 | X contradictions, X duplicate headers |
-| Knowledge Loop | X/10 | git tracked: yes/no, retro: yes/no |
+| 大小与预算 | X/15 | 总计 ~X tokens，X 条规则 |
+| 结构 | X/15 | X 个章节，有/缺少概述 |
+| 路径作用域 | X/12 | X 个导入，单体/模块化 |
+| 规则质量 | X/15 | X% 正面，发现 X 处模糊 |
+| 新鲜度 | X/12 | 最后更新 X，X 个损坏导入 |
+| 团队就绪度 | X/10 | X 个配置文件，更新协议：有/无 |
+| 冲突检测 | X/11 | X 处矛盾，X 个重复标题 |
+| 知识循环 | X/10 | git 跟踪：有/无，回顾：有/无 |
 
-### Context Budget
-- Global CLAUDE.md: ~X tokens
-- Project CLAUDE.md: ~X tokens
-- @imports combined: ~X tokens
-- Total always-on: ~X tokens
-- Rule count: X/150 instructions
+### 上下文预算
+- 全局 CLAUDE.md：~X tokens
+- 项目 CLAUDE.md：~X tokens
+- @imports 合计：~X tokens
+- 总常驻上下文：~X tokens
+- 规则数量：X/150 条
 
-### Priority Issues (fix these first)
-1. [Issue] — [specific fix with example]
-2. [Issue] — [specific fix with example]
-3. [Issue] — [specific fix with example]
+### 优先级问题（优先修复）
+1. [问题] — [具体修复方案及示例]
+2. [问题] — [具体修复方案及示例]
+3. [问题] — [具体修复方案及示例]
 
-### Quick Wins (< 30 min each)
-- [Fix]: [what to do and where]
-- [Fix]: [what to do and where]
-- [Fix]: [what to do and where]
+### 快速制胜（每项 < 30 分钟）
+- [修复]：[做什么及在哪里]
+- [修复]：[做什么及在哪里]
+- [修复]：[做什么及在哪里]
 
-### Maturity Level
-[Choose one and explain why]
+### 成熟度等级
+[选择一个并说明原因]
 
-**Level 1 — Empty** (0-19): No structured context. Claude operates with zero project knowledge.
-**Level 2 — Basic** (20-39): CLAUDE.md exists but is monolithic, stale, or mostly vague rules.
-**Level 3 — Structured** (40-59): Clear sections and imports, but missing freshness or team patterns.
-**Level 4 — Optimized** (60-79): Modular, scoped, positive-first rules with a known update cadence.
-**Level 5 — Engineering-Grade** (80-100): Profile-aware, git-tracked, conflict-free, knowledge loop active.
+**Level 1 — 空置**（0-19）：无结构化上下文。Claude 在零项目知识下运行。
+**Level 2 — 基础**（20-39）：存在 CLAUDE.md，但为单体、过时或大多为模糊规则。
+**Level 3 — 结构化**（40-59）：清晰的章节和导入，但缺少新鲜度或团队模式。
+**Level 4 — 已优化**（60-79）：模块化、作用域限定、正面优先规则，具有已知的更新节奏。
+**Level 5 — 工程级**（80-100）：配置文件感知、git 跟踪、无冲突、知识循环活跃。
 
-### Ready-to-use Improvements
+### 即用型改进
 
-Provide 2-3 concrete text blocks that users can paste directly into their CLAUDE.md.
-Each block must address a Priority Issue identified above. Format:
+提供 2-3 个具体文本块，用户可直接粘贴到他们的 CLAUDE.md 中。
+每个块必须解决上述优先级问题。格式：
 
-**Improvement 1: [name]**
-File: `[path]` — add at [top/section X/end]
+**改进 1：[名称]**
+文件：`[路径]` — 添加到[顶部/章节 X/末尾]
 ```
-[exact text to paste]
-```
-
-**Improvement 2: [name]**
-File: `[path]` — add at [top/section X/end]
-```
-[exact text to paste]
+[要粘贴的精确文本]
 ```
 
----
-
-### Phase 4: Await Validation
-
-**CRITICAL**: Do NOT create or modify any files without explicit approval.
-
-After presenting the report, ask:
-
-"Which improvements would you like me to implement?
-
-Options:
-- `all` — Apply all ready-to-use improvements
-- `1, 2` — Specific improvements by number
-- `priority` — Only Priority Issues fixes
-- `none` — Keep the report for reference only
-
-Please specify your choice:"
-
-Wait for explicit user response before taking any action.
-
-## Output Format
-
-Structure your response exactly as:
-
-1. **Score table** with dimension breakdown
-2. **Context Budget** summary
-3. **Priority Issues** (numbered, fix first)
-4. **Quick Wins** (bullet list, < 30 min each)
-5. **Maturity Level** with explanation
-6. **Ready-to-use Improvements** (paste-ready text blocks)
-7. **Validation Request** (ask before implementing)
+**改进 2：[名称]**
+文件：`[路径]` — 添加到[顶部/章节 X/末尾]
+```
+[要粘贴的精确文本]
 ```
 
 ---
 
-## 5. What to Expect
+### 阶段 4：等待确认
 
-Here's an example of what the audit report looks like:
+**关键提示**：未经明确批准，请勿创建或修改任何文件。
 
-### Example Score Table
+呈现报告后，询问：
+
+"你希望我实施哪些改进？
+
+选项：
+- `all` — 应用所有即用型改进
+- `1, 2` — 按编号指定改进
+- `priority` — 仅修复优先级问题
+- `none` — 仅保留报告供参考
+
+请指定你的选择："
+
+等待用户明确回复后再采取任何行动。
+
+## 输出格式
+
+请严格按以下结构组织回复：
+
+1. **得分表**，包含各维度细分
+2. **上下文预算**摘要
+3. **优先级问题**（编号，优先修复）
+4. **快速制胜**（项目列表，每项 < 30 分钟）
+5. **成熟度等级**及说明
+6. **即用型改进**（可直接粘贴的文本块）
+7. **确认请求**（实施前先询问）
+```
+
+---
+
+## 5. 预期结果
+
+以下是审计报告示例：
+
+### 得分表示例
 
 ```
-## Context Engineering Audit
+## 上下文工程审计
 
-### Score: 52/100
+### 得分：52/100
 
-| Dimension | Score | Notes |
+| 维度 | 得分 | 备注 |
 |-----------|-------|-------|
-| Size & Budget | 10/15 | ~6,200 tokens total, 182 rules (over limit) |
-| Structure | 9/15 | 4 sections, no anti-patterns section |
-| Path-Scoping | 4/12 | 1 import, monolithic project CLAUDE.md |
-| Rule Quality | 8/15 | 60% positive, 3 vague instructions found |
-| Freshness | 9/12 | last commit 4 months ago, 1 broken import |
-| Team Readiness | 3/10 | no profiles, no update protocol |
-| Conflict Detection | 6/11 | 1 "always/never" contradiction, no duplicate headers |
-| Knowledge Loop | 3/10 | not git tracked, no retro pattern |
+| 大小与预算 | 10/15 | 总计约 6,200 tokens，182 条规则（超出限制） |
+| 结构 | 9/15 | 4 个章节，无反模式章节 |
+| 路径作用域 | 4/12 | 1 个导入，单体项目 CLAUDE.md |
+| 规则质量 | 8/15 | 60% 正面，发现 3 条模糊指令 |
+| 新鲜度 | 9/12 | 最后提交在 4 个月前，1 个损坏导入 |
+| 团队就绪度 | 3/10 | 无配置文件，无更新协议 |
+| 冲突检测 | 6/11 | 1 处"总是/从不"矛盾，无重复标题 |
+| 知识循环 | 3/10 | 未进行 git 跟踪，无回顾模式 |
 ```
 
-### Example Quick Wins
+### 快速制胜示例
 
 ```
-Quick Wins (< 30 min each):
-- Fix broken import: @~/.claude/TONE.md not found — update path or remove
-- Add overview section: 2-line project description at top of CLAUDE.md
-- Trim rule count: merge 3 formatting rules into one compressed block
+快速制胜（每项 < 30 分钟）：
+- 修复损坏导入：@~/.claude/TONE.md 未找到 — 更新路径或移除
+- 添加概述章节：在 CLAUDE.md 顶部添加 2 行项目描述
+- 精简规则数量：将 3 条格式规则合并为一个压缩块
 ```
 
 ---
 
-## 6. Scoring Guide
+## 6. 评分指南
 
-| Score | Maturity | Recommended Action |
+| 分数 | 成熟度 | 建议操作 |
 |-------|----------|--------------------|
-| **80-100** | Level 5: Engineering-Grade | Maintain with quarterly review |
-| **60-79** | Level 4: Optimized | Address priority issues, reach 80 |
-| **40-59** | Level 3: Structured | Dedicate a session to improvement |
-| **20-39** | Level 2: Basic | Restructure recommended, use template |
-| **0-19** | Level 1: Empty | Start fresh with skeleton template |
+| **80-100** | Level 5：工程级 | 每季度审查维护 |
+| **60-79** | Level 4：已优化 | 解决优先级问题，达到 80 |
+| **40-59** | Level 3：结构化 | 专门安排一次改进会话 |
+| **20-39** | Level 2：基础 | 建议重构，使用模板 |
+| **0-19** | Level 1：空置 | 使用骨架模板重新开始 |
 
 ---
 
-## 7. Glossary
+## 7. 术语表
 
-| Term | Definition |
+| 术语 | 定义 |
 |------|-----------|
-| **Always-on context** | Everything Claude loads before your first message: CLAUDE.md files plus all @imports |
-| **@import** | A line starting with `@` in CLAUDE.md that loads another file into context |
-| **Path-scoping** | Applying rules only to specific file types or directories, not globally |
-| **Rule quality** | Specificity and actionability of instructions — vague rules waste tokens and confuse Claude |
-| **Knowledge loop** | The practice of updating context files after sessions based on what worked and what didn't |
-| **Profile assembly** | Combining different context modules to create role-specific setups (junior, senior, reviewer) |
-| **Staleness signal** | Indicators that context is outdated: broken imports, deprecated model names, no git history |
-| **Conflict** | Two rules that contradict each other — Claude will pick one arbitrarily, usually the wrong one |
-| **Monolithic CLAUDE.md** | A single large file with all instructions, no imports, no modular breakdown |
-| **Maturity level** | A 1-5 scale measuring context engineering sophistication from empty to engineering-grade |
+| **常驻上下文** | Claude 在第一条消息之前加载的所有内容：CLAUDE.md 文件及所有 @imports |
+| **@import** | CLAUDE.md 中以 `@` 开头的行，用于将另一个文件加载到上下文中 |
+| **路径作用域** | 仅对特定文件类型或目录应用规则，而非全局 |
+| **规则质量** | 指令的明确性和可执行性 — 模糊的规则浪费 tokens 并使 Claude 困惑 |
+| **知识循环** | 根据会话中有效和无效的内容更新上下文文件的实践 |
+| **配置文件组装** | 组合不同的上下文模块以创建特定角色的设置（初级、高级、审查者） |
+| **过时信号** | 表明上下文已过时的指标：损坏的导入、已弃用的模型名称、无 git 历史 |
+| **冲突** | 两条相互矛盾的规则 — Claude 会任意选择一条，通常选错 |
+| **单体 CLAUDE.md** | 包含所有指令的单个大文件，无导入，无模块化拆分 |
+| **成熟度等级** | 衡量上下文工程成熟度的 1-5 级量表，从空置到工程级 |
 
 ---
 
-## 8. Common Issues
+## 8. 常见问题
 
-### "Token estimate seems off"
+### "Token 估算似乎不准"
 
-**Cause**: The estimate uses chars/4 as a rough proxy for GPT-style tokens. Claude's tokenizer may differ slightly.
+**原因**：估算使用 chars/4 作为 GPT 风格 tokens 的粗略代理。Claude 的分词器可能略有不同。
 
-**Fix**: Focus on relative numbers and thresholds rather than absolute token counts. The 8K always-on budget is a heuristic, not a hard limit.
+**修复**：关注相对数字和阈值，而非绝对 token 计数。8K 常驻预算是一种启发式规则，而非硬性限制。
 
-### "Score is low but Claude seems to work fine"
+### "分数很低但 Claude 似乎运行正常"
 
-**Cause**: Claude works without context engineering — the score reflects optimization, not basic functionality.
+**原因**：Claude 在没有上下文工程的情况下也能工作 — 分数反映的是优化程度，而非基本功能。
 
-**Fix**: A low score means you're leaving productivity on the table. Each dimension gap adds cognitive overhead per session.
+**修复**：低分意味着你还有生产力提升空间。每个维度的差距都会增加每次会话的认知开销。
 
-### "Broken import flagged but file exists"
+### "标记了损坏的导入但文件存在"
 
-**Cause**: Relative path resolution differs from Claude's actual working directory at startup.
+**原因**：相对路径解析与 Claude 启动时的实际工作目录不同。
 
-**Fix**: Use absolute paths (`~/.claude/file.md`) for global imports. Use project-relative paths (`./docs/conventions.md`) for project imports.
+**修复**：对全局导入使用绝对路径（`~/.claude/file.md`）。对项目导入使用项目相对路径（`./docs/conventions.md`）。
 
-### "Profile-readiness flagged but I'm solo"
+### "标记了配置文件就绪度但我是个人开发者"
 
-**Cause**: The audit checks for team-scalability patterns regardless of team size.
+**原因**：审计会检查团队可扩展性模式，无论团队规模如何。
 
-**Fix**: Profile-based assembly still benefits solo developers when switching contexts (reviewing PRs vs writing features vs debugging). It is optional for solo use.
-
----
-
-## 9. Related Resources
-
-- [The Ultimate Claude Code Guide](../guide/ultimate-guide.md) - Full reference
-- [Audit Your Claude Code Setup](./audit-prompt.md) - Full configuration audit (agents, hooks, MCP, CI)
-- [Cheatsheet](../guide/cheatsheet.md) - Quick daily reference
-- [Claude Code Official Docs](https://docs.anthropic.com/en/docs/claude-code) - Anthropic documentation
-- [context-evaluator.ai](https://context-evaluator.ai) - Zero-install LLM-native audit for CLAUDE.md and AGENTS.md: 17 AI evaluators, automated `.patch` remediation. Complements this prompt with deeper rule-by-rule analysis and a different evaluation angle (LLM-as-judge vs bash heuristics).
+**修复**：基于配置文件的组装在切换上下文时（审查 PR vs 编写功能 vs 调试）仍然有益于个人开发者。个人使用时可选项。
 
 ---
 
-*Last updated: April 2026 | Version 1.1*
+## 9. 相关资源
+
+- [Claude Code 终极指南](../guide/ultimate-guide.md) - 完整参考
+- [审计你的 Claude Code 设置](./audit-prompt.md) - 完整配置审计（代理、钩子、MCP、CI）
+- [速查表](../guide/cheatsheet.md) - 日常快速参考
+- [Claude Code 官方文档](https://docs.anthropic.com/en/docs/claude-code) - Anthropic 文档
+- [context-evaluator.ai](https://context-evaluator.ai) - 零安装、LLM 原生的 CLAUDE.md 和 AGENTS.md 审计：17 个 AI 评估器，自动 `.patch` 修复。通过更深入的逐规则分析和不同的评估角度（LLM 作为评判者 vs bash 启发式）来补充此提示词。
+
+---
+
+*最后更新：2026 年 4 月 | 版本 1.1*

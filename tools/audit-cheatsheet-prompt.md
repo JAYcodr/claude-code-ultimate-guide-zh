@@ -1,71 +1,71 @@
-# Audit Your Landing Cheatsheet
+# 审计你的项目速查表
 
-> A self-contained prompt to evaluate if your project needs a cheatsheet and audit existing ones against the gold standard.
+> 一个独立的提示词，用于评估你的项目是否需要速查表，并对照黄金标准审计现有速查表。
 
-**Author**: [Florian BRUNIAUX](https://github.com/FlorianBruniaux) | Founding Engineer [@Methode Aristote](https://methode-aristote.fr)
+**作者**: [Florian BRUNIAUX](https://github.com/FlorianBruniaux) | 创始工程师 [@Methode Aristote](https://methode-aristote.fr)
 
-**Reference**: [Claude Code Ultimate Guide Cheatsheet](https://github.com/FlorianBruniaux/claude-code-ultimate-guide/blob/main/guide/cheatsheet.md) (gold standard)
-
----
-
-## 1. What This Does
-
-This prompt instructs Claude to perform a systematic cheatsheet audit in 4 phases:
-
-1. **Discovery** — Explore the project source + landing to understand scope
-2. **Evaluation** — Score whether the project needs a cheatsheet (objective criteria)
-3. **Audit** — If a cheatsheet exists, grade it against 13 quality checkpoints
-4. **Recommendation** — Go/no-go decision with actionable plan
-
-**Covers 3 scenarios**:
-- No cheatsheet exists → need assessment + go/no-go
-- Partial cheatsheet (HTML only, or MD only) → gap analysis
-- Complete cheatsheet (MD + PDF + HTML) → quality audit
-
-**Time**: ~3-5 minutes depending on project size
+**参考**: [Claude Code Ultimate Guide 速查表](https://github.com/FlorianBruniaux/claude-code-ultimate-guide/blob/main/guide/cheatsheet.md)（黄金标准）
 
 ---
 
-## 2. Who This Is For
+## 1. 功能说明
 
-| Audience | What You'll Get |
+此提示词指导 Claude 执行系统性的速查表审计，共分为4个阶段：
+
+1. **发现** — 探索项目源码和落地页，了解范围
+2. **评估** — 根据客观标准评分，判断项目是否需要速查表
+3. **审计** — 如果存在速查表，对照13个质量检查点进行评分
+4. **建议** — 做出可行/不可行的决策及可执行计划
+
+**涵盖3种场景**:
+- 无速查表 → 需求评估 + 可行/不可行决策
+- 部分速查表（仅 HTML 或仅 MD）→ 差距分析
+- 完整速查表（MD + PDF + HTML）→ 质量审计
+
+**用时**: ~3-5分钟（视项目规模而定）
+
+---
+
+## 2. 适用对象
+
+| 受众 | 收益 |
 |----------|-----------------|
-| **Project maintainer** | Clear go/no-go on creating a cheatsheet |
-| **Landing page builder** | Quality checklist for cheatsheet pages |
-| **Documentation lead** | Gap analysis and prioritized improvements |
+| **项目维护者** | 明确是否创建速查表的决策依据 |
+| **落地页构建者** | 速查表页面质量检查清单 |
+| **文档负责人** | 差距分析及优先级改进建议 |
 
-**Prerequisites**:
-- Claude Code installed and working
-- Access to the project source code (repo with docs/README)
-- Access to the landing site (if exists)
-- Bash shell (native on macOS/Linux, WSL on Windows)
+**前提条件**:
+- 已安装并可正常使用 Claude Code
+- 可访问项目源代码（包含文档/README 的仓库）
+- 可访问落地页（如果存在）
+- Bash shell（macOS/Linux 原生支持，Windows 使用 WSL）
 
 ---
 
-## 3. How to Use It
+## 3. 使用方法
 
-### Step 1: Copy the Prompt
+### 步骤1：复制提示词
 
-Copy everything inside the code block in [Section 4](#4-the-prompt) below.
+复制下方[第4节](#4-the-prompt)代码块中的所有内容。
 
-### Step 2: Navigate to your project
+### 步骤2：进入项目目录
 
 ```bash
 cd your-project-directory
 claude
 ```
 
-### Step 3: Paste and Execute
+### 步骤3：粘贴并执行
 
-Paste the prompt and press Enter. Claude will begin the 4-phase audit.
+粘贴提示词并按回车。Claude 将开始4阶段审计。
 
-### Step 4: Review Results
+### 步骤4：查看结果
 
-Claude will present findings per phase and a final summary with actionable recommendations.
+Claude 将展示每个阶段的发现结果以及最终摘要，包含可操作的建议。
 
 ---
 
-## 4. The Prompt
+## 4. 提示词
 
 ````markdown
 # Cheatsheet Audit
@@ -428,11 +428,11 @@ When evaluating HTML cheatsheet pages, the gold standard includes:
 
 ---
 
-## 5. Example Output
+## 5. 输出示例
 
-Here's what the audit looks like when run against a real project:
+以下是对真实项目运行审计时的示例输出：
 
-### Example: Project with no cheatsheet
+### 示例：无速查表的项目
 
 ```
 === PHASE 1: DISCOVERY ===
@@ -471,4 +471,4 @@ If you decide to create a cheatsheet:
 
 ---
 
-**Version**: 1.0.0 | **Last Updated**: February 2026
+**版本**: 1.0.0 | **最后更新**: 2026年2月

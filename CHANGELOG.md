@@ -17,6 +17,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **汉化 guide/core/architecture.md + methodologies.md**：P1 翻译完成，术语统一，中文流畅。
 - **优化翻译工作流 SKILL.md** (`.agents/skills/zh-translation-workflow/SKILL.md`): 补充 frontmatter metadata（allowed-tools、effort）、更新进度表、精简流程、更新提交策略。
 - **汉化 guide/diagrams/ 全部 12 个图表文件** (`guide/diagrams/01-12*.md`): 仅翻译英文散文标题/描述/图注，Mermaid/ASCII/代码块/URL 全部保留不动。译文自然流畅。
+- **汉化 tools/ 全部 7 个提示词模板** (`tools/`): 完整翻译 audit-prompt（707 行）、audit-cheatsheet-prompt、context-audit-prompt、onboarding-prompt、spec-completeness-audit、mobile-access、README。保留全部代码块、URL、表格结构及 Markdown 格式，中文用户可直接 `cat file | claude` 使用。
 - **翻译状态表更新**: P1 architecture.md 改为 ✅、workflows 改为 25/25、diagrams 改为 ✅。总进度 22/26 ✅。
 
 ### Fixed

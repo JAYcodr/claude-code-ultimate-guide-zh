@@ -1,23 +1,23 @@
-# Claude Code Mobile Access
+# Claude Code 移动端访问
 
-> **⚠️ STATUS: WIP / UNTESTED**
+> **⚠️ 状态：进行中/未经测试**
 >
-> This guide is a work in progress. The setup has not been fully tested across different environments.
-> Use at your own risk. Contributions and feedback welcome.
+> 本指南仍在编写中。该设置尚未在不同环境中得到充分测试。
+> 请自行承担使用风险。欢迎贡献和反馈。
 
 ---
 
-## The Problem
+## 问题描述
 
-Claude Code CLI is a **local interactive process**, not a service with a session API. Each instance is autonomous. Even `claude --remote` only offloads execution—it doesn't create a relay system.
+Claude Code CLI 是一个**本地交互进程**，而非带有会话 API 的服务。每个实例都是独立的。即使是 `claude --remote` 也只是卸载执行——并不会创建中继系统。
 
-**What's missing**: A native `claude --serve` mode that exposes a WebSocket API, allows multiple clients, and maintains the same conversation context.
+**缺失的是什么**：一个原生的 `claude --serve` 模式，能够暴露 WebSocket API、允许多客户端、并保持同一会话上下文。
 
-**The workaround**: Expose your terminal via web browser using `ttyd`, accessible from anywhere via `Tailscale` VPN.
+**变通方案**：使用 `ttyd` 通过网络浏览器暴露你的终端，并通过 `Tailscale` VPN 从任何地方访问。
 
 ---
 
-## Solution: ttyd + Tailscale
+## 解决方案：ttyd + Tailscale
 
 ```
 YOUR COMPUTER                     YOUR PHONE
@@ -28,17 +28,17 @@ YOUR COMPUTER                     YOUR PHONE
 └─────────────────┘               └─────────────────┘
 ```
 
-- **ttyd**: Exposes your terminal in a web browser
-- **Tailscale**: Free VPN that gives your computer a fixed IP, accessible from anywhere (4G, public WiFi, etc.)
-- **tmux**: Keeps session alive even if you close the browser
+- **ttyd**：在网络浏览器中暴露你的终端
+- **Tailscale**：免费 VPN，给你的电脑分配固定 IP，可从任何地方访问（4G、公共 WiFi 等）
+- **tmux**：即使关闭浏览器也能保持会话存活
 
-**Use case**: Follow and continue Claude Code sessions from your phone (commuting, away from desk, etc.)
+**使用场景**：从手机端跟踪和继续 Claude Code 会话（通勤途中、离开办公桌等）
 
 ---
 
-## Architecture Comparison
+## 架构对比
 
-### ttyd + Tailscale (Self-hosted)
+### ttyd + Tailscale（自托管）
 
 ```
 YOUR COMPUTER                     YOUR PHONE
@@ -52,7 +52,7 @@ YOUR COMPUTER                     YOUR PHONE
 ✅ ToS-Safe: CLI officiel, pas d'intermédiaire cloud
 ```
 
-### Happy Coder (App native)
+### Happy Coder（原生应用）
 
 ```
 YOUR COMPUTER                     YOUR PHONE
@@ -68,7 +68,7 @@ YOUR COMPUTER                     YOUR PHONE
 ✅ ToS-Safe: Wrapper local, subprocess Node.js
 ```
 
-### Remoto.sh (Cloud relay)
+### Remoto.sh（云端中继）
 
 ```
 REMOTO CLOUD                      YOUR PHONE
@@ -85,30 +85,30 @@ REMOTO CLOUD                      YOUR PHONE
 
 ---
 
-## Why This Approach?
+## 为什么选择此方案？
 
-### ToS Considerations
+### 服务条款考量
 
-Some third-party wrappers (like OpenCode) have been blocked by Anthropic for ToS violations. This approach is **ToS-safe** because:
+一些第三方包装器（如 OpenCode）因违反服务条款而被 Anthropic 封禁。此方案是**符合服务条款安全**的，因为：
 
-- You're using the **official Claude Code CLI**
-- ttyd just exposes your terminal via browser (no wrapper)
-- Tailscale is just a VPN for secure access
-- No third-party client interacting with Claude's API
-
----
-
-## Prerequisites
-
-- macOS or Linux
-- Claude Code CLI installed and authenticated
-- Tailscale account (free tier works)
+- 你使用的是**官方 Claude Code CLI**
+- ttyd 仅通过网络浏览器暴露你的终端（无包装器）
+- Tailscale 只是用于安全访问的 VPN
+- 没有第三方客户端与 Claude 的 API 交互
 
 ---
 
-## Installation
+## 前置要求
 
-### Quick Setup Script
+- macOS 或 Linux
+- 已安装并认证的 Claude Code CLI
+- Tailscale 账户（免费版即可）
+
+---
+
+## 安装
+
+### 快速设置脚本
 
 ```bash
 #!/bin/bash
@@ -182,7 +182,7 @@ echo "  3. Run: claude-mobile"
 echo ""
 ```
 
-### Manual Installation
+### 手动安装
 
 ```bash
 # macOS
@@ -196,9 +196,9 @@ curl -fsSL https://tailscale.com/install.sh | sh
 
 ---
 
-## Usage
+## 使用方法
 
-### First Time Setup
+### 首次设置
 
 ```bash
 # 1. Connect to Tailscale (one-time)
@@ -214,7 +214,7 @@ tailscale up
 claude-mobile
 ```
 
-### Output
+### 输出
 
 ```
 ══════════════════════════════════
@@ -226,18 +226,18 @@ claude-mobile
 ══════════════════════════════════
 ```
 
-### On Your Phone
+### 在手机上操作
 
-1. Open Safari/Chrome
-2. Go to `http://100.78.42.15:7681` (use your actual Tailscale IP)
-3. Login with `claude` / `claude123`
-4. You now have Claude Code in your browser
+1. 打开 Safari/Chrome
+2. 访问 `http://100.78.42.15:7681`（使用你的实际 Tailscale IP）
+3. 使用 `claude` / `claude123` 登录
+4. 现在你的浏览器中已拥有 Claude Code
 
 ---
 
-## Configuration
+## 配置
 
-### Change Password
+### 修改密码
 
 ```bash
 export CLAUDE_MOBILE_PASS="your-secure-password"
@@ -250,30 +250,30 @@ Or add to your shell config:
 echo 'export CLAUDE_MOBILE_PASS="your-secure-password"' >> ~/.zshrc
 ```
 
-### Change Port
+### 修改端口
 
-Edit `~/.local/bin/claude-mobile` and change `PORT=7681` to your preferred port.
-
----
-
-## Security
-
-| Layer | Protection |
-|-------|------------|
-| **Network** | Tailscale uses WireGuard encryption |
-| **Authentication** | Basic auth (username:password) via ttyd |
-| **Access** | Only accessible from your Tailscale network |
-
-**Recommendations**:
-- Use a strong password (not the default `claude123`)
-- Don't expose ttyd directly to the internet without Tailscale
-- Keep Tailscale client updated on all devices
+编辑 `~/.local/bin/claude-mobile` 并将 `PORT=7681` 更改为你偏好的端口。
 
 ---
 
-## Troubleshooting
+## 安全性
 
-### "not connected" instead of IP
+| 层面 | 保护措施 |
+|------|----------|
+| **网络** | Tailscale 使用 WireGuard 加密 |
+| **认证** | 通过 ttyd 的基本认证（用户名:密码） |
+| **访问控制** | 仅可从你的 Tailscale 网络访问 |
+
+**建议**：
+- 使用强密码（不要使用默认的 `claude123`）
+- 不要在没有 Tailscale 的情况下直接将 ttyd 暴露在互联网上
+- 在所有设备上保持 Tailscale 客户端更新
+
+---
+
+## 故障排除
+
+### 显示"not connected"而非 IP
 
 ```bash
 # Check Tailscale status
@@ -283,21 +283,21 @@ tailscale status
 tailscale up
 ```
 
-### Can't access from phone
+### 无法从手机访问
 
-1. Ensure Tailscale app is installed on phone and connected to same account
-2. Check firewall isn't blocking port 7681
-3. Try accessing locally first: `http://localhost:7681`
+1. 确保手机已安装 Tailscale 应用并登录同一账户
+2. 检查防火墙未阻止端口 7681
+3. 先尝试本地访问：`http://localhost:7681`
 
-### Session not persisting
+### 会话未持久化
 
-The tmux session should persist. To manually reattach:
+tmux 会话应该是持续存在的。如需手动重新连接：
 
 ```bash
 tmux attach -t cc
 ```
 
-### ttyd command not found
+### ttyd 命令未找到
 
 ```bash
 # macOS
@@ -309,23 +309,23 @@ sudo snap install ttyd --classic
 
 ---
 
-## Alternatives Comparison
+## 替代方案对比
 
-| Solution | Type | Pros | Cons | ToS | Stars |
-|----------|------|------|------|-----|-------|
-| **ttyd + Tailscale** ✅ | Self-hosted | Gratuit, max contrôle, CLI officiel | Setup manuel, UX terminal | ✅ Safe | N/A |
-| [Happy Coder](https://github.com/slopus/happy) | App native | Voice, encryption, multi-instances, mobile-first | Dépendance projet tiers | ✅ Safe | 7.8K |
-| [Remoto.sh](https://remoto.sh) | Cloud relay | Setup rapide, browser only | Cloud wrapping, latence, coût | ⚠️ Risk | N/A |
-| tmux + SSH | Self-hosted | Zero deps, CLI officiel | Besoin client SSH mobile | ✅ Safe | N/A |
+| 方案 | 类型 | 优点 | 缺点 | 服务条款 | 星标 |
+|------|------|------|------|---------|------|
+| **ttyd + Tailscale** ✅ | 自托管 | 免费、最大控制、官方CLI | 手动设置、终端体验 | ✅ 安全 | N/A |
+| [Happy Coder](https://github.com/slopus/happy) | 原生应用 | 语音、加密、多实例、移动优先 | 依赖第三方项目 | ✅ 安全 | 7.8K |
+| [Remoto.sh](https://remoto.sh) | 云端中继 | 快速设置、仅浏览器 | 云端包装、延迟、成本 | ⚠️ 风险 | N/A |
+| tmux + SSH | 自托管 | 零依赖、官方CLI | 需要移动SSH客户端 | ✅ 安全 | N/A |
 
-We chose ttyd + Tailscale because:
-- It's just your terminal exposed via browser
-- No third-party wrapper around Claude Code
-- Zero ToS risk—you're using the official CLI
+我们选择 ttyd + Tailscale 是因为：
+- 只是通过浏览器暴露你的终端
+- 没有围绕 Claude Code 的第三方包装器
+- 零服务条款风险——你使用的是官方 CLI
 
 ---
 
-### Happy Coder - Alternative Recommandée
+### Happy Coder - 推荐替代方案
 
 Si vous préférez une **app native** plutôt qu'un terminal web :
 
@@ -344,7 +344,7 @@ npm i -g happy-coder && happy
 
 ---
 
-### Remoto.sh - Alternative Cloud (avec risques)
+### Remoto.sh - 云端替代方案（存在风险）
 
 **Pourquoi risqué** : Remoto.sh utilise des conteneurs Docker cloud comme relay. Selon les ToS Anthropic (§4.2), les "proxies non autorisés qui masquent l'origine des requêtes" sont interdits. Des suspensions ont été signalées sur Reddit/HN pour usage similaire.
 
@@ -352,34 +352,34 @@ npm i -g happy-coder && happy
 
 ---
 
-## Related Resources
+## 相关资源
 
-- [ttyd GitHub](https://github.com/tsl0922/ttyd) - Terminal web server
-- [Tailscale](https://tailscale.com/) - Zero-config VPN
-- [ttyd + Claude Code Guide](https://aiengineerguide.com/blog/agentic-cli-browser-ttyd/) - Community tutorial
-- [VPS Setup Guide](https://joshualent.com/snippets/claude-phone/) - Alternative: run on VPS
+- [ttyd GitHub](https://github.com/tsl0922/ttyd) - 网页终端服务器
+- [Tailscale](https://tailscale.com/) - 零配置 VPN
+- [ttyd + Claude Code 指南](https://aiengineerguide.com/blog/agentic-cli-browser-ttyd/) - 社区教程
+- [VPS 设置指南](https://joshualent.com/snippets/claude-phone/) - 替代方案：在 VPS 上运行
 
 ---
 
-## Sources
+## 来源
 
-- [Happy Coder GitHub](https://github.com/slopus/happy) - 7.8K ⭐, MIT license
-- [ttyd GitHub](https://github.com/tsl0922/ttyd) - Terminal web server
-- [Tailscale](https://tailscale.com/) - Zero-config VPN
-- [Remoto.sh](https://remoto.sh) - Cloud terminal (ToS risk noted)
+- [Happy Coder GitHub](https://github.com/slopus/happy) - 7.8K ⭐, MIT 许可证
+- [ttyd GitHub](https://github.com/tsl0922/ttyd) - 网页终端服务器
+- [Tailscale](https://tailscale.com/) - 零配置 VPN
+- [Remoto.sh](https://remoto.sh) - 云终端（已注明的服务条款风险）
 - ToS Anthropic §4.2 - Proxies non autorisés
 
 ---
 
-## Contributing
+## 贡献
 
-This doc is **WIP/UNTESTED**. If you test this setup, please share:
-- Your OS/environment
-- Any issues encountered
-- Suggested improvements
+本文档为**进行中/未经测试**。如果你测试了这个设置，请分享：
+- 你的操作系统/环境
+- 遇到的任何问题
+- 建议的改进
 
-Open an issue or PR on this repo.
+在此仓库提交 issue 或 PR。
 
 ---
 
-*Last updated: January 2026 | Status: WIP/UNTESTED | Data verified: Happy Coder 7.8K ⭐ (2026-01-19)*
+*最后更新：2026年1月 | 状态：进行中/未经测试 | 数据已验证：Happy Coder 7.8K ⭐ (2026-01-19)*
