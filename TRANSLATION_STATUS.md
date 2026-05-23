@@ -6,12 +6,12 @@
 
 | 优先级 | 总计 | ✅ 完成 | 🔄 进行中 | ❌ 未开始 |
 |--------|------|--------|-----------|----------|
-| P0 | 11 | 10 | 0 | 1 |
+| P0 | 14 | 14 | 0 | 0 |
 | P1 | 4 | 0 | 0 | 4 |
 | P2 | 2 | 0 | 0 | 2 |
 | P3 | 2 | 0 | 0 | 2 |
 | P4 | 2 | 0 | 0 | 2 |
-| **合计** | **21** | **10** | **0** | **11** |
+| **合计** | **24** | **14** | **0** | **10** |
 
 ## 详细状态
 
@@ -27,7 +27,10 @@
 | P0 | guide/learning-path/06-hooks.md | ~435 | ✅ | dbeb30c | 2026-05-23 | |
 | P0 | guide/learning-path/07-advanced.md | ~580 | ✅ | dbeb30c | 2026-05-23 | |
 | P0 | guide/cheatsheet.md | ~677 | ✅ | dbeb30c | 2026-05-23 | |
-| P0 | guide/ultimate-guide.md §1-3 | ~5,000 | ❌ | - | - | Quick Start / Core Concepts / Memory Files |
+| P0 | guide/ultimate-guide.md | ~240 | ✅ | dbeb30c | 2026-05-23 | TOC 导航页（分章后） |
+| P0 | guide/ultimate-guide/01-quick-start.md | ~1,416 | ✅ | dbeb30c | 2026-05-23 | |
+| P0 | guide/ultimate-guide/02-core-concepts.md | ~3,200 | ✅ | dbeb30c | 2026-05-23 | |
+| P0 | guide/ultimate-guide/03-memory-settings.md | ~1,692 | ✅ | dbeb30c | 2026-05-23 | |
 | P1 | examples/skills/ | ~200 | ❌ | - | - | 注释翻译 |
 | P1 | examples/agents/ | ~300 | ❌ | - | - | 注释翻译 |
 | P1 | guide/core/architecture.md | ~200 | ❌ | - | - | |
@@ -50,4 +53,7 @@
 | 2026-05-23 | guide/learning-path/03 + 04 | 首版翻译 | 263e863 |
 | 2026-05-23 | guide/learning-path/05 + 06 | 首版翻译 | 263e863 |
 | 2026-05-23 | scripts/sync-upstream.sh | 创建 | 4a98b77 |
-| 2026-05-23 | guide/learning-path/07-advanced.md | 首版翻译 | *待提交* |
+| 2026-05-23 | guide/learning-path/07-advanced.md | 首版翻译 | 8ce0b77 |
+| 2026-05-23 | §1 Quick Start + 拆分 ultimate-guide | 首版翻译 + 重构 | 183fdec |
+| 2026-05-23 | §2 Core Concepts | 首版翻译（3,200 行，4 批次） | 5770bef |
+| 2026-05-23 | §3 Memory & Settings | 首版翻译（1,692 行，3 批次） | 7e8fb2d |
