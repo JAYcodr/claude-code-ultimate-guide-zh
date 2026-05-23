@@ -26,18 +26,20 @@ jobs:
         run: npm ci
 
       - name: Check YAML/JSON formatting (Prettier)
-        run: npx prettier --check "**/*.{yaml,yml,json}" \
-          --ignore-path .gitignore \
-          --ignore-path .prettierignore
+        run: |
+          npx prettier --check "**/*.{yaml,yml,json}" \
+            --ignore-path .gitignore \
+            --ignore-path .prettierignore
 
       - name: Lint Markdown (markdownlint)
-        run: npx markdownlint-cli2 "**/*.md" \
-          --config .markdownlint.json \
-          --ignores "node_modules/**" \
-          --ignores ".git/**" \
-          --ignores "machine-readable/**" \
-          --ignores "CHANGELOG.md" \
-          --ignores "quiz/**" \
-          --ignores ".github/**" \
-          --ignores "claudedocs/**" \
-          --ignores "docs/**" || true
+        run: |
+          npx markdownlint-cli2 "**/*.md" \
+            --config .markdownlint.json \
+            --ignores "node_modules/**" \
+            --ignores ".git/**" \
+            --ignores "machine-readable/**" \
+            --ignores "CHANGELOG.md" \
+            --ignores "quiz/**" \
+            --ignores ".github/**" \
+            --ignores "claudedocs/**" \
+            --ignores "docs/**" || true
