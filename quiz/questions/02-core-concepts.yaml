@@ -1,4 +1,4 @@
-category: "Core Concepts"
+category: "核心概念"
 category_id: 2
 source_file: "guide/ultimate-guide.md"
 
@@ -6,143 +6,143 @@ questions:
   - id: "02-001"
     difficulty: "junior"
     profiles: ["junior", "senior", "power", "pm"]
-    question: "At what context percentage should you use /compact?"
+    question: "在上下文百分比达到多少时应该使用 /compact？"
     options:
       a: "0-50%"
       b: "50-70%"
       c: "70-90%"
-      d: "Only at 100%"
+      d: "仅在 100% 时"
     correct: "c"
     explanation: |
-      Use /compact when context reaches 70-90% (the red zone). The context zones are: Green (0-50%) - work freely; Yellow (50-75%) - start being selective; Red (75-90%) - use /compact; Critical (90%+) - must /clear or risk errors. Using /compact at 70% reduces usage by approximately 50% while preserving key context. Note: Claude Code also has an automatic compaction mechanism (6-7% buffer + micro-compaction) that triggers around 75-92% — manual /compact lets you control timing before the auto-trigger kicks in.
+      当上下文达到 70-90%（红色区域）时使用 /compact。上下文区域为：绿色（0-50%）——自由工作；黄色（50-75%）——开始有选择地工作；红色（75-90%）——使用 /compact；临界（90%+）——必须 /clear，否则会有错误。在 70% 时使用 /compact 可减少约 50% 的使用量，同时保留关键上下文。注意：Claude Code 还有一个自动压缩机制（6-7% 缓冲区 + 微压缩），在 75-92% 左右触发——手动 /compact 让您可以在自动触发之前控制时机。
     doc_reference:
       file: "guide/ultimate-guide.md"
-      section: "2.2 Context Management"
+      section: "2.2 上下文管理"
       anchor: "#context-zones"
 
   - id: "02-002"
     difficulty: "junior"
     profiles: ["junior", "senior", "power"]
-    question: "What is Claude's context window size?"
+    question: "Claude 的上下文窗口大小是多少？"
     options:
-      a: "50,000 tokens"
-      b: "100,000 tokens"
-      c: "200,000 tokens"
-      d: "500,000 tokens"
+      a: "50,000 令牌"
+      b: "100,000 令牌"
+      c: "200,000 令牌"
+      d: "500,000 令牌"
     correct: "c"
     explanation: |
-      Claude has a 200,000 token context window. Think of it like RAM - when it fills up, things slow down or fail. This context includes all messages, files read, command outputs, and tool results. Effective context management is described as "the most important concept in Claude Code."
+      Claude 有 200,000 令牌的上下文窗口。把它想象成 RAM——当它填满时，事情会变慢或失败。此上下文包括所有消息、读取的文件、命令输出和工具结果。有效的上下文管理被描述为“Claude Code 中最重要的概念”。
     doc_reference:
       file: "guide/ultimate-guide.md"
-      section: "2.2 Context Management"
+      section: "2.2 上下文管理"
       anchor: "#the-context-budget"
 
   - id: "02-003"
     difficulty: "senior"
     profiles: ["senior", "power"]
-    question: "What does the statusline 'Ctx(u): 45%' indicate?"
+    question: "状态栏 'Ctx(u): 45%' 表示什么？"
     options:
-      a: "45% of your budget is remaining"
-      b: "You've used 45% of your context"
-      c: "45% of files are loaded"
-      d: "Claude is 45% confident"
+      a: "您的预算还剩 45%"
+      b: "您已使用了 45% 的上下文"
+      c: "已加载 45% 的文件"
+      d: "Claude 有 45% 的置信度"
     correct: "b"
     explanation: |
-      The statusline metric 'Ctx(u): 45%' shows you've used 45% of your context window. The full statusline format is: `Claude Code | Ctx(u): 45% | Cost: $0.23 | Session: 1h 23m`. Monitoring this helps you know when to use /compact or /clear before context-related issues occur.
+      状态栏指标 'Ctx(u): 45%' 显示您已使用了 45% 的上下文窗口。完整的状态栏格式为：`Claude Code | Ctx(u): 45% | Cost: $0.23 | Session: 1h 23m`。监控这一点有助于您在出现上下文相关问题之前知道何时使用 /compact 或 /clear。
     doc_reference:
       file: "guide/ultimate-guide.md"
-      section: "2.2 Context Management"
+      section: "2.2 上下文管理"
       anchor: "#reading-the-statusline"
 
   - id: "02-004"
     difficulty: "junior"
     profiles: ["junior", "senior", "power"]
-    question: "What is the difference between /compact and /clear?"
+    question: "/compact 和 /clear 有什么区别？"
     options:
-      a: "/compact is faster, /clear is more thorough"
-      b: "/compact summarizes context (preserves key info), /clear starts completely fresh (loses all context)"
-      c: "/compact clears files, /clear clears conversations"
-      d: "They do the same thing"
+      a: "/compact 更快，/clear 更彻底"
+      b: "/compact 总结上下文（保留关键信息），/clear 完全重新开始（丢失所有上下文）"
+      c: "/compact 清除文件，/clear 清除对话"
+      d: "它们做同样的事情"
     correct: "b"
     explanation: |
-      /compact summarizes the conversation, preserving key context while reducing usage by approximately 50%. Use it when running low on context. /clear starts completely fresh, losing all context - use it when changing topics or context is severely bloated. Choose based on whether you need to maintain continuity.
+      /compact 总结对话，保留关键上下文，同时将使用量减少约 50%。当上下文不足时使用它。/clear 完全重新开始，丢失所有上下文——在更改主题或上下文严重膨胀时使用。根据您是否需要保持连续性来选择。
     doc_reference:
       file: "guide/ultimate-guide.md"
-      section: "2.2 Context Management"
+      section: "2.2 上下文管理"
       anchor: "#context-recovery-strategies"
 
   - id: "02-005"
     difficulty: "senior"
     profiles: ["senior", "power"]
-    question: "Which action consumes the MOST context tokens?"
+    question: "哪个操作消耗最多的上下文令牌？"
     options:
-      a: "Reading a small file (~500 tokens)"
-      b: "Running a simple command (~1K tokens)"
-      c: "Reading a large file or multi-file search (~5K+ tokens)"
-      d: "Sending a short message"
+      a: "读取一个小文件（约 500 令牌）"
+      b: "运行一个简单命令（约 1K 令牌）"
+      c: "读取一个大文件或多文件搜索（约 5K+ 令牌）"
+      d: "发送一条短消息"
     correct: "c"
     explanation: |
-      Reading large files (5K+ tokens) and multi-file searches (3K+ tokens) consume the most context. A small file costs ~500 tokens, running commands ~1K tokens. Long conversations accumulate over time. To optimize, be specific in queries, use symbol references like "read the calculateTotal function" instead of entire files.
+      读取大文件（5K+ 令牌）和多文件搜索（3K+ 令牌）消耗最多上下文。一个小文件花费约 500 令牌，运行命令约 1K 令牌。长时间的对话会随着时间积累。为了优化，请在查询中具体说明，使用符号引用，如“读取 calculateTotal 函数”而不是整个文件。
     doc_reference:
       file: "guide/ultimate-guide.md"
-      section: "2.2 Context Management"
+      section: "2.2 上下文管理"
       anchor: "#what-consumes-context"
 
   - id: "02-006"
     difficulty: "power"
     profiles: ["power"]
-    question: "What is the 'Last 20% Rule' in context management?"
+    question: "上下文管理中的 '最后 20% 规则' 是什么？"
     options:
-      a: "Always keep the last 20% of your conversation"
-      b: "Reserve ~20% of context for multi-file operations, corrections, and summary generation at session end"
-      c: "Delete 20% of context regularly"
-      d: "Use only 20% of available context"
+      a: "始终保留对话的最后 20%"
+      b: "保留约 20% 的上下文用于多文件操作、纠正和会话结束时的总结生成"
+      c: "定期删除 20% 的上下文"
+      d: "仅使用可用上下文的 20%"
     correct: "b"
     explanation: |
-      The Last 20% Rule recommends reserving approximately 20% of your context for: multi-file operations at end of session, last-minute corrections, and generating summary/checkpoint documents. This buffer ensures you can complete your work properly even as context fills up.
+      最后 20% 规则建议保留大约 20% 的上下文用于：会话结束时的多文件操作、最后一分钟的纠正以及生成总结/检查点文档。即使上下文填满，这个缓冲区也能确保您可以正确完成工作。
     doc_reference:
       file: "guide/ultimate-guide.md"
-      section: "2.2 Context Management"
+      section: "2.2 上下文管理"
       anchor: "#context-inspection"
 
   - id: "02-007"
     difficulty: "senior"
     profiles: ["senior", "power"]
-    question: "What is 'context poisoning' (also called context bleeding)?"
+    question: "什么是 '上下文污染'（也称为上下文溢出）？"
     options:
-      a: "When context usage reaches 100%"
-      b: "When information from one task contaminates another"
-      c: "When Claude forgets your instructions"
-      d: "When files get corrupted"
+      a: "当上下文使用量达到 100% 时"
+      b: "当来自一个任务的信息污染另一个任务时"
+      c: "当 Claude 忘记您的指令时"
+      d: "当文件损坏时"
     correct: "b"
     explanation: |
-      Context poisoning occurs when information from one task contaminates another. Examples include: style bleeding (blue button style applies to unrelated forms), instruction contamination (conflicting rules cause confusion), and temporal confusion (Claude uses outdated file names). Use explicit task boundaries and clarify priorities to prevent it.
+      当来自一个任务的信息污染另一个任务时，会发生上下文污染。示例包括：样式溢出（蓝色按钮样式应用于不相关的表单）、指令污染（冲突规则导致混淆）和时间混淆（Claude 使用过时的文件名）。使用明确的任务边界并澄清优先级以防止这种情况。
     doc_reference:
       file: "guide/ultimate-guide.md"
-      section: "2.2 Context Management"
+      section: "2.2 上下文管理"
       anchor: "#context-poisoning-bleeding"
 
   - id: "02-008"
     difficulty: "junior"
     profiles: ["junior", "senior", "power"]
-    question: "What is the 7-step interaction loop in Claude Code?"
+    question: "Claude Code 中的 7 步交互循环是什么？"
     options:
-      a: "Plan, Code, Test, Deploy, Monitor, Fix, Repeat"
-      b: "Describe, Analyze, Propose, Review, Decide, Verify, Commit"
-      c: "Read, Write, Edit, Run, Debug, Test, Push"
-      d: "Ask, Wait, Accept, Run, Check, Fix, Done"
+      a: "计划、编码、测试、部署、监控、修复、重复"
+      b: "描述、分析、提议、审查、决定、验证、提交"
+      c: "读取、写入、编辑、运行、调试、测试、推送"
+      d: "询问、等待、接受、运行、检查、修复、完成"
     correct: "b"
     explanation: |
-      The interaction loop is: 1) DESCRIBE - explain what you need, 2) ANALYZE - Claude explores the codebase, 3) PROPOSE - Claude suggests changes (diff), 4) REVIEW - you read and evaluate, 5) DECIDE - Accept/Reject/Modify, 6) VERIFY - run tests, check behavior, 7) COMMIT - save changes (optional). The key insight: you remain in control throughout.
+      交互循环为：1) 描述——解释您需要什么，2) 分析——Claude 探索代码库，3) 提议——Claude 建议更改（差异），4) 审查——您阅读和评估，5) 决定——接受/拒绝/修改，6) 验证——运行测试，检查行为，7) 提交——保存更改（可选）。关键洞察：您始终掌控一切。
     doc_reference:
       file: "guide/ultimate-guide.md"
-      section: "2.1 The Interaction Loop"
+      section: "2.1 交互循环"
       anchor: "#21-the-interaction-loop"
 
   - id: "02-009"
     difficulty: "junior"
     profiles: ["junior", "senior", "power"]
-    question: "How do you exit Plan Mode to start making changes?"
+    question: "如何退出计划模式以开始进行更改？"
     options:
       a: "/edit"
       b: "/execute"
@@ -150,135 +150,135 @@ questions:
       d: "/exit-plan"
     correct: "b"
     explanation: |
-      Use /execute to exit Plan Mode and begin implementing changes. While in Plan Mode, Claude can only read and analyze - no modifications are allowed. You can also respond to Claude's prompt "Ready to implement this plan?" to transition. This staged approach ensures you understand the plan before execution.
+      使用 /execute 退出计划模式并开始实施更改。在计划模式下，Claude 只能读取和分析——不允许修改。您也可以响应 Claude 的提示“准备好实施此计划了吗？”来过渡。这种分阶段方法确保您在执行之前理解计划。
     doc_reference:
       file: "guide/ultimate-guide.md"
-      section: "2.3 Plan Mode"
+      section: "2.3 计划模式"
       anchor: "#exiting-plan-mode"
 
   - id: "02-010"
     difficulty: "power"
     profiles: ["power"]
-    question: "What is OpusPlan mode?"
+    question: "什么是 OpusPlan 模式？"
     options:
-      a: "A premium subscription tier"
-      b: "Using Opus for planning (superior reasoning) and Sonnet for implementation (cost-efficient)"
-      c: "A debugging mode"
-      d: "A way to plan without Claude"
+      a: "高级订阅层"
+      b: "使用 Opus 进行计划（卓越推理）和 Sonnet 进行实施（成本效益）"
+      c: "调试模式"
+      d: "一种无需 Claude 进行计划的方法"
     correct: "b"
     explanation: |
-      OpusPlan uses Opus for planning (with superior reasoning capabilities) and automatically switches to Sonnet for implementation (more cost-efficient). Enable with `/model opusplan`. This provides Opus-quality planning while preserving tokens through Sonnet-speed execution. Particularly valuable for Pro subscribers with limited Opus tokens.
+      OpusPlan 使用 Opus 进行计划（具有卓越的推理能力）并自动切换到 Sonnet 进行实施（更具成本效益）。使用 `/model opusplan` 启用。这提供了 Opus 质量的计划，同时通过 Sonnet 速度的执行保留令牌。对于 Opus 令牌有限的 Pro 订阅者特别有价值。
     doc_reference:
       file: "guide/ultimate-guide.md"
-      section: "2.3 Plan Mode"
+      section: "2.3 计划模式"
       anchor: "#opusplan-mode"
 
   - id: "02-011"
     difficulty: "senior"
     profiles: ["senior", "power"]
-    question: "What are symptoms of context depletion?"
+    question: "上下文耗尽的症状是什么？"
     options:
-      a: "Claude types slower"
-      b: "Shorter responses, forgetting CLAUDE.md instructions, inconsistencies with earlier conversation"
-      c: "Error messages appear"
-      d: "Cost increases dramatically"
+      a: "Claude 打字变慢"
+      b: "响应更短，忘记 CLAUDE.md 指令，与早期对话不一致"
+      c: "出现错误消息"
+      d: "成本急剧增加"
     correct: "b"
     explanation: |
-      Context depletion symptoms include: shorter responses than usual (warning), forgetting CLAUDE.md instructions (serious), inconsistencies with earlier conversation (critical), errors on code already discussed (critical), and "I can't access that file" for files already read (critical). When critical symptoms appear, start a new session immediately.
+      上下文耗尽症状包括：响应比平时更短（警告），忘记 CLAUDE.md 指令（严重），与早期对话不一致（严重），已讨论代码的错误（严重），以及对于已读取文件的“我无法访问该文件”（严重）。当出现严重症状时，立即开始新会话。
     doc_reference:
       file: "guide/ultimate-guide.md"
-      section: "2.2 Context Management"
+      section: "2.2 上下文管理"
       anchor: "#context-depletion-symptoms"
 
   - id: "02-012"
     difficulty: "junior"
     profiles: ["junior", "senior", "power"]
-    question: "What can /rewind do?"
+    question: "/rewind 可以做什么？"
     options:
-      a: "Undo git commits"
-      b: "Revert Claude's file changes within the current session"
-      c: "Go back in conversation history"
-      d: "Restore deleted files from disk"
+      a: "撤销 git 提交"
+      b: "在当前会话中还原 Claude 的文件更改"
+      c: "返回对话历史记录"
+      d: "从磁盘恢复已删除的文件"
     correct: "b"
     explanation: |
-      /rewind reverts file changes made by Claude. It works across multiple files but only on Claude's changes (not manual edits), only within the current session, and does NOT automatically revert git commits. For risky operations, create a git checkpoint first: "Let's commit what we have before trying this experimental approach."
+      /rewind 还原 Claude 所做的文件更改。它可以跨多个文件工作，但仅适用于 Claude 的更改（非手动编辑），仅在当前会话内，并且不会自动还原 git 提交。对于有风险的操作，首先创建 git 检查点：“在尝试这种实验性方法之前，让我们提交我们拥有的内容。”
     doc_reference:
       file: "guide/ultimate-guide.md"
-      section: "2.4 Rewind"
+      section: "2.4 倒带"
       anchor: "#24-rewind"
 
   - id: "02-013"
     difficulty: "senior"
     profiles: ["senior", "power"]
-    question: "What does Claude NOT have access to regarding your project?"
+    question: "关于您的项目，Claude 没有访问权限的是什么？"
     options:
-      a: "File structure and code content"
-      b: "Git state and branches"
-      c: "Runtime state, external services, and hidden files"
-      d: "Project rules in CLAUDE.md"
+      a: "文件结构和代码内容"
+      b: "Git 状态和分支"
+      c: "运行时状态、外部服务和隐藏文件"
+      d: "CLAUDE.md 中的项目规则"
     correct: "c"
     explanation: |
-      Claude knows: file structure, code content, git state, and project rules (CLAUDE.md). Claude does NOT know: runtime state (can't see running processes), external services (can't access databases directly), your intent (needs clear instructions), and hidden files (respects .gitignore by default). Understanding this mental model helps you communicate effectively.
+      Claude 知道：文件结构、代码内容、git 状态和项目规则（CLAUDE.md）。Claude 不知道：运行时状态（看不到正在运行的进程），外部服务（无法直接访问数据库），您的意图（需要明确指令），以及隐藏文件（默认尊重 .gitignore）。理解这个心理模型有助于您有效地沟通。
     doc_reference:
       file: "guide/ultimate-guide.md"
-      section: "2.5 Mental Model"
+      section: "2.5 心理模型"
       anchor: "#what-claude-doesnt-know"
 
   - id: "02-014"
     difficulty: "power"
     profiles: ["power"]
-    question: "What is the purpose of the 'Sanity Check Technique'?"
+    question: "'理智检查技术' 的目的是什么？"
     options:
-      a: "To verify code compiles correctly"
-      b: "To verify Claude has loaded your CLAUDE.md configuration correctly"
-      c: "To check for memory leaks"
-      d: "To validate test coverage"
+      a: "验证代码正确编译"
+      b: "验证 Claude 已正确加载您的 CLAUDE.md 配置"
+      c: "检查内存泄漏"
+      d: "验证测试覆盖率"
     correct: "b"
     explanation: |
-      The Sanity Check Technique verifies Claude loaded your configuration. Add identifiable info to CLAUDE.md (like your name, project name, tech stack), then ask Claude "What is my name? What project am I working on?" Correct answers confirm configuration is loaded. For advanced checking, add multiple checkpoints throughout long CLAUDE.md files.
+      理智检查技术验证 Claude 已加载您的配置。将可识别的信息添加到 CLAUDE.md（如您的姓名、项目名称、技术栈），然后询问 Claude“我叫什么名字？我在做什么项目？”正确答案确认配置已加载。对于高级检查，在长 CLAUDE.md 文件中添加多个检查点。
     doc_reference:
       file: "guide/ultimate-guide.md"
-      section: "2.2 Context Management"
+      section: "2.2 上下文管理"
       anchor: "#sanity-check-technique"
 
   - id: "02-015"
     difficulty: "senior"
     profiles: ["senior", "power"]
-    question: "When should you use XML-structured prompts?"
+    question: "什么时候应该使用 XML 结构化提示？"
     options:
-      a: "For all prompts regardless of complexity"
-      b: "For multi-step features, bug investigations with context, and code reviews with specific criteria"
-      c: "Only for simple one-liner requests"
-      d: "Only when working with APIs"
+      a: "对于所有提示，无论复杂性如何"
+      b: "对于多步骤功能、带有上下文的错误调查，以及具有特定标准的代码审查"
+      c: "仅用于简单的单行请求"
+      d: "仅在使用 API 时"
     correct: "b"
     explanation: |
-      Use XML-structured prompts when requests have 3+ distinct aspects (instruction + context + constraints), when ambiguity causes misunderstanding, when creating reusable templates, or for complex hierarchy. Don't use them for simple one-liner requests or quick typo fixes - the overhead outweighs the benefit. Tags like <instruction>, <context>, <constraints> help Claude understand different aspects.
+      当请求具有 3 个以上不同方面（指令 + 上下文 + 约束）时，当歧义导致误解时，当创建可重用模板时，或用于复杂层次结构时，使用 XML 结构化提示。不要将它们用于简单的单行请求或快速错别字修复——开销超过收益。诸如 <instruction>、<context>、<constraints> 之类的标签帮助 Claude 理解不同方面。
     doc_reference:
       file: "guide/ultimate-guide.md"
-      section: "2.6 Structured Prompting with XML Tags"
+      section: "2.6 使用 XML 标签进行结构化提示"
       anchor: "#when-to-use-xml-structured-prompts"
 
   - id: "02-016"
     difficulty: "power"
     profiles: ["power"]
-    question: "What is a 'Session Handoff Pattern' used for?"
+    question: "'会话交接模式' 用于什么？"
     options:
-      a: "Transferring sessions between team members"
-      b: "Documenting state, decisions, and next steps to maintain continuity between sessions"
-      c: "Backing up your code"
-      d: "Exporting conversation history"
+      a: "在团队成员之间转移会话"
+      b: "记录状态、决策和下一步，以保持会话之间的连续性"
+      c: "备份您的代码"
+      d: "导出对话历史记录"
     correct: "b"
     explanation: |
-      The Session Handoff Pattern creates a document to bridge gaps between sessions. It includes: what was accomplished, current state, decisions made, next steps, and context for the next session. Create handoffs at end of work day, before context limit, when switching focus areas, or during interruptions. Store in `claudedocs/handoffs/handoff-YYYY-MM-DD.md`.
+      会话交接模式创建一个文档来弥合会话之间的差距。它包括：已完成的工作、当前状态、做出的决策、下一步以及下一个会话的上下文。在工作日结束时、在上下文限制之前、切换焦点区域时或在中断期间创建交接。存储在 `claudedocs/handoffs/handoff-YYYY-MM-DD.md` 中。
     doc_reference:
       file: "guide/ultimate-guide.md"
-      section: "2.2 Context Management"
+      section: "2.2 上下文管理"
       anchor: "#session-handoff-pattern"
 
   - id: "02-017"
     difficulty: "senior"
     profiles: ["senior", "power"]
-    question: "What is the typical cost of a 1-hour Claude Code session?"
+    question: "1 小时 Claude Code 会话的典型成本是多少？"
     options:
       a: "$0.01 - $0.05"
       b: "$0.10 - $0.50"
@@ -286,59 +286,59 @@ questions:
       d: "$10.00 - $20.00"
     correct: "b"
     explanation: |
-      A typical 1-hour session costs $0.10 - $0.50 depending on usage patterns. The guide provides cost budgets: quick task (5-10 min) $0.05-$0.10, feature work (1-2 hours) $0.20-$0.50, deep refactor (half day) $1.00-$2.00. Spending $0.50 to save 30 minutes provides 60x ROI if your time is worth $30/hour - don't over-optimize!
+      典型的 1 小时会话根据使用模式花费 $0.10 - $0.50。指南提供了成本预算：快速任务（5-10 分钟）$0.05-$0.10，功能工作（1-2 小时）$0.20-$0.50，深度重构（半天）$1.00-$2.00。花费 $0.50 节省 30 分钟提供 60 倍的 ROI，如果您的时间价值 $30/小时——不要过度优化！
     doc_reference:
       file: "guide/ultimate-guide.md"
-      section: "2.2 Context Management"
+      section: "2.2 上下文管理"
       anchor: "#cost-awareness--optimization"
 
   - id: "02-018"
     difficulty: "power"
     profiles: ["power"]
-    question: "What is Auto Plan Mode and how do you enable it?"
+    question: "什么是自动计划模式，如何启用它？"
     options:
-      a: "Automatic planning that's always on by default"
-      b: "A configuration that forces Claude to present a plan and wait for approval before any tool execution"
-      c: "A mode that automatically generates project plans"
-      d: "A premium feature for enterprise users"
+      a: "默认情况下始终打开的自动计划"
+      b: "一种强制 Claude 在执行任何工具之前呈现计划并等待批准的配置"
+      c: "一种自动生成项目计划的模式"
+      d: "面向企业用户的高级功能"
     correct: "b"
     explanation: |
-      Auto Plan Mode makes Claude present a plan and wait for explicit user approval before executing ANY tool. Configure via `~/.claude/auto-plan-mode.txt` and launch with `claude --append-system-prompt "$(cat ~/.claude/auto-plan-mode.txt)"`. Results in 76% fewer tokens with better results because plans are validated before execution.
+      自动计划模式让 Claude 在执行任何工具之前呈现计划并等待明确的用户批准。通过 `~/.claude/auto-plan-mode.txt` 配置，并使用 `claude --append-system-prompt "$(cat ~/.claude/auto-plan-mode.txt)"` 启动。结果是令牌减少 76%，结果更好，因为计划在执行前得到验证。
     doc_reference:
       file: "guide/ultimate-guide.md"
-      section: "2.3 Plan Mode"
+      section: "2.3 计划模式"
       anchor: "#auto-plan-mode"
 
   - id: "02-019"
     difficulty: "intermediate"
     profiles: ["senior", "power"]
-    question: "What is the BMAD (Big Model Agentic Development) methodology best suited for?"
+    question: "BMAD（大模型智能体开发）方法论最适合什么？"
     options:
-      a: "Small teams of 2-3 people needing fast iteration"
-      b: "High-complexity projects with stable requirements where deep planning pays off"
-      c: "Any project with more than 10 developers"
-      d: "Greenfield projects only, never legacy codebases"
+      a: "2-3 人的小团队需要快速迭代"
+      b: "需求稳定的高复杂度项目，深度规划会有回报"
+      c: "任何拥有超过 10 个开发人员的项目"
+      d: "仅全新项目，绝不是遗留代码库"
     correct: "b"
     explanation: |
-      BMAD is optimized for high-complexity projects with stable requirements — where the upfront investment in structured planning (requirements, architecture, stories) pays dividends. The key criterion is complexity + stability, not team headcount. BMAD uses specialized agents (Analyst, Architect, SM, Dev) to break down and execute work systematically. It struggles with rapidly changing requirements because replanning cost is high.
+      BMAD 针对需求稳定的高复杂度项目进行了优化——在结构化规划（需求、架构、故事）方面的前期投资会带来回报。关键标准是复杂度 + 稳定性，而不是团队人数。BMAD 使用专门的智能体（分析师、架构师、SM、开发）系统地分解和执行工作。它在需求快速变化时会遇到困难，因为重新规划成本很高。
     doc_reference:
       file: "guide/ultimate-guide.md"
-      section: "BMAD Methodology"
+      section: "BMAD 方法论"
       anchor: "#bmad-methodology"
 
   - id: "02-020"
     difficulty: "intermediate"
     profiles: ["senior", "power"]
-    question: "What is the primary criterion for choosing FDD (Feature-Driven Development) with Claude Code?"
+    question: "选择 Claude Code 的 FDD（功能驱动开发）的主要标准是什么？"
     options:
-      a: "Teams smaller than 5 developers who need a simple process"
-      b: "Feature teams with parallel delivery needs — multiple features developed simultaneously"
-      c: "Projects requiring detailed UML documentation and design models"
-      d: "Enterprise teams with more than 50 developers"
+      a: "团队少于 5 个开发人员，需要简单流程"
+      b: "具有并行交付需求的功能团队——同时开发多个功能"
+      c: "需要详细 UML 文档和设计模型的项目"
+      d: "拥有超过 50 个开发人员的企业团队"
     correct: "b"
     explanation: |
-      FDD's primary criterion is feature teams with parallel delivery needs — multiple features being developed simultaneously across the team. FDD's per-feature iteration (Design → Build) maps well onto Claude Code's session-based workflow, where each feature gets a dedicated planning and implementation session. The key signal is "parallel delivery", not team size. FDD is less suited to projects where features have deep interdependencies requiring sequential development.
+      FDD 的主要标准是具有并行交付需求的功能团队——多个功能在团队中同时开发。FDD 的每功能迭代（设计 → 构建）与 Claude Code 的基于会话的工作流非常匹配，其中每个功能获得专门的规划和实施会话。关键信号是“并行交付”，而不是团队规模。FDD 不太适合功能具有需要顺序开发的深度相互依赖关系的项目。
     doc_reference:
       file: "guide/ultimate-guide.md"
-      section: "FDD Methodology"
+      section: "FDD 方法论"
       anchor: "#fdd-methodology"

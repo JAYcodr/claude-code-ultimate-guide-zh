@@ -1,4 +1,5 @@
-category: "Quick Start"
+
+category: "快速入门"
 category_id: 1
 source_file: "guide/ultimate-guide.md"
 
@@ -6,7 +7,7 @@ questions:
   - id: "01-001"
     difficulty: "junior"
     profiles: ["junior", "senior", "power", "pm"]
-    question: "What is the recommended universal method to install Claude Code?"
+    question: "安装 Claude Code 的推荐通用方法是什么？"
     options:
       a: "brew install claude-code"
       b: "npm install -g @anthropic-ai/claude-code"
@@ -14,33 +15,33 @@ questions:
       d: "curl -fsSL https://claude.ai/install.sh | sh"
     correct: "b"
     explanation: |
-      The universal installation method that works across all platforms (Windows, macOS, Linux) is `npm install -g @anthropic-ai/claude-code`. While shell scripts and Homebrew are available for specific platforms, npm is the recommended cross-platform approach. This ensures consistent installation regardless of your operating system.
+      适用于所有平台（Windows、macOS、Linux）的通用安装方法是 `npm install -g @anthropic-ai/claude-code`。虽然 shell 脚本和 Homebrew 可用于特定平台，但 npm 是推荐的跨平台方法。这确保了无论您使用什么操作系统，安装过程都是一致的。
     doc_reference:
       file: "guide/ultimate-guide.md"
-      section: "1.1 Installation"
+      section: "1.1 安装"
       anchor: "#11-installation"
 
   - id: "01-002"
     difficulty: "junior"
     profiles: ["junior", "senior", "power"]
-    question: "After Claude proposes a code change, what options do you have when reviewing the diff?"
+    question: "在 Claude 提出代码更改后，审查差异时有哪些选项？"
     options:
-      a: "Only accept (y) or reject (n)"
-      b: "Accept (y), reject (n), or edit (e)"
-      c: "Accept (y), skip (s), or delay (d)"
-      d: "Commit (c), reject (r), or review (v)"
+      a: "只能接受 (y) 或拒绝 (n)"
+      b: "接受 (y)、拒绝 (n) 或编辑 (e)"
+      c: "接受 (y)、跳过 (s) 或延迟 (d)"
+      d: "提交 (c)、拒绝 (r) 或审查 (v)"
     correct: "b"
     explanation: |
-      When Claude proposes a change, you have three options: press 'y' to accept the change, 'n' to reject and ask for alternatives, or 'e' to edit the change manually. This gives you full control over what gets applied to your codebase. Always review diffs before accepting - this is your safety net.
+      当 Claude 提出更改时，您有三个选项：按 'y' 接受更改，按 'n' 拒绝并要求替代方案，或按 'e' 手动编辑更改。这让您可以完全控制应用到代码库的内容。接受前请务必审查差异——这是您的安全网。
     doc_reference:
       file: "guide/ultimate-guide.md"
-      section: "1.2 First Workflow"
+      section: "1.2 第一个工作流"
       anchor: "#12-first-workflow"
 
   - id: "01-003"
     difficulty: "junior"
     profiles: ["junior", "senior", "power", "pm"]
-    question: "Which command shows all available Claude Code commands?"
+    question: "哪个命令显示所有可用的 Claude Code 命令？"
     options:
       a: "/commands"
       b: "/list"
@@ -48,118 +49,118 @@ questions:
       d: "/menu"
     correct: "c"
     explanation: |
-      The `/help` command displays all available Claude Code commands. This is the go-to command when you're lost or want to discover available functionality. It's one of the 7 essential commands that cover 90% of daily usage.
+      `/help` 命令显示所有可用的 Claude Code 命令。当您迷路或想发现可用功能时，这是首选命令。它是覆盖 90% 日常使用的 7 个基本命令之一。
     doc_reference:
       file: "guide/ultimate-guide.md"
-      section: "1.3 Essential Commands"
+      section: "1.3 基本命令"
       anchor: "#13-essential-commands"
 
   - id: "01-004"
     difficulty: "junior"
     profiles: ["junior", "senior", "power"]
-    question: "What does the `!` prefix do in Claude Code?"
+    question: "Claude Code 中的 `!` 前缀有什么作用？"
     options:
-      a: "Marks a command as urgent"
-      b: "Runs a shell command directly without asking Claude"
-      c: "Escapes special characters"
-      d: "Deletes the previous command"
+      a: "将命令标记为紧急"
+      b: "直接运行 shell 命令，不询问 Claude"
+      c: "转义特殊字符"
+      d: "删除上一个命令"
     correct: "b"
     explanation: |
-      The `!` prefix executes shell commands immediately without asking Claude to do it. For example, `!git status` runs the command directly. Use this for quick status checks, view commands, and already-known commands. It's faster than asking Claude when you know exactly what command you need.
+      `!` 前缀立即执行 shell 命令，不询问 Claude 去做。例如，`!git status` 直接运行命令。这适用于快速状态检查、查看命令和已知命令。当您确切知道需要什么命令时，比询问 Claude 更快。
     doc_reference:
       file: "guide/ultimate-guide.md"
-      section: "1.3 Essential Commands"
+      section: "1.3 基本命令"
       anchor: "#shell-commands-with-"
 
   - id: "01-005"
     difficulty: "junior"
     profiles: ["junior", "senior", "power"]
-    question: "What does the `@` symbol do when used in a prompt?"
+    question: "在提示中使用 `@` 符号有什么作用？"
     options:
-      a: "Mentions another user"
-      b: "References a specific file for targeted operations"
-      c: "Tags a message as important"
-      d: "Activates an agent"
+      a: "提及另一个用户"
+      b: "引用特定文件以进行针对性操作"
+      c: "将消息标记为重要"
+      d: "激活智能体"
     correct: "b"
     explanation: |
-      The `@` symbol references specific files in your prompts for targeted operations. For example, `Review @src/auth/login.tsx for security issues` signals Claude to read that file. This provides precision (target exact files), speed (skip file discovery), and clarity (makes your intent explicit). Claude reads the file on-demand via tools.
+      `@` 符号在提示中引用特定文件以进行针对性操作。例如，`Review @src/auth/login.tsx for security issues` 指示 Claude 读取该文件。这提供了精确性（针对确切文件）、速度（跳过文件发现）和清晰度（明确您的意图）。Claude 通过工具按需读取文件。
     doc_reference:
       file: "guide/ultimate-guide.md"
-      section: "1.3 Essential Commands"
+      section: "1.3 基本命令"
       anchor: "#file-references-with-"
 
   - id: "01-006"
     difficulty: "senior"
     profiles: ["senior", "power"]
-    question: "What is the recommended approach when migrating from GitHub Copilot to Claude Code?"
+    question: "从 GitHub Copilot 迁移到 Claude Code 时推荐什么方法？"
     options:
-      a: "Completely stop using Copilot immediately"
-      b: "Use a hybrid approach: Copilot for autocomplete, Claude Code for complex tasks"
-      c: "Only use Claude Code for simple tasks"
-      d: "Export all Copilot settings to Claude Code"
+      a: "立即完全停止使用 Copilot"
+      b: "使用混合方法：Copilot 用于自动补全，Claude Code 用于复杂任务"
+      c: "仅对简单任务使用 Claude Code"
+      d: "将所有 Copilot 设置导出到 Claude Code"
     correct: "b"
     explanation: |
-      The guide recommends a hybrid approach: use Copilot for quick autocomplete and boilerplate while using Claude Code for feature implementation, debugging, code reviews, and understanding unfamiliar codebases. This leverages the strengths of both tools - Copilot excels at inline suggestions while Claude Code handles multi-file operations and complex reasoning.
+      指南推荐混合方法：使用 Copilot 进行快速自动补全和样板代码，同时使用 Claude Code 进行功能实现、调试、代码审查和理解不熟悉的代码库。这利用了两种工具的优势——Copilot 擅长内联建议，而 Claude Code 处理多文件操作和复杂推理。
     doc_reference:
       file: "guide/ultimate-guide.md"
-      section: "1.6 Migrating from Other AI Coding Tools"
+      section: "1.6 从其他 AI 编码工具迁移"
       anchor: "#migration-guide-github-copilot--claude-code"
 
   - id: "01-007"
     difficulty: "junior"
     profiles: ["junior", "senior", "power"]
-    question: "In Plan Mode, what is Claude allowed to do?"
+    question: "在计划模式下，Claude 允许做什么？"
     options:
-      a: "Edit files, run commands, and make commits"
-      b: "Only read and analyze - no modifications allowed"
-      c: "Run commands but not edit files"
-      d: "Create new files but not edit existing ones"
+      a: "编辑文件、运行命令和提交"
+      b: "仅读取和分析——不允许修改"
+      c: "运行命令但不编辑文件"
+      d: "创建新文件但不编辑现有文件"
     correct: "b"
     explanation: |
-      Plan Mode is Claude Code's "look but don't touch" mode. It allows reading files, searching the codebase, analyzing architecture, and proposing approaches. It prevents editing files, running state-modifying commands, creating new files, and making commits. Perfect for safe exploration before making changes.
+      计划模式是 Claude Code 的“只看不动”模式。它允许读取文件、搜索代码库、分析架构和提出方法。它禁止编辑文件、运行修改状态的命令、创建新文件和提交。非常适合在进行更改前进行安全探索。
     doc_reference:
       file: "guide/ultimate-guide.md"
-      section: "1.4 Permission Modes"
+      section: "1.4 权限模式"
       anchor: "#plan-mode"
 
   - id: "01-008"
     difficulty: "senior"
     profiles: ["senior", "power"]
-    question: "What flag allows you to continue your most recent Claude Code conversation?"
+    question: "哪个标志允许您继续最近的 Claude Code 对话？"
     options:
       a: "--last"
-      b: "--continue or -c"
+      b: "--continue 或 -c"
       c: "--resume-last"
       d: "--restore"
     correct: "b"
     explanation: |
-      Use `claude --continue` or `claude -c` to automatically resume your most recent conversation. This maintains full context and conversation history across terminal sessions. For resuming a specific session by ID, use `claude --resume <id>` or `claude -r <id>`. This is particularly useful for multi-day features or when interrupted.
+      使用 `claude --continue` 或 `claude -c` 自动恢复最近的对话。这在终端会话之间保留完整上下文和对话历史。要通过 ID 恢复特定会话，请使用 `claude --resume <id>` 或 `claude -r <id>`。这对于多日功能或被打断时特别有用。
     doc_reference:
       file: "guide/ultimate-guide.md"
-      section: "1.3 Essential Commands"
+      section: "1.3 基本命令"
       anchor: "#session-continuation-and-resume"
 
   - id: "01-009"
     difficulty: "junior"
     profiles: ["junior", "senior", "power"]
-    question: "What should you ALWAYS do before accepting a code change from Claude?"
+    question: "接受 Claude 的代码更改前，您应该始终做什么？"
     options:
-      a: "Run the test suite"
-      b: "Create a backup of the file"
-      c: "Read the diff carefully"
-      d: "Ask for Claude's confidence level"
+      a: "运行测试套件"
+      b: "创建文件备份"
+      c: "仔细阅读差异"
+      d: "询问 Claude 的置信度"
     correct: "c"
     explanation: |
-      Always read the diff before accepting changes - this is your safety net. The guide emphasizes this as critical: "Always review diffs before accepting changes." While running tests is good practice, reviewing the diff is the immediate required step before any acceptance. You need to understand what changes are being proposed.
+      接受更改前请务必阅读差异——这是您的安全网。指南强调这一点至关重要：“接受更改前请务必审查差异。”虽然运行测试是良好实践，但审查差异是接受前的立即必要步骤。您需要了解正在提议的更改。
     doc_reference:
       file: "guide/ultimate-guide.md"
-      section: "1.2 First Workflow"
+      section: "1.2 第一个工作流"
       anchor: "#step-3-review-the-diff"
 
   - id: "01-010"
     difficulty: "junior"
     profiles: ["junior", "senior", "power"]
-    question: "Which keyboard shortcut cancels the current operation in Claude Code?"
+    question: "哪个键盘快捷键取消 Claude Code 中的当前操作？"
     options:
       a: "Ctrl+Z"
       b: "Ctrl+C"
@@ -167,84 +168,84 @@ questions:
       d: "Ctrl+Q"
     correct: "c"
     explanation: |
-      Esc cancels (stops) the current operation in Claude Code. Press Esc once to stop Claude mid-action, and double-tap Esc (Esc+Esc) to open the rewind menu. Ctrl+C is the standard terminal interrupt but Esc is the primary in-app shortcut for stopping operations. Knowing these shortcuts helps maintain control during your workflow.
+      Esc 取消（停止）Claude Code 中的当前操作。按 Esc 一次可在中途停止 Claude，双击 Esc (Esc+Esc) 可打开倒带菜单。Ctrl+C 是标准终端中断，但 Esc 是主要的应用内停止操作快捷键。了解这些快捷键有助于在工作流中保持控制。
     doc_reference:
       file: "guide/ultimate-guide.md"
-      section: "1.3 Essential Commands"
+      section: "1.3 基本命令"
       anchor: "#quick-actions--shortcuts"
 
   - id: "01-011"
     difficulty: "senior"
     profiles: ["senior", "power"]
-    question: "When should you use auto-accept mode in Claude Code?"
+    question: "什么时候应该在 Claude Code 中使用自动接受模式？"
     options:
-      a: "For all operations to save time"
-      b: "Only for well-defined, reversible operations you trust"
-      c: "When working on production code"
-      d: "For complex refactoring tasks"
+      a: "对所有操作使用以节省时间"
+      b: "仅对您信任的定义明确、可逆的操作使用"
+      c: "处理生产代码时"
+      d: "处理复杂重构任务时"
     correct: "b"
     explanation: |
-      Auto-accept mode should only be used for well-defined, reversible operations. The guide warns: "Only use auto-accept for well-defined, reversible operations." It's dangerous for complex or risky changes. Default mode (asking permission) is safest, especially for learning and production work.
+      自动接受模式仅应在定义明确、可逆的操作中使用。指南警告：“仅对定义明确、可逆的操作使用自动接受。”对于复杂或有风险的更改很危险。默认模式（请求许可）最安全，特别是在学习和生产工作中。
     doc_reference:
       file: "guide/ultimate-guide.md"
-      section: "1.4 Permission Modes"
+      section: "1.4 权限模式"
       anchor: "#auto-accept-mode"
 
   - id: "01-012"
     difficulty: "power"
     profiles: ["power"]
-    question: "What is the recommended rule of thumb for choosing between Claude Code and autocomplete tools based on code size?"
+    question: "根据代码大小在 Claude Code 和自动补全工具之间选择的推荐经验法则是什么？"
     options:
-      a: "<10 lines: autocomplete, >10 lines: Claude Code"
-      b: "<5 lines: autocomplete, 5-50 lines single file: either, >50 lines or multi-file: Claude Code"
-      c: "Always use Claude Code regardless of size"
-      d: "<20 lines: autocomplete, >20 lines: Claude Code"
+      a: "<10 行：自动补全，>10 行：Claude Code"
+      b: "<5 行：自动补全，单文件 5-50 行：任一均可，>50 行或多文件：Claude Code"
+      c: "无论大小始终使用 Claude Code"
+      d: "<20 行：自动补全，>20 行：Claude Code"
     correct: "b"
     explanation: |
-      The guide provides clear guidance: less than 5 lines of code - use Copilot/autocomplete; 5-50 lines in a single file - either tool works; more than 50 lines or multi-file changes - use Claude Code. This helps you choose the right tool for the task's complexity level.
+      指南提供了明确指导：少于 5 行代码——使用 Copilot/自动补全；单文件 5-50 行——任一工具均可；超过 50 行或多文件更改——使用 Claude Code。这有助于为任务的复杂程度选择合适的工具。
     doc_reference:
       file: "guide/ultimate-guide.md"
-      section: "1.6 Migrating from Other AI Coding Tools"
+      section: "1.6 从其他 AI 编码工具迁移"
       anchor: "#common-migration-issues"
 
   - id: "01-013"
     difficulty: "junior"
     profiles: ["junior", "senior", "power"]
-    question: "What image formats does Claude Code support for visual analysis?"
+    question: "Claude Code 支持哪些图像格式用于视觉分析？"
     options:
-      a: "Only PNG"
-      b: "PNG, JPG, JPEG, WebP, GIF (static)"
-      c: "All image formats including RAW"
-      d: "SVG and PNG only"
+      a: "仅 PNG"
+      b: "PNG、JPG、JPEG、WebP、GIF（静态）"
+      c: "所有图像格式，包括 RAW"
+      d: "仅 SVG 和 PNG"
     correct: "b"
     explanation: |
-      Claude Code supports PNG, JPG, JPEG, WebP, and static GIF formats. You can paste images directly in the terminal (Cmd+V/Ctrl+V), drag and drop, or reference by path. This is useful for implementing UI from mockups, debugging visual issues, analyzing diagrams, and accessibility audits. Note that images consume significant context tokens (1000-2000 words equivalent).
+      Claude Code 支持 PNG、JPG、JPEG、WebP 和静态 GIF 格式。您可以直接在终端中粘贴图像（Cmd+V/Ctrl+V）、拖放或通过路径引用。这对于从线框图实现 UI、调试视觉问题、分析图表和可访问性审计很有用。请注意，图像会消耗大量上下文令牌（相当于 1000-2000 字）。
     doc_reference:
       file: "guide/ultimate-guide.md"
-      section: "1.3 Essential Commands"
+      section: "1.3 基本命令"
       anchor: "#working-with-images-and-screenshots"
 
   - id: "01-014"
     difficulty: "senior"
     profiles: ["senior", "power"]
-    question: "When resuming a Claude Code session, what context is preserved?"
+    question: "恢复 Claude Code 会话时，保留哪些上下文？"
     options:
-      a: "Only the conversation history"
-      b: "Full conversation history, files read/edited, CLAUDE.md settings, and MCP server state"
-      c: "Just the last 10 messages"
-      d: "Only files that were modified"
+      a: "仅对话历史"
+      b: "完整对话历史、读取/编辑的文件、CLAUDE.md 设置和 MCP 服务器状态"
+      c: "仅最后 10 条消息"
+      d: "仅修改的文件"
     correct: "b"
     explanation: |
-      When you resume a session, Claude retains: full conversation history, files previously read/edited, CLAUDE.md and project settings, MCP server state (if Serena is used), and uncommitted code changes awareness. This comprehensive context preservation allows seamless continuation of complex, multi-day tasks.
+      当您恢复会话时，Claude 保留：完整对话历史、之前读取/编辑的文件、CLAUDE.md 和项目设置、MCP 服务器状态（如果使用 Serena）以及未提交的代码更改感知。这种全面的上下文保留允许无缝继续复杂的多日任务。
     doc_reference:
       file: "guide/ultimate-guide.md"
-      section: "1.3 Essential Commands"
+      section: "1.3 基本命令"
       anchor: "#context-preservation"
 
   - id: "01-015"
     difficulty: "junior"
     profiles: ["junior", "senior", "power", "pm"]
-    question: "What command should you use to verify Claude Code installation?"
+    question: "您应该使用哪个命令来验证 Claude Code 安装？"
     options:
       a: "claude check"
       b: "claude --verify"
@@ -252,59 +253,60 @@ questions:
       d: "claude test"
     correct: "c"
     explanation: |
-      Use `claude --version` to verify your installation and display the current version. This is also useful before reporting bugs. After installation, you can also use `claude doctor` to verify auto-updater health and `claude update` to check for available updates.
+      使用 `claude --version` 验证您的安装并显示当前版本。这在报告错误之前也很有用。安装后，您还可以使用 `claude doctor` 验证自动更新器的健康状态，并使用 `claude update` 检查可用更新。
     doc_reference:
       file: "guide/ultimate-guide.md"
-      section: "1.1 Installation"
+      section: "1.1 安装"
       anchor: "#verify-installation"
 
   - id: "01-016"
     difficulty: "intermediate"
     profiles: ["senior", "power"]
-    question: "What is the optimal image resolution range for Claude Code visual analysis?"
+    question: "Claude Code 视觉分析的最佳图像分辨率范围是什么？"
     options:
-      a: "50-200px (smallest possible)"
-      b: "200-1568px (sweet spot for quality/token balance)"
-      c: "2000-4000px (maximum detail)"
-      d: "8000px+ (highest resolution)"
+      a: "50-200px（尽可能小）"
+      b: "200-1568px（质量/令牌平衡的最佳点）"
+      c: "2000-4000px（最大细节）"
+      d: "8000px+（最高分辨率）"
     correct: "b"
     explanation: |
-      The optimal range is 200-1568px. Below 200px lacks detail, 200-1000px is the sweet spot for wireframes, 1000-1568px provides optimal quality/token balance, images above 1568px are auto-downscaled (wasting upload time), and images over 8000px are rejected by the API.
+      最佳范围是 200-1568px。低于 200px 缺乏细节，200-1000px 是线框图的最佳点，1000-1568px 提供最佳质量/令牌平衡，1568px 以上的图像会自动缩小（浪费上传时间），超过 8000px 的图像会被 API 拒绝。
     doc_reference:
       file: "guide/ultimate-guide.md"
-      section: "1.3 Essential Commands"
+      section: "1.3 基本命令"
       anchor: "#image-resolution-guidelines"
 
   - id: "01-017"
     difficulty: "senior"
     profiles: ["senior", "power"]
-    question: "How are image tokens calculated in Claude Code?"
+    question: "Claude Code 中如何计算图像令牌？"
     options:
       a: "file_size_bytes / 1000"
       b: "(width × height) / 750"
       c: "pixels / 1000"
-      d: "Fixed 500 tokens per image"
+      d: "每图像固定 500 令牌"
     correct: "b"
     explanation: |
-      Token calculation formula: (width × height) / 750 ≈ tokens consumed. Examples: 200×200 = ~54 tokens, 500×500 = ~334 tokens, 1000×1000 = ~1334 tokens. This helps estimate context impact before pasting images. Use /status after pasting to monitor actual context usage.
+      令牌计算公式：(width × height) / 750 ≈ 消耗的令牌。示例：200×200 = ~54 令牌，500×500 = ~334 令牌，1000×1000 = ~1334 令牌。这有助于在粘贴图像前估计上下文影响。粘贴后使用 /status 监视实际上下文使用情况。
     doc_reference:
       file: "guide/ultimate-guide.md"
-      section: "1.3 Essential Commands"
+      section: "1.3 基本命令"
       anchor: "#image-resolution-guidelines"
 
   - id: "01-018"
     difficulty: "intermediate"
     profiles: ["senior", "power"]
-    question: "Which image format is recommended for wireframes and diagrams in Claude Code?"
+    question: "在 Claude Code 中，线框图和图表推荐使用哪种图像格式？"
     options:
-      a: "JPEG (best compression)"
-      b: "PNG (sharp lines and text)"
-      c: "GIF (universal support)"
-      d: "BMP (lossless)"
+      a: "JPEG（最佳压缩）"
+      b: "PNG（清晰线条和文字）"
+      c: "GIF（通用支持）"
+      d: "BMP（无损）"
     correct: "b"
     explanation: |
-      PNG is recommended for wireframes, diagrams, and text because it preserves sharp lines. WebP is good for general screenshots with compression. JPEG is for photos only—compression artifacts harm line detection. GIF should be avoided (static only, poor quality). Always crop to relevant area and resize to 1000-1200px if larger.
+      PNG 推荐用于线框图、图表和文字，因为它保留了清晰线条。WebP 适合带压缩的一般截图。JPEG 仅适用于照片——压缩伪影会损害线条检测。应避免使用 GIF（仅静态，质量差）。如果较大，始终裁剪到相关区域并调整大小到 1000-1200px。
     doc_reference:
       file: "guide/ultimate-guide.md"
-      section: "1.3 Essential Commands"
+      section: "1.3 基本命令"
       anchor: "#format-recommendations"
+

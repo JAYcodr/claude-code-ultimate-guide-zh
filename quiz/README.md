@@ -1,86 +1,86 @@
-# Claude Code Knowledge Quiz
+# Claude Code 知识测验
 
-Test your understanding of Claude Code with interactive multiple-choice questions.
+通过交互式多项选择题测试你对 Claude Code 的理解程度。
 
 [![Node.js](https://img.shields.io/badge/Node.js-18+-green.svg)](https://nodejs.org/)
 [![Platform](https://img.shields.io/badge/Platform-macOS%20%7C%20Linux%20%7C%20Windows-blue.svg)]()
 
-## Quick Start
+## 快速开始
 
 ```bash
-# Navigate to quiz directory
+# 进入 quiz 目录
 cd quiz
 
-# Install dependencies
+# 安装依赖
 npm install
 
-# Run the quiz
+# 运行测验
 npm start
 
-# Or run directly
+# 或者直接运行
 node src/index.js
 ```
 
-## Features
+## 功能特性
 
-- **4 User Profiles**: Junior, Senior, Power User, Product Manager
-- **10 Topic Categories**: From Quick Start to Advanced Patterns
-- **159 Curated Questions**: Practical knowledge, not trivia
-- **Immediate Feedback**: Learn from mistakes with explanations
-- **Documentation Links**: Direct references to guide sections
-- **Score Tracking**: See strengths and weak areas
-- **Session Persistence**: History saved to `~/.claude-quiz/`
-- **Cross-Platform**: Works on macOS, Linux, and Windows
+- **4 种用户画像**：初级、高级、超级用户、产品经理
+- **10 个主题类别**：从快速入门到高级模式
+- **159 道精心设计的题目**：实用知识，而非琐事
+- **即时反馈**：通过解释从错误中学习
+- **文档链接**：直接引用指南章节
+- **分数追踪**：查看强项和弱项
+- **会话持久化**：历史记录保存到 `~/.claude-quiz/`
+- **跨平台**：支持 macOS、Linux 和 Windows
 
-## Usage
+## 使用方法
 
-### Interactive Mode (Recommended)
+### 交互式模式（推荐）
 
 ```bash
 npm start
 ```
 
-You'll be prompted to:
-1. Select your profile (Junior/Senior/Power User/PM)
-2. Choose topics (all or specific sections)
-3. Answer questions with A/B/C/D
+系统会提示你：
+1. 选择你的画像（初级/高级/超级用户/PM）
+2. 选择主题（全部或特定章节）
+3. 使用 A/B/C/D 回答问题
 
-### Command Line Options
+### 命令行选项
 
 ```bash
-node src/index.js [options]
+node src/index.js [选项]
 
-Options:
-  -p, --profile <type>   Pre-select profile (junior|senior|power|pm)
-  -t, --topics <list>    Quiz specific sections (1-10, comma-separated)
-  -c, --count <n>        Limit number of questions (1-50)
-  -d, --dynamic          Enable dynamic question generation via claude -p
-  -h, --help             Show help message
-  -v, --version          Show version
+选项：
+  -p, --profile <类型>   预选画像（junior|senior|power|pm）
+  -t, --topics <列表>    测验特定章节（1-10，逗号分隔）
+  -c, --count <n>        限制题目数量（1-50）
+  -d, --dynamic          启用通过 claude -p 动态生成题目
+  -h, --help             显示帮助信息
+  -v, --version          显示版本
 ```
 
-### Examples
+### 示例
 
 ```bash
-# Interactive mode
+# 交互式模式
 npm start
 
-# Senior profile, default topics
+# 高级画像，默认主题
 node src/index.js -p senior
 
-# Power user, specific topics (Agents, Hooks, MCP)
+# 超级用户，特定主题（智能体、钩子、MCP）
 node src/index.js -p power -t 4,7,8
 
-# Quick 10-question quiz
+# 快速 10 题测验
 node src/index.js -c 10
 
-# Junior profile with dynamic generation
+# 初级画像，动态生成
 node src/index.js -p junior -d
 ```
 
-## Example Session
+## 示例会话
 
-Here's what a typical quiz session looks like:
+典型的测验会话如下所示：
 
 ```
 ============================================================
@@ -88,110 +88,110 @@ Here's what a typical quiz session looks like:
    Master Claude Code: The Complete Guide
 ============================================================
 
-? Select your profile: Senior Developer (40 min to mastery)
-? Select topics to quiz: Custom selection...
-? Select topics (space to toggle, enter to confirm):
-  ◉ [2] Core Concepts
-  ◉ [4] Agents
-  ◉ [7] Hooks
+? 选择你的画像：高级开发者（40 分钟达到精通）
+? 选择测验主题：自定义选择...
+? 选择主题（空格切换，回车确认）：
+  ◉ [2] 核心概念
+  ◉ [4] 智能体
+  ◉ [7] 钩子
 
 ------------------------------------------------------------
-Starting quiz: 20 questions for senior profile
+开始测验：高级画像 20 道题目
 ------------------------------------------------------------
 
 ------------------------------------------------------------
-Question 1/20 [Core Concepts]
+题目 1/20 [核心概念]
 
-At what context percentage should you use /compact?
+上下文达到多少百分比时应该使用 /compact？
 
   A) 0-50%
   B) 50-70%
   C) 70-90%
-  D) Only at 100%
+  D) 只在 100% 时
 
-? Your answer: C
+? 你的答案：C
 
-✓ CORRECT!
+✓ 正确！
 
-Progress: █░░░░░░░░░░░░░░░░░░░ 1/20 | Score: 1/1 (100%)
+进度：█░░░░░░░░░░░░░░░░░░░ 1/20 | 分数：1/1 (100%)
 
 ------------------------------------------------------------
-Question 2/20 [Hooks]
+题目 2/20 [钩子]
 
-What exit code should a PreToolUse hook return to BLOCK an operation?
+PreToolUse 钩子应该返回什么退出码来阻止操作？
 
   A) 0
   B) 1
   C) 2
   D) -1
 
-? Your answer: A
+? 你的答案：A
 
-✗ INCORRECT. The correct answer is C) 2
+✗ 错误。正确答案是 C) 2
 
-Explanation:
-Exit code 2 blocks the operation. Exit code 0 allows it to proceed.
-Other exit codes are treated as errors and logged but don't block.
+解释：
+退出码 2 会阻止操作。退出码 0 允许操作继续。
+其他退出码被视为错误并记录，但不会阻止。
 
-See: https://github.com/FlorianBruniaux/claude-code-ultimate-guide/blob/main/guide/ultimate-guide.md#72-creating-hooks
-     (Line 4164)
+参见：https://github.com/FlorianBruniaux/claude-code-ultimate-guide/blob/main/guide/ultimate-guide.md#72-creating-hooks
+     (第 4164 行)
 
-Progress: ██░░░░░░░░░░░░░░░░░░ 2/20 | Score: 1/2 (50%)
-? Continue to next question? Yes
+进度：██░░░░░░░░░░░░░░░░░░ 2/20 | 分数：1/2 (50%)
+? 继续下一题？是
 
-... (more questions) ...
+...（更多题目）...
 
 ============================================================
-   QUIZ COMPLETE
+   测验完成
 ============================================================
 
-Overall Score: 16/20 (80%)
+总分：16/20 (80%)
 
-By Category:
-  Core Concepts       6/7  (86%)  [████████░░]
-  Agents              5/7  (71%)  [███████░░░]
-  Hooks               5/6  (83%)  [████████░░]
+按类别：
+  核心概念       6/7  (86%)  [████████░░]
+  智能体         5/7  (71%)  [███████░░░]
+  钩子           5/6  (83%)  [████████░░]
 
-Weak Areas (< 75%):
-  - Agents: Review section 4 in the guide
+弱项（< 75%）：
+  - 智能体：复习指南第 4 章
 
-Recommended Reading:
+推荐阅读：
   4. guide/ultimate-guide.md#4-agents
 
-Time: 9 minutes 2 seconds
+耗时：9 分 2 秒
 
 ------------------------------------------------------------
-? What would you like to do? (Use arrow keys)
-❯ Retry wrong questions only
-  New quiz (different questions)
-  Exit
+? 你想做什么？（使用箭头键）
+❯ 仅重试答错的题目
+  新测验（不同题目）
+  退出
 ```
 
-## Profiles
+## 画像
 
-| Profile | Questions | Focus Areas |
+| 画像 | 题目数 | 重点领域 |
 |---------|-----------|-------------|
-| **Junior Developer** | 15 | Sections 1-3, 6 (essentials) |
-| **Senior Developer** | 20 | Sections 2-4, 7, 9 (architecture, automation) |
-| **Power User** | 25 | All sections |
-| **Product Manager** | 10 | Sections 1-3 (conceptual overview) |
+| **初级开发者** | 15 | 第 1-3、6 章（基础） |
+| **高级开发者** | 20 | 第 2-4、7、9 章（架构、自动化） |
+| **超级用户** | 25 | 所有章节 |
+| **产品经理** | 10 | 第 1-3 章（概念性概述） |
 
-## Topics
+## 主题
 
-| # | Topic | Key Concepts |
+| # | 主题 | 关键概念 |
 |---|-------|--------------|
-| 1 | Quick Start & Installation | Installation, first workflow, essential commands |
-| 2 | Core Concepts | Context management, Plan Mode, interaction loop |
-| 3 | Memory & Settings | CLAUDE.md, .claude/ folder, permissions |
-| 4 | Agents | Custom agents, specialization, orchestration |
-| 5 | Skills | Reusable knowledge, skill composition |
-| 6 | Commands | Slash commands, custom commands |
-| 7 | Hooks | Event system, security hooks, exit codes |
-| 8 | MCP Servers | Context7, Serena, Sequential, plugins |
-| 9 | Advanced Patterns | The Trinity, CI/CD, composition |
-| 10 | Reference | Shortcuts, troubleshooting, daily workflow |
+| 1 | 快速入门与安装 | 安装、第一个工作流、常用命令 |
+| 2 | 核心概念 | 上下文管理、计划模式、交互循环 |
+| 3 | 记忆与设置 | CLAUDE.md、.claude/ 文件夹、权限 |
+| 4 | 智能体 | 自定义智能体、专业化、编排 |
+| 5 | 技能 | 可重用知识、技能组合 |
+| 6 | 命令 | 斜杠命令、自定义命令 |
+| 7 | 钩子 | 事件系统、安全钩子、退出码 |
+| 8 | MCP 服务器 | Context7、Serena、Sequential、插件 |
+| 9 | 高级模式 | 三位一体、CI/CD、组合 |
+| 10 | 参考 | 快捷键、故障排除、日常工作流 |
 
-## Quiz Flow
+## 测验流程
 
 ```
 ┌─────────────────────────────────────────────┐
@@ -200,129 +200,129 @@ Time: 9 minutes 2 seconds
                      │
                      ▼
 ┌─────────────────────────────────────────────┐
-│  Select Profile (Junior/Senior/Power/PM)    │
+│  选择画像（初级/高级/超级用户/PM）          │
 └─────────────────────────────────────────────┘
                      │
                      ▼
 ┌─────────────────────────────────────────────┐
-│  Select Topics (All or Specific 1-10)       │
+│  选择主题（全部或特定 1-10）               │
 └─────────────────────────────────────────────┘
                      │
                      ▼
 ┌─────────────────────────────────────────────┐
-│  Question 1/20 [Category]                   │
+│  题目 1/20 [类别]                          │
 │                                             │
-│  What is the recommended action when...?    │
+│  当...时推荐的操作是什么？                  │
 │                                             │
-│    A) Option A                              │
-│    B) Option B                              │
-│    C) Option C                              │
-│    D) Option D                              │
+│    A) 选项 A                               │
+│    B) 选项 B                               │
+│    C) 选项 C                               │
+│    D) 选项 D                               │
 └─────────────────────────────────────────────┘
                      │
             ┌────────┴────────┐
             ▼                 ▼
      ┌──────────┐      ┌──────────────────┐
-     │ CORRECT! │      │ INCORRECT        │
-     │          │      │ Correct: C       │
-     │          │      │ Explanation...   │
-     │          │      │ See: guide#...   │
+     │ 正确！   │      │ 错误             │
+     │          │      │ 正确答案：C      │
+     │          │      │ 解释...          │
+     │          │      │ 参见：guide#...  │
      └──────────┘      └──────────────────┘
             │                 │
             └────────┬────────┘
                      ▼
-              (Next Question)
+              (下一题)
                      │
                      ▼
 ┌─────────────────────────────────────────────┐
-│           QUIZ COMPLETE                     │
+│           测验完成                           │
 │                                             │
-│  Overall Score: 16/20 (80%)                 │
+│  总分：16/20 (80%)                          │
 │                                             │
-│  By Category:                               │
-│    Core Concepts:  6/7  (86%)  [████████░░] │
-│    Agents:         5/7  (71%)  [███████░░░] │
-│    Hooks:          5/6  (83%)  [████████░░] │
+│  按类别：                                   │
+│    核心概念：  6/7  (86%)  [████████░░]    │
+│    智能体：    5/7  (71%)  [███████░░░]    │
+│    钩子：      5/6  (83%)  [████████░░]    │
 │                                             │
-│  Weak Areas: Agents (review section 4)      │
+│  弱项：智能体（复习第 4 章）                │
 └─────────────────────────────────────────────┘
                      │
                      ▼
 ┌─────────────────────────────────────────────┐
-│  [R] Retry wrong questions only             │
-│  [N] New quiz (different questions)         │
-│  [E] Exit                                   │
+│  [R] 仅重试答错的题目                       │
+│  [N] 新测验（不同题目）                     │
+│  [E] 退出                                   │
 └─────────────────────────────────────────────┘
 ```
 
-## Session Persistence
+## 会话持久化
 
-Quiz sessions are automatically saved to `~/.claude-quiz/`:
+测验会话自动保存到 `~/.claude-quiz/`：
 
 ```
 ~/.claude-quiz/
   sessions/
-    2026-01-12_143052.json   # Individual session data
+    2026-01-12_143052.json   # 单个会话数据
     2026-01-12_150623.json
-  stats.json                  # Aggregate statistics
+  stats.json                  # 汇总统计
 ```
 
-### Session Data Includes:
-- Profile and topics selected
-- Questions answered (correct/incorrect/skipped)
-- Time taken
-- Category breakdown
-- Wrong questions with correct answers
+### 会话数据包括：
+- 选择的画像和主题
+- 回答的题目（正确/错误/跳过）
+- 耗时
+- 类别细分
+- 错误题目及正确答案
 
-## Dynamic Question Generation
+## 动态题目生成
 
-When the `--dynamic` flag is enabled and the Claude CLI is installed, the quiz can generate additional questions on-the-fly using `claude -p`:
+当启用 `--dynamic` 标志且安装了 Claude CLI 时，测验可以使用 `claude -p` 动态生成额外题目：
 
 ```bash
 node src/index.js -d
 ```
 
-This requires:
-- Claude CLI installed (`npm install -g @anthropic-ai/claude-code`)
-- Active API key configured
+这需要：
+- 已安装 Claude CLI（`npm install -g @anthropic-ai/claude-code`）
+- 已配置活跃的 API 密钥
 
-Dynamic questions supplement the static pool when:
-- Static pool is exhausted for selected topics
-- User requests fresh questions
-- Variety is needed for repeated quizzes
+动态题目在以下情况下补充静态题库：
+- 所选主题的静态题库耗尽
+- 用户需要新鲜题目
+- 重复测验需要多样性
 
-## Contributing Questions
+## 贡献题目
 
-We welcome question contributions! See [`templates/question-template.yaml`](./templates/question-template.yaml) for the format.
+我们欢迎题目贡献！查看 [`templates/question-template.yaml`](./templates/question-template.yaml) 了解格式。
 
-### Quality Guidelines
+### 质量指南
 
-**Good questions test:**
-- Practical application ("When should you...")
-- Decision-making ("Which approach is best for...")
-- Understanding ("Why does Claude...")
-- Troubleshooting ("What would you do if...")
+**好的题目测试：**
+- 实际应用（"你应该何时..."）
+- 决策制定（"哪种方法最适合..."）
+- 理解（"为什么 Claude..."）
+- 故障排除（"如果...你会怎么做"）
 
-**Avoid:**
-- Trivia ("What is the exact command syntax...")
-- Pure memorization ("List all keyboard shortcuts...")
-- Version-specific details that may change
+**避免：**
+- 琐事（"确切的命令语法是什么..."）
+- 纯记忆（"列出所有快捷键..."）
+- 可能会变的版本特定细节
 
-### Submitting Questions
+### 提交题目
 
-1. Fork the repository
-2. Add questions to the appropriate `questions/XX-category.yaml` file
-3. Follow the template format exactly
-4. Ensure `doc_reference` points to valid sections
-5. Submit a PR with description of added questions
+1. 分叉仓库
+2. 将题目添加到相应的 `questions/XX-category.yaml` 文件
+3. 严格遵循模板格式
+4. 确保 `doc_reference` 指向有效章节
+5. 提交 PR，描述添加的题目
 
-## Troubleshooting
+## 故障排除
 
-### "No questions available"
+### "没有可用的题目"
 
-- Check that selected topics have questions in `questions/` directory
-- Verify YAML files are valid (use a YAML validator)
-- Try selecting different topics or "All topics"
+- 检查所选主题在 `questions/` 目录中有题目
+- 验证 YAML 文件有效（使用 YAML 验证器）
+- 尝试选择不同主题或"所有主题"
 
 ### "Cannot find module 'yaml'"
 
@@ -331,16 +331,16 @@ cd quiz
 npm install
 ```
 
-### Quiz hangs on input
+### 测验在输入时挂起
 
-- Ensure you're running in an interactive terminal
-- Try pressing Enter if stuck
-- Use Ctrl+C to exit and restart
+- 确保在交互式终端中运行
+- 如果卡住，尝试按 Enter
+- 使用 Ctrl+C 退出并重新启动
 
-## License
+## 许可证
 
-Same as parent repository: [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/)
+与父仓库相同：[CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/)
 
 ---
 
-**Part of**: [claude-code-ultimate-guide](https://github.com/FlorianBruniaux/claude-code-ultimate-guide)
+**属于**：[claude-code-ultimate-guide](https://github.com/FlorianBruniaux/claude-code-ultimate-guide)
