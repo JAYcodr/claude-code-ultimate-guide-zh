@@ -1,4 +1,3 @@
-<!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
 # 10. Reference
 
 _Quick jump:_ [Commands Table](#101-commands-table) · [Keyboard Shortcuts](#102-keyboard-shortcuts) · [Configuration Reference](#103-configuration-reference) · [Troubleshooting](#104-troubleshooting) · [Cheatsheet](#105-cheatsheet) · [Daily Workflow](#106-daily-workflow--checklists)
@@ -1115,4 +1114,5 @@ exit 0
 ```
 
 ---
+
 

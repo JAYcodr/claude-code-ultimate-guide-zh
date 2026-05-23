@@ -1,4 +1,3 @@
-<!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
 ---
 name: architecture-reviewer
 description: 架构与设计评审智能体 — 只读。评估结构决策、识别设计坏味道、在实现前标记风险。绝不修改代码。在合并架构变更前或 planner 生成计划后使用。
@@ -88,3 +87,5 @@ tools: Read, Grep, Glob
 - 模型选择指南：[第 2.5 节](../../guide/ultimate-guide.md#25-model-selection--thinking-guide)
 - 代码评审员（用于风格/质量评审）：[code-reviewer.md](./code-reviewer.md)
 - 安全审计员（用于 OWASP 评审）：[security-auditor.md](./security-auditor.md)
+
+

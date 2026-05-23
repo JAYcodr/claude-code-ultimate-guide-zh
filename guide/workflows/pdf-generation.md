@@ -1,4 +1,3 @@
-<!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
 ---
 title: "PDF 生成与 Claude Code"
 description: "使用 Claude Code 通过 Quarto 和 Typst 技术栈生成专业 PDF"

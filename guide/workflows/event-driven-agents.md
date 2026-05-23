@@ -1,4 +1,3 @@
-<!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
 ---
 title: "事件驱动智能体自动化"
 description: "从外部事件如看板卡片移动、GitHub issues 和 Jira 转换触发 Claude Code 智能体"

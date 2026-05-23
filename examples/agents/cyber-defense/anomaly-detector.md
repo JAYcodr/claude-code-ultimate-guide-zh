@@ -1,4 +1,3 @@
-<!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
 ---
 name: anomaly-detector
 description: 从结构化安全事件中检测统计异常和攻击模式。网络安全管道的第二个阶段 — 读取 cyber-defense-events.json 并生成异常。
@@ -70,3 +69,5 @@ tools: Read
 - 将异常链接到 cyber-defense-events.json 中的特定事件 ID
 - 如果零异常：写入 `{"anomalies_found": 0, "anomalies": []}` 并报告"未检测到异常。日志看起来干净。"
 - 不要建议风险级别 — 那是 risk-classifier 的范围
+
+

@@ -1,4 +1,3 @@
-<!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
 ---
 title: "Claude 规范优先开发"
 description: "在实现前于 CLAUDE.md 中定义规范，实现结构化开发"

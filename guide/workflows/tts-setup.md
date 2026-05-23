@@ -1,4 +1,3 @@
-<!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
 ---
 title: "TTS 设置工作流 - Agent Vibes 安装"
 description: "在 macOS 上为 Claude Code 添加文字转语音朗读"

@@ -1,4 +1,3 @@
-<!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
 ---
 name: analytics-agent
 description: 带内置评估和安全检查的 SQL 查询生成器
@@ -314,3 +313,5 @@ psql -U user -d ecommerce -f revenue_by_category.sql
 ---
 
 **状态**：模板 v1.0 | **兼容性**：PostgreSQL 12+、MySQL 8+、SQLite 3+
+
+

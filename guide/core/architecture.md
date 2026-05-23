@@ -1,4 +1,3 @@
-<!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
 ---
 title: "Claude Code 架构与内部机制"
 description: "Claude Code 内部机制与架构的技术深度解析"
@@ -1623,3 +1622,5 @@ Claude Code 背后的核心哲学：
 **最后更新**：2026 年 2 月
 **Claude Code 版本**：v2.1.34
 **文档版本**：1.1.0
+
+

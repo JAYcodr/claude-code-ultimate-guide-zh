@@ -1,4 +1,3 @@
-<!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
 ---
 title: "使用 Claude Code 进行计划驱动开发"
 description: "用 /plan 模式探索复杂任务并提出实现计划"

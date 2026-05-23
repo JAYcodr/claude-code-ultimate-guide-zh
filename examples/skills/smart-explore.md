@@ -1,4 +1,3 @@
-<!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
 ---
 name: smart-explore
 description: "使用 tree-sitter AST 进行渐进式代码探索 — 先结构，后深入。将代码阅读从每文件 10-15k token 减少到 200-500 token。"
@@ -508,3 +507,5 @@ python -m mcp_server_tree_sitter --help
 **最后更新**：2026 年 3 月
 **兼容**：Claude Code 2.0+
 **依赖**：tree-sitter CLI（方法 B），Python 3.10+（脚本）
+
+

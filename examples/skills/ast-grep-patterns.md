@@ -1,4 +1,3 @@
-<!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
 ---
 name: ast-grep-patterns
 description: "教 Claude 何时以及如何使用 ast-grep 进行结构化代码搜索的技能"
@@ -401,3 +400,5 @@ claude mcp call serena find_symbol --name "authenticate"
 
 **最后更新**：2026 年 1 月
 **兼容**：Claude Code 2.1.7+
+
+

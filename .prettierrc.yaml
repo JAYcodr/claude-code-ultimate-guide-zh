@@ -1,0 +1,13 @@
+tabWidth: 2
+useTabs: false
+printWidth: 100
+overrides:
+  - files: "*.yaml"
+    options:
+      parser: "yaml"
+  - files: "*.yml"
+    options:
+      parser: "yaml"
+  - files: "*.json"
+    options:
+      parser: "json"

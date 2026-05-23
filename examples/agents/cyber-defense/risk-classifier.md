@@ -1,4 +1,3 @@
-<!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
 ---
 name: risk-classifier
 description: 从检测到的异常中分类整体风险级别。网络安全管道的第三阶段 — 读取 cyber-defense-anomalies.json 并分配 CRITICAL/HIGH/MEDIUM/LOW 以及理由。
@@ -70,3 +69,5 @@ tools: Read
 - 一个风险级别，不是一个范围
 - 理由必须引用特定的异常 ID
 - `recommended_action` 必须具体（不是"监控情况"）
+
+

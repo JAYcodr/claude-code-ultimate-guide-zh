@@ -1,4 +1,3 @@
-<!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
 
 # Claude Code 学习路径
 
@@ -261,3 +260,4 @@
 ---
 
 **或者先快速评估：** `/self-assessment quick`（5 分钟）
+

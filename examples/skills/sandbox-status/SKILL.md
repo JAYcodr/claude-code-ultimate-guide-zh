@@ -1,4 +1,3 @@
-<!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
 ---
 name: sandbox-status
 description: 显示原生沙箱状态、配置和最近违规
@@ -178,3 +177,5 @@ echo "  运行时：https://github.com/anthropic-experimental/sandbox-runtime"
 - [原生沙箱指南](../../guide/security/sandbox-native.md) — 完整技术参考
 - [沙箱验证钩子](../hooks/bash/sandbox-validation.sh) — 命令前验证
 - [沙箱配置示例](../config/sandbox-native.json) — 生产就绪设置
+
+

@@ -1,4 +1,3 @@
-<!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
 ---
 title: "实现前探索"
 description: "编码前让 Claude 提供带权衡的多种方法，以防止锚定偏差"

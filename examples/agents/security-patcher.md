@@ -1,4 +1,3 @@
-<!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
 ---
 name: security-patcher
 description: 根据 security-auditor 的发现应用安全补丁。需要审计报告作为输入。始终提出补丁供人工审阅——未经批准绝不应用。
@@ -169,3 +168,5 @@ tools: Read, Grep, Glob, Write, Edit
 严重性：CRITICAL
 建议修复：使用参数化查询替代字符串插值
 ```
+
+

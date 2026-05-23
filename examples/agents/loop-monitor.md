@@ -1,4 +1,3 @@
-<!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
 ---
 name: loop-monitor
 description: 自主循环监视器 — 检测长时间无人值守的 Claude 会话中的停滞、token 失控和无限循环。与 watchdog 进程配合使用。
@@ -120,3 +119,5 @@ done
 - [生产安全：规则 6](../../guide/security/production-safety.md#rule-6-autonomous-loop-safety) — 心跳死机开关（互补）
 - [智能体团队工作流：迭代检索](../../guide/workflows/agent-teams.md#9-iterative-retrieval-for-sub-agents) — 子智能体的上下文模式
 - [钩子配置文件门控](../../guide/ultimate-guide.md#76-hook-profiles) — 自主会话的 `minimal` 配置文件
+
+

@@ -1,4 +1,3 @@
-<!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
 ---
 title: "Astro 动态 OG 图片生成"
 description: "在构建时自动生成社交预览图片，而不是维护过时的静态 PNG"

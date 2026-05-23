@@ -1,4 +1,3 @@
-<!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
 ---
 title: "GitHub Actions 工作流与 Claude Code"
 description: "使用 claude-code-action 自动化 PR 评审、问题分类和质量门禁的生产就绪模式"

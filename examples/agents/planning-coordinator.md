@@ -1,4 +1,3 @@
-<!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
 ---
 name: planning-coordinator
 description: 动态研究团队的合成智能体 — 只读。接收所有专业研究智能体的报告，生成连贯无冗余的实现计划。当在 /plan-start 阶段 4 选择 2+ 个智能体时自动触发。
@@ -161,3 +160,5 @@ curl -X POST http://localhost:4000/api/auth/login -H "Content-Type: application/
 - [ADR 编写者智能体](./adr-writer.md)
 - [计划挑战者智能体](./plan-challenger.md)
 - [计划-验证-执行管道](../../guide/workflows/plan-pipeline.md)
+
+

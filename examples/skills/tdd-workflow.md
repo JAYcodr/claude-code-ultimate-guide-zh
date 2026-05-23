@@ -1,4 +1,3 @@
-<!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
 ---
 name: tdd-workflow
 description: 测试驱动开发工作流和最佳实践
@@ -141,3 +140,5 @@ class Cart {
 | Mock | 验证交互 | `expect(mock).toHaveBeenCalled()` |
 | Spy | 追踪调用 | `jest.spyOn(obj, 'method')` |
 | Fake | 简化实现 | 内存数据库 |
+
+

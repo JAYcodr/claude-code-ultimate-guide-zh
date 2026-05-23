@@ -1,4 +1,3 @@
-<!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
 ---
 title: "设计到代码工作流（Figma MCP）"
 description: "使用 Figma MCP Server 实现自动化设计系统实现，达到 1:1 设计代码对等"

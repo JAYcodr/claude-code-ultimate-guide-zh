@@ -1,4 +1,3 @@
-<!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
 # 7. Hooks
 
 _Quick jump:_ [The Event System](#71-the-event-system) · [Creating Hooks](#72-creating-hooks) · [Hook Templates](#73-hook-templates) · [Security Hooks](#74-security-hooks) · [Hook Examples](#75-hook-examples)
@@ -1794,4 +1793,5 @@ export ECC_HOOK_PROFILE=strict
 > **Credit**: Hook profile gating pattern from [Everything Claude Code](https://github.com/affaan-m/everything-claude-code) (Affaan Mustafa, Anthropic hackathon winner).
 
 ---
+
 

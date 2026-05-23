@@ -1,4 +1,3 @@
-<!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
 ---
 title: "团队 AI 指令管理"
 description: "使用基于配置文件的模块组装跨团队扩展 CLAUDE.md"

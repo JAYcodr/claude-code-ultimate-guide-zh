@@ -1,4 +1,3 @@
-<!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
 # 5. Skills
 
 _Quick jump:_ [Two Kinds of Skills](#50-two-kinds-of-skills) · [Understanding Skills](#51-understanding-skills) · [Creating Skills](#52-creating-skills) · [Skill Lifecycle](#5x-skill-lifecycle--retirement) · [Skill Evals](#5y-skill-evals) · [Skill Template](#53-skill-template) · [Skill Examples](#54-skill-examples)
@@ -1513,4 +1512,5 @@ cp -r /tmp/agent-skills/react-best-practices .claude/skills/
 - See also: [AI Ecosystem Guide](./ecosystem/ai-ecosystem.md) for complementary tools
 
 ---
+
 

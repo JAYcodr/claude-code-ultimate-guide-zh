@@ -1,4 +1,3 @@
-<!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
 ---
 title: "搜索工具精通：组合 rg、grepai、Serena 和 ast-grep"
 description: "通过组合正确的工具掌握代码搜索，实现最高效率"

@@ -1,4 +1,3 @@
-<!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
 ---
 name: security-auditor
 description: 用于安全漏洞检测和 OWASP 合规检查
@@ -120,3 +119,5 @@ const API_KEY = "sk-abc123..."
 // 正确：环境变量
 const API_KEY = process.env.API_KEY
 ```
+
+

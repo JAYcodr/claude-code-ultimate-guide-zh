@@ -1,4 +1,3 @@
-<!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
 ---
 name: adr-writer
 description: 架构决策记录（ADR）生成智能体 — 只读。检测代码变更中的架构决策、分类关键性、并生成采用 Michael Nygard 面向模式的 ADR 格式（上下文-决策-后果）的 ADR。绝不修改代码。在重大变更后或需要记录决策时使用。
@@ -206,3 +205,5 @@ docs/adr/0023-switch-auth-to-jwt.md
 - Martin Fowler，"知识启动"（2026 年 2 月）：引用现有 ADR 而非重复决策
 - "ADR 作为机器可读技能"模式：eventuallymaking.io
 - 架构评审员（补充）：[architecture-reviewer.md](./architecture-reviewer.md)
+
+

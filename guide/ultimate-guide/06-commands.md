@@ -1,4 +1,3 @@
-<!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
 # 6. Commands (User-Invocable Skills)
 
 _Quick jump:_ [Slash Commands](#61-slash-commands) · [Creating Custom Commands](#62-creating-custom-commands) · [Command Template](#63-command-template) · [Command Examples](#64-command-examples)
@@ -933,4 +932,5 @@ Challenge and refine problem definitions before solution design.
 ```
 
 ---
+
 

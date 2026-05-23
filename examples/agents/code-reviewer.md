@@ -1,4 +1,3 @@
-<!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
 ---
 name: code-reviewer
 description: 用于全面代码审查，包含质量、安全和性能检查
@@ -292,3 +291,5 @@ async function processAll() {
 - 基础模板：Claude Code Ultimate Guide
 - 反幻觉和防御性模式：[Méthode Aristote](https://github.com/FlorianBruniaux) 代码评审系统
 - 条件上下文加载：生产级 Next.js/T3 Stack 代码评审实践
+
+

@@ -1,0 +1,16 @@
+# Separate projects with their own tooling
+quiz/
+mcp-server/
+
+# CI/config files (not documentation content)
+.github/
+.codex/
+.mlc-config.json
+.pre-commit-config.yaml
+
+# Pre-existing YAML bug (duplicate keys)
+examples/skills/update-threat-db/threat-db.yaml
+examples/commands/resources/threat-db.yaml
+
+# Auto-generated hashes file (not human-formatted)
+recap-hashes.json

@@ -1,4 +1,3 @@
-<!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
 ---
 name: devops-sre
 description: 使用 FIRE 框架（第一响应、调查、修复、评估）进行基础设施故障排查
@@ -169,3 +168,5 @@ kubectl describe pod <pod> -n <ns> | grep -A3 "Limits:"
 # 节点压力
 kubectl describe node <node> | grep -A10 "Conditions:"
 ```
+
+

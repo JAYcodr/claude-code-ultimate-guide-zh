@@ -10,6 +10,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 
 - **汉化 workflows 目录 16/24 文件** (`guide/workflows/`): Batch 1+2 批量翻译 + 润色。包含 README、code-review、changelog-fragments、skeleton-projects、gstack-workflow、event-driven-agents、exploration-workflow、team-ai-instructions、tdd-with-claude、og-image-generation、tts-setup、plan-pipeline、github-actions、plan-driven、pdf-generation、talk-pipeline。
+- **文档格式 CI** (`.github/workflows/format-check.yml`): 新增 Prettier YAML/JSON 格式检查 + markdownlint Markdown 语法检查（非阻塞）。
+- **格式化配置** (`.prettierrc.yaml`、`.markdownlint.json`): 支持 CJK 文档，禁用与中文不兼容的规则。
+- **移除翻译注释**（78 个文件）: 删除所有 `<!-- 中文翻译版 · 基于上游 commit: xxx -->` 注释，git history 足够追溯，文件更干净。
 - **汉化 ultimate-guide.md TOC 导航页** (`guide/ultimate-guide.md`): 将入口页完整翻译为中文（标题、frontmatter、TL;DR、决策表、完整目录）。
 - **汉化 guide/core/architecture.md + methodologies.md**：P1 翻译完成，术语统一，中文流畅。
 - **优化翻译工作流 SKILL.md** (`.agents/skills/zh-translation-workflow/SKILL.md`): 补充 frontmatter metadata（allowed-tools、effort）、更新进度表、精简流程、更新提交策略。

@@ -1,4 +1,3 @@
-<!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
 ---
 title: "Claude Code — 视觉图表"
 description: "48 张涵盖所有主要 Claude Code 概念的 Mermaid 交互式图表"

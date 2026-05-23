@@ -1,4 +1,3 @@
-<!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
 ---
 name: output-evaluator
 description: 在提交/执行前评估 Claude Code 输出质量（LLM-as-a-Judge 模式）
@@ -142,3 +141,5 @@ tools: Read, Grep, Glob
 - `/validate-changes` 命令 — 在提交前调用
 - `pre-commit-evaluator.sh` 钩子 — 自动 git 集成
 - 重大变更的手动调用
+
+

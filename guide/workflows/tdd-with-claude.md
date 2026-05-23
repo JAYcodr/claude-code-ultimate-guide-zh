@@ -1,4 +1,3 @@
-<!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
 ---
 title: "使用 Claude Code 进行 TDD"
 description: "红-绿-重构循环的测试驱动开发"

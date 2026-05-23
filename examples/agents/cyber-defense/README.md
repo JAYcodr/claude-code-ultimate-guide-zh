@@ -1,4 +1,3 @@
-<!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
 
 # 网络安全智能体团队
 
@@ -208,3 +207,4 @@ examples/skills/cyber-defense-team/
 ---
 
 **灵感来源**：Maryam Miradi 的 SMART COMPASS 框架 — 同一系统，不同技术栈。
+

@@ -1,4 +1,3 @@
-<!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
 ---
 title: "任务管理工作流"
 description: "使用 Tasks API 和 TodoWrite 进行多会话任务协调，适用于复杂项目"

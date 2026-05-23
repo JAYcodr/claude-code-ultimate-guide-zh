@@ -1,0 +1,15 @@
+{
+  "name": "claude-code-ultimate-guide-zh",
+  "private": true,
+  "scripts": {
+    "prettier:check": "prettier --check \"**/*.{yaml,yml,json}\" --ignore-path .gitignore",
+    "prettier:write": "prettier --write \"**/*.{yaml,yml,json}\" --ignore-path .gitignore",
+    "lint:md": "markdownlint-cli2 \"**/*.md\" --config .markdownlint.json",
+    "lint:md:fix": "markdownlint-cli2 \"**/*.md\" --config .markdownlint.json --fix",
+    "lint:all": "npm run prettier:check && npm run lint:md"
+  },
+  "devDependencies": {
+    "markdownlint-cli2": "^0.17.0",
+    "prettier": "^3.4.0"
+  }
+}

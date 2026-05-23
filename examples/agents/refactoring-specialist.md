@@ -1,4 +1,3 @@
-<!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
 ---
 name: refactoring-specialist
 description: 用于遵循 SOLID 原则和最佳实践进行整洁代码重构
@@ -122,3 +121,5 @@ function createRange({ start, end, step = 1, inclusive = false }) {}
 - 频繁提交
 - 记录破坏性变更
 - 将重构 PR 与功能 PR 分开
+
+

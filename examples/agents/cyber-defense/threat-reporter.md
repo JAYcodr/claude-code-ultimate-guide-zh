@@ -1,4 +1,3 @@
-<!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
 ---
 name: threat-reporter
 description: 生成人类可读的安全事件报告。网络安全管道的最后阶段 — 读取所有三个 JSON 文件并为安全团队生成 Markdown 报告。
@@ -75,3 +74,5 @@ tools: Read, Write
 
 将报告写入 `cyber-defense-report.md` 并打印一行总结：
 `报告已保存 → cyber-defense-report.md | 风险：[级别] | 行动：[N]`
+
+

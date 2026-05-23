@@ -1,4 +1,3 @@
-<!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
 ---
 name: planner
 description: 战略规划智能体 — 只读性探索，在实现前分解任务、分析代码库并生成详细计划。永不修改文件。
@@ -63,3 +62,5 @@ tools: Read, Grep, Glob
 **来源**：
 - 模型选择指南：[第 2.5 节](../../guide/ultimate-guide.md#25-model-selection--thinking-guide)
 - OpusPlan 工作流：[第 2.3 节](../../guide/ultimate-guide.md#23-plan-mode)
+
+

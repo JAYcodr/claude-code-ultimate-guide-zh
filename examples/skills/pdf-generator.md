@@ -1,4 +1,3 @@
-<!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
 ---
 name: pdf-generator
 description: 使用 Quarto/Typst 技术栈配合现代设计模板生成专业 PDF
@@ -396,3 +395,5 @@ format:
 - [Typst 文档](https://typst.app/docs/)
 - [Quarto + Typst 指南](https://quarto.org/docs/output-formats/typst.html)
 - [工作流指南](../../guide/workflows/pdf-generation.md)
+
+

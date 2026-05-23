@@ -1,4 +1,3 @@
-<!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
 ---
 name: log-ingestor
 description: 将原始日志解析为结构化安全事件。网络安全管道的第一个阶段 — 读取日志文件并提取类型化事件（错误、警告、认证失败、异常）。
@@ -61,3 +60,5 @@ tools: Read, Glob
 - 如果时间戳缺失，使用 `"timestamp": null`
 - 如果源 IP 缺失，使用 `"source_ip": null`
 - 写入 JSON 文件，然后报告："接入 X 行 → Y 事件（Z 个安全相关）"
+
+

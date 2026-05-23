@@ -1,4 +1,3 @@
-<!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
 ---
 name: test-writer
 description: 用于按照 TDD/BDD 原则生成全面测试
@@ -107,3 +106,5 @@ describe('Feature Integration', () => {
 - 使用工厂函数生成测试数据
 - 测试要快（单元测试 < 100ms）
 - 不要直接测试私有方法
+
+

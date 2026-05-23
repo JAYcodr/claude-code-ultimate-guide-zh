@@ -1,5 +1,3 @@
-<!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
-
 ---
 title: "Claude Code 速查表"
 description: "一页可打印的日常精华，帮你把 Claude Code 用出最大效率"
@@ -677,3 +675,5 @@ where.exe claude; claude doctor; claude mcp list
 **作者**: Florian BRUNIAUX | [@Méthode Aristote](https://methode-aristote.fr) | 写作工具: Claude
 
 *最后更新: 2026 年 5 月 | 版本 3.41.0*
+
+

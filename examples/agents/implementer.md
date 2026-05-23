@@ -1,4 +1,3 @@
-<!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
 ---
 name: implementer
 description: 机械执行智能体，用于边界清晰、定义明确的任务。范围和方式必须在任务提示中明确说明。在 planner 生成计划后使用。复杂逻辑或设计决策请使用 Sonnet。
@@ -64,3 +63,5 @@ Haiku 的输入 token 成本比 Opus 低 60 倍。机械任务 — 重命名、�
 **来源**：
 - 模型选择指南：[第 2.5 节](../../guide/ultimate-guide.md#25-model-selection--thinking-guide)
 - Planner/Implementer 模式：[第 2.5 节 每个智能体模式的模型](../../guide/ultimate-guide.md#model-per-agent-patterns)
+
+

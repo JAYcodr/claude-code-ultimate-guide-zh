@@ -1,4 +1,3 @@
-<!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
 ---
 title: "Claude Code 工作流"
 description: "使用 Claude Code 的常见开发模式指南"

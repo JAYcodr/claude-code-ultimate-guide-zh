@@ -1,4 +1,3 @@
-<!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
 ---
 name: integration-reviewer
 description: 运行时集成验证器 — 只读。验证服务连接参数、异步/同步一致性、环境变量完整性、库 API 正确性和 OTEL 管道完整性。在 /plan-validate 阶段有新服务、库或可观测性配置纳入范围时触发。
@@ -159,3 +158,5 @@ tools: Read, Grep, Glob, WebFetch
 - [安全分析师智能体](./security-auditor.md)
 - [规划协调者智能体](./planning-coordinator.md)
 - [计划-验证-执行管道](../../guide/workflows/plan-pipeline.md)
+
+

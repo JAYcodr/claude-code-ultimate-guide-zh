@@ -1,0 +1,43 @@
+name: Format Check
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  format-check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check YAML/JSON formatting (Prettier)
+        run: npx prettier --check "**/*.{yaml,yml,json}" \
+          --ignore-path .gitignore \
+          --ignore-path .prettierignore
+
+      - name: Lint Markdown (markdownlint)
+        run: npx markdownlint-cli2 "**/*.md" \
+          --config .markdownlint.json \
+          --ignores "node_modules/**" \
+          --ignores ".git/**" \
+          --ignores "machine-readable/**" \
+          --ignores "CHANGELOG.md" \
+          --ignores "quiz/**" \
+          --ignores ".github/**" \
+          --ignores "claudedocs/**" \
+          --ignores "docs/**" || true

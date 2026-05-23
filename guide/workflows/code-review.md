@@ -1,4 +1,3 @@
-<!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
 ---
 title: "代码评审（Claude Code 功能）"
 description: "面向团队和企业计划的多智能体 PR 评审自动化 — 设置、触发器、REVIEW.md 配置和成本管理"

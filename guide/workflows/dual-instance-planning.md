@@ -1,4 +1,3 @@
-<!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
 ---
 title: "双实例计划工作流"
 description: "使用两个 Claude 实例，分别承担计划和实现角色"

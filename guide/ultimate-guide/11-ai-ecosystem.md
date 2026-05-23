@@ -1,4 +1,3 @@
-<!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
 # 11. AI Ecosystem: Complementary Tools
 
 _Quick jump:_ [Why Complementarity](#111-why-complementarity-matters) · [Tool Matrix](#112-tool-matrix) · [Practical Workflows](#113-practical-workflows) · [Integration Patterns](#114-integration-patterns)
@@ -1191,3 +1190,4 @@ We'll evaluate and add it to this section if it meets quality criteria.
 **Contributions**: Issues and PRs welcome.
 
 **Last updated**: January 2026 | **Version**: 3.40.0
+

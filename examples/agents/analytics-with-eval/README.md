@@ -1,4 +1,3 @@
-<!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
 ---
 title: "带内置评估的分析智能体"
 description: "生产级分析智能体，带自动化指标收集和安全验证"
@@ -248,3 +247,5 @@ export CLAUDE_RESPONSE='{"content":"SELECT * FROM users;"}'
 与父仓库相同（MIT）
 
 **有问题？** 在主仓库中发起 issue 或讨论。
+
+

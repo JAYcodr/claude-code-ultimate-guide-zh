@@ -1,4 +1,3 @@
-<!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
 ---
 title: "开发方法论参考"
 description: "15 种结构化 AI 辅助开发方法论的快速参考，包括 TDD、SDD 和 BDD"
@@ -607,3 +606,5 @@ openspec/
 - [workflows/plan-driven.md](../workflows/plan-driven.md) — 使用 /plan 模式
 - [workflows/iterative-refinement.md](../workflows/iterative-refinement.md) — 迭代优化循环
 - [ultimate-guide.md#912](../ultimate-guide.md) — 第 9.12 节摘要
+
+

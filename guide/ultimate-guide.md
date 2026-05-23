@@ -1,5 +1,3 @@
-<!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
-
 ---
 title: "Claude Code 终极指南"
 description: "从零到高手的 Claude Code 完全自学指南"

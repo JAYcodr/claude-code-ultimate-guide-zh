@@ -1,4 +1,3 @@
-<!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
 ---
 name: security-checklist
 description: Web 应用程序安全清单
@@ -147,3 +146,5 @@ logger.security({
 6. [ ] 数据库凭证已轮换
 7. [ ] 日志已配置（不记录敏感数据）
 8. [ ] 备份策略已测试
+
+

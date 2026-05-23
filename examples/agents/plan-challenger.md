@@ -1,4 +1,3 @@
-<!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
 ---
 name: plan-challenger
 description: 对抗式计划评审智能体 — 只读。系统化地从 5 个维度攻击实现计划，然后通过反驳推理消除误报。绝不修改代码。在对重大实现计划做出承诺前使用。
@@ -148,3 +147,5 @@ tools: Read, Grep, Glob
 - 反驳推理模式：次级模块反驳初级发现以消除误报
 - 架构评审员（用于代码级评审）：[architecture-reviewer.md](./architecture-reviewer.md)
 - 代码评审员（用于风格/质量）：[code-reviewer.md](./code-reviewer.md)
+
+

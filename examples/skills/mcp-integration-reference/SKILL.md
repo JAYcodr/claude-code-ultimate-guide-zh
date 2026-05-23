@@ -1,4 +1,3 @@
-<!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
 ---
 name: mcp-integration-reference
 description: "与 MCP 服务器集成的技能模板。演示了参考文件模式：Claude 在进行任何工具调用前读取领域特定的 MCP 速查表，减少因服务器特定陷阱导致的查询失败。复刻此技能并将 Sentry 示例替换为你的目标 MCP。"
@@ -137,3 +136,5 @@ Read: references/sentry-mcp.md
 5. 调整分析步骤以匹配你的数据领域
 
 此模式适用于任何具有不直观查询行为的 MCP：Datadog、PagerDuty、Linear、Jira、Posthog、Mixpanel 等。
+
+

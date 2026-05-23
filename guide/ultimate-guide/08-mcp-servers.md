@@ -1,4 +1,3 @@
-<!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
 # 8. MCP Servers
 
 _Quick jump:_ [What is MCP](#81-what-is-mcp) · [Available Servers](#82-available-servers) · [Configuration](#83-configuration) · [Server Selection Guide](#84-server-selection-guide) · [Plugin System](#85-plugin-system) · [MCP Security](#86-mcp-security)
@@ -3181,4 +3180,5 @@ claude
 **Best practice**: Audit your MCP configuration quarterly. Remove servers you're not actively using.
 
 ---
+
 
