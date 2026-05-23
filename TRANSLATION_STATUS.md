@@ -58,7 +58,11 @@
 | 2026-05-23 | §2 Core Concepts | 首版翻译（3,200 行，4 批次） | 5770bef |
 | 2026-05-23 | §3 记忆与设置 | 首版翻译（1,692 行，3 批次） | 7e8fb2d |
 | 2026-05-23 | §2 + §3 润色 5 处 | 修复翻译腔 | e0f5121 |
-
-| 2026-05-23 | guide/ultimate-guide.md TOC | 翻译为中文 | (uncommitted) |
-| 2026-05-23 | §3 标题 + 多处措辞润色 | 翻译腔修复 | (uncommitted) |
-| 2026-05-23 | TRANSLATION_STATUS | 更新 P1 实际状态 | (uncommitted) |
+| 2026-05-23 | P1 批次 + ultimate-guide TOC | 汉化 + 润色 + 工作流优化 | 94560ee |
+| 2026-05-23 | TRANSLATION_STATUS.md | 更新 P0 完成状态 | bbb0547 |
+| 2026-05-23 | 删除上游英文版 workflow | 清理 CI | fd2ea4b |
+| 2026-05-23 | 添加 .nojekyll | 修复 GitHub Pages | f11f3ef |
+| 2026-05-23 | 升级 GitHub Actions | 兼容 Node.js 24 | 8ac0165 |
+| 2026-05-23 | 添加 index.md | GitHub Pages 入口页 | 3f7b2dd |
+| 2026-05-23 | 修正 index.md 链接 | 修复链接指向 | 2e496f5 |
+| 2026-05-23 | 修复 index → index.html | 修复 GitHub Pages 404 | ebbdc24 |

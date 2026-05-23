@@ -1,3 +1,4 @@
+<!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
 ---
 name: security-checklist
 description: Web 应用程序安全清单

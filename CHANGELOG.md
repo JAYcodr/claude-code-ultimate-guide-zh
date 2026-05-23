@@ -10,7 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 
 - **汉化 ultimate-guide.md TOC 导航页** (`guide/ultimate-guide.md`): 将入口页完整翻译为中文（标题、frontmatter、TL;DR、决策表、完整目录）。
-- **汉化 guide/core/architecture.md + methodologies.md + examples/skills/ + examples/agents/**：P1 批次全部翻译完成，待审查提交。
+- **汉化 guide/core/architecture.md + methodologies.md**：P1 翻译完成，术语统一，中文流畅。
 - **优化翻译工作流 SKILL.md** (`.agents/skills/zh-translation-workflow/SKILL.md`): 补充 frontmatter metadata（allowed-tools、effort）、更新进度表、精简流程、更新提交策略。
 
 ### Fixed
