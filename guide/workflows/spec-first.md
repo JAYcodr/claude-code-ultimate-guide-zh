@@ -1,126 +1,127 @@
+<!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
 ---
-title: "Spec-First Development with Claude"
-description: "Define specifications in CLAUDE.md before implementation for structured development"
+title: "Claude 规范优先开发"
+description: "在实现前于 CLAUDE.md 中定义规范，实现结构化开发"
 tags: [workflow, architecture, config]
 ---
 
-# Spec-First Development with Claude
+# Claude 规范优先开发
 
-> **Confidence**: Tier 2 — Validated by multiple production teams and aligns with official SDD guidance.
+> **置信度**：Tier 2 — 经多个生产团队验证，与官方 SDD 指导一致。
 
-Define what you want in CLAUDE.md BEFORE asking Claude to build. One well-structured iteration equals 8 unstructured ones.
+在要求 Claude 构建之前，先在 CLAUDE.md 中定义你想要什么。一个结构良好的迭代等于八个无结构的迭代。
 
 ---
 
-## Table of Contents
+## 目录
 
 1. [TL;DR](#tldr)
-2. [The Pattern](#the-pattern)
-3. [Task Granularity: Sizing Work for Agents](#task-granularity-sizing-work-for-agents)
-4. [CLAUDE.md Spec Templates](#claudemd-spec-templates)
-5. [Step-by-Step Workflow](#step-by-step-workflow)
-6. [Integration with Tools](#integration-with-tools)
-7. [When to Use](#when-to-use)
-8. [Anti-Patterns](#anti-patterns)
-9. [See Also](#see-also)
+2. [模式](#模式)
+3. [任务粒度：为智能体调整工作大小](#任务粒度为智能体调整工作大小)
+4. [CLAUDE.md 规范模板](#claudemd-规范模板)
+5. [逐步工作流](#逐步工作流)
+6. [与工具集成](#与工具集成)
+7. [何时使用](#何时使用)
+8. [反模式](#反模式)
+9. [相关参考](#相关参考)
 
 ---
 
 ## TL;DR
 
 ```
-1. Write spec in CLAUDE.md
-2. Claude reads spec automatically
-3. Implementation follows spec exactly
-4. Verify against spec
+1. 在 CLAUDE.md 中编写规范
+2. Claude 自动读取规范
+3. 实现严格遵循规范
+4. 根据规范验证
 ```
 
-CLAUDE.md IS your spec file. Treat it as a contract.
+CLAUDE.md 就是你的规范文件。把它当作契约。
 
 ---
 
-## The Pattern
+## 模式
 
-Spec-First Development inverts the typical AI coding flow:
+规范优先开发颠覆了典型的 AI 编码流程：
 
 ```
-Traditional:        Spec-First:
+传统：                规范优先：
 ───────────         ──────────
-Prompt → Code       Spec → Prompt → Code → Verify
+提示 → 代码           规范 → 提示 → 代码 → 验证
   │                   │               │       │
-  └─ Hope it's       └── Contract    └── Follows spec
-     what you want        defined          └── Check against spec
+  └─ 希望它是          └── 契约         └── 遵循规范
+     你想要的              定义              └── 对照规范检查
 ```
 
-The spec becomes the source of truth that:
-- Constrains what Claude builds
-- Documents decisions for the team
-- Enables verification of completeness
+规范成为真相来源：
+- 约束 Claude 构建的内容
+- 为团队记录决策
+- 启用完整性验证
 
 ---
 
-## Task Granularity: Sizing Work for Agents
+## 任务粒度：为智能体调整工作大小
 
-Before writing the spec, verify the task is the right size. Agents work best with **vertical slices** — thin, end-to-end units that cut through all layers but implement exactly one complete user behavior (e.g. "password reset via email", not "authentication system").
+在编写规范之前，验证任务大小是否合适。智能体最适合**垂直切片**工作 — 薄的、端到端的单元，切穿所有层但只实现一个完整的用户行为（例如"通过邮件重置密码"，而不是"认证系统"）。
 
-**Rule of thumb**: One agent session = one vertical slice. If the task description requires "and" between two user behaviors, split it.
+**经验法则**：一个智能体会话 = 一个垂直切片。如果任务描述需要在两个用户行为之间说"和"，请拆分它。
 
-### PRD Quality Checklist
+### PRD 质量检查清单
 
-Run this before handing any task to an agent. Six dimensions to verify:
+在将任何任务交给智能体之前运行此检查。验证六个维度：
 
-| Dimension | Question to ask | Red flag |
+| 维度 | 要问的问题 | 红旗 |
 |-----------|----------------|----------|
-| **Problem Clarity** | Is the problem statement unambiguous? | "Improve performance" |
-| **Testable Criteria** | Can completion be verified automatically? | "Works well" |
-| **Scope Boundaries** | What is explicitly OUT of scope? | Nothing listed as excluded |
-| **Observable Done** | What does "done" look like to a user? | Internal-only description |
-| **Requirements Clarity** | No implementation details in the spec? | "Use Redis for caching" |
-| **Terminology** | Same terms used throughout? | "user" and "account" mixed |
+| **问题清晰度** | 问题陈述是否明确？ | "改进性能" |
+| **可测试标准** | 完成可以自动验证吗？ | "运作良好" |
+| **范围边界** | 什么明确不在范围内？ | 没有列出排除项 |
+| **可观察的完成** | 用户角度看"完成"是什么样子？ | 内部描述 |
+| **需求清晰度** | 规范中没有实现细节？ | "使用 Redis 缓存" |
+| **术语** | 整个过程使用相同术语？ | "user"和"account"混用 |
 
-A task that fails 2+ dimensions needs rework before an agent touches it. The spec review catches ambiguity that will otherwise surface as incorrect implementation mid-session.
+任务在 2+ 个维度上失败需要在智能体处理前重做。规范审查捕获的歧义否则会在会话中作为不正确的实现出现。
 
 ```
-❌ Too big, ambiguous:
-"Add user authentication to the app"
+❌ 太大、模糊：
+"为应用添加用户认证"
 
-✅ One vertical slice:
-"Users can log in with email + password.
-- POST /auth/login returns JWT on success, 401 on failure
-- Invalid credentials show 'Email or password incorrect' (not which is wrong)
-- Session expires after 24h
-- Out of scope: OAuth, password reset, remember me"
+✅ 一个垂直切片：
+"用户可以通过邮件 + 密码登录。
+- POST /auth/login 成功返回 JWT，失败返回 401
+- 无效凭证显示'邮件或密码错误'（不提示哪个错了）
+- 会话 24 小时后过期
+- 范围外：OAuth、密码重置、记住我"
 ```
 
-### Feature List: Machine-Readable Scope Control
+### 功能列表：机器可读的范围控制
 
-A feature list is a JSON file that tracks scope and completion state per feature across agent sessions. Unlike a PRD, which describes intent, a feature list is the agent's operational contract: it gets read at session start, updated at session end, and persists across handoffs.
+功能列表是一个 JSON 文件，跨智能体会话跟踪每个功能的范围和完成状态。与 PRD（描述意图）不同，功能列表是智能体的操作契约：它在会话开始时读取，在会话结束时更新，并在交接时持久化。
 
-Each feature entry has three required fields. The `description` tells the agent what to build. The `verify` field is a shell command that exits 0 on success, and this matters because it forces the definition of done to be executable, not just descriptive. The `status` field tracks progress through a one-way state machine: `not_started` → `active` → `blocked` → `passing`. An entry can only move forward, never backward. When a feature reaches `passing`, an `evidence` field records what proved it (a test name, command output, or a specific log line).
+每个功能条目有三个必需字段。`description` 告诉智能体要构建什么。`verify` 字段是一个 shell 命令，成功时退出 0，这很重要，因为它将完成定义强制为可执行的，而不仅仅是描述性的。`status` 字段通过单向状态机跟踪进度：`not_started` → `active` → `blocked` → `passing`。条目只能向前移动，永远不能向后。当功能达到 `passing` 时，`evidence` 字段记录是什么证明了它（测试名称、命令输出或特定日志行）。
 
-The WIP=1 rule applies here: only one feature can be in `active` state at any time. Multiple active features lead to partial work and incomplete verification across all of them.
+WIP=1 规则适用于此：任何时候只能有一个功能处于 `active` 状态。多个活跃功能会导致所有功能的部分工作和不完整验证。
 
-Store `feature_list.json` in the project root alongside `AGENTS.md`. At session start, the agent reads it to know what was done and what to pick next. At session end, the agent writes the updated state and evidence before committing.
+将 `feature_list.json` 存储在项目根目录中，与 `AGENTS.md` 并列。在会话开始时，智能体读取它以知道完成了什么、下一步该选什么。在会话结束时，智能体写入更新后的状态和证据，然后再提交。
 
-The feature list works alongside `claudedocs/handoffs/`. Together, these two artifacts give the next session both the operational state (which features are done and verified) and the narrative context (what happened, what was tried, what is left open). Neither replaces the other.
+功能列表与 `claudedocs/handoffs/` 配合使用。这两个工件一起为下一个会话提供操作状态（哪些功能已完成并验证）和叙事上下文（发生了什么，尝试了什么，什么是开放的）。两者都不能替代对方。
 
-A minimal example showing two features at different stages:
+显示不同阶段两个功能的最小示例：
 
 ```json
 {
   "features": [
     {
       "id": "feat-001",
-      "name": "Document Import",
-      "description": "Allow users to import PDF and TXT files from local filesystem",
+      "name": "文档导入",
+      "description": "允许用户从本地文件系统导入 PDF 和 TXT 文件",
       "verify": "npm test -- --grep 'document import'",
       "status": "passing",
       "evidence": "npm test: 12 passed, 0 failed (2026-05-01 14:22)"
     },
     {
       "id": "feat-002",
-      "name": "Document Chunking",
-      "description": "Split imported documents into ~500-character chunks with metadata",
+      "name": "文档分块",
+      "description": "将导入的文档拆分为约 500 字符的块，带元数据",
       "verify": "npm test -- --grep 'chunking'",
       "status": "not_started",
       "evidence": "",
@@ -130,420 +131,420 @@ A minimal example showing two features at different stages:
 }
 ```
 
-The `evidence` field on `feat-001` shows exactly what ran and when. The `feat-002` entry is `not_started` with an empty `evidence` field, waiting for `feat-001` to be confirmed passing before it becomes `active`. This pattern is described in the Anthropic engineering blog post on [harness design for long-running applications](https://www.anthropic.com/engineering/harness-design-long-running-apps). A ready-to-use template is available at `examples/workflows/feature-list.json`.
+`feat-001` 上的 `evidence` 字段准确显示运行了什么以及何时。`feat-002` 条目是 `not_started`，`evidence` 字段为空，等待 `feat-001` 确认通过后才能变为 `active`。此模式在 Anthropic 工程博客文章中描述：[长期运行应用程序的线束设计](https://www.anthropic.com/engineering/harness-design-long-running-apps)。可在 `examples/workflows/feature-list.json` 获取可直接使用的模板。
 
 ---
 
-## CLAUDE.md Spec Templates
+## CLAUDE.md 规范模板
 
-### Feature Spec (Most Common)
-
-```markdown
-## Feature: [Name]
-
-### Description
-[2-3 sentences explaining the feature purpose]
-
-### Capabilities
-- MUST: [Required functionality]
-- MUST: [Another requirement]
-- SHOULD: [Nice to have]
-- MUST NOT: [Explicit exclusions]
-
-### Tech Stack
-- Required: [lib1, lib2, lib3]
-- Forbidden: [lib4, lib5]
-
-### Acceptance Criteria
-- [ ] Criterion 1: [Specific, testable condition]
-- [ ] Criterion 2: [Another condition]
-- [ ] Criterion 3: [Edge case handling]
-
-### API Contract (if applicable)
-- Endpoint: POST /api/[resource]
-- Request: { field1: string, field2: number }
-- Response: { id: string, created: timestamp }
-- Errors: 400 (validation), 404 (not found), 500 (server)
-```
-
-### Architecture Spec
+### 功能规范（最常见）
 
 ```markdown
-## Architecture: [Component Name]
+## 功能：[名称]
 
-### Purpose
-[Why this component exists]
+### 描述
+[2-3 句话解释功能目的]
 
-### Boundaries
-- Owns: [What this component is responsible for]
-- Delegates to: [What other components handle]
-- Does NOT: [Explicit non-responsibilities]
+### 功能
+- 必须： [必需功能]
+- 必须： [另一个要求]
+- 应当： [最好有]
+- 不得： [明确排除]
 
-### Dependencies
-- Upstream: [Components that call this]
-- Downstream: [Components this calls]
+### 技术栈
+- 必需：[lib1, lib2, lib3]
+- 禁止：[lib4, lib5]
 
-### Data Flow
+### 验收标准
+- [ ] 标准 1：[具体、可测试的条件]
+- [ ] 标准 2：[另一个条件]
+- [ ] 标准 3：[边界情况处理]
+
+### API 契约（如果适用）
+- 端点：POST /api/[resource]
+- 请求：{ field1: string, field2: number }
+- 响应：{ id: string, created: timestamp }
+- 错误：400（验证）、404（未找到）、500（服务器）
 ```
-Input → Validation → Processing → Output
+
+### 架构规范
+
+```markdown
+## 架构：[组件名称]
+
+### 目的
+[此组件存在的原因]
+
+### 边界
+- 拥有：[此组件负责什么]
+- 委托给：[其他组件处理什么]
+- 不做：[明确的不负责任]
+
+### 依赖
+- 上游：[调用此组件的组件]
+- 下游：[此组件调用的组件]
+
+### 数据流
+```
+输入 → 验证 → 处理 → 输出
          │              │
-         └─ Errors ─────┘
+         └─ 错误 ─────┘
 ```
 
-### Constraints
-- Performance: [Response time, throughput]
-- Security: [Auth requirements, data handling]
-- Scalability: [Expected load, limits]
+### 约束
+- 性能：[响应时间、吞吐量]
+- 安全：[认证要求、数据处理]
+- 可扩展性：[预期负载、限制]
 ```
 
-### API Spec
+### API 规范
 
 ```markdown
-## API: [Endpoint Name]
+## API：[端点名称]
 
-### Endpoint
+### 端点
 `POST /api/v1/[resource]`
 
-### Authentication
-Bearer token required. Scopes: `read:resource`, `write:resource`
+### 认证
+需要 Bearer 令牌。范围：`read:resource`、`write:resource`
 
-### Request
+### 请求
 ```json
 {
-  "field1": "string (required, max 255 chars)",
-  "field2": "number (optional, default: 0)",
+  "field1": "string（必需，最多 255 字符）",
+  "field2": "number（可选，默认：0）",
   "nested": {
     "subfield": "boolean"
   }
 }
 ```
 
-### Response
+### 响应
 ```json
 {
   "id": "uuid",
-  "created_at": "ISO 8601 timestamp",
+  "created_at": "ISO 8601 时间戳",
   "data": { ... }
 }
 ```
 
-### Error Codes
-| Code | Meaning | Response Body |
+### 错误代码
+| 代码 | 含义 | 响应体 |
 |------|---------|---------------|
-| 400 | Validation failed | `{ "errors": [...] }` |
-| 401 | Not authenticated | `{ "message": "..." }` |
-| 403 | Not authorized | `{ "message": "..." }` |
-| 404 | Resource not found | `{ "message": "..." }` |
+| 400 | 验证失败 | `{ "errors": [...] }` |
+| 401 | 未认证 | `{ "message": "..." }` |
+| 403 | 未授权 | `{ "message": "..." }` |
+| 404 | 资源未找到 | `{ "message": "..." }` |
 ```
 
 ---
 
-## Step-by-Step Workflow
+## 逐步工作流
 
-### Step 1: Write the Spec
+### 第 1 步：编写规范
 
-Before any implementation request, add spec to CLAUDE.md:
+在任何实现请求之前，将规范添加到 CLAUDE.md：
 
 ```markdown
-## Feature: User Authentication
+## 功能：用户认证
 
-### Capabilities
-- MUST: Email/password login
-- MUST: JWT token generation
-- MUST: Password hashing with bcrypt
-- SHOULD: Remember me functionality
-- MUST NOT: Store plain text passwords
+### 功能
+- 必须：邮件/密码登录
+- 必须：JWT 令牌生成
+- 必须：使用 bcrypt 的密码哈希
+- 应当：记住我功能
+- 不得：存储明文密码
 
-### Tech Stack
-- Required: bcrypt, jsonwebtoken
-- Forbidden: passport.js (too heavy for this use case)
+### 技术栈
+- 必需：bcrypt、jsonwebtoken
+- 禁止：passport.js（对此用例来说太重）
 
-### Acceptance Criteria
-- [ ] User can login with valid credentials
-- [ ] Invalid credentials return 401
-- [ ] Token expires after 24h (or 7d with remember me)
-- [ ] Passwords hashed with cost factor 12
+### 验收标准
+- [ ] 用户可以使用有效凭证登录
+- [ ] 无效凭证返回 401
+- [ ] 令牌 24 小时后过期（勾选记住我则为 7 天）
+- [ ] 密码使用成本因子 12 进行哈希
 ```
 
-### Step 2: Reference Spec in Prompt
+### 第 2 步：在提示中引用规范
 
 ```
-Implement the User Authentication feature as specified in CLAUDE.md.
-Follow the acceptance criteria exactly.
+按照 CLAUDE.md 中指定的那样实现用户认证功能。
+严格遵循验收标准。
 ```
 
-Claude automatically reads CLAUDE.md and follows the spec.
+Claude 自动读取 CLAUDE.md 并遵循规范。
 
-### Step 3: Verify Against Spec
+### 第 3 步：根据规范验证
 
-After implementation, verify:
-
-```
-Review the implementation against the User Authentication spec.
-Check off each acceptance criterion that's satisfied.
-List any gaps.
-```
-
-### Step 4: Update Spec if Needed
-
-If requirements change during implementation:
+实现后，验证：
 
 ```
-Update the User Authentication spec to include:
-- MUST: Rate limiting (5 attempts per minute)
-Then implement the rate limiting.
+根据用户认证规范审查实现。
+勾选每个已满足的验收标准。
+列出任何差距。
+```
+
+### 第 4 步：如有需要更新规范
+
+如果需求在实现期间更改：
+
+```
+更新用户认证规范以包含：
+- 必须：限流（每分钟 5 次尝试）
+然后实现限流。
 ```
 
 ---
 
-## Integration with Tools
+## 与工具集成
 
-### With Spec Kit (Greenfield)
+### 配合 Spec Kit（新建项目）
 
 ```bash
-# Install Spec Kit
+# 安装 Spec Kit
 npx @anthropic/spec-kit init
 
-# Use slash commands
-/speckit.constitution  # Define project guardrails
-/speckit.specify       # Write feature specs
-/speckit.plan          # Create implementation plan
-/speckit.implement     # Build from spec
+# 使用斜杠命令
+/speckit.constitution  # 定义项目护栏
+/speckit.specify       # 编写功能规范
+/speckit.plan          # 创建实施计划
+/speckit.implement     # 从规范构建
 ```
 
-### With OpenSpec (Brownfield)
+### 配合 OpenSpec（现有项目）
 
 ```bash
-# Install OpenSpec
+# 安装 OpenSpec
 npm install -g @fission-ai/openspec@latest
 openspec init
 
-# Use slash commands
-/openspec:proposal "Add dark mode"  # Create change proposal
-/openspec:apply add-dark-mode       # Implement changes
-/openspec:archive add-dark-mode     # Merge to specs
+# 使用斜杠命令
+/openspec:proposal "添加深色模式"  # 创建变更提案
+/openspec:apply add-dark-mode       # 实现变更
+/openspec:archive add-dark-mode     # 合并到规范
 ```
 
-### With Plan Mode
+### 配合计划模式
 
 ```
-[Press Shift+Tab to enter Plan Mode]
+[按 Shift+Tab 进入计划模式]
 
-I need to implement the Payment Processing feature.
-Review the spec in CLAUDE.md and create an implementation plan.
+我需要实现支付处理功能。
+审查 CLAUDE.md 中的规范并创建实施计划。
 ```
 
 ---
 
-## When to Use
+## 何时使用
 
-### Use Spec-First
+### 使用规范优先
 
-| Scenario | Why |
+| 场景 | 为什么 |
 |----------|-----|
-| New features | Define before building |
-| API design | Contract must be explicit |
-| Architecture decisions | Document constraints |
-| Team collaboration | Shared understanding |
-| Complex requirements | Reduce ambiguity |
+| 新功能 | 构建前定义 |
+| API 设计 | 契约必须明确 |
+| 架构决策 | 记录约束 |
+| 团队协作 | 共享理解 |
+| 复杂需求 | 减少歧义 |
 
-### Skip Spec-First
+### 跳过规范优先
 
-| Scenario | Why |
+| 场景 | 为什么 |
 |----------|-----|
-| Quick fixes | Overhead not worth it |
-| Exploration | Don't know what you want yet |
-| Prototyping | Requirements will change |
-| Single-line changes | Obvious intent |
+| 快速修复 | 开销不值得 |
+| 探索 | 还不知道想要什么 |
+| 原型设计 | 需求会更改 |
+| 单行更改 | 意图明显 |
 
 ---
 
-## Anti-Patterns
+## 反模式
 
-### Vague Specs
+### 模糊规范
 
 ```markdown
-# Wrong
-## Feature: User Management
-- Handle users
+# 错误
+## 功能：用户管理
+- 处理用户
 
-# Right
-## Feature: User Management
-### Capabilities
-- MUST: Create user with email, password, name
-- MUST: Update user profile (name, avatar)
-- MUST: Soft delete (mark as inactive, don't remove data)
-- MUST NOT: Allow duplicate emails
+# 正确
+## 功能：用户管理
+### 功能
+- 必须：使用邮件、密码、姓名创建用户
+- 必须：更新用户资料（姓名、头像）
+- 必须：软删除（标记为不活跃，不删除数据）
+- 不得：允许重复邮件
 ```
 
-### Spec After Code
+### 代码后的规范
 
 ```
-# Wrong workflow
-1. Ask Claude to implement feature
-2. Write spec documenting what was built
+# 错误工作流
+1. 让 Claude 实现功能
+2. 编写规范记录已构建的内容
 
-# Right workflow
-1. Write spec defining what should be built
-2. Ask Claude to implement from spec
+# 正确工作流
+1. 编写规范定义应该构建什么
+2. 让 Claude 从规范实现
 ```
 
-### Ignoring Forbidden
+### 忽略禁止项
 
 ```markdown
-# Don't forget exclusions
-### Tech Stack
-- Required: React, TypeScript
-- Forbidden: jQuery, vanilla JS, class components
-             ↑ These constraints prevent drift
+# 不要忘记排除项
+### 技术栈
+- 必需：React、TypeScript
+- 禁止：jQuery、 vanilla JS、类组件
+             ↑ 这些约束防止漂移
 ```
 
 ---
 
-## Modular Spec Design
+## 模块化规范设计
 
-**Pattern**: Break large specifications into multiple focused files instead of cramming everything into a single CLAUDE.md.
+**模式**：将大型规范分解为多个专注的文件，而不是将所有内容塞进单个 CLAUDE.md。
 
-### The Problem: Monolithic CLAUDE.md
+### 问题：单体 CLAUDE.md
 
-When specs exceed ~200 lines, several issues emerge:
+当规范超过约 200 行时，会出现几个问题：
 
-- **Context pollution**: Claude struggles to extract relevant information from bloated context
-- **Cognitive overload**: Developers can't quickly scan for what they need
-- **Maintenance burden**: Updating one area requires navigating unrelated sections
-- **Performance degradation**: Large CLAUDE.md files slow down context loading and processing
+- **上下文污染**：Claude 难以从臃肿的上下文中提取相关信息
+- **认知过载**：开发者无法快速扫描所需内容
+- **维护负担**：更新一个区域需要导航不相关的部分
+- **性能下降**：大型 CLAUDE.md 文件减慢上下文加载和处理
 
-### When to Split
+### 何时拆分
 
-| Threshold | Action |
+| 阈值 | 操作 |
 |-----------|--------|
-| **<100 lines** | Single CLAUDE.md is fine |
-| **100-200 lines** | Consider splitting if distinct domains exist |
-| **>200 lines** | **Split immediately** — you're past the cognitive load threshold |
-| **Multi-team projects** | Split by domain/ownership regardless of size |
+| **<100 行** | 单个 CLAUDE.md 没问题 |
+| **100-200 行** | 如果存在不同领域考虑拆分 |
+| **>200 行** | **立即拆分** — 你已超过认知负荷阈值 |
+| **多团队项目** | 无论大小按领域/所有权拆分 |
 
-### Split Strategies
+### 拆分策略
 
-**1. Feature-Based Split**
-
-```
-CLAUDE.md              # Core project context
-CLAUDE-auth.md         # Authentication spec
-CLAUDE-api.md          # API endpoints spec
-CLAUDE-billing.md      # Payment processing spec
-```
-
-**2. Role-Based Split**
+**1. 基于功能的拆分**
 
 ```
-CLAUDE.md              # Shared conventions
-CLAUDE-frontend.md     # UI/UX specifications
-CLAUDE-backend.md      # API/database specs
-CLAUDE-infra.md        # DevOps/deployment specs
+CLAUDE.md              # 核心项目上下文
+CLAUDE-auth.md         # 认证规范
+CLAUDE-api.md          # API 端点规范
+CLAUDE-billing.md      # 支付处理规范
 ```
 
-**3. Workflow-Based Split**
+**2. 基于角色的拆分**
 
 ```
-CLAUDE.md              # Daily development rules
-CLAUDE-testing.md      # Test specifications
-CLAUDE-release.md      # Release process spec
-CLAUDE-security.md     # Security requirements
+CLAUDE.md              # 共享约定
+CLAUDE-frontend.md     # UI/UX 规范
+CLAUDE-backend.md      # API/数据库规范
+CLAUDE-infra.md        # DevOps/部署规范
 ```
 
-### Implementation Pattern
+**3. 基于工作流的拆分**
 
-**Main CLAUDE.md** (stays concise):
+```
+CLAUDE.md              # 日常开发规则
+CLAUDE-testing.md      # 测试规范
+CLAUDE-release.md      # 发布流程规范
+CLAUDE-security.md     # 安全要求
+```
+
+### 实现模式
+
+**主 CLAUDE.md**（保持简洁）：
 ```markdown
-# Project: [NAME]
+# 项目：[名称]
 
-## Tech Stack
-[Core technologies]
+## 技术栈
+[核心技术]
 
-## Commands
-[Daily commands]
+## 命令
+[日常命令]
 
-## Rules
-[Universal rules]
+## 规则
+[通用规则]
 
-## Detailed Specs
-- Authentication: See @CLAUDE-auth.md
-- API Design: See @CLAUDE-api.md
-- Testing: See @CLAUDE-testing.md
+## 详细规范
+- 认证：见 @CLAUDE-auth.md
+- API 设计：见 @CLAUDE-api.md
+- 测试：见 @CLAUDE-testing.md
 ```
 
-**CLAUDE-auth.md** (focused spec):
+**CLAUDE-auth.md**（专注规范）：
 ```markdown
-# Authentication Specification
+# 认证规范
 
-## Capabilities
-- MUST: JWT-based authentication
-- MUST: Refresh token rotation
-- MUST NOT: Store tokens in localStorage
+## 功能
+- 必须：基于 JWT 的认证
+- 必须：刷新令牌轮换
+- 不得：将令牌存储在 localStorage 中
 
-## API Contract
-[Detailed auth endpoints...]
+## API 契约
+[详细认证端点...]
 
-## Security Requirements
-[Specific auth security rules...]
+## 安全要求
+[特定认证安全规则...]
 ```
 
-**Benefits**:
-- Claude can reference specific files with `@CLAUDE-auth.md`
-- Faster context loading (only relevant specs)
-- Easier maintenance (edit one domain without affecting others)
-- Better team collaboration (ownership per spec file)
+**好处**：
+- Claude 可以用 `@CLAUDE-auth.md` 引用特定文件
+- 更快的上下文加载（仅相关规范）
+- 更轻松的维护（编辑一个领域不影响其他）
+- 更好的团队协作（每个规范文件的所有权）
 
-**Source**: Addy Osmani, ["How to write a good spec for AI agents"](https://addyosmani.com/blog/good-spec/) (Jan 2026)
+**来源**：Addy Osmani，["如何为 AI 智能体编写好的规范"](https://addyosmani.com/blog/good-spec/)（2026 年 1 月）
 
 ---
 
-## Operational Boundaries
+## 操作边界
 
-**Pattern**: Define explicit boundaries for what AI agents should do automatically, ask about, or never touch.
+**模式**：为 AI 智能体应该自动执行、先询问还是永不触碰的内容定义明确的边界。
 
-### The Three-Tier System
+### 三层系统
 
-Traditional specs use binary constraints (MUST/MUST NOT), but operational work requires three levels:
+传统规范使用二元约束（MUST/MUST NOT），但操作工作需要三个级别：
 
-| Tier | Meaning | Claude Code Mapping |
+| 层级 | 含义 | Claude Code 映射 |
 |------|---------|---------------------|
-| **Always** | Execute automatically without asking | Auto-accept mode |
-| **Ask First** | Get user confirmation before proceeding | Default mode |
-| **Never** | Block or require Plan Mode | Plan mode / Hook blocking |
+| **始终** | 无需询问自动执行 | 自动接受模式 |
+| **先问** | 继续前获取用户确认 | 默认模式 |
+| **永不** | 阻止或需要计划模式 | 计划模式 / Hook 阻止 |
 
-### Operational Boundaries Template
+### 操作边界模板
 
 ```markdown
-## Boundaries
+## 边界
 
-### Always (Auto-accept)
-- Run tests after code changes
-- Format code with Prettier
-- Update imports when moving files
-- Fix linting errors
-- Add type annotations for untyped code
+### 始终（自动接受）
+- 代码更改后运行测试
+- 用 Prettier 格式化代码
+- 移动文件时更新导入
+- 修复 lint 错误
+- 为未类型化的代码添加类型注解
 
-### Ask First (Confirm)
-- Modify database schemas
-- Add new dependencies
-- Change API contracts
-- Refactor >50 lines of code
-- Update configuration files
+### 先问（确认）
+- 修改数据库模式
+- 添加新依赖
+- 更改 API 契约
+- 重构 >50 行代码
+- 更新配置文件
 
-### Never (Block)
-- Push to production branch
-- Commit secrets or API keys
-- Delete data without backup
-- Modify CI/CD workflows without review
-- Bypass security checks
+### 永不（阻止）
+- 推送到生产分支
+- 提交密钥或 API 密钥
+- 在没有备份的情况下删除数据
+- 未经审查修改 CI/CD 工作流
+- 绕过安全检查
 ```
 
-### Mapping to Claude Code Permissions
+### 映射到 Claude Code 权限
 
-**Always → Permission Allowlist**:
+**始终 → 权限允许列表**：
 ```json
-// In .claude/settings.json
+// 在 .claude/settings.json 中
 {
   "permissions": {
     "allow": [
@@ -555,400 +556,400 @@ Traditional specs use binary constraints (MUST/MUST NOT), but operational work r
 }
 ```
 
-**Ask First → Default Mode**:
-- Standard behavior, prompts for every action
-- Use for actions with moderate risk/impact
+**先问 → 默认模式**：
+- 标准行为，提示每个操作
+- 用于具有中等风险/影响的操作
 
-**Never → Plan Mode + Hooks**:
+**永不 → 计划模式 + Hooks**：
 ```bash
-# Hook configured via settings.json (PreToolUse event)
+# 通过 settings.json 配置的 Hook（PreToolUse 事件）
 #!/bin/bash
 if [[ "$TOOL_NAME" == "Bash" ]] && [[ "$INPUT" =~ "git push origin main" ]]; then
   echo "BLOCKED: Direct push to main blocked. Use feature branches."
-  exit 2  # Send feedback to Claude (non-zero exit blocks the action)
+  exit 2  # 发送反馈给 Claude（非零退出阻止操作）
 fi
 ```
 
-### Decision Framework
+### 决策框架
 
-Ask yourself for each action:
-1. **Can it cause data loss?** → Ask First or Never
-2. **Is it reversible with git?** → Maybe Always
-3. **Does it affect other developers?** → Ask First
-4. **Is it a security risk?** → Never
-5. **Is it part of the standard workflow?** → Always
+为每个操作问自己：
+1. **它会导致数据丢失吗？** → 先问或永不
+2. **它可以用 git 撤销吗？** → 可能是始终
+3. **它会影响其他开发者吗？** → 先问
+4. **它是安全风险吗？** → 永不
+5. **它是标准工作流的一部分吗？** → 始终
 
-### Example: API Development
+### 示例：API 开发
 
 ```markdown
-### Always
-- Run unit tests (npm test)
-- Validate request schemas
-- Generate API documentation
-- Check response formats
+### 始终
+- 运行单元测试（npm test）
+- 验证请求模式
+- 生成 API 文档
+- 检查响应格式
 
-### Ask First
-- Add new API endpoints
-- Change existing endpoint signatures
-- Modify authentication requirements
-- Update rate limiting rules
+### 先问
+- 添加新 API 端点
+- 更改现有端点签名
+- 修改认证要求
+- 更新限流规则
 
-### Never
-- Expose internal endpoints publicly
-- Log sensitive user data
-- Disable authentication checks
-- Remove rate limiting
+### 永不
+- 向公众公开内部端点
+- 记录敏感用户数据
+- 禁用认证检查
+- 移除限流
 ```
 
-### Maintenance
+### 维护
 
-Review boundaries quarterly:
-- **Promote**: Actions that never caused issues (Ask First → Always)
-- **Demote**: Actions that caused problems (Always → Ask First)
-- **Block**: Repeated mistakes (Ask First → Never)
+每季度审查边界：
+- **晋升**：从未导致问题的操作（先问 → 始终）
+- **降级**：导致问题的操作（始终 → 先问）
+- **阻止**：重复错误（先问 → 永不）
 
-**Source**: Addy Osmani, ["How to write a good spec for AI agents"](https://addyosmani.com/blog/good-spec/) (Jan 2026)
+**来源**：Addy Osmani，["如何为 AI 智能体编写好的规范"](https://addyosmani.com/blog/good-spec/)（2026 年 1 月）
 
 ---
 
-## Command Spec Template
+## 命令规范模板
 
-**Pattern**: Document executable commands with expected outputs and error handling.
+**模式**：用预期输出和错误处理记录可执行命令。
 
-### Why Command Specs Matter
+### 为什么命令规范很重要
 
-Most specs focus on **features** ("build authentication"), but **commands** ("how to test authentication") are equally critical for AI agents.
+大多数规范专注于**功能**（"构建认证"），但**命令**（"如何测试认证"）对 AI 智能体同样重要。
 
-### Template Structure
+### 模板结构
 
 ```markdown
-## Commands
+## 命令
 
-### [Command Category]
+### [命令类别]
 
-**Purpose**: [What this command accomplishes]
+**目的**：[此命令完成什么]
 
-#### Command: `[actual command]`
-**When**: [Trigger condition]
-**Expected Output**: [What success looks like]
-**Error Handling**: [What to do on failure]
-**Flags**: [Important options]
+#### 命令：`[实际命令]`
+**何时**： [触发条件]
+**预期输出**： [成功的样子]
+**错误处理**： [失败时做什么]
+**标志**： [重要选项]
 
 ---
 ```
 
-### Example: Testing Commands
+### 示例：测试命令
 
 ```markdown
-## Commands
+## 命令
 
-### Testing
+### 测试
 
-#### Command: `pnpm test`
-**When**: Before every commit, after code changes
-**Expected Output**:
-- All tests pass (exit code 0)
-- Coverage ≥80% (lines, branches, functions)
-- No console warnings
-**Error Handling**:
-- If tests fail → Fix tests, don't skip
-- If coverage drops → Add tests for uncovered code
-- If warnings appear → Investigate before committing
-**Flags**:
-- `--coverage`: Generate coverage report
-- `--watch`: Run in watch mode for development
-- `--silent`: Suppress console output
+#### 命令：`pnpm test`
+**何时**：每次提交前，代码更改后
+**预期输出**：
+- 所有测试通过（退出代码 0）
+- 覆盖率 ≥80%（行、分支、函数）
+- 无控制台警告
+**错误处理**：
+- 如果测试失败 → 修复测试，不要跳过
+- 如果覆盖率下降 → 为未覆盖的代码添加测试
+- 如果出现警告 → 提交前调查
+**标志**：
+- `--coverage`：生成覆盖率报告
+- `--watch`：在开发模式下运行（监视模式）
+- `--silent`：抑制控制台输出
 
-#### Command: `pnpm test:e2e`
-**When**: Before merging to main, in CI pipeline
-**Expected Output**:
-- All E2E scenarios pass
-- Screenshots captured for failures
-- Test duration <5 minutes
-**Error Handling**:
-- If flaky → Investigate race conditions, don't retry blindly
-- If timeout → Check network mocks, async handling
-- If screenshots differ → Review UI changes deliberately
-**Flags**:
-- `--headed`: Run with visible browser (debugging)
-- `--project chromium`: Test specific browser
+#### 命令：`pnpm test:e2e`
+**何时**：合并到 main 前，CI 管道中
+**预期输出**：
+- 所有 E2E 场景通过
+- 失败时捕获截图
+- 测试持续时间 <5 分钟
+**错误处理**：
+- 如果不稳定 → 调查竞争条件，不要盲目重试
+- 如果超时 → 检查网络模拟、异步处理
+- 如果截图不同 →  deliberate 审查 UI 更改
+**标志**：
+- `--headed`：用可见浏览器运行（调试）
+- `--project chromium`：测试特定浏览器
 ```
 
-### Example: Build & Deployment
+### 示例：构建和部署
 
 ```markdown
-## Commands
+## 命令
 
-### Build
+### 构建
 
-#### Command: `pnpm build`
-**When**: Before deployment, in CI pipeline
-**Expected Output**:
-- Build succeeds (exit code 0)
-- Output in `dist/` directory
-- No TypeScript errors
-- Bundle size <500KB (main chunk)
-**Error Handling**:
-- If TypeScript errors → Fix types, don't use `@ts-ignore`
-- If bundle too large → Analyze with `pnpm analyze`, code-split
-- If missing assets → Check public/ directory, update paths
-**Flags**:
-- `--mode production`: Production optimizations
-- `--analyze`: Generate bundle size report
+#### 命令：`pnpm build`
+**何时**：部署前，CI 管道中
+**预期输出**：
+- 构建成功（退出代码 0）
+- 输出在 `dist/` 目录
+- 无 TypeScript 错误
+- 包大小 <500KB（主块）
+**错误处理**：
+- 如果 TypeScript 错误 → 修复类型，不要使用 `@ts-ignore`
+- 如果包太大 → 用 `pnpm analyze` 分析，代码分割
+- 如果缺少资源 → 检查 public/ 目录，更新路径
+**标志**：
+- `--mode production`：生产优化
+- `--analyze`：生成包大小报告
 
-### Deployment
+### 部署
 
-#### Command: `pnpm deploy:staging`
-**When**: After PR approval, before production
-**Expected Output**:
-- Deployment succeeds
-- Health check returns 200 OK
-- Staging URL: https://staging.example.com
-**Error Handling**:
-- If health check fails → Rollback automatically
-- If database migration fails → Don't proceed, investigate
-- If environment vars missing → Check .env.staging, update secrets
-**Never**: Run `pnpm deploy:production` manually — use CI/CD only
+#### 命令：`pnpm deploy:staging`
+**何时**：PR 批准后，生产前
+**预期输出**：
+- 部署成功
+- 健康检查返回 200 OK
+- 暂存 URL：https://staging.example.com
+**错误处理**：
+- 如果健康检查失败 → 自动回滚
+- 如果数据库迁移失败 → 不要继续，调查
+- 如果环境变量缺失 → 检查 .env.staging，更新密钥
+**永不**：手动运行 `pnpm deploy:production` — 只使用 CI/CD
 ```
 
-### Example: Database Commands
+### 示例：数据库命令
 
 ```markdown
-## Commands
+## 命令
 
-### Database
+### 数据库
 
-#### Command: `pnpm db:migrate`
-**When**: After pulling schema changes, before development
-**Expected Output**:
-- Migrations applied successfully
-- Database schema matches models
-- Seed data loaded (development only)
-**Error Handling**:
-- If migration fails → Check database connection, review SQL
-- If conflicts detected → Resolve migrations, don't force
-**Never**: Run migrations in production manually — CI/CD only
+#### 命令：`pnpm db:migrate`
+**何时**：拉取模式更改后，开发前
+**预期输出**：
+- 迁移成功应用
+- 数据库模式与模型匹配
+- 种子数据加载（仅开发）
+**错误处理**：
+- 如果迁移失败 → 检查数据库连接，审查 SQL
+- 如果检测到冲突 → 解决迁移，不要强制
+**永不**：手动在生产中运行迁移 — 只使用 CI/CD
 
-#### Command: `pnpm db:reset`
-**When**: Development only, never in staging/production
-**Expected Output**:
-- Database dropped and recreated
-- All migrations applied
-- Seed data loaded
-**Error Handling**:
-- If production check fails → Abort immediately, verify environment
-**Safety**: Requires `NODE_ENV=development` check
+#### 命令：`pnpm db:reset`
+**何时**：仅开发，永不在暂存/生产
+**预期输出**：
+- 数据库被删除并重新创建
+- 所有迁移应用
+- 种子数据加载
+**错误处理**：
+- 如果生产检查失败 → 立即中止，验证环境
+**安全**：需要 `NODE_ENV=development` 检查
 ```
 
-### Integration with CLAUDE.md
+### 与 CLAUDE.md 的集成
 
-Reference command specs in your main CLAUDE.md:
+在主 CLAUDE.md 中引用命令规范：
 
 ```markdown
-## Commands
-- Build: `pnpm build` (see spec for error handling)
-- Test: `pnpm test` (must pass before commit)
-- Deploy: See CLAUDE-deployment.md for full procedures
+## 命令
+- 构建：`pnpm build`（错误处理见规范）
+- 测试：`pnpm test`（提交前必须通过）
+- 部署：见 CLAUDE-deployment.md 了解完整程序
 ```
 
-**Source**: Addy Osmani, ["How to write a good spec for AI agents"](https://addyosmani.com/blog/good-spec/) (Jan 2026)
+**来源**：Addy Osmani，["如何为 AI 智能体编写好的规范"](https://addyosmani.com/blog/good-spec/)（2026 年 1 月）
 
 ---
 
-## Anti-Pattern: Monolithic CLAUDE.md
+## 反模式：单体 CLAUDE.md
 
-### The Problem
+### 问题
 
-**Symptom**: Your CLAUDE.md has grown to 300+ lines, mixing feature specs, API contracts, testing requirements, deployment procedures, and team conventions.
+**症状**：你的 CLAUDE.md 已增长到 300+ 行，混合了功能规范、API 契约、测试要求、部署程序和团队约定。
 
-**Impact**:
-- **Context inefficiency**: Claude loads entire 300 lines for every request, even for simple tasks
-- **Slow response time**: Large context = slower processing
-- **Reduced accuracy**: Important details get lost in noise
-- **Maintenance overhead**: Updating one section requires navigating unrelated content
-- **Team friction**: Multiple developers editing same file = merge conflicts
+**影响**：
+- **上下文效率低下**：即使对于简单任务，Claude 也会加载全部 300 行
+- **响应时间慢**：大上下文 = 处理更慢
+- **准确性降低**：重要细节在噪音中丢失
+- **维护开销**：更新一个部分需要导航不相关内容
+- **团队摩擦**：多个开发者编辑同一文件 = 合并冲突
 
-### Real-World Example
+### 真实示例
 
-**Before** (monolithic):
+**之前**（单体）：
 ```markdown
-# CLAUDE.md (387 lines)
+# CLAUDE.md（387 行）
 
-## Tech Stack
-[20 lines]
+## 技术栈
+[20 行]
 
-## Authentication
-[45 lines of auth spec]
+## 认证
+[45 行认证规范]
 
-## API Endpoints
-[67 lines of API contracts]
+## API 端点
+[67 行 API 契约]
 
-## Database Schema
-[52 lines of schema rules]
+## 数据库模式
+[52 行模式规则]
 
-## Testing
-[38 lines of test requirements]
+## 测试
+[38 行测试要求]
 
-## Deployment
-[41 lines of deployment procedures]
+## 部署
+[41 行部署程序]
 
-## Security Rules
-[55 lines of security requirements]
+## 安全规则
+[55 行安全要求]
 
-## Team Conventions
-[33 lines of coding standards]
+## 团队约定
+[33 行编码标准]
 
-## Git Workflow
-[28 lines of branching rules]
+## Git 工作流
+[28 行分支规则]
 
-## Troubleshooting
-[8 lines of common issues]
+## 故障排除
+[8 行常见问题]
 ```
 
-**Problem**: Claude loads all 387 lines even when user asks: "Add a new API endpoint for user profile"
+**问题**：即使用户问"为用户资料添加新的 API 端点"，Claude 也会加载全部 387 行
 
-**After** (modular):
+**之后**（模块化）：
 ```
-CLAUDE.md (82 lines)          # Core context: tech stack, commands, rules
-CLAUDE-auth.md (45 lines)     # Authentication spec only
-CLAUDE-api.md (67 lines)      # API contracts only
-CLAUDE-database.md (52 lines) # Database schema only
-CLAUDE-testing.md (38 lines)  # Test requirements only
-CLAUDE-deploy.md (41 lines)   # Deployment procedures only
-CLAUDE-security.md (55 lines) # Security requirements only
+CLAUDE.md（82 行）          # 核心上下文：技术栈、命令、规则
+CLAUDE-auth.md（45 行）     # 仅认证规范
+CLAUDE-api.md（67 行）      # 仅 API 契约
+CLAUDE-database.md（52 行） # 仅数据库模式
+CLAUDE-testing.md（38 行）  # 仅测试要求
+CLAUDE-deploy.md（41 行）   # 仅部署程序
+CLAUDE-security.md（55 行） # 仅安全要求
 ```
 
-**Benefit**: Claude loads CLAUDE.md (82 lines) + CLAUDE-api.md (67 lines) = 149 lines (61% reduction)
+**好处**：Claude 加载 CLAUDE.md（82 行）+ CLAUDE-api.md（67 行）= 149 行（减少 61%）
 
-### Split Strategy
+### 拆分策略
 
-**Step 1: Identify Domains**
+**第 1 步：识别领域**
 
-Look for natural boundaries in your spec:
-- Do these sections serve different purposes?
-- Would different team members own different sections?
-- Are some sections referenced more frequently than others?
+在规范中寻找自然边界：
+- 这些部分服务不同目的吗？
+- 不同团队成员会拥有不同部分吗？
+- 某些部分是否比其他部分更频繁地引用？
 
-**Step 2: Extract to Focused Files**
+**第 2 步：提取到专注文件**
 
-Move domain-specific content to dedicated files:
+将领域特定内容移至专用文件：
 
 ```bash
-# Keep in CLAUDE.md (always loaded)
-- Tech stack (unchanging baseline)
-- Daily commands (frequent reference)
-- Universal rules (apply to all work)
+# 保留在 CLAUDE.md 中（始终加载）
+- 技术栈（不变的基础）
+- 日常命令（频繁引用）
+- 通用规则（适用于所有工作）
 
-# Extract to domain files (load on demand)
-- Feature specs → CLAUDE-[feature].md
-- API contracts → CLAUDE-api.md
-- Testing → CLAUDE-testing.md
-- Deployment → CLAUDE-deploy.md
+# 提取到领域文件（按需加载）
+- 功能规范 → CLAUDE-[feature].md
+- API 契约 → CLAUDE-api.md
+- 测试 → CLAUDE-testing.md
+- 部署 → CLAUDE-deploy.md
 ```
 
-**Step 3: Create Index in Main CLAUDE.md**
+**第 3 步：在主 CLAUDE.md 中创建索引**
 
 ```markdown
-# Project: [NAME]
+# 项目：[名称]
 
-## Tech Stack
-[Core technologies]
+## 技术栈
+[核心技术]
 
-## Commands
-[Daily commands]
+## 命令
+[日常命令]
 
-## Rules
-[Universal rules]
+## 规则
+[通用规则]
 
-## Detailed Specifications
-Reference these files for domain-specific requirements:
-- @CLAUDE-auth.md — Authentication & authorization
-- @CLAUDE-api.md — API endpoint contracts
-- @CLAUDE-database.md — Schema and migrations
-- @CLAUDE-testing.md — Test requirements
-- @CLAUDE-deploy.md — Deployment procedures
-- @CLAUDE-security.md — Security requirements
+## 详细规范
+参考这些文件获取特定领域的要求：
+- @CLAUDE-auth.md — 认证和授权
+- @CLAUDE-api.md — API 端点契约
+- @CLAUDE-database.md — 模式迁移
+- @CLAUDE-testing.md — 测试要求
+- @CLAUDE-deploy.md — 部署程序
+- @CLAUDE-security.md — 安全要求
 ```
 
-**Step 4: Reference When Needed**
+**第 4 步：按需引用**
 
-Claude can reference specific files:
+Claude 可以引用特定文件：
 ```
-User: "Add a new API endpoint for user settings"
-Claude: Reads CLAUDE.md + @CLAUDE-api.md (relevant context only)
+用户："为用户设置添加新的 API 端点"
+Claude：读取 CLAUDE.md + @CLAUDE-api.md（仅相关上下文）
 ```
 
-### Maintenance Rules
+### 维护规则
 
-1. **Keep CLAUDE.md <100 lines** (core context only)
-2. **Domain files <150 lines each** (if bigger, split further)
-3. **Review quarterly**: Merge rarely-used files, split frequently-updated sections
-4. **Use @file references**: Explicitly load what you need
+1. **保持 CLAUDE.md <100 行**（仅核心上下文）
+2. **领域文件每个 <150 行**（如果更大，继续拆分）
+3. **每季度审查**：合并很少使用的文件，拆分经常更新的部分
+4. **使用 @file 引用**：明确加载你需要的内容
 
-### Migration Checklist
+### 迁移检查清单
 
-- [ ] Identify domains in current CLAUDE.md (>200 lines?)
-- [ ] Create domain-specific files (CLAUDE-[domain].md)
-- [ ] Move content to focused files
-- [ ] Update main CLAUDE.md with index/references
-- [ ] Test: Ask Claude to perform domain-specific task
-- [ ] Verify: Check context usage with `/status`
-- [ ] Document: Update team on new structure
+- [ ] 识别当前 CLAUDE.md 中的领域（>200 行？）
+- [ ] 创建特定领域的文件（CLAUDE-[domain].md）
+- [ ] 将内容移至专注的文件
+- [ ] 用索引/引用更新主 CLAUDE.md
+- [ ] 测试：让 Claude 执行特定领域的任务
+- [ ] 验证：用 `/status` 检查上下文使用情况
+- [ ] 记录：向团队通报新结构
 
-**Source**: Addy Osmani, ["How to write a good spec for AI agents"](https://addyosmani.com/blog/good-spec/) (Jan 2026)
+**来源**：Addy Osmani，["如何为 AI 智能体编写好的规范"](https://addyosmani.com/blog/good-spec/)（2026 年 1 月）
 
 ---
 
 ## SDD vs TDD vs BDD
 
-As of 2026, spec-driven development has productized enough to compare it meaningfully against the older methodologies. The distinction is not which is better in the abstract — it is which artifact governs.
+截至 2026 年，规范驱动开发已经产品化到可以与旧方法论进行有意义的比较。区别不是抽象地哪个更好 — 而是哪个工件统治。
 
-| Methodology | Governing artifact | When it runs | Human role | Regen possible? |
+| 方法论 | 统治工件 | 何时运行 | 人工角色 | 可重新生成？ |
 |-------------|-------------------|--------------|------------|-----------------|
-| TDD | Test suite | After code exists | Write tests first, then code | No — tests document what was built |
-| BDD | Gherkin (.feature files) | After code exists | Write scenarios, then automate | Partial — scenarios can drive codegen |
-| SDD | Spec file (natural language structured) | Before code exists | Write spec, approve contract | Yes — code is a derivable output of the spec |
+| TDD | 测试套件 | 代码存在后 | 先写测试，然后代码 | 否 — 测试记录已构建的内容 |
+| BDD | Gherkin（.feature 文件）| 代码存在后 | 写场景，然后自动化 | 部分 — 场景可以驱动代码生成 |
+| SDD | 规范文件（自然语言结构化）| 代码存在前 | 写规范，批准契约 | 是 — 代码是规范的派生输出 |
 
-The practical implication of the SDD column: if the spec is the governing artifact, then code is in principle regenerable from the spec. Tessl takes this to the logical extreme with files marked `// GENERATED FROM SPEC - DO NOT EDIT`. Martin Fowler notes this is "spec-first" (code starts from spec) but not yet "spec-anchored" (spec and code stay synchronized automatically over time). No tool has solved spec drift reliably at production scale.
+SDD 列的实际含义：如果规范是统治工件，那么代码原则上可以从规范重新生成。Tessl 将此推到逻辑极端，文件标记为 `// GENERATED FROM SPEC - DO NOT EDIT`。Martin Fowler 注意到这是"规范优先"（代码从规范开始）但还不是"规范锚定"（规范和代码随时间自动保持同步）。截至目前，没有工具在生产规模上可靠地解决规范漂移。
 
-Multi-file task failure rate without spec structure: pass@1 drops to 19.4% for multi-file infrastructure tasks versus 87% for isolated functions (Augment Code internal data, no published peer-reviewed study). The directional claim is credible — agents without persistent task context fail more often on tasks that span files and components. The specific numbers are vendor-sourced.
+没有规范结构的多文件任务失败率：对于多文件基础设施任务，pass@1 下降到 19.4%，而隔离函数为 87%（Augment Code 内部数据，无已发布同行评审研究）。方向性声明是可信的 — 没有持久任务上下文的智能体在跨文件和组件的任务上失败得更频繁。具体数字来自供应商。
 
-### Factory.ai Missions architecture
+### Factory.ai Missions 架构
 
-The most documented multi-agent SDD implementation in production. Architecture:
+生产中记录最多的多智能体 SDD 实现。架构：
 
-1. **Orchestrator** translates requirements into behavioral validation contracts before any implementation begins.
-2. **Workers** implement features in parallel, each receiving a bounded task description from the contract.
-3. **Validator agents** (adversarial, independent) verify each implementation against the contract. They have no context from the workers — only the contract and the output.
+1. **编排器**在任何实现开始前将需求转化为行为验证契约。
+2. **工作器**并行实现功能，每个从契约接收有界任务描述。
+3. **验证器智能体**（对抗性的、独立的）根据契约验证每个实现。他们没有来自工作器的上下文 — 只有契约和输出。
 
-On a documented Slack clone project: validators caught 81 problems before any code merged, generating 34% of the total implementation work as "fix features." Median mission duration: 2 hours. The longest documented mission: 16 days. Factory.ai externalizes state in shared artifacts (validation contracts, feature lists, skill definitions) to survive context resets across multi-day missions.
+在一个记录在案的 Slack 克隆项目上：验证器在任何代码合并之前捕获了 81 个问题，产生了 34% 的总实现工作作为"修复功能"。任务持续时间中位数：2 小时。最长的记录任务：16 天。Factory.ai 在共享工件（验证契约、功能列表、技能定义）中外部化状态，以在多天任务中存活上下文重置。
 
-CLI reference (when using Factory.ai):
+CLI 参考（使用 Factory.ai 时）：
 
 ```bash
-droid exec --mission path/to/mission.yaml    # Start a mission
-droid status                                  # Check active missions
-droid validate --mission-id <id>             # Run validators manually
+droid exec --mission path/to/mission.yaml    # 启动任务
+droid status                                  # 检查活跃任务
+droid validate --mission-id <id>             # 手动运行验证器
 ```
 
-### Spec drift: the open problem
+### 规范漂移：开放问题
 
-The risk that matters most in production: when the spec and the code diverge, agents regenerate bugs that were already fixed. Mitigation patterns:
+生产中最重要的是：當規範和代碼發散時，智能體會重新生成已經修復的 bug。缓解模式：
 
-- Version the spec as a git artifact before any implementation commit.
-- Cursor `/evolve` command: updates the spec when the implementation intentionally departs from it.
-- Intent (agent): writes changes back to the spec during implementation, keeping both in sync.
-- GitHub Spec Kit: stores specs in `.specify/` as versioned files that CI can read.
+- 在任何实现提交之前，将规范作为 git 工件进行版本控制。
+- Cursor `/evolve` 命令：当实现有意偏离规范时更新规范。
+- Intent（智能体）：在实现期间将更改写回规范，保持两者同步。
+- GitHub Spec Kit：在 `.specify/` 中存储规范作为版本化文件，CI 可以读取。
 
-No tool has a reliable, widely-adopted mechanism for automated spec-code synchronization at long timescales. This is the primary open problem in SDD as of May 2026.
+截至 2026 年 5 月，没有工具具有可靠的、广泛采用的机制来在长时间尺度上自动规范代码同步。这是 SDD 的主要开放问题。
 
 ---
 
-## See Also
+## 相关参考
 
-- [../core/methodologies.md](../core/methodologies.md) — SDD and other methodologies
-- [Spec Kit Documentation](https://github.blog/ai-and-ml/generative-ai/spec-driven-development-with-ai-get-started-with-a-new-open-source-toolkit/)
-- [OpenSpec Documentation](https://github.com/Fission-AI/OpenSpec)
-- [tdd-with-claude.md](./tdd-with-claude.md) — Combine with TDD
-- [Spec-to-Code Factory](https://github.com/SylvainChabaud/spec-to-code-factory) — Implémentation référence complète avec enforcement outillé (6 gates via Node.js, invariants "No Spec No Code" + "No Task No Commit", ~900K tokens/projet)
-- [Superpowers](https://github.com/obra/superpowers) — Plugin suite (95k+ stars) with a `brainstorming` skill that enforces spec-first as a mandatory gate: the agent refuses to write code until a spec has been reviewed and approved. Install: `/plugin install superpowers@claude-plugins-official`.
+- [../core/methodologies.md](../core/methodologies.md) — SDD 等方法论
+- [Spec Kit 文档](https://github.blog/ai-and-ml/generative-ai/spec-driven-development-with-ai-get-started-with-a-new-open-source-toolkit/)
+- [OpenSpec 文档](https://github.com/Fission-AI/OpenSpec)
+- [tdd-with-claude.md](./tdd-with-claude.md) — 与 TDD 结合
+- [Spec-to-Code Factory](https://github.com/SylvainChabaud/spec-to-code-factory) — 通过 Node.js 强制执行outillé 的完整参考实现（6 个门禁，不规范不代码 + 不任务不提交 invariants，每个项目约 900K tokens）
+- [Superpowers](https://github.com/obra/superpowers) — 插件套件（95k+ 星），带有 `brainstorming` 技能，将规范优先作为强制门禁：智能体在规范被审查和批准之前拒绝写代码。安装：`/plugin install superpowers@claude-plugins-official`。

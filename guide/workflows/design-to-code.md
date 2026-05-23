@@ -1,175 +1,176 @@
+<!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
 ---
-title: "Design-to-Code Workflow with Figma MCP"
-description: "Automated design system implementation using Figma MCP Server for 1:1 design-code parity"
+title: "设计到代码工作流（Figma MCP）"
+description: "使用 Figma MCP Server 实现自动化设计系统实现，达到 1:1 设计代码对等"
 tags: [workflow, mcp, integration]
 ---
 
-# Design-to-Code Workflow with Figma MCP
+# 设计到代码工作流（Figma MCP）
 
-> **Confidence**: Tier 2 — Based on documented production case studies (Parallel HQ, builder.io), MCP server specifications, and community workflows.
+> **可信度**：第 2 层 — 基于记录的生产案例研究（Parallel HQ、builder.io）、MCP 服务器规范和社区工作流。
 
-Automated design system implementation using Figma MCP Server enables Product Designers to hand off production-ready specifications to Claude Code, which implements components maintaining 1:1 design-code parity.
+使用 Figma MCP Server 实现自动化设计系统实现，使产品设计师能够将生产就绪的规范交给 Claude Code，后者实现的组件保持 1:1 的设计代码对等。
 
 ---
 
-## Table of Contents
+## 目录
 
 1. [TL;DR](#tldr)
-2. [Documented Impact](#documented-impact)
-3. [Architecture Overview](#architecture-overview)
-4. [3-Tier Token Hierarchy](#3-tier-token-hierarchy)
-5. [Prerequisites](#prerequisites)
-6. [Core Workflows](#core-workflows)
-7. [Code Connect Setup](#code-connect-setup)
-8. [Example Prompts](#example-prompts)
-9. [Team Adoption Patterns](#team-adoption-patterns)
-10. [Anti-Patterns](#anti-patterns)
-11. [Implementation Roadmap](#implementation-roadmap)
-12. [Resources](#resources)
+2. [记录的影响](#记录的影响)
+3. [架构概览](#架构概览)
+4. [三层 Token 层级](#三层-token-层级)
+5. [前置要求](#前置要求)
+6. [核心工作流](#核心工作流)
+7. [Code Connect 设置](#code-connect-设置)
+8. [示例提示](#示例提示)
+9. [团队采用模式](#团队采用模式)
+10. [反模式](#反模式)
+11. [实施路线图](#实施路线图)
+12. [资源](#资源)
 
 ---
 
 ## TL;DR
 
 ```
-Designer (Figma Make) → Export (Figma Design) → Claude (Figma MCP) → Production Code
+设计师（Figma Make）→ 导出（Figma Design）→ Claude（Figma MCP）→ 生产代码
 
-Key insight: Design system = source of truth
-Claude consumes tokens/components directly from Figma
-Implementation maintains design parity automatically
+关键洞察：设计系统 = 事实来源
+Claude 直接从 Figma 读取 token/组件
+实现自动保持设计对等
 ```
 
 ---
 
-## Documented Impact
+## 记录的影响
 
-Based on production case studies from January 2026:
+基于 2026 年 1 月的生产案例研究：
 
-| Metric | Improvement | Source |
-|--------|-------------|--------|
-| Design inconsistencies | 62% reduction | Parallel HQ study |
-| Workflow efficiency | 78% improvement | builder.io case study |
-| Engineering time saved | 75 days (6 months) | Parallel HQ production data |
-| Time-to-market | 56% reduction | Multi-org composite |
-| Design technical debt | 82% reduction | Post-implementation audit |
+| 指标 | 改进 | 来源 |
+|--------|-------------|----------|
+| 设计不一致 | 减少 62% | Parallel HQ 研究 |
+| 工作流效率 | 提高 78% | builder.io 案例研究 |
+| 节省工程时间 | 75 天（6 个月）| Parallel HQ 生产数据 |
+| 上市时间 | 减少 56% | 多组织综合 |
+| 设计技术债务 | 减少 82% | 实施后审计 |
 
-**Typical workflow timing**:
-- Single frame → Production component: 2-3 minutes
-- Design system drift audit: 3 weeks → 3 minutes
-- Token update propagation: Manual hours → Automated seconds
+**典型工作流时间**：
+- 单帧 → 生产组件：2-3 分钟
+- 设计系统偏移审计：3 周 → 3 分钟
+- Token 更新传播：手动数小时 → 自动化秒级
 
-*Sources: builder.io/blog/claude-code-figma-mcp-server, parallelhq.com/blog/automating-design-systems-with-ai, composio.dev/blog/how-to-use-figma-mcp-with-claude-code*
+*来源：builder.io/blog/claude-code-figma-mcp-server, parallelhq.com/blog/automating-design-systems-with-ai, composio.dev/blog/how-to-use-figma-mcp-with-claude-code*
 
 ---
 
-## Architecture Overview
+## 架构概览
 
-### Full Stack
+### 完整堆栈
 
 ```
-[Figma Design File]
-    ↓ (Variables & Styles)
-[Tokens Studio Plugin] (optional but recommended)
-    ↓ (JSON export)
-[GitHub Repository]
-    ↓ (CI/CD)
+[Figma 设计文件]
+    ↓（变量和样式）
+[Tokens Studio 插件]（可选但推荐）
+    ↓（JSON 导出）
+[GitHub 仓库]
+    ↓（CI/CD）
 [Style Dictionary]
-    ↓ (Transform)
-[CSS Custom Properties / Tailwind Config]
-    ↓ (Consumed by)
-[Component Library]
-    ↑ (Reads via)
+    ↓（转换）
+[CSS 自定义属性 / Tailwind 配置]
+    ↓（被消耗）
+[组件库]
+    ↑（通过读取）
 [Claude Code + Figma MCP]
 ```
 
-### MCP Integration Point
+### MCP 集成点
 
-Claude Code accesses Figma through the Figma MCP Server:
+Claude Code 通过 Figma MCP Server 访问 Figma：
 
 ```
 Claude Code
-    ↓ (uses)
-Figma MCP Server (mcp-server-figma)
-    ↓ (authenticates via)
-Figma Personal Access Token
-    ↓ (reads)
-Figma File (Dev Mode data)
+    ↓（使用）
+Figma MCP Server（mcp-server-figma）
+    ↓（通过以下方式进行身份验证）
+Figma 个人访问令牌
+    ↓（读取）
+Figma 文件（Dev Mode 数据）
 ```
 
-**What Claude can access**:
-- File structure and frames
-- Color/text/effect styles
-- Component properties
-- Variables (tokens)
-- Dev Mode annotations
-- Code Connect snippets (if configured)
+**Claude 可以访问的内容**：
+- 文件结构和帧
+- 颜色/文本/效果样式
+- 组件属性
+- 变量（token）
+- Dev Mode 注释
+- Code Connect 代码片段（如果已配置）
 
-**What Claude cannot access**:
-- Private files without token permissions
-- Edit capabilities (read-only)
-- Real-time collaboration data
-- Version history (only current state)
+**Claude 无法访问的内容**：
+- 没有令牌权限的私人文件
+- 编辑能力（只读）
+- 实时协作数据
+- 版本历史（仅当前状态）
 
 ---
 
-## 3-Tier Token Hierarchy
+## 三层 Token 层级
 
-Modern design systems use a hierarchical token structure. Claude Code understands this hierarchy when consuming Figma data.
+现代设计系统使用层级 token 结构。Claude Code 在消费 Figma 数据时理解此层级。
 
-| Tier | Definition | Figma Implementation | Code Output |
+| 层级 | 定义 | Figma 实现 | 代码输出 |
 |------|------------|----------------------|-------------|
-| **Base** | Primitive values | Figma Variables (e.g., `blue-600: #0066CC`, `spacing-2: 8px`) | CSS custom properties (`--blue-600`, `--spacing-2`) |
-| **Composite** | Combined primitives | Component fills referencing variables | Tailwind config or CSS classes |
-| **Semantic** | Contextual meaning | Contextual variable aliases (e.g., `color-interactive-primary` → `blue-600`) | Component props or theme tokens |
+| **基础** | 原始值 | Figma 变量（例如 `blue-600: #0066CC`，`spacing-2: 8px`） | CSS 自定义属性（`--blue-600`，`--spacing-2`） |
+| **复合** | 组合原始值 | 引用变量的组件填充 | Tailwind 配置或 CSS 类 |
+| **语义** | 上下文含义 | 上下文变量别名（例如 `color-interactive-primary` → `blue-600`） | 组件 props 或主题 token |
 
-### Example Hierarchy
+### 层级示例
 
 ```
-Base:
+Base（基础）：
   --color-blue-600: #0066CC
   --spacing-2: 8px
   --radius-md: 4px
 
-Composite:
+Composite（复合）：
   --button-padding: var(--spacing-2) var(--spacing-4)
   --button-border-radius: var(--radius-md)
 
-Semantic:
+Semantic（语义）：
   --interactive-primary: var(--color-blue-600)
   --interactive-primary-hover: var(--color-blue-700)
 ```
 
-**Claude Code behavior**: When given a Figma component, Claude:
-1. Extracts referenced variables (base tier)
-2. Identifies composite patterns (spacing, sizing)
-3. Applies semantic naming from your token conventions
-4. Generates code matching this hierarchy
+**Claude Code 行为**：当给出一个 Figma 组件时，Claude：
+1. 提取引用的变量（基础层级）
+2. 识别复合模式（间距、大小）
+3. 应用来自 token 约定的语义命名
+4. 生成与此层级匹配的代码
 
 ---
 
-## Prerequisites
+## 前置要求
 
-### For Designers
+### 设计师前置要求
 
-| Requirement | Details |
+| 要求 | 详情 |
 |-------------|---------|
-| **Figma License** | Dev Mode seat (enables variable inspection, code snippets) |
-| **Organized Variables** | Use Figma Variables or Tokens Studio plugin for token management |
-| **Component Structure** | Auto Layout, named layers, consistent naming conventions |
-| **Frame Naming** | Descriptive frame names (Claude uses these for component names) |
+| **Figma 许可证** | Dev Mode 席位（启用变量检查、代码片段） |
+| **组织化变量** | 使用 Figma 变量或 Tokens Studio 插件进行 token 管理 |
+| **组件结构** | 自动布局、命名层、一致的命名约定 |
+| **帧命名** | 描述性帧名称（Claude 用这些作为组件名称） |
 
-### For Developers
+### 开发者前置要求
 
-| Requirement | Details |
+| 要求 | 详情 |
 |-------------|---------|
-| **Claude Code** | Version 1.5.0+ (MCP support) |
+| **Claude Code** | 版本 1.5.0+（MCP 支持）|
 | **Figma MCP Server** | `npm install -g @modelcontextprotocol/server-figma` |
-| **Personal Access Token** | Generated from Figma account settings → Tokens |
-| **MCP Configuration** | Token configured in Claude Code settings |
+| **个人访问令牌** | 从 Figma 账户设置 → 生成令牌 |
+| **MCP 配置** | 在 Claude Code 设置中配置令牌 |
 
-### MCP Configuration
+### MCP 配置
 
-Add to your Claude Code MCP settings (`.claude/mcp.json` or settings UI):
+添加到 Claude Code MCP 设置（`.claude/mcp.json` 或设置 UI）：
 
 ```json
 {
@@ -185,7 +186,7 @@ Add to your Claude Code MCP settings (`.claude/mcp.json` or settings UI):
 }
 ```
 
-**Security note**: Use environment variables for production:
+**安全注意**：生产环境使用环境变量：
 ```json
 {
   "env": {
@@ -194,40 +195,40 @@ Add to your Claude Code MCP settings (`.claude/mcp.json` or settings UI):
 }
 ```
 
-Then export in your shell: `export FIGMA_TOKEN="figd_..."`
+然后在 shell 中导出：`export FIGMA_TOKEN="figd_..."`
 
 ---
 
-## Core Workflows
+## 核心工作流
 
-### Workflow A: Single Frame → Production Component
+### 工作流 A：单帧 → 生产组件
 
-**Timing**: 2-3 minutes per component
+**时间**：每个组件 2-3 分钟
 
-**Steps**:
+**步骤**：
 
-1. **Designer**: Create component in Figma with proper variables/styles
-2. **Designer**: Share Figma file URL with dev/Claude
-3. **Developer**: Prompt Claude Code:
+1. **设计师**：在 Figma 中使用正确变量/样式创建组件
+2. **设计师**：与开发/Claude 分享 Figma 文件 URL
+3. **开发者**：提示 Claude Code：
 
 ```
-Read the "Button/Primary" component from Figma file:
+从 Figma 文件读取 "Button/Primary" 组件：
 https://www.figma.com/design/FILE_KEY
 
-Implement as a React component with TypeScript.
-Use Tailwind for styling, mapping Figma variables to our design tokens.
-Ensure responsive behavior matches Figma's Auto Layout constraints.
+实现为 React 组件，使用 TypeScript。
+使用 Tailwind 样式，将 Figma 变量映射到我们的设计 token。
+确保响应行为与 Figma 的自动布局约束匹配。
 ```
 
-4. **Claude**:
-   - Fetches component via Figma MCP
-   - Extracts styles, dimensions, spacing
-   - Maps variables to code tokens
-   - Generates component with props matching Figma variants
+4. **Claude**：
+   - 通过 Figma MCP 获取组件
+   - 提取样式、尺寸、间距
+   - 将变量映射到代码 token
+   - 生成与 Figma 变体匹配的 props 组件
 
-5. **Verification**: `npm run dev` → Visual comparison against Figma
+5. **验证**：`npm run dev` → 与 Figma 进行视觉对比
 
-**Example output**:
+**示例输出**：
 ```tsx
 // components/Button/Primary.tsx
 interface ButtonProps {
@@ -260,583 +261,583 @@ export function PrimaryButton({ size = 'md', disabled, children }: ButtonProps) 
 
 ---
 
-### Workflow B: Design System Drift Audit
+### 工作流 B：设计系统偏移审计
 
-**Timing**: 3 weeks manual review → 3 minutes automated
+**时间**：3 周手动审查 → 3 分钟自动化
 
-**Problem**: Over time, code diverges from design system (magic numbers, hardcoded colors, inconsistent spacing).
+**问题**：随着时间推移，代码偏离设计系统（魔术数字、硬编码颜色、不一致的间距）。
 
-**Solution**: Claude audits codebase against Figma source of truth.
+**解决方案**：Claude 根据 Figma 事实来源审计代码库。
 
-**Prompt**:
+**提示**：
 ```
-Audit src/components for design system compliance.
-Compare against our Figma design system:
+审计 src/components 的设计系统合规性。
+对比我们的 Figma 设计系统：
 https://www.figma.com/design/FILE_KEY
 
-Report:
-1. Hardcoded colors not using design tokens
-2. Magic number spacing values
-3. Components not matching Figma structure
-4. Missing responsive patterns
+报告：
+1. 未使用设计 token 的硬编码颜色
+2. 魔术数字间距值
+3. 与 Figma 结构不匹配的组件
+4. 缺少的响应模式
 
-Then propose fixes with token replacements.
+然后用 token 替换建议修复。
 ```
 
-**Claude output**:
+**Claude 输出**：
 ```markdown
-## Design System Audit Results
+## 设计系统审计结果
 
-### Issues Found (23 total)
+### 发现的问题（23 个总计）
 
-#### Hardcoded Colors (8 instances)
-- `src/components/Card.tsx:45` → `#0066CC` should be `var(--interactive-primary)`
-- `src/components/Header.tsx:12` → `#F3F4F6` should be `var(--surface-secondary)`
+#### 硬编码颜色（8 例）
+- `src/components/Card.tsx:45` → `#0066CC` 应该是 `var(--interactive-primary)`
+- `src/components/Header.tsx:12` → `#F3F4F6` 应该是 `var(--surface-secondary)`
 ...
 
-#### Magic Numbers (11 instances)
-- `src/components/Modal.tsx:23` → `padding: 16px 24px` should be `var(--spacing-4) var(--spacing-6)`
+#### 魔术数字（11 例）
+- `src/components/Modal.tsx:23` → `padding: 16px 24px` 应该是 `var(--spacing-4) var(--spacing-6)`
 ...
 
-#### Structural Mismatches (4 instances)
-- `src/components/Button.tsx` → Missing `icon-left` variant present in Figma
+#### 结构不匹配（4 例）
+- `src/components/Button.tsx` → 缺少 Figma 中存在的 `icon-left` 变体
 ...
 ```
 
 ---
 
-### Workflow C: Token Automation Pipeline
+### 工作流 C：Token 自动化管道
 
-**Goal**: Figma variable changes automatically propagate to code.
+**目标**：Figma 变量更改自动传播到代码。
 
-**Architecture**:
+**架构**：
 
 ```
-Figma Variables
-    ↓ (Tokens Studio export or Figma API)
-GitHub Repository (tokens.json)
-    ↓ (GitHub Actions CI/CD)
-Style Dictionary Transform
-    ↓ (generates)
-CSS / Tailwind / Platform-specific tokens
-    ↓ (commit & deploy)
-Production
+Figma 变量
+    ↓（Tokens Studio 导出或 Figma API）
+GitHub 仓库（tokens.json）
+    ↓（GitHub Actions CI/CD）
+Style Dictionary 转换
+    ↓（生成）
+CSS / Tailwind / 平台特定 token
+    ↓（提交和部署）
+生产
 ```
 
-**Setup** (one-time):
+**设置**（一次性）：
 
-1. **Tokens Studio Plugin**: Connect to GitHub repo
-2. **Style Dictionary Config**: Define transform rules
-3. **GitHub Actions**: Auto-run on token updates
-4. **Claude Role**: Review and validate generated tokens
+1. **Tokens Studio 插件**：连接到 GitHub 仓库
+2. **Style Dictionary 配置**：定义转换规则
+3. **GitHub Actions**：token 更新时自动运行
+4. **Claude 角色**：审查和验证生成的 token
 
-**Developer Prompt** (after CI runs):
+**开发者提示**（CI 运行后）：
 ```
-Review the token update from commit abc1234.
-Check if any components need updates to consume new tokens.
-Generate migration guide if breaking changes exist.
+审查提交 abc1234 的 token 更新。
+检查是否有组件需要更新以使用新的 token。
+如果存在破坏性更改，生成迁移指南。
 ```
 
-**Claude output**:
+**Claude 输出**：
 ```markdown
-## Token Update Review (v2.3.0 → v2.4.0)
+## Token 更新审查（v2.3.0 → v2.4.0）
 
-### Changes
-- Added: `--spacing-7`, `--spacing-8` (requested by design)
-- Changed: `--interactive-secondary` hue shift 5° (brand refresh)
-- Deprecated: `--legacy-blue` (remove by Q3)
+### 更改
+- 新增：`--spacing-7`、`--spacing-8`（设计要求）
+- 更改：`--interactive-secondary` 色相偏移 5°（品牌刷新）
+- 弃用：`--legacy-blue`（Q3 前移除）
 
-### Impact Analysis
-- 12 components reference `--interactive-secondary` → Auto-updated via token reference
-- 3 components use deprecated `--legacy-blue` → Migration needed
+### 影响分析
+- 12 个组件引用 `--interactive-secondary` → 通过 token 引用自动更新
+- 3 个组件使用弃用的 `--legacy-blue` → 需要迁移
 
-### Migration Required
-1. `src/components/LegacyButton.tsx:34` → Replace `--legacy-blue` with `--interactive-primary`
-2. `src/components/OldCard.tsx:67` → Replace with new token
-3. `src/utils/theme.ts:12` → Update theme export
+### 需要迁移
+1. `src/components/LegacyButton.tsx:34` → 将 `--legacy-blue` 替换为 `--interactive-primary`
+2. `src/components/OldCard.tsx:67` → 替换为新 token
+3. `src/utils/theme.ts:12` → 更新主题导出
 
-### Migration Script
-[Claude generates codemod or find/replace script]
+### 迁移脚本
+[Claude 生成 codemod 或查找/替换脚本]
 ```
 
 ---
 
-### Workflow D: Visual Iteration Loop (Figma + Playwright)
+### 工作流 D：视觉迭代循环（Figma + Playwright）
 
-**Goal**: Automated visual regression testing against Figma designs.
+**目标**：针对 Figma 设计进行自动化视觉回归测试。
 
-**MCP Stack**: Figma MCP + Playwright MCP
+**MCP 堆栈**：Figma MCP + Playwright MCP
 
-**Setup**:
+**设置**：
 ```
-Claude Code accesses:
-- Figma (design source of truth)
-- Playwright (automated browser testing)
-```
-
-**Prompt**:
-```
-Take a screenshot of our Button component in all variants.
-Compare against Figma frames from:
-https://www.figma.com/design/FILE_KEY → "Button Tests" page
-
-Report any visual differences (color, spacing, typography).
+Claude Code 访问：
+- Figma（设计事实来源）
+- Playwright（自动化浏览器测试）
 ```
 
-**Workflow**:
-1. Claude reads Figma frames (expected state)
-2. Claude uses Playwright to screenshot live components (actual state)
-3. Claude compares (pixel diff or visual inspection)
-4. Reports discrepancies with fix suggestions
+**提示**：
+```
+截取我们 Button 组件在所有变体下的截图。
+对比 Figma 帧：
+https://www.figma.com/design/FILE_KEY → "Button Tests" 页面
 
-**Example output**:
+报告任何视觉差异（颜色、间距、版式）。
+```
+
+**工作流**：
+1. Claude 读取 Figma 帧（预期状态）
+2. Claude 使用 Playwright 截取实时组件截图（实际状态）
+3. Claude 比较（像素差异或视觉检查）
+4. 报告差异及修复建议
+
+**示例输出**：
 ```markdown
-## Visual Regression Report
+## 视觉回归报告
 
-### ✅ Matching (5/7)
+### ✅ 匹配（5/7）
 - Button/Primary/Default
 - Button/Primary/Hover
 - Button/Secondary/Default
 ...
 
-### ❌ Mismatches (2/7)
+### ❌ 不匹配（2/7）
 
 #### Button/Primary/Disabled
-- **Issue**: Text opacity 0.4 in code, 0.5 in Figma
-- **Fix**: Update `disabled:opacity-50` → `disabled:opacity-40`
-- **File**: `src/components/Button.tsx:23`
+- **问题**：代码中文本透明度 0.4，Figma 中 0.5
+- **修复**：更新 `disabled:opacity-50` → `disabled:opacity-40`
+- **文件**：`src/components/Button.tsx:23`
 
 #### Button/Large
-- **Issue**: Padding 12px in code, 16px in Figma
-- **Fix**: Update `py-3` → `py-4` (16px)
-- **File**: `src/components/Button.tsx:18`
+- **问题**：代码中 padding 12px，Figma 中 16px
+- **修复**：更新 `py-3` → `py-4`（16px）
+- **文件**：`src/components/Button.tsx:18`
 ```
 
 ---
 
-## Code Connect Setup
+## Code Connect 设置
 
-**Code Connect** is Figma's no-code tool for linking design components to code snippets. This enhances Claude's ability to generate correct code.
+**Code Connect** 是 Figma 的无代码工具，用于将设计组件链接到代码片段。这增强了 Claude 生成正确代码的能力。
 
-### What It Does
+### 它做什么
 
-- Designers annotate Figma components with code examples
-- Claude reads these annotations via MCP
-- Generated code matches team conventions automatically
+- 设计师在 Figma Dev Mode 中用代码示例注释组件
+- Claude 通过 MCP 读取这些注释
+- 生成的代码自动匹配团队约定
 
-### Setup (for Designers)
+### 设置（面向设计师）
 
-1. In Figma Dev Mode → Select component → Code Connect panel
-2. Add code snippet showing how component is used:
+1. 在 Figma Dev Mode → 选择组件 → Code Connect 面板
+2. 添加显示组件使用方式的代码片段：
 
 ```tsx
-// Example Code Connect annotation in Figma
+// Figma 中的示例 Code Connect 注释
 <Button variant="primary" size="lg">
   Click me
 </Button>
 ```
 
-3. Claude sees this when asked to implement, uses team's exact patterns
+3. Claude 在被要求实现时看到这些，使用团队的确切模式
 
-### Benefits
+### 优势
 
-| Without Code Connect | With Code Connect |
+| 没有 Code Connect | 有 Code Connect |
 |---------------------|-------------------|
-| Claude generates generic code | Claude uses team conventions |
-| Prop naming inconsistent | Props match Figma variants exactly |
-| Requires manual correction | Production-ready first pass |
+| Claude 生成通用代码 | Claude 使用团队约定 |
+| Props 命名不一致 | Props 与 Figma 变体完全匹配 |
+| 需要手动修正 | 首次通过即可投入生产 |
 
-**Reference**: Read more at parallelhq.com/blog (Code Connect UI article)
+**参考**：在 parallelhq.com/blog 阅读更多（Code Connect UI 文章）
 
 ---
 
-## Alternative: Pencil (IDE-Native Canvas)
+## 替代方案：Pencil（IDE 原生画布）
 
-**Overview**: [Pencil](https://pencil.dev) brings infinite design canvas directly into Claude Code/Cursor/VSCode, eliminating external tool switching and enabling design-as-code workflows.
+**概述**：[Pencil](https://pencil.dev) 将无限设计画布直接嵌入 Claude Code/Cursor/VSCode，消除了外部工具切换，并实现了设计即代码工作流。
 
-### Architecture
+### 架构
 
-**Core Innovation**: Unlike Figma (cloud-based) or Excalidraw (standalone), Pencil embeds the design canvas directly in your IDE where Claude and your code live.
+**核心创新**：与 Figma（云端）或 Excalidraw（独立）不同，Pencil 将设计画布直接嵌入 Claude 和代码所在的 IDE 中。
 
 ```
-Traditional Workflow:
-Figma (design) → Export → Claude Code → Implementation → Manual sync
+传统工作流：
+Figma（设计）→ 导出 → Claude Code → 实现 → 手动同步
 
-Pencil Workflow:
-IDE Canvas (design + AI agents + code) → Git commit → Continuous alignment
+Pencil 工作流：
+IDE 画布（设计 + AI 智能体 + 代码）→ Git 提交 → 持续对齐
 ```
 
-**Key Features**:
-- **WebGL Canvas**: Infinite, performant, fully editable
-- **AI Multiplayer Agents**: Parallel agents process design collaboratively
-- **Git-Native**: `.pen` files (JSON format) version-controlled alongside code
-- **MCP Bi-Directional**: Full read+write access (not just read like Figma MCP)
-- **Figma Import**: Copy-paste directly from Figma preserving vectors and styles
+**关键特性**：
+- **WebGL 画布**：无限、高性能、完全可编辑
+- **AI 多智能体**：并行智能体协作处理设计
+- **Git 原生**：`.pen` 文件（JSON 格式）与代码一起版本控制
+- **MCP 双向**：完全读写访问（不像 Figma MCP 那样仅读取）
+- **Figma 导入**：直接从 Figma 复制粘贴，保留向量和样式
 
 ### Pencil vs. Figma MCP
 
-| Aspect | Pencil | Figma MCP |
+| 方面 | Pencil | Figma MCP |
 |--------|--------|-----------|
-| **Location** | IDE-native (Cursor/VSCode/Claude Code) | External cloud |
-| **Format** | `.pen` JSON (open) | Proprietary binary |
-| **Versioning** | Git-native (branch/merge/history) | Figma cloud versions |
-| **AI Agents** | Multiplayer parallel | Single-threaded via MCP |
-| **Collaboration** | Code-first (developers + designers) | Design-first (designers + devs) |
-| **MCP Access** | Bi-directional (read+write) | Read-only |
-| **Workflow** | Design → Commit → Code in same env | Design → Export → Handoff → Code |
-| **Best For** | Engineer-designers, code-centric teams | Traditional design-dev separation |
-| **Maturity** | Emerging (launched Jan 2026) | Mature (2024+) |
-| **Pricing** | Currently free, TBD future | Freemium (free tier available) |
+| **位置** | IDE 原生（Cursor/VSCode/Claude Code）| 外部云 |
+| **格式** | `.pen` JSON（开放）| 专有二进制 |
+| **版本控制** | Git 原生（分支/合并/历史）| Figma 云版本 |
+| **AI 智能体** | 多玩家并行 | 通过 MCP 单线程 |
+| **协作** | 代码优先（开发者 + 设计师）| 设计优先（设计师 + 开发者）|
+| **MCP 访问** | 双向（读+写）| 只读 |
+| **工作流** | 设计 → 提交 → 代码在同一环境 | 设计 → 导出 → 交接 → 代码 |
+| **最适合** | 工程师-设计师、代码为中心的团队 | 传统设计-开发分离 |
+| **成熟度** | 新兴（2026 年 1 月推出）| 成熟（2024+）|
+| **定价** | 目前免费，未来待定 | Freemium（有免费层）|
 
-### When to Use Pencil
+### 何时使用 Pencil
 
-✅ **Good Fit**:
-- Team uses Cursor or VSCode + Claude Code as primary environment
-- Engineer-designers comfortable with terminal/IDE workflows
-- Projects requiring tight design-code alignment (design-as-code paradigm)
-- Desire for git-native design versioning (branch protection, rollback, etc.)
-- Want to leverage parallel AI agents for design automation
+✅ **适合**：
+- 团队使用 Cursor 或 VSCode + Claude Code 作为主要环境
+- 熟悉终端/IDE 工作流的工程师-设计师
+- 需要紧密设计-代码对齐的项目（设计即代码范式）
+- 希望对设计版本进行 git 原生控制（分支保护、回滚等）
+- 希望利用并行 AI 智能体进行设计自动化
 
-⚠️ **Consider Carefully**:
-- Traditional design team (non-technical) → Figma may be better
-- Need enterprise SLA/support → Pencil still maturing
-- Complex design system with 50+ components → Figma ecosystem more mature
-- Team not using Cursor/VSCode → Limited compatibility
+⚠️ **仔细考虑**：
+- 传统设计团队（非技术）→ Figma 可能更好
+- 需要企业 SLA/支持 → Pencil 仍在成熟
+- 复杂设计系统有 50+ 组件 → Figma 生态系统更成熟
+- 团队不使用 Cursor/VSCode → 兼容性有限
 
-### Setup
+### 设置
 
-1. **Install Pencil extension**:
-   - Visit [pencil.dev](https://pencil.dev)
-   - Follow installation for Cursor/VSCode/Claude Code
-   - Create account (currently free)
+1. **安装 Pencil 扩展**：
+   - 访问 [pencil.dev](https://pencil.dev)
+   - 按照 Cursor/VSCode/Claude Code 的安装说明操作
+   - 创建账户（目前免费）
 
-2. **Create first canvas**:
+2. **创建第一个画布**：
    ```bash
-   # Open IDE, launch Pencil extension
-   # Create new .pen file in your repo
-   # Design on infinite canvas
+   # 打开 IDE，启动 Pencil 扩展
+   # 在你的仓库中创建新的 .pen 文件
+   # 在无限画布上设计
    ```
 
-3. **Git workflow**:
+3. **Git 工作流**：
    ```bash
    git add design/homepage.pen
    git commit -m "feat(design): add homepage hero section"
    git push
    ```
 
-4. **Claude integration**:
-   - Claude can read .pen files via MCP
-   - Prompt: "Implement the Button component from design/components.pen"
-   - Claude extracts design specs and generates code
+4. **Claude 集成**：
+   - Claude 可以通过 MCP 读取 .pen 文件
+   - 提示："从 design/components.pen 实现 Button 组件"
+   - Claude 提取设计规范并生成代码
 
-### Example Prompt
+### 示例提示
 
 ```
-Read the "Hero Section" from design/homepage.pen.
+从 design/homepage.pen 读取 "Hero Section"。
 
-Implement as React component with:
-- Responsive behavior matching canvas breakpoints
-- Animations from design (fade-in, slide-up)
-- Copy exactly as specified in canvas
-- Use Tailwind for styling
+实现为 React 组件，具有：
+- 与画布断点匹配的响应行为
+- 设计中的动画（淡入、滑入）
+- 完全按照画布中指定的副本
+- 使用 Tailwind 样式
 
-Ensure pixel-perfect match with design specs.
+确保与设计规范像素完美匹配。
 ```
 
-### Founder & Backing
+### 创始人和支持
 
-**Tom Krcha** (CEO, Pencil):
-- Co-founder Adobe XD (2014-2018), 10 years at Adobe
-- Prior exits: Alter Avatars (acquired by Google), Around (acquired by Miro)
-- 14+ years development experience
+**Tom Krcha**（CEO，Pencil）：
+- Adobe XD 联合创始人（2014-2018），Adobe 10 年
+- 之前退出：Alter Avatars（被 Google 收购）、Around（被 Miro 收购）
+- 14+ 年开发经验
 
-**Funding**: a16z Speedrun (~$1M) + KAYA VC
+**资金**：a16z Speedrun（~$1M）+ KAYA VC
 
-**Traction**: 1M+ views on launch, thousands of signups including Microsoft, Shopify, Uber executives.
+**吸引力**：发布时 100 万+ 浏览量，数千人注册，包括 Microsoft、Shopify、Uber 高管。
 
-### Maturity Note
+### 成熟度注意
 
-**⚠️ Status**: Launched January 2026 (very recent). Strong early signals but documentation and ecosystem still maturing.
+**⚠️ 状态**：2026 年 1 月推出（非常新）。强劲的早期信号，但文档和生态系统仍在成熟中。
 
-**Recommendations**:
-- **Production projects**: Pilot with 1-2 non-critical features first
-- **New projects**: Safe to adopt for teams on Cursor/Claude Code
-- **Traditional workflows**: Stick with Figma MCP until Pencil matures (3-6 months)
+**建议**：
+- **生产项目**：首先与 1-2 个非关键功能进行试点
+- **新项目**：对使用 Cursor/Claude Code 的团队来说安全采用
+- **传统工作流**：在 Pencil 成熟（3-6 个月）前坚持使用 Figma MCP
 
-**Monitor**: Pricing announcement, public GitHub repo, mature documentation expected Q2 2026.
+**监控**：预计 2026 年 Q2 的定价公告、公开 GitHub 仓库、成熟文档。
 
 ---
 
-## Example Prompts
+## 示例提示
 
-### Component Implementation
+### 组件实现
 ```
-Implement the "Card/Product" component from our Figma design system:
+从我们的 Figma 设计系统实现 "Card/Product" 组件：
 [Figma URL]
 
-Requirements:
-- Use our existing design tokens from tailwind.config.ts
-- Include hover states matching Figma interactions
-- Implement all variants (default, featured, compact)
-- Add TypeScript types for all props
+要求：
+- 使用 tailwind.config.ts 中我们现有的设计 token
+- 包含与 Figma 交互匹配的悬停状态
+- 实现所有变体（default、featured、compact）
+- 为所有 props 添加 TypeScript 类型
 ```
 
-### Design System Expansion
+### 设计系统扩展
 ```
-Our design team added a new "Badge" component to Figma:
-[Figma URL → Badge frame]
+我们的设计团队在 Figma 中添加了新 "Badge" 组件：
+[Figma URL → Badge 帧]
 
-Generate:
-1. React component with all variants
-2. Storybook stories
-3. Unit tests for prop combinations
-4. Update design system docs
-```
-
-### Token Validation
-```
-Compare the color tokens in our Tailwind config against
-Figma variables from: [Figma URL]
-
-Report any mismatches and generate update script.
+生成：
+1. 包含所有变体的 React 组件
+2. Storybook 故事
+3. props 组合的单元测试
+4. 更新设计系统文档
 ```
 
-### Responsive Implementation
+### Token 验证
 ```
-Implement the "Hero" section from Figma with exact responsive behavior:
-[Figma URL → Hero/Responsive frame]
+将 Tailwind 配置中的颜色 token 与
+Figma 变量对比：[Figma URL]
 
-Figma has 3 breakpoints configured. Match these precisely.
+报告任何不匹配并生成更新脚本。
 ```
 
-### Accessibility Audit
+### 响应实现
 ```
-Review the "Modal" component implementation against Figma specs:
+使用与 Figma 完全相同的响应行为实现 "Hero" 部分：
+[Figma URL → Hero/Responsive 帧]
+
+Figma 配置了 3 个断点。精确匹配这些。
+```
+
+### 无障碍审计
+```
+根据 Figma 规范审查 "Modal" 组件实现：
 [Figma URL]
 
-Check:
-- Focus management matches Figma's interaction flow
-- Color contrast meets WCAG AA (Figma has contrast checker)
-- Keyboard navigation (Figma annotations specify tab order)
+检查：
+- 焦点管理与 Figma 的交互流匹配
+- 颜色对比符合 WCAG AA（Figma 有对比度检查器）
+- 键盘导航（Figma 注释指定 tab 顺序）
 ```
 
-### Design QA Before Handoff
+### 设计 QA 交接前
 ```
-Review the "Checkout Flow" frames for implementation readiness:
-[Figma URL → Checkout Flow page]
+审查 "Checkout Flow" 帧的实施准备情况：
+[Figma URL → Checkout Flow 页面]
 
-Check:
-- All interactive states defined (hover, focus, disabled, error)
-- Variables used consistently (no magic values)
-- Auto Layout constraints are implementable
-- Missing anything needed for production code?
+检查：
+- 所有交互状态已定义（悬停、焦点、禁用、错误）
+- 一致使用变量（无魔术值）
+- 自动布局约束可实现
+- 生产代码还缺少什么？
 ```
 
-### Multi-Component Atomic Implementation
+### 多组件原子实现
 ```
-Implement the atomic design system components in order:
+按顺序实现原子设计系统组件：
 
-1. Atoms: [Figma URL → Atoms page]
-   - Button, Input, Label, Badge
+1. 原子：[Figma URL → Atoms 页面]
+   - Button、Input、Label、Badge
 
-2. Molecules: [Figma URL → Molecules page]
-   - FormField (Label + Input + Error)
-   - SearchBar (Input + Button)
+2. 分子：[Figma URL → Molecules 页面]
+   - FormField（Label + Input + Error）
+   - SearchBar（Input + Button）
 
-3. Organisms: [Figma URL → Organisms page]
-   - LoginForm (using molecules)
+3. 有机体：[Figma URL → Organisms 页面]
+   - LoginForm（使用分子）
 
-Ensure each level only imports from lower levels.
+确保每个层级只从较低层级导入。
 ```
 
 ---
 
-## Team Adoption Patterns
+## 团队采用模式
 
-### For Product Designers
+### 面向产品设计师
 
-**New workflow**:
-1. Design in Figma with proper variable structure
-2. Use Figma Make for rapid prototyping
-3. Export to Figma Design with Dev Mode enabled
-4. Share file URL + specific frames with dev team
-5. Claude consumes design → Generates implementation
-6. Designer reviews code output visually (not reading code)
+**新工作流**：
+1. 使用正确的变量结构在 Figma 中设计
+2. 使用 Figma Make 进行快速原型设计
+3. 导出到启用了 Dev Mode 的 Figma Design
+4. 与开发团队分享文件 URL + 具体帧
+5. Claude 消费设计 → 生成实现
+6. 设计师通过视觉对比（而非阅读代码）审查代码输出
 
-**Key insight**: Designers don't need to learn code. They review implementation by visual comparison against Figma.
+**关键洞察**：设计师不需要学习代码。他们通过与 Figma 的视觉对比来审查实现。
 
-### For Developers
+### 面向开发者
 
-**New workflow**:
-1. Receive Figma URL from designer
-2. Prompt Claude to implement from Figma source
-3. Review generated code for architecture fit
-4. Run visual comparison (Playwright or manual)
-5. Commit production-ready component
+**新工作流**：
+1. 从设计师接收 Figma URL
+2. 提示 Claude 从 Figma 事实来源实现
+3. 审查生成的代码架构
+4. 运行视觉对比（Playwright 或手动）
+5. 提交生产就绪组件
 
-**Time saved**: Skip manual pixel-perfect implementation. Focus on logic, not layout matching.
+**节省时间**：跳过手动像素完美实现。专注于逻辑，而非布局匹配。
 
-### For Product Managers
+### 面向产品经理
 
-**New capability**: Request design implementation estimates based on Figma frames.
+**新能力**：基于 Figma 帧请求设计实施估计。
 
-**Prompt for PMs**:
+**PM 提示**：
 ```
-Review the "Dashboard Redesign" Figma file:
+审查 "Dashboard Redesign" Figma 文件：
 [Figma URL]
 
-Estimate implementation complexity:
-- How many new components needed?
-- Which existing components can be reused?
-- Any technical blockers?
+估计实施复杂性：
+- 需要多少新组件？
+- 哪些现有组件可以重用？
+- 有技术障碍吗？
 
-Provide rough timeline for dev implementation.
+提供开发实施的时间表。
 ```
 
-Claude output:
+Claude 输出：
 ```markdown
-## Implementation Analysis
+## 实施分析
 
-### Scope
-- 12 frames total
-- 4 new components (DataTable, MetricCard, FilterPanel, DateRangePicker)
-- 8 existing components reused
+### 范围
+- 共 12 帧
+- 4 个新组件（DataTable、MetricCard、FilterPanel、DateRangePicker）
+- 8 个现有组件重用
 
-### Complexity Assessment
-- **Low**: MetricCard (similar to existing Card, 1-2h)
-- **Medium**: FilterPanel (multi-select logic, 4-6h)
-- **High**: DataTable (sorting, pagination, virtualization, 2-3 days)
-- **High**: DateRangePicker (third-party library integration, 1-2 days)
+### 复杂性评估
+- **低**：MetricCard（类似于现有 Card，1-2h）
+- **中**：FilterPanel（多选逻辑，4-6h）
+- **高**：DataTable（排序、分页、虚拟化，2-3 天）
+- **高**：DateRangePicker（第三方库集成，1-2 天）
 
-### Technical Considerations
-- DataTable needs backend API for server-side pagination
-- DateRangePicker: evaluate date-fns vs dayjs vs native
-- FilterPanel state management (local vs global)
+### 技术考虑
+- DataTable 需要后端 API 用于服务器端分页
+- DateRangePicker：评估 date-fns vs dayjs vs native
+- FilterPanel 状态管理（本地 vs 全局）
 
-### Estimated Timeline
-- Development: 5-7 days
-- Code review + QA: 2 days
-- Total: 1.5-2 weeks
+### 估计时间表
+- 开发：5-7 天
+- 代码审查 + QA：2 天
+- 总计：1.5-2 周
 ```
 
 ---
 
-## Anti-Patterns
+## 反模式
 
-| ❌ Anti-Pattern | Why It Fails | ✅ Correct Approach |
+| ❌ 反模式 | 为什么失败 | ✅ 正确方法 |
 |----------------|-------------|-------------------|
-| **Manual design transcription** | Error-prone, time-consuming, drift inevitable | Let Claude read Figma directly via MCP |
-| **Screenshots as specs** | No token data, no interactivity, ambiguous | Share Figma URLs, let Claude access structured data |
-| **Hardcoded values** | Breaks when design system updates | Use design tokens from Figma variables |
-| **Designer codes** | Inefficient use of designer skills | Designer designs → Claude codes → Dev reviews |
-| **Developer guesses spacing** | Inconsistent with design system | Claude extracts exact values from Figma |
-| **No Code Connect annotations** | Generic code output | Annotate once → Claude uses team conventions |
-| **Skipping visual comparison** | Implementation drift | Always verify against Figma source |
-| **Token naming mismatch** | Figma variables ≠ code tokens | Establish naming convention, use Style Dictionary |
-| **Missing responsive specs** | Developer guesses breakpoints | Figma has responsive frames → Claude reads exact specs |
-| **Single-tier tokens** | Inflexible, hard to theme | Use 3-tier hierarchy (base/composite/semantic) |
+| **手动设计转录** | 易出错、耗时、偏移不可避免 | 让 Claude 通过 MCP 直接读取 Figma |
+| **截图作为规范** | 无 token 数据、无交互性、模糊 | 分享 Figma URL，让 Claude 访问结构化数据 |
+| **硬编码值** | 设计系统更新时破坏 | 使用 Figma 变量的设计 token |
+| **设计师编码** | 设计师技能的低效使用 | 设计师设计 → Claude 编码 → 开发审查 |
+| **开发者猜测间距** | 与设计系统不一致 | Claude 从 Figma 提取精确值 |
+| **没有 Code Connect 注释** | 通用代码输出 | 注释一次 → Claude 使用团队约定 |
+| **跳过视觉对比** | 实现偏移 | 始终根据 Figma 事实来源验证 |
+| **Token 命名不匹配** | Figma 变量 ≠ 代码 token | 建立命名约定，使用 Style Dictionary |
+| **缺少响应规范** | 开发者猜测断点 | Figma 有响应帧 → Claude 读取精确规范 |
+| **单层 token** | 不灵活，难以主题化 | 使用 3 层层级（基础/复合/语义）|
 
 ---
 
-## Implementation Roadmap
+## 实施路线图
 
-### Phase 1: Foundation (Week 1-2)
+### 阶段 1：基础（第 1-2 周）
 
-**Goal**: Basic Figma → Claude → Code pipeline
+**目标**：基本 Figma → Claude → 代码管道
 
-- [ ] Install Figma MCP Server
-- [ ] Configure personal access token
-- [ ] Test connection: Claude reads public Figma file
-- [ ] Create project CLAUDE.md with design system conventions
-- [ ] Implement 3-5 simple components (Button, Input, Badge)
-- [ ] Establish visual QA process (manual comparison)
+- [ ] 安装 Figma MCP Server
+- [ ] 配置个人访问令牌
+- [ ] 测试连接：Claude 读取公共 Figma 文件
+- [ ] 在项目 CLAUDE.md 中创建设计系统约定
+- [ ] 实现 3-5 个简单组件（Button、Input、Badge）
+- [ ] 建立视觉 QA 流程（手动对比）
 
-**Success criteria**:
-- Claude generates component from Figma URL
-- Output matches design visually
-- Dev team understands workflow
-
----
-
-### Phase 2: Scaling (Week 3-4)
-
-**Goal**: Full design system implementation + automation
-
-- [ ] Implement 20+ components from Figma library
-- [ ] Set up token automation (Tokens Studio + Style Dictionary)
-- [ ] Create component testing suite (Storybook + visual regression)
-- [ ] Train designers on variable hygiene
-- [ ] Document team conventions in CLAUDE.md
-- [ ] Run first design system drift audit
-
-**Success criteria**:
-- 80%+ of UI components auto-generated
-- Token updates propagate automatically
-- Designers confident in handoff process
+**成功标准**：
+- Claude 从 Figma URL 生成组件
+- 输出在视觉上匹配设计
+- 开发团队理解工作流
 
 ---
 
-### Phase 3: Orchestration (Week 5+)
+### 阶段 2：扩展（第 3-4 周）
 
-**Goal**: Multi-MCP workflows + continuous sync
+**目标**：完整设计系统实现 + 自动化
 
-- [ ] Integrate Playwright MCP for automated visual testing
-- [ ] Set up CI/CD for design-code parity checks
-- [ ] Create Figma → GitHub → Production pipeline
-- [ ] Implement design system governance (linting, audits)
-- [ ] Enable non-devs to trigger Claude implementations (tickets, Slack)
-- [ ] Measure metrics (TTM, inconsistency rate, dev time saved)
+- [ ] 从 Figma 库实现 20+ 组件
+- [ ] 设置 token 自动化（Tokens Studio + Style Dictionary）
+- [ ] 创建组件测试套件（Storybook + 视觉回归）
+- [ ] 培训设计师变量卫生
+- [ ] 在 CLAUDE.md 中记录团队约定
+- [ ] 运行首次设计系统偏移审计
 
-**Success criteria**:
-- Design updates → Production in <1 day
-- Zero manual design transcription
-- Measurable team velocity increase
+**成功标准**：
+- 80%+ 的 UI 组件自动生成
+- Token 更新自动传播
+- 设计师对交接流程有信心
 
 ---
 
-## Resources
+### 阶段 3：编排（第 5 周+）
 
-### Official Documentation
+**目标**：多 MCP 工作流 + 持续同步
 
-- **Figma MCP Server**: [@modelcontextprotocol/server-figma](https://github.com/modelcontextprotocol/servers/tree/main/src/figma) (GitHub)
-- **Figma Developer Docs**: [figma.com/developers](https://www.figma.com/developers)
-- **Style Dictionary**: [amzn.github.io/style-dictionary](https://amzn.github.io/style-dictionary/)
-- **Tokens Studio Plugin**: [tokens.studio](https://tokens.studio/)
+- [ ] 集成 Playwright MCP 进行自动化视觉测试
+- [ ] 设置设计-代码对等检查的 CI/CD
+- [ ] 创建 Figma → GitHub → 生产管道
+- [ ] 实施设计系统治理（linting、审计）
+- [ ] 使非开发人员能够触发 Claude 实现（工单、Slack）
+- [ ] 衡量指标（TTM、不一致率、节省的开发时间）
 
-### Case Studies & Tutorials
+**成功标准**：
+- 设计更新 → 生产 <1 天
+- 零手动设计转录
+- 可衡量的团队速度增加
 
-- **builder.io**: "Claude Code + Figma MCP Server: AI Design-to-Code Workflow" (January 2026)
+---
+
+## 资源
+
+### 官方文档
+
+- **Figma MCP Server**：[github.com/modelcontextprotocol/servers/tree/main/src/figma](https://github.com/modelcontextprotocol/servers/tree/main/src/figma)（GitHub）
+- **Figma 开发者文档**：[figma.com/developers](https://www.figma.com/developers)
+- **Style Dictionary**：[amzn.github.io/style-dictionary](https://amzn.github.io/style-dictionary/)
+- **Tokens Studio 插件**：[tokens.studio](https://tokens.studio/)
+
+### 案例研究和教程
+
+- **builder.io**："Claude Code + Figma MCP Server: AI Design-to-Code Workflow"（2026 年 1 月）
   - [builder.io/blog/claude-code-figma-mcp-server](https://www.builder.io/blog/claude-code-figma-mcp-server)
-  - Production metrics, workflow examples
+  - 生产指标、工作流示例
 
-- **Vladimir Siedykh**: "Multi-MCP Orchestration with Claude Code"
+- **Vladimir Siedykh**："Multi-MCP Orchestration with Claude Code"
   - [vladimirsiedykh.com/blog/claude-code-mcp-workflow](https://vladimirsiedykh.com/)
-  - Figma + Playwright + Linear integration
+  - Figma + Playwright + Linear 集成
 
-- **Parallel HQ**: "Automating Design Systems with AI"
+- **Parallel HQ**："Automating Design Systems with AI"
   - [parallelhq.com/blog/automating-design-systems-with-ai](https://parallelhq.com/)
-  - 75 days saved, Code Connect UI guide
+  - 节省 75 天，Code Connect UI 指南
 
-- **Composio**: "How to Use Figma MCP with Claude Code"
+- **Composio**："How to Use Figma MCP with Claude Code"
   - [composio.dev/blog/how-to-use-figma-mcp-with-claude-code](https://composio.dev/)
-  - Token hierarchy patterns, setup guide
+  - Token 层级模式、设置指南
 
-### Community Resources
+### 社区资源
 
-- **Figma Community**: Search "Design System Tokens" for starter templates
-- **MCP Registry**: [mcp.run](https://mcp.run/) → Figma server examples
-- **Discord**: Anthropic Discord → #mcp-servers channel
+- **Figma 社区**：搜索"Design System Tokens"获取起始模板
+- **MCP 注册表**：[mcp.run](https://mcp.run/) → Figma 服务器示例
+- **Discord**：Anthropic Discord → #mcp-servers 频道
 
-### Related Workflows
+### 相关工作流
 
-- [Working with Images](#working-with-images-and-screenshots) — Claude Code image analysis
-- [ASCII Art & Wireframing](#wireframing-tools-for-ai-development) — Low-fidelity design iteration
-- [Playwright MCP](#playwright-browser-automation) — Visual regression testing
+- [使用图像和截图](#working-with-images-and-screenshots) — Claude Code 图像分析
+- [ASCII Art 和线框图](#wireframing-tools-for-ai-development) — 低保真设计迭代
+- [Playwright MCP](#playwright-browser-automation) — 视觉回归测试
 
 ---
 
-## See Also
+## 另见
 
-- [Figma MCP section](#figma-mcp-integration) — Main guide Figma MCP section
-- [examples/claude-md/product-designer.md](../../examples/claude-md/product-designer.md) — Product Designer CLAUDE.md template
-- [../cheatsheet.md](../cheatsheet.md) — Quick reference
+- [Figma MCP 部分](#figma-mcp-integration) — 主指南 Figma MCP 部分
+- [examples/claude-md/product-designer.md](../../examples/claude-md/product-designer.md) — 产品设计师 CLAUDE.md 模板
+- [../cheatsheet.md](../cheatsheet.md) — 快速参考

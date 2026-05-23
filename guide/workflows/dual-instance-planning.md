@@ -1,269 +1,270 @@
+<!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
 ---
-title: "Dual-Instance Planning Workflow"
-description: "Use two Claude instances with distinct roles for planning and implementation"
+title: "双实例计划工作流"
+description: "使用两个 Claude 实例，分别承担计划和实现角色"
 tags: [workflow, architecture, design-patterns]
 ---
 
-# Dual-Instance Planning Workflow
+# 双实例计划工作流
 
-> **Confidence**: Tier 2 — Based on practitioner experience (Jon Williams, Feb 2026). Pattern validated through personal transition Cursor → Claude Code over 6 months.
+> **可信度**：第 2 层 — 基于实践者经验（Jon Williams，2026 年 2 月）。模式经过 6 个月从 Cursor 到 Claude Code 的个人转型验证。
 
-Use two Claude instances with distinct roles: one for planning and review (Claude Zero), one for implementation (Claude One). Separation of concerns improves plan quality and reduces implementation errors.
+使用两个 Claude 实例，分别承担不同角色：一个用于计划和审查（Claude Zero），一个用于实现（Claude One）。职责分离提高了计划质量，减少了实现错误。
 
 ---
 
-## Table of Contents
+## 目录
 
 1. [TL;DR](#tldr)
-2. [When to Use This Pattern](#when-to-use-this-pattern)
-3. [Setup](#setup)
-4. [Complete Workflow](#complete-workflow)
-5. [Plan Template](#plan-template)
-6. [Cost Analysis](#cost-analysis)
-7. [Tips and Troubleshooting](#tips-and-troubleshooting)
-8. [See Also](#see-also)
+2. [何时使用此模式](#何时使用此模式)
+3. [设置](#设置)
+4. [完整工作流](#完整工作流)
+5. [计划模板](#计划模板)
+6. [成本分析](#成本分析)
+7. [技巧与故障排查](#技巧与故障排查)
+8. [另见](#另见)
 
 ---
 
 ## TL;DR
 
 ```
-1. Launch Claude Zero (planner): explores, writes plans, reviews
-2. Launch Claude One (implementer): reads plans, codes, commits
-3. Human gatekeeper: approve plans before implementation
-4. Plans directory: Review/ → Active/ → Completed/
-5. Cost: ~$100-200/month (vs $500-1K for Boris horizontal pattern)
+1. 启动 Claude Zero（计划者）：探索、编写计划、审查
+2. 启动 Claude One（实现者）：读取计划、写代码、提交
+3. 人工看门人：在实现前批准计划
+4. 计划目录：Review/ → Active/ → Completed/
+5. 成本：约 $100-200/月（vs Boris 水平模式 $500-1K）
 ```
 
-**Best for**: Solo devs, spec-heavy work, quality > speed, budget <$300/month
+**最适合**：独立开发者、需求密集型工作、质量优先于速度、预算 <$300/月
 
 ---
 
-## When to Use This Pattern
+## 何时使用此模式
 
-### ✅ Use When
+### ✅ 使用场景
 
-- **Complex specifications**: Requirements need clarification through interview-style questions
-- **Quality-critical features**: Security, payments, data migrations
-- **Learning phase**: New codebase, unfamiliar patterns
-- **Product designers coding**: Non-dev background, need planning rigor
-- **Budget constraints**: $100-200/month (vs $500-1K for parallel multi-instance)
-- **Spec-heavy workflows**: Detailed requirements, many edge cases
+- **复杂规范**：需求需要通过访谈式问题澄清
+- **质量关键功能**：安全、支付、数据迁移
+- **学习阶段**：新代码库、不熟悉的模式
+- **产品设计师编码**：非开发者背景，需要计划严谨性
+- **预算限制**：$100-200/月（vs 并行多实例 $500-1K）
+- **需求密集型工作流**：详细需求、许多边缘情况
 
-### ❌ Don't Use When
+### ❌ 不使用场景
 
-- **Simple changes**: Typo fixes, trivial refactors (use single instance)
-- **Exploratory coding**: Problem space unknown (planning overhead not justified)
-- **Tight deadlines**: Speed > quality (accept correction loops)
-- **High-volume parallel features**: Use Boris pattern (Section 9.17) instead
-- **Very limited budget**: <$100/month (use Sonnet, single instance)
+- **简单更改**：拼写错误修复、微不足道的重构（使用单实例）
+- **探索性编码**：问题空间未知（计划开销不合理）
+- **紧迫期限**：速度 > 质量（接受纠正循环）
+- **高容量并行功能**：改用 Boris 模式（第 9.17 节）
+- **预算非常有限**：<$100/月（使用 Sonnet，单实例）
 
-### Comparison to Other Patterns
+### 与其他模式对比
 
-| Pattern | Scaling Axis | Cost/Month | Best For |
+| 模式 | 扩展轴 | 成本/月 | 最适合 |
 |---------|--------------|------------|----------|
-| **Single instance** | None | $50-100 | Most developers, general use |
-| **Dual-instance (Jon)** | Vertical (plan ↔ implement) | $100-200 | Spec-heavy, quality focus |
-| **Multi-instance (Boris)** | Horizontal (5-15 parallel) | $500-1,000 | Teams, high-volume shipping |
+| **单实例** | 无 | $50-100 | 大多数开发者，通用用途 |
+| **双实例（Jon）** | 垂直（计划 ↔ 实现） | $100-200 | 需求密集、质量聚焦 |
+| **多实例（Boris）** | 水平（5-15 并行） | $500-1,000 | 团队、高容量发布 |
 
 ---
 
-## Setup
+## 设置
 
-### Step 1: Create Directory Structure
+### 步骤 1：创建目录结构
 
 ```bash
 cd ~/projects/your-project
 mkdir -p .claude/plans/{Review,Active,Completed}
 ```
 
-**Directory roles**:
-- `Review/` — Plans awaiting human approval
-- `Active/` — Approved plans under implementation
-- `Completed/` — Archived plans (learning resource)
+**目录角色**：
+- `Review/` — 等待人工批准的计划
+- `Active/` — 已批准正在实现的计划
+- `Completed/` — 已归档计划（学习资源）
 
-**Add to .gitignore**:
+**添加到 .gitignore**：
 ```bash
 # .gitignore
 .claude/plans/Review/
 .claude/plans/Active/
-# Optional: commit Completed/ for team learning
+# 可选：为团队学习提交 Completed/
 ```
 
-### Step 2: Launch Claude Zero (Planner)
+### 步骤 2：启动 Claude Zero（计划者）
 
-**Terminal 1**:
+**终端 1**：
 ```bash
 cd ~/projects/your-project
 claude
 ```
 
-**First message** (role enforcement):
+**第一条消息**（角色强制）：
 ```
 You are Claude Zero (Planner).
 
-Your role:
-- Explore codebase using Plan Mode (Shift+Tab twice)
-- Interview user about requirements
-- Write detailed plans to .claude/plans/Review/
-- Review implementations after Claude One completes them
-- NEVER edit code directly
-- NEVER commit changes
+你的角色：
+- 使用计划模式探索代码库（Shift+Tab 两次）
+- 通过访谈了解需求
+- 将详细计划写入 .claude/plans/Review/
+- 在 Claude One 完成后审查实现
+- 永远不直接编辑代码
+- 永远不提交变更
 
-Start by acknowledging this role.
+开始时确认此角色。
 ```
 
-Claude Zero confirms: "Understood. I am Claude Zero (Planner). I will explore, plan, and review, but never touch code."
+Claude Zero 确认："明白了。我是 Claude Zero（计划者）。我将探索、计划和审查，但绝不触碰代码。"
 
-### Step 3: Launch Claude One (Implementer)
+### 步骤 3：启动 Claude One（实现者）
 
-**Terminal 2** (new session):
+**终端 2**（新会话）：
 ```bash
 cd ~/projects/your-project
 claude
 ```
 
-**First message** (role enforcement):
+**第一条消息**（角色强制）：
 ```
 You are Claude One (Implementer).
 
-Your role:
-- Read approved plans from .claude/plans/Active/
-- Implement exactly as specified
-- Commit changes after each logical step
-- Report completion back to user
-- NEVER create plans
-- NEVER skip approval steps
+你的角色：
+- 从 .claude/plans/Active/ 读取批准的计划
+- 严格按照规范实现
+- 每个逻辑步骤后提交变更
+- 向用户报告完成情况
+- 永远不创建计划
+- 永远不跳过批准步骤
 
-Start by acknowledging this role.
+开始时确认此角色。
 ```
 
-Claude One confirms: "Understood. I am Claude One (Implementer). I execute approved plans only."
+Claude One 确认："明白了。我是 Claude One（实现者）。我只执行批准的计划。"
 
 ---
 
-## Complete Workflow
+## 完整工作流
 
-### Phase 1: Planning (Claude Zero)
+### 阶段 1：计划（Claude Zero）
 
-#### Step 1.1: Initiate Planning
+#### 步骤 1.1：开始计划
 
-**You** (to Claude Zero):
+**你**（对 Claude Zero）：
 ```
-# Enter Plan Mode (Shift+Tab twice), then:
+# 进入计划模式（Shift+Tab 两次），然后：
 
-Implement JWT authentication for the API:
-- Access tokens (15min expiry)
-- Refresh tokens (7 day expiry)
-- Middleware to protect routes
-- Logout capability (revoke refresh tokens)
+为 API 实现 JWT 认证：
+- 访问令牌（15 分钟过期）
+- 刷新令牌（7 天过期）
+- 保护路由的中间件
+- 注销功能（撤销刷新令牌）
 ```
 
-#### Step 1.2: Claude Zero Explores
+#### 步骤 1.2：Claude Zero 探索
 
-Claude Zero (in Plan Mode):
-- Reads existing auth code
-- Searches for auth patterns in codebase
-- Identifies dependencies (libraries, env vars)
+Claude Zero（处于计划模式）：
+- 读取现有认证代码
+- 搜索代码库中的认证模式
+- 识别依赖项（库、环境变量）
 
-#### Step 1.3: Claude Zero Interviews You
+#### 步骤 1.3：Claude Zero 访谈你
 
-Claude Zero asks clarifying questions:
+Claude Zero 提出澄清问题：
 ```
-Before I draft the plan, I need to clarify:
+在我起草计划之前，需要澄清：
 
-1. Should we support multiple concurrent sessions per user?
-   (e.g., user logged in on phone + laptop simultaneously)
+1. 我们是否支持每个用户多个并发会话？
+   （例如，用户同时在手机和笔记本电脑上登录）
 
-2. Where should refresh tokens be stored?
-   - Database table
+2. 刷新令牌应该存储在哪里？
+   - 数据库表
    - Redis
-   - Other
+   - 其他
 
-3. Which routes should be protected?
-   - All /api/* routes?
-   - Specific routes only?
+3. 哪些路由应该被保护？
+   - 所有 /api/* 路由？
+   - 仅特定路由？
 
-4. Do you want rate limiting on login attempts?
+4. 你想在登录尝试上设置速率限制吗？
 
-5. Success criteria for "done"?
-   - Tests passing?
-   - Postman collection?
-   - Documentation updated?
+5. "完成"的成功标准是什么？
+   - 测试通过？
+   - Postman 集合？
+   - 文档已更新？
 ```
 
-**You answer**, Claude Zero refines understanding.
+**你回答**，Claude Zero 完善理解。
 
-#### Step 1.4: Claude Zero Writes Plan
+#### 步骤 1.4：Claude Zero 编写计划
 
-Claude Zero creates `.claude/plans/Review/auth-jwt.md`:
+Claude Zero 创建 `.claude/plans/Review/auth-jwt.md`：
 
 ```markdown
-# Plan: JWT Authentication
+# 计划：JWT 认证
 
-**Created**: 2026-02-04
-**Author**: Claude Zero
-**Estimated effort**: 3-4 hours
-**Risk level**: Medium (security-critical)
+**创建时间**：2026-02-04
+**作者**：Claude Zero
+**估计工作量**：3-4 小时
+**风险级别**：中等（安全关键）
 
-## Summary
-Implement JWT-based authentication with access/refresh token pattern.
-Support multiple concurrent sessions per user.
-Refresh tokens stored in database with revocation capability.
+## 摘要
+实现基于 JWT 的认证，采用访问/刷新令牌模式。
+支持每个用户多个并发会话。
+刷新令牌存储在数据库中，可撤销。
 
-## Requirements Clarified
-- Multiple sessions per user: YES
-- Refresh token storage: Database (new table)
-- Protected routes: All /api/* except /api/auth/*
-- Rate limiting: YES (5 attempts per 15min)
-- Success criteria: Tests pass + Postman collection
+## 需求澄清
+- 每个用户多个会话：是
+- 刷新令牌存储：数据库（新表）
+- 受保护路由：除 /api/auth/* 外的所有 /api/*
+- 速率限制：是（每 15 分钟 5 次尝试）
+- 成功标准：测试通过 + Postman 集合
 
-## Files to Create
+## 要创建的文件
 
-### 1. src/auth/jwt.ts (~120 lines)
-**Purpose**: JWT utility functions
+### 1. src/auth/jwt.ts（约 120 行）
+**用途**：JWT 工具函数
 
-**Exports**:
+**导出**：
 - `generateAccessToken(userId: string): string`
-  - Payload: { userId, type: 'access' }
-  - Expiry: 15 minutes
-  - Sign with JWT_SECRET
+  - Payload：{ userId, type: 'access' }
+  - 过期时间：15 分钟
+  - 使用 JWT_SECRET 签名
 
 - `generateRefreshToken(userId: string): string`
-  - Payload: { userId, type: 'refresh', jti: uuid() }
-  - Expiry: 7 days
-  - Sign with JWT_REFRESH_SECRET
-  - jti = unique token ID for revocation
+  - Payload：{ userId, type: 'refresh', jti: uuid() }
+  - 过期时间：7 天
+  - 使用 JWT_REFRESH_SECRET 签名
+  - jti = 用于撤销的唯一令牌 ID
 
 - `verifyAccessToken(token: string): { userId: string } | null`
-  - Verify signature
-  - Check expiry
-  - Return payload or null
+  - 验证签名
+  - 检查过期
+  - 返回 payload 或 null
 
 - `verifyRefreshToken(token: string): { userId: string, jti: string } | null`
-  - Verify signature
-  - Check expiry
-  - Check not revoked (database lookup)
-  - Return payload or null
+  - 验证签名
+  - 检查过期
+  - 检查未被撤销（数据库查询）
+  - 返回 payload 或 null
 
-**Dependencies**: jsonwebtoken, uuid
+**依赖**：jsonwebtoken、uuid
 
-### 2. src/middleware/auth.ts (~60 lines)
-**Purpose**: Authentication middleware
+### 2. src/middleware/auth.ts（约 60 行）
+**用途**：认证中间件
 
-**Exports**:
+**导出**：
 - `requireAuth(req, res, next)`
-  - Extract token from Authorization header (Bearer format)
-  - Verify using verifyAccessToken()
-  - Attach userId to req.userId
-  - 401 if invalid/missing
+  - 从 Authorization header（Bearer 格式）提取令牌
+  - 使用 verifyAccessToken() 验证
+  - 将 userId 附加到 req.userId
+  - 无效/缺失时返回 401
 
-**Dependencies**: jwt.ts
+**依赖**：jwt.ts
 
-### 3. src/db/migrations/YYYYMMDD_create_refresh_tokens.ts (~40 lines)
-**Purpose**: Database table for refresh tokens
+### 3. src/db/migrations/YYYYMMDD_create_refresh_tokens.ts（约 40 行）
+**用途**：刷新令牌的数据库表
 
-**Schema**:
+**Schema**：
 ```sql
 CREATE TABLE refresh_tokens (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -277,19 +278,19 @@ CREATE INDEX idx_refresh_tokens_user_id ON refresh_tokens(user_id);
 CREATE INDEX idx_refresh_tokens_jti ON refresh_tokens(jti);
 ```
 
-## Files to Modify
+## 要修改的文件
 
 ### 1. src/routes/api.ts
-**Location**: Line 23 (after imports)
-**Change**: Add requireAuth middleware to all routes except /auth/*
+**位置**：第 23 行（导入之后）
+**更改**：将 requireAuth 中间件应用于除 /auth/* 外的所有路由
 
-**Before**:
+**之前**：
 ```typescript
 router.get('/profile', profileController);
 router.post('/posts', createPostController);
 ```
 
-**After**:
+**之后**：
 ```typescript
 import { requireAuth } from '../middleware/auth';
 router.get('/profile', requireAuth, profileController);
@@ -297,174 +298,174 @@ router.post('/posts', requireAuth, createPostController);
 ```
 
 ### 2. src/routes/auth.ts
-**Location**: Create new file OR add to existing auth routes
-**Changes**:
-- POST /auth/login → return { accessToken, refreshToken }
-- POST /auth/refresh → exchange refresh token for new access token
-- POST /auth/logout → revoke refresh token
+**位置**：创建新文件或添加到现有 auth 路由
+**更改**：
+- POST /auth/login → 返回 { accessToken, refreshToken }
+- POST /auth/refresh → 用刷新令牌换取新访问令牌
+- POST /auth/logout → 撤销刷新令牌
 
 ### 3. src/config/env.ts
-**Location**: Line 15 (after existing secrets)
-**Add**:
+**位置**：第 15 行（现有 secrets 之后）
+**添加**：
 ```typescript
 JWT_SECRET: process.env.JWT_SECRET || '',
 JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET || '',
 ```
 
 ### 4. .env.example
-**Add**:
+**添加**：
 ```
 JWT_SECRET=your-secret-here-min-32-chars
 JWT_REFRESH_SECRET=your-refresh-secret-here-min-32-chars
 ```
 
-## Implementation Steps (Sequential)
+## 实现步骤（顺序）
 
-1. **Install dependencies**
+1. **安装依赖**
    ```bash
    npm install jsonwebtoken uuid
    npm install --save-dev @types/jsonwebtoken @types/uuid
    ```
 
-2. **Create JWT utilities** (jwt.ts)
-   - Implement all 4 functions
-   - Add error handling (try/catch on verify)
+2. **创建 JWT 工具**（jwt.ts）
+   - 实现所有 4 个函数
+   - 添加错误处理（verify 上的 try/catch）
 
-3. **Run database migration** (refresh_tokens table)
-   - Test migration up/down
+3. **运行数据库迁移**（refresh_tokens 表）
+   - 测试迁移 up/down
 
-4. **Create auth middleware** (auth.ts)
-   - Implement requireAuth
-   - Test with mock token
+4. **创建认证中间件**（auth.ts）
+   - 实现 requireAuth
+   - 用模拟令牌测试
 
-5. **Create/update auth routes** (auth.ts routes)
+5. **创建/更新 auth 路由**（auth.ts 路由）
    - POST /auth/login
    - POST /auth/refresh
    - POST /auth/logout
 
-6. **Protect existing routes** (api.ts)
-   - Apply requireAuth to all /api/* routes
+6. **保护现有路由**（api.ts）
+   - 将 requireAuth 应用于所有 /api/* 路由
 
-7. **Add JWT secrets to .env**
-   - Generate secure random strings (64 chars)
+7. **将 JWT secrets 添加到 .env**
+   - 生成安全随机字符串（64 个字符）
 
-8. **Write tests**
-   - Unit tests for jwt.ts functions
-   - Integration tests for auth flow
-   - Test token expiry
-   - Test revocation
+8. **编写测试**
+   - jwt.ts 函数的单元测试
+   - auth 流的集成测试
+   - 测试令牌过期
+   - 测试撤销
 
-9. **Create Postman collection**
-   - Login → get tokens
-   - Access protected route with access token
-   - Refresh access token
-   - Logout → revoke refresh token
-   - Verify revoked token rejected
+9. **创建 Postman 集合**
+   - 登录 → 获取令牌
+   - 使用访问令牌访问受保护路由
+   - 刷新访问令牌
+   - 注销 → 撤销刷新令牌
+   - 验证被撤销的令牌被拒绝
 
-## Success Criteria
+## 成功标准
 
-- [ ] POST /auth/login returns accessToken + refreshToken
-- [ ] Protected routes return 401 without valid access token
-- [ ] Protected routes return 200 with valid access token
-- [ ] POST /auth/refresh exchanges refresh token for new access token
-- [ ] POST /auth/logout revokes refresh token
-- [ ] Revoked refresh tokens are rejected on /auth/refresh
-- [ ] Expired access tokens are rejected
-- [ ] Multiple sessions per user work (different refresh tokens)
-- [ ] All tests pass (npm test)
-- [ ] Postman collection works end-to-end
+- [ ] POST /auth/login 返回 accessToken + refreshToken
+- [ ] 受保护路由在无有效访问令牌时返回 401
+- [ ] 受保护路由在有有效访问令牌时返回 200
+- [ ] POST /auth/refresh 用刷新令牌换取新访问令牌
+- [ ] POST /auth/logout 撤销刷新令牌
+- [ ] 被撤销的刷新令牌在 /auth/refresh 上被拒绝
+- [ ] 过期的访问令牌被拒绝
+- [ ] 每个用户多个会话工作（不同的刷新令牌）
+- [ ] 所有测试通过（npm test）
+- [ ] Postman 集合端到端工作
 
-## Security Checklist
+## 安全清单
 
-- [ ] JWT secrets are in .env (never committed)
-- [ ] JWT secrets are ≥32 characters
-- [ ] Refresh tokens stored in database (not just JWT)
-- [ ] Refresh tokens have unique jti for revocation
-- [ ] Access tokens have short expiry (15min)
-- [ ] Authorization header validated (Bearer format)
-- [ ] Token verification errors are caught (no crashes)
+- [ ] JWT secrets 在 .env 中（永不提交）
+- [ ] JWT secrets ≥32 个字符
+- [ ] 刷新令牌存储在数据库中（不只是 JWT）
+- [ ] 刷新令牌有唯一 jti 用于撤销
+- [ ] 访问令牌过期时间短（15 分钟）
+- [ ] Authorization header 已验证（Bearer 格式）
+- [ ] 令牌验证错误被捕获（无崩溃）
 
-## Risks & Mitigation
+## 风险与缓解
 
-| Risk | Impact | Mitigation |
+| 风险 | 影响 | 缓解 |
 |------|--------|------------|
-| JWT secrets leaked | High | .env in .gitignore, never log secrets |
-| Token expiry too long | Medium | 15min access, 7 day refresh (short enough) |
-| No rate limiting on login | Medium | Add rate limiting (5 attempts/15min) |
-| Refresh token table grows indefinitely | Low | Add cleanup job (delete expired tokens) |
+| JWT secrets 泄露 | 高 | .env 在 .gitignore 中，永不记录 secrets |
+| 令牌过期时间过长 | 中 | 15 分钟访问，7 天刷新（足够短） |
+| 登录无速率限制 | 中 | 添加速率限制（每 15 分钟 5 次尝试） |
+| 刷新令牌表无限增长 | 低 | 添加清理作业（删除过期令牌） |
 
-## Questions for Implementer (Claude One)
+## 给实现者（Claude One）的问题
 
-If you encounter these scenarios during implementation:
+如果在实现过程中遇到这些场景：
 
-1. **Existing user login flow**: Integrate with existing login logic, don't replace entire auth system
-2. **Database ORM**: Use existing ORM (Prisma/TypeORM/Knex) for refresh_tokens table
-3. **Error messages**: Return generic "Invalid token" (don't leak whether token is expired vs invalid signature)
+1. **现有用户登录流程**：与现有登录逻辑集成，不要替换整个认证系统
+2. **数据库 ORM**：使用现有 ORM（Prisma/TypeORM/Knex）用于 refresh_tokens 表
+3. **错误消息**：返回通用的"无效令牌"（不要泄露令牌是过期还是无效签名）
 
-## Estimated Effort Breakdown
+## 估计工作量分解
 
-- JWT utilities: 45 min
-- Database migration: 15 min
-- Middleware: 30 min
-- Auth routes: 60 min
-- Protect existing routes: 15 min
-- Tests: 90 min
-- Postman collection: 15 min
+- JWT 工具：45 分钟
+- 数据库迁移：15 分钟
+- 中间件：30 分钟
+- Auth 路由：60 分钟
+- 保护现有路由：15 分钟
+- 测试：90 分钟
+- Postman 集合：15 分钟
 
-**Total**: ~4 hours
+**总计**：约 4 小时
 
 ---
 
-**Plan approved?** → Move to `.claude/plans/Active/auth-jwt.md`
+**计划已批准？** → 移动到 `.claude/plans/Active/auth-jwt.md`
 ```
 
-### Phase 2: Human Review
+### 阶段 2：人工审查
 
-**You review** `.claude/plans/Review/auth-jwt.md`:
+**你审查** `.claude/plans/Review/auth-jwt.md`：
 
-**Checklist**:
-- [ ] All requirements covered?
-- [ ] Approach makes sense for this codebase?
-- [ ] Security considerations addressed?
-- [ ] Estimated effort realistic?
-- [ ] Success criteria clear and testable?
-- [ ] Files to create/modify are correct paths?
+**清单**：
+- [ ] 所有需求都已覆盖？
+- [ ] 方法对这个代码库合理吗？
+- [ ] 安全考虑已解决？
+- [ ] 估计工作量现实吗？
+- [ ] 成功标准清晰且可测试？
+- [ ] 要创建/修改的文件路径正确？
 
-**If approved**:
+**如果批准**：
 ```bash
 mv .claude/plans/Review/auth-jwt.md .claude/plans/Active/
 ```
 
-**If changes needed**, ask Claude Zero to revise:
+**如果需要更改**，要求 Claude Zero 修改：
 ```
-(to Claude Zero): Update the plan:
-- Change refresh token expiry to 30 days instead of 7
-- Add password reset flow to scope
-```
-
-### Phase 3: Implementation (Claude One)
-
-**You** (to Claude One):
-```
-Implement .claude/plans/Active/auth-jwt.md
-
-Follow the plan exactly. Commit after each logical step.
-Report back when complete.
+（对 Claude Zero）：更新计划：
+- 将刷新令牌过期时间改为 30 天而不是 7 天
+- 在范围内添加密码重置流程
 ```
 
-Claude One:
-1. Reads plan file
-2. Installs dependencies
-3. Creates jwt.ts
-4. Creates database migration
-5. Runs migration
-6. Creates auth middleware
-7. Updates routes
-8. Adds env vars
-9. Writes tests
-10. Creates Postman collection
+### 阶段 3：实现（Claude One）
 
-**Claude One commits** after each step:
+**你**（对 Claude One）：
+```
+实现 .claude/plans/Active/auth-jwt.md
+
+严格按照计划执行。每个逻辑步骤后提交。
+完成后报告。
+```
+
+Claude One：
+1. 读取计划文件
+2. 安装依赖
+3. 创建 jwt.ts
+4. 创建数据库迁移
+5. 运行迁移
+6. 创建认证中间件
+7. 更新路由
+8. 添加环境变量
+9. 编写测试
+10. 创建 Postman 集合
+
+**Claude One** 在每步后提交：
 ```
 feat: add JWT utility functions
 feat: create refresh_tokens table migration
@@ -473,22 +474,22 @@ feat: protect API routes with JWT auth
 test: add JWT auth flow tests
 ```
 
-### Phase 4: Verification (Claude Zero)
+### 阶段 4：验证（Claude Zero）
 
-**You** (to Claude Zero):
+**你**（对 Claude Zero）：
 ```
-Review the JWT implementation Claude One just completed.
-Check against the plan in .claude/plans/Active/auth-jwt.md.
+审查 Claude One 刚完成的 JWT 实现。
+对照 .claude/plans/Active/auth-jwt.md 中的计划进行检查。
 ```
 
-Claude Zero reviews:
-- Code structure matches plan?
-- All success criteria met?
-- Security checklist completed?
-- Tests passing?
-- Any code smells or issues?
+Claude Zero 审查：
+- 代码结构符合计划？
+- 所有成功标准满足？
+- 安全清单完成？
+- 测试通过？
+- 有无代码异味或问题？
 
-**Claude Zero report**:
+**Claude Zero 报告**：
 ```
 ✅ Review complete: auth-jwt.md
 
@@ -508,217 +509,217 @@ Critical issues: None
 Ready to archive plan to Completed/.
 ```
 
-### Phase 5: Archive
+### 阶段 5：归档
 
-**If approved**:
+**如果批准**：
 ```bash
 mv .claude/plans/Active/auth-jwt.md .claude/plans/Completed/
 ```
 
-**Plan is now archived** for future reference and team learning.
+**计划现在已归档**，供将来参考和团队学习。
 
 ---
 
-## Plan Template
+## 计划模板
 
-Save this template to `.claude/plan-template.md` for consistent plan structure:
+将此模板保存到 `.claude/plan-template.md` 以获得一致的计划结构：
 
 ```markdown
-# Plan: [Feature Name]
+# 计划：[功能名称]
 
-**Created**: [Date]
-**Author**: Claude Zero
-**Estimated effort**: [Hours]
-**Risk level**: Low | Medium | High
+**创建时间**：[日期]
+**作者**：Claude Zero
+**估计工作量**：[小时]
+**风险级别**：低 | 中 | 高
 
-## Summary
-[2-3 sentence overview of what this plan accomplishes]
+## 摘要
+[2-3 句话概述此计划实现的功能]
 
-## Requirements Clarified
-[List of requirements confirmed through interview]
-- Requirement 1: [Answer]
-- Requirement 2: [Answer]
+## 需求澄清
+[通过访谈确认的需求列表]
+- 需求 1：[答案]
+- 需求 2：[答案]
 
-## Files to Create
+## 要创建的文件
 
-### 1. [File path] (~[Lines] lines)
-**Purpose**: [What this file does]
+### 1. [文件路径]（约 [行数] 行）
+**用途**：[此文件的作用]
 
-**Exports**:
+**导出**：
 - `functionName(params): returnType`
-  - [What it does]
-  - [Key implementation details]
+  - [它的作用]
+  - [关键实现细节]
 
-**Dependencies**: [Libraries, other files]
+**依赖**：[库、其他文件]
 
-## Files to Modify
+## 要修改的文件
 
-### 1. [File path]
-**Location**: Line [N] ([Context: after what, before what])
-**Change**: [What to change]
+### 1. [文件路径]
+**位置**：第 [N] 行（[上下文：在什么之后，什么之前]）
+**更改**：[要更改什么]
 
-**Before**:
-```[language]
-[Existing code snippet]
+**之前**：
+```[语言]
+[现有代码片段]
 ```
 
-**After**:
-```[language]
-[Modified code snippet]
+**之后**：
+```[语言]
+[修改后的代码片段]
 ```
 
-## Implementation Steps (Sequential)
+## 实现步骤（顺序）
 
-1. **[Step name]**
-   - [Substep]
-   - [Substep]
+1. **[步骤名称]**
+   - [子步骤]
+   - [子步骤]
 
-2. **[Step name]**
-   - [Substep]
+2. **[步骤名称]**
+   - [子步骤]
 
-## Success Criteria
+## 成功标准
 
-- [ ] [Testable criterion 1]
-- [ ] [Testable criterion 2]
+- [ ] [可测试标准 1]
+- [ ] [可测试标准 2]
 
-## Security Checklist (if applicable)
+## 安全清单（如适用）
 
-- [ ] [Security item 1]
-- [ ] [Security item 2]
+- [ ] [安全项目 1]
+- [ ] [安全项目 2]
 
-## Risks & Mitigation
+## 风险与缓解
 
-| Risk | Impact | Mitigation |
+| 风险 | 影响 | 缓解 |
 |------|--------|------------|
-| [Risk] | [High/Med/Low] | [How to prevent/handle] |
+| [风险] | [高/中/低] | [如何预防/处理] |
 
-## Questions for Implementer (Claude One)
+## 给实现者（Claude One）的问题
 
-If you encounter these scenarios during implementation:
-1. [Scenario]: [Guidance]
+如果在实现过程中遇到这些场景：
+1. [场景]：[指导]
 
-## Estimated Effort Breakdown
+## 估计工作量分解
 
-- [Task 1]: [Time]
-- [Task 2]: [Time]
+- [任务 1]：[时间]
+- [任务 2]：[时间]
 
-**Total**: [Hours]
+**总计**：[小时]
 
 ---
 
-**Plan approved?** → Move to `.claude/plans/Active/[filename].md`
+**计划已批准？** → 移动到 `.claude/plans/Active/[filename].md`
 ```
 
 ---
 
-## Cost Analysis
+## 成本分析
 
-### Dual-Instance vs Single Instance with Corrections
+### 双实例 vs 带纠正的单实例
 
-| Scenario | Single Instance | Dual Instance | Savings |
+| 场景 | 单实例 | 双实例 | 节省 |
 |----------|----------------|---------------|---------|
-| **Simple feature** (login form) | 1 session × $5 = **$5** | 2 sessions × $3 = $6 | +$1 (single wins) |
-| **Medium feature** (auth system) | 1 session × $15 + 2 corrections × $10 = **$35** | 2 sessions × $12 = $24 | **$11 saved** |
-| **Complex feature** (ambiguous spec) | 1 session × $20 + 3 corrections × $15 = **$65** | 2 sessions × $18 = $36 | **$29 saved** |
+| **简单功能**（登录表单） | 1 会话 × $5 = **$5** | 2 会话 × $3 = $6 | +$1（单实例胜） |
+| **中等功能**（认证系统） | 1 会话 × $15 + 2 次纠正 × $10 = **$35** | 2 会话 × $12 = $24 | **$11 节省** |
+| **复杂功能**（模糊规范） | 1 会话 × $20 + 3 次纠正 × $15 = **$65** | 2 会话 × $18 = $36 | **$29 节省** |
 
-**Breakeven point**: Features requiring ≥2 correction loops → dual-instance is cheaper.
+**盈亏平衡点**：需要 ≥2 次纠正循环的功能 → 双实例更便宜。
 
-### Monthly Budget Estimates
+### 月度预算估算
 
-**Assumptions**:
-- 20 working days/month
-- 2 features per day (mix of simple + complex)
-- Opus 4.5 pricing (~$15/1M input, $75/1M output)
+**假设**：
+- 每月 20 个工作日
+- 每天 2 个功能（简单 + 复杂的混合）
+- Opus 4.5 定价（~$15/1M 输入，$75/1M 输出）
 
-| Profile | Features/Month | Single Instance | Dual Instance | Savings |
+| 用户类型 | 功能/月 | 单实例 | 双实例 | 节省 |
 |---------|----------------|----------------|---------------|---------|
-| **Light user** | 20 simple | $100 | $120 | -$20 (single wins) |
-| **Moderate user** | 30 mixed (60% medium, 40% simple) | $650 | $480 | **$170 saved** |
-| **Heavy user** | 40 complex | $2,000 | $1,200 | **$800 saved** |
+| **轻度用户** | 20 个简单 | $100 | $120 | -$20（单实例胜） |
+| **中度用户** | 30 个混合（60% 中等，40% 简单） | $650 | $480 | **$170 节省** |
+| **重度用户** | 40 个复杂 | $2,000 | $1,200 | **$800 节省** |
 
-**Recommendation**:
-- Simple features only → Single instance
-- Medium/complex features → Dual instance saves money and time
+**建议**：
+- 仅有简单功能 → 单实例
+- 中等/复杂功能 → 双实例省钱省时间
 
 ---
 
-## Tips and Troubleshooting
+## 技巧与故障排查
 
-### Role Enforcement
+### 角色强制
 
-**Problem**: Claude Zero starts editing code.
+**问题**：Claude Zero 开始编辑代码。
 
-**Solution**: Remind in every request:
+**解决方案**：在每个请求中提醒：
 ```
-(to Claude Zero): Remember: you are Claude Zero (Planner only).
-Do not edit code. Write plan to .claude/plans/Review/
+（对 Claude Zero）：记住：你是 Claude Zero（仅计划者）。
+不编辑代码。将计划写入 .claude/plans/Review/
 ```
 
-**Prevention**: Use CLAUDE.md to enforce roles:
+**预防**：使用 CLAUDE.md 强制角色：
 
 ```markdown
 # .claude/CLAUDE.md
 
-## If you are Claude Zero (Planner):
-- Use Plan Mode (Shift+Tab twice) for all exploration
-- Save all plans to .claude/plans/Review/[feature].md
-- NEVER edit code
-- NEVER commit changes
-- Review implementations after Claude One completes them
+## 如果你是 Claude Zero（计划者）：
+- 使用计划模式进行所有探索（Shift+Tab 两次）
+- 将所有计划保存到 .claude/plans/Review/[feature].md
+- 永远不编辑代码
+- 永远不提交变更
+- 在 Claude One 完成后审查实现
 
-## If you are Claude One (Implementer):
-- Read plans from .claude/plans/Active/
-- Implement exactly as specified
-- Commit after each logical step
-- NEVER create plans
+## 如果你是 Claude One（实现者）：
+- 从 .claude/plans/Active/ 读取计划
+- 严格按照规范实现
+- 每个逻辑步骤后提交
+- 永远不创建计划
 ```
 
-### Context Pollution
+### 上下文污染
 
-**Problem**: Claude One's context is polluted with planning discussions.
+**问题**：Claude One 的上下文被计划讨论污染。
 
-**Solution**: Use separate terminal sessions (separate contexts):
-- Terminal 1 = Claude Zero (planning context)
-- Terminal 2 = Claude One (implementation context)
+**解决方案**：使用独立的终端会话（独立上下文）：
+- 终端 1 = Claude Zero（计划上下文）
+- 终端 2 = Claude One（实现上下文）
 
-**Never share context** between Claude Zero and Claude One.
+**永不共享上下文** 在 Claude Zero 和 Claude One 之间。
 
-### Plan Drift
+### 计划漂移
 
-**Problem**: Claude One deviates from plan during implementation.
+**问题**：Claude One 在实现过程中偏离计划。
 
-**Solution**: Include this in plan:
+**解决方案**：在计划中包含此内容：
 ```markdown
-## Implementation Rules for Claude One
+## Claude One 的实施规则
 
-- Follow plan steps sequentially (don't skip or reorder)
-- If you encounter blockers, STOP and report (don't improvise)
-- Commit after each step (granular history)
-- If unclear, ask user (don't guess)
+- 按顺序执行计划步骤（不跳过或重新排序）
+- 如果遇到阻塞器，停止并报告（不要即兴发挥）
+- 每步后提交（粒度历史）
+- 如果不清楚，问用户（不要猜测）
 ```
 
-### Overhead Management
+### 开销管理
 
-**Problem**: Moving files between directories is manual overhead.
+**问题**：在目录之间移动文件是手动开销。
 
-**Solution**: Create bash aliases:
+**解决方案**：创建 bash 别名：
 
 ```bash
-# Add to ~/.bashrc or ~/.zshrc
+# 添加到 ~/.bashrc 或 ~/.zshrc
 
-# Move plan to Active (approve)
+# 将计划移动到 Active（批准）
 approve-plan() {
     mv ".claude/plans/Review/$1.md" ".claude/plans/Active/"
     echo "✅ Approved: $1.md → Active/"
 }
 
-# Move plan to Completed (archive)
+# 将计划移动到 Completed（归档）
 complete-plan() {
     mv ".claude/plans/Active/$1.md" ".claude/plans/Completed/"
     echo "✅ Completed: $1.md → Archived"
 }
 
-# List plans by status
+# 按状态列出计划
 plans() {
     echo "📋 Review:"
     ls -1 .claude/plans/Review/ 2>/dev/null || echo "  (empty)"
@@ -731,22 +732,22 @@ plans() {
 }
 ```
 
-**Usage**:
+**用法**：
 ```bash
-plans                     # List all plans
-approve-plan auth-jwt     # Approve plan
-complete-plan auth-jwt    # Archive completed plan
+plans                     # 列出所有计划
+approve-plan auth-jwt     # 批准计划
+complete-plan auth-jwt    # 归档完成计划
 ```
 
 ---
 
-## See Also
+## 另见
 
-- **Main guide**: [Section 9.17.1](#alternative-pattern-dual-instance-planning-vertical-separation) — Overview and comparison
-- **Plan Mode**: [plan-driven.md](plan-driven.md) — Foundation for planning workflows
-- **Multi-Instance (Boris)**: [Section 9.17](#917-scaling-patterns-multi-instance-workflows) — Horizontal scaling alternative
-- **Cost optimization**: [Section 8.10](#cost-optimization-tips) — Budget management
+- **主指南**：[第 9.17.1 节](#alternative-pattern-dual-instance-planning-vertical-separation) — 概述和对比
+- **计划模式**：[plan-driven.md](plan-driven.md) — 计划工作流的基础
+- **多实例（Boris）**：[第 9.17 节](#917-scaling-patterns-multi-instance-workflows) — 水平扩展替代方案
+- **成本优化**：[第 8.10 节](#cost-optimization-tips) — 预算管理
 
-**External resources**:
-- [Jon Williams LinkedIn post](https://www.linkedin.com/posts/thatjonwilliams_ive-been-using-cursor-for-six-months-now-activity-7424481861802033153-k8bu) — Original pattern description (Feb 3, 2026)
-- [10 Tips from Claude Code Team](https://paddo.dev/blog/claude-code-team-tips/) — Team workflows including plan-first approach
+**外部资源**：
+- [Jon Williams LinkedIn 帖子](https://www.linkedin.com/posts/thatjonwilliams_ive-been-using-cursor-for-six-months-now-activity-7424481861802033153-k8bu) — 原始模式描述（2026 年 2 月 3 日）
+- [Claude Code 团队的 10 个技巧](https://paddo.dev/blog/claude-code-team-tips/) — 包括计划优先方法的工作流

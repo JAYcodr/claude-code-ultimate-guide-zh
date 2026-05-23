@@ -1,534 +1,535 @@
+<!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
 ---
-title: "Iterative Refinement"
-description: "Prompt, observe, and reprompt until satisfied — the core loop of AI-assisted development"
+title: "迭代优化"
+description: "提示、观察、再提示，直到满意为止 — AI 辅助开发的核心循环"
 tags: [workflow, guide, design-patterns]
 ---
 
-# Iterative Refinement
+# 迭代优化
 
-> **Confidence**: Tier 2 — Validated pattern observed across many Claude Code users.
+> **置信度**：Tier 2 — 在众多 Claude Code 用户中经过验证的模式
 
-Prompt, observe, reprompt until satisfied. The core loop of effective AI-assisted development.
+提示、观察、再提示，直到满意为止。有效 AI 辅助开发的核心循环。
 
 ---
 
-## Table of Contents
+## 目录
 
 1. [TL;DR](#tldr)
-2. [The Loop](#the-loop)
-3. [Feedback Patterns](#feedback-patterns)
-4. [Autonomous Loops](#autonomous-loops)
-5. [Integration with Claude Code](#integration-with-claude-code)
-6. [Script Generation Workflow](#script-generation-workflow)
-7. [Iteration Strategies](#iteration-strategies)
-8. [Anti-Patterns](#anti-patterns)
-9. [Community Patterns & Known Limitations](#community-patterns--known-limitations)
-10. [See Also](#see-also)
+2. [核心循环](#核心循环)
+3. [反馈模式](#反馈模式)
+4. [自主循环](#自主循环)
+5. [与 Claude Code 的集成](#与-claude-code-的集成)
+6. [脚本生成工作流](#脚本生成工作流)
+7. [迭代策略](#迭代策略)
+8. [反模式](#反模式)
+9. [社区模式与已知局限](#社区模式与已知局限)
+10. [相关参考](#相关参考)
 
 ---
 
 ## TL;DR
 
 ```
-1. Initial prompt with clear goal
-2. Claude produces output
-3. Evaluate against criteria
-4. Specific feedback: "Change X because Y"
-5. Repeat until done
+1. 初始提示，明确目标
+2. Claude 生成输出
+3. 根据标准评估
+4. 具体反馈："将 X 改为 Y，因为 Z"
+5. 重复直到完成
 ```
 
-Key insight: **Specific feedback > vague feedback**
+核心洞察：**具体反馈 > 模糊反馈**
 
 ---
 
-## The Loop
+## 核心循环
 
-### Step 1: Initial Prompt
+### 第 1 步：初始提示
 
-Start with clear intent and constraints:
-
-```
-Create a React component for a user profile card.
-- Show avatar, name, bio
-- Include edit button
-- Use Tailwind CSS
-- Mobile-responsive
-```
-
-### Step 2: Evaluate Output
-
-Claude produces code. Evaluate:
-- Does it meet requirements?
-- What's missing?
-- What's wrong?
-- What could be better?
-
-### Step 3: Specific Feedback
-
-Provide targeted corrections:
+以清晰的意图和约束开始：
 
 ```
-Good start. Changes needed:
-1. Avatar should be circular, not square
-2. Edit button should only show for own profile (add isOwner prop)
-3. Bio should truncate after 3 lines with "Show more"
+创建一个 React 用户资料卡片组件。
+- 显示头像、姓名、个人简介
+- 包含编辑按钮
+- 使用 Tailwind CSS
+- 移动端自适应
 ```
 
-### Step 4: Repeat
+### 第 2 步：评估输出
 
-Continue until satisfied:
+Claude 生成代码。评估：
+- 是否满足需求？
+- 缺少什么？
+- 哪里有问题？
+- 有什么可以改进？
+
+### 第 3 步：具体反馈
+
+提供有针对性的修正：
 
 ```
-Better. One more thing:
-- Add loading skeleton state for when data is fetching
+不错的开始。需要修改的内容：
+1. 头像应该是圆形，而不是方形
+2. 编辑按钮应该只对自己资料显示（添加 isOwner prop）
+3. 个人简介超过 3 行时应截断，显示"展开更多"
+```
+
+### 第 4 步：重复
+
+持续直到满意：
+
+```
+好。再补充一点：
+- 添加加载骨架屏状态，用于数据获取中
 ```
 
 ---
 
-## Feedback Patterns
+## 反馈模式
 
-### Effective Feedback
+### 有效反馈
 
-| Pattern | Example |
+| 模式 | 示例 |
 |---------|---------|
-| **Specific location** | "Line 23: change `===` to `==`" |
-| **Clear action** | "Add error boundary around the form" |
-| **Reason given** | "Remove the console.log because it leaks user data" |
-| **Priority marked** | "Critical: fix the SQL injection. Nice-to-have: add pagination." |
+| **具体位置** | "第 23 行：将 `===` 改为 `==`" |
+| **明确动作** | "在表单周围添加错误边界" |
+| **给出理由** | "删除 console.log，因为它会泄露用户数据" |
+| **标注优先级** | "关键：修复 SQL 注入。可选：添加分页。" |
 
-### Ineffective Feedback
+### 无效反馈
 
-| Anti-Pattern | Why It Fails | Better Alternative |
+| 反模式 | 失败原因 | 更好的替代 |
 |--------------|--------------|-------------------|
-| "Make it better" | No direction | "Improve readability by extracting the validation logic" |
-| "This is wrong" | No specifics | "The date format should be ISO 8601, not Unix timestamp" |
-| "I don't like it" | Subjective | "Use functional components instead of class components" |
-| "Fix the bugs" | Too vague | "Fix: 1) null check on line 12, 2) off-by-one in loop" |
+| "让它更好" | 没有方向 | "通过提取验证逻辑来提高可读性" |
+| "这是错的" | 没有细节 | "日期格式应该是 ISO 8601，而不是 Unix 时间戳" |
+| "我不喜欢" | 主观臆断 | "使用函数式组件而不是类组件" |
+| "修复 bug" | 太模糊 | "修复：1) 第 12 行的空检查，2) 循环中的 off-by-one 错误" |
 
 ---
 
-## Autonomous Loops
+## 自主循环
 
-Claude can self-iterate with clear completion criteria.
+Claude 可以使用清晰完成标准进行自我迭代。
 
-### The Ralph Wiggum Pattern
+### Ralph Wiggum 模式
 
-Named after the self-improvement loop pattern:
-
-```
-Keep improving the code quality until:
-1. All tests pass
-2. No TypeScript errors
-3. ESLint shows zero warnings
-
-After each iteration, run the checks and fix any issues.
-Stop when all criteria are met.
-```
-
-### Completion Criteria Examples
+以自我提升循环模式命名：
 
 ```
-Iterate until:
-- Response time < 100ms for 95th percentile
-- Test coverage > 80%
-- All accessibility checks pass
-- Bundle size < 200KB
+持续改进代码质量，直到：
+1. 所有测试通过
+2. 无 TypeScript 错误
+3. ESLint 显示零警告
+
+每次迭代后，运行检查并修复任何问题。
+所有标准满足时停止。
 ```
 
-### Iteration Limits
-
-Always set limits to prevent infinite loops:
+### 完成标准示例
 
 ```
-Improve the algorithm performance.
-Maximum 5 iterations.
-Stop early if improvement < 5% between iterations.
+迭代直到：
+- 95% 分位响应时间 < 100ms
+- 测试覆盖率 > 80%
+- 所有可访问性检查通过
+- 包大小 < 200KB
+```
+
+### 迭代限制
+
+始终设置限制以防止无限循环：
+
+```
+改进算法性能。
+最多 5 次迭代。
+如果迭代间改进 < 5% 则提前停止。
 ```
 
 ---
 
-## Integration with Claude Code
+## 与 Claude Code 的集成
 
-### With Task Tool
+### 使用 Task 工具
 
-Track refinement iterations using `TaskCreate` and `TaskUpdate`:
+使用 `TaskCreate` 和 `TaskUpdate` 跟踪优化迭代：
 
 ```
-TaskCreate: "Implement initial version"
-TaskCreate: "Fix: handle empty arrays"
-TaskCreate: "Fix: add input validation"
-TaskCreate: "Optimization: memoize expensive calculations"
-# Mark completed as you progress with TaskUpdate
+TaskCreate: "实现初始版本"
+TaskCreate: "修复：处理空数组"
+TaskCreate: "修复：添加输入验证"
+TaskCreate: "优化：记忆化昂贵计算"
+# 使用 TaskUpdate 标记完成进度
 ```
 
-### With Hooks
+### 使用 Hooks
 
-Auto-validate after each change using Claude Code hooks (configured via `/hooks` command or `settings.json`). For example, a `PostToolUse` hook on the `Edit` tool can run linting and tests automatically. Claude sees failures and can self-correct.
+使用 Claude Code hooks 在每次更改后自动验证（例如，在 `Edit` 工具上配置 `PostToolUse` hook 可以自动运行 lint 和测试）。Claude 看到失败后会自我修正。
 
-### With /compact
+### 使用 /compact
 
-When context grows during iterations:
+当迭代过程中上下文增长时：
 
 ```
 /compact
 
-Continue refining the search algorithm.
-We've made good progress, focus on the remaining issues.
+继续优化搜索算法。
+我们已经取得了很好的进展，专注于剩余问题。
 ```
 
-### Checkpointing
+### 检查点
 
-After significant progress:
+在取得显著进展后：
 
 ```
-Good progress. Let's checkpoint:
-- Commit what we have
-- List remaining issues
-- Continue with the next priority
+进展良好。让我们设置检查点：
+- 提交当前内容
+- 列出剩余问题
+- 继续下一个优先级
 ```
 
 ---
 
-## Script Generation Workflow
+## 脚本生成工作流
 
-Script and automation generation delivers the highest ROI for iterative refinement—70-90% time savings in practitioner reports. Scripts are self-contained, testable in isolation, and yield immediate value.
+脚本和自动化生成在迭代优化中交付最高投资回报率——根据实践者报告可节省 70-90% 的时间。脚本是独立的、可隔离测试的，并且能产生直接价值。
 
-### The 3-7 Iteration Pattern
+### 3-7 次迭代模式
 
-Most production-ready scripts emerge after 3-7 iterations:
+大多数生产就绪的脚本需要经过 3-7 次迭代：
 
-| Iteration | Focus | Prompt Pattern |
-|-----------|-------|----------------|
-| 1 | Basic functionality | "Create a script that [goal]" |
-| 2-3 | Constraints + edge cases | "Add [constraint]. Handle [edge case]." |
-| 4-5 | Hardening | "Add error handling, logging, input validation" |
-| 6-7 | Polish | "Optimize for [metric]. Add usage docs." |
+| 迭代 | 重点 | 提示模式 |
+|-----------|-------|-------------------|
+| 1 | 基础功能 | "创建一个脚本来 [目标]" |
+| 2-3 | 约束 + 边界情况 | "添加 [约束]。处理 [边界情况]。" |
+| 4-5 | 强化 | "添加错误处理、日志、输入验证" |
+| 6-7 | 完善 | "优化 [指标]。添加使用文档。" |
 
-### Example: Kubernetes Pod Manager (PowerShell)
+### 示例：Kubernetes Pod 管理器（PowerShell）
 
-**Iteration 1 — Basic**
+**迭代 1 — 基础**
 ```
-Create a PowerShell function to list pods in a Kubernetes namespace.
-```
-
-**Iteration 2 — Add filtering**
-```
-Add: filter by label selector and pod status.
-Show: pod name, status, age, restarts.
+创建一个 PowerShell 函数来列出 Kubernetes 命名空间中的 pods。
 ```
 
-**Iteration 3 — Add actions**
+**迭代 2 — 添加过滤**
 ```
-Add: ability to delete pods matching filter.
-Require: confirmation before deletion.
-```
-
-**Iteration 4 — Error handling**
-```
-Handle: kubectl not found, invalid namespace, permission denied.
-Add: verbose logging with -Verbose flag.
+添加：按标签选择器和 pod 状态过滤。
+显示：pod 名称、状态、年龄、重启次数。
 ```
 
-**Iteration 5 — Production ready**
+**迭代 3 — 添加操作**
 ```
-Add: dry-run mode, output to JSON for piping, help documentation.
-Ensure: works on Windows, Linux, macOS.
+添加：删除匹配过滤条件的 pods 的能力。
+要求：删除前确认。
 ```
 
-### Common Pitfalls
+**迭代 4 — 错误处理**
+```
+处理：kubectl 未找到、无效命名空间、权限被拒绝。
+添加：带 -Verbose 标志的详细日志。
+```
 
-| Pitfall | Example | Mitigation |
+**迭代 5 — 生产就绪**
+```
+添加：干运行模式、输出 JSON 以便管道传输、帮助文档。
+确保：在 Windows、Linux、macOS 上运行。
+```
+
+### 常见陷阱
+
+| 陷阱 | 示例 | 缓解措施 |
 |---------|---------|------------|
-| Hallucinated commands | `apt-get` on macOS | Specify OS: "Ubuntu 22.04 only" |
-| Security gaps | No input validation | Always request: "validate all user inputs" |
-| Over-engineering | Adds unnecessary libs | Request: "minimal dependencies, stdlib preferred" |
-| Context drift | Forgets requirements after iteration 5 | Checkpoint prompt: "Recap current requirements before next change" |
-| Platform assumptions | Assumes bash features in sh | Specify: "POSIX-compliant" or "bash 4+" |
+| 幻觉命令 | macOS 上使用 `apt-get` | 指定 OS："仅 Ubuntu 22.04" |
+| 安全漏洞 | 无输入验证 | 始终要求："验证所有用户输入" |
+| 过度工程化 | 添加不必要的库 | 要求："最小依赖，优先使用标准库" |
+| 上下文漂移 | 迭代 5 后忘记需求 | 检查点提示："在下一次更改前总结当前需求" |
+| 平台假设 | 在 sh 中假设 bash 功能 | 指定："POSIX 兼容"或"bash 4+" |
 
-### Script Iteration Template
-
-```
-Current script: [paste or reference]
-
-Iteration goal: [specific improvement]
-
-Constraints:
-- Must preserve: [existing behavior to keep]
-- Must not: [things to avoid]
-- Target environment: [OS, shell, runtime]
-
-Success criteria: [how to verify this iteration works]
-```
-
----
-
-## Iteration Strategies
-
-### Breadth-First
-
-Fix all issues at same level before going deeper:
+### 脚本迭代模板
 
 ```
-First pass: Fix all type errors
-Second pass: Fix all lint warnings
-Third pass: Improve test coverage
-Fourth pass: Optimize performance
-```
+当前脚本：[粘贴或引用]
 
-### Depth-First
+迭代目标：[具体改进]
 
-Complete one area fully before moving on:
+约束：
+- 必须保留：[要保留的现有行为]
+- 禁止：[要避免的事项]
+- 目标环境：[操作系统、shell、运行时]
 
-```
-1. Perfect the authentication flow (all aspects)
-2. Then move to user management
-3. Then move to settings
-```
-
-### Priority-Based
-
-Address by importance:
-
-```
-Iterate in this order:
-1. Security issues (critical)
-2. Data integrity bugs (high)
-3. UX problems (medium)
-4. Code style (low)
+成功标准：[如何验证这次迭代有效]
 ```
 
 ---
 
-## Anti-Patterns
+## 迭代策略
 
-### Moving Target
+### 广度优先
 
-```
-# Wrong
-"Actually, let's change the approach entirely..."
-(Repeated 5 times)
-
-# Right
-Commit to an approach, iterate within it.
-If approach is wrong, explicitly restart.
-```
-
-### Perfectionism Loop
+在同一层级修复所有问题后再深入：
 
 ```
-# Wrong
-Keep improving forever
-
-# Right
-Set clear "good enough" criteria:
-- Tests pass
-- Handles main use cases
-- No critical issues
-→ Ship it, improve later
+第一轮：修复所有类型错误
+第二轮：修复所有 lint 警告
+第三轮：提高测试覆盖率
+第四轮：优化性能
 ```
 
-### Lost Context
+### 深度优先
+
+在一个领域完全完成后再转到下一个：
 
 ```
-# Wrong
-After 50 iterations, forget what the goal was
+1. 完善身份验证流程（所有方面）
+2. 然后转向用户管理
+3. 然后转向设置
+```
 
-# Right
-Periodically restate the goal:
-"Reminder: we're building a rate limiter.
-Current state: basic implementation works.
-Next: add Redis backend."
+### 优先级排序
+
+按重要性排序处理：
+
+```
+按此顺序迭代：
+1. 安全问题（关键）
+2. 数据完整性 bug（高）
+3. UX 问题（中）
+4. 代码风格（低）
 ```
 
 ---
 
-## Review Auto-Correction Loop
+## 反模式
 
-Specialized iterative pattern for code review where Claude reviews → fixes → re-reviews until convergence.
+### 移动靶心
 
-### Pattern
+```
+# 错误
+"实际上，让我们完全改变方法..."
+（重复 5 次）
+
+# 正确
+坚持一种方法，在其内部迭代。
+如果方法错误，明确重启。
+```
+
+### 完美主义循环
+
+```
+# 错误
+永远持续改进
+
+# 正确
+设定明确的"足够好"标准：
+- 测试通过
+- 处理主要用例
+- 无关键问题
+→ 发布它，以后再改进
+```
+
+### 丢失上下文
+
+```
+# 错误
+50 次迭代后忘记目标是什么
+
+# 正确
+定期重申目标：
+"提醒：我们正在构建一个限流器。
+当前状态：基本实现可行。
+下一步：添加 Redis 后端。"
+```
+
+---
+
+## 审查自动修正循环
+
+一种专门的迭代模式，用于代码审查：Claude 审查 → 修复 → 重新审查直到收敛。
+
+### 模式
 
 ```
 ┌─────────────────────────────────────────┐
-│   Review Auto-Correction Loop           │
+│   审查自动修正循环                        │
 │                                          │
-│   Review (identify issues)               │
+│   审查（识别问题）                         │
 │        ↓                                 │
-│   Fix (apply corrections)                │
+│   修复（应用修正）                         │
 │        ↓                                 │
-│   Re-Review (verify fixes)               │
+│   重新审查（验证修复）                     │
 │        ↓                                 │
-│   Converge (minimal changes) → Done      │
+│   收敛（最小更改） → 完成                 │
 │        ↑                                 │
-│        └──── Repeat (max iterations)     │
+│        └──── 重复（最多迭代次数）          │
 └─────────────────────────────────────────┘
 ```
 
-### Prompt Template
+### 提示模板
 
 ```
-Review this PR with auto-correction:
-1. Multi-agent review (3 scope-focused agents)
-2. Fix all 🔴 Must Fix issues
-3. Re-review to verify fixes didn't introduce new issues
-4. Fix all 🟡 Should Fix issues
-5. Re-review one final time
-6. Stop when only 🟢 Can Skip remain
+使用自动修正审查此 PR：
+1. 多智能体审查（3 个范围聚焦的智能体）
+2. 修复所有 🔴 必须修复问题
+3. 重新审查以验证修复没有引入新问题
+4. 修复所有 🟡 应当修复问题
+5. 最后一次重新审查
+6. 当只剩下 🟢 可跳过项时停止
 
-Max iterations: 3
-Stop early if iteration produces <5 lines changed
+最大迭代次数：3
+如果迭代产生的更改 <5 行则提前停止
 ```
 
-### Safeguards
+### 安全措施
 
-| Safeguard | Purpose | Implementation |
-|-----------|---------|----------------|
-| **Max iterations** | Prevent infinite loops | Hard limit: 3 iterations |
-| **Quality gates** | Ensure fixes are valid | Run `tsc && lint` before each iteration |
-| **Protected files** | Prevent risky changes | Skip auto-fix for: package.json, migrations, .env |
-| **Change threshold** | Stop when converged | Exit if iteration changes <5 lines |
-| **Rollback capability** | Recover from bad fixes | Git commit before each iteration |
+| 安全措施 | 目的 | 实现方式 |
+|-----------|---------|-------------------|
+| **最大迭代次数** | 防止无限循环 | 硬限制：3 次迭代 |
+| **质量门禁** | 确保修复有效 | 每次迭代前运行 `tsc && lint` |
+| **受保护文件** | 防止风险更改 | 跳过自动修复：package.json、迁移、.env |
+| **更改阈值** | 在收敛时停止 | 如果迭代更改 <5 行则退出 |
+| **回滚能力** | 从错误修复中恢复 | 每次迭代前 git 提交 |
 
-### Example Session
+### 示例会话
 
-**Iteration 1: Initial Review**
+**迭代 1：初始审查**
 ```
-Claude: Found 8 issues:
-- 🔴 3 Must Fix (SQL injection, empty catch, missing auth)
-- 🟡 4 Should Fix (DRY violations, N+1 query)
-- 🟢 1 Can Skip (naming style)
-```
-
-**Iteration 2: Fix Must Fix + Re-Review**
-```
-Claude: Fixed 3 Must Fix issues.
-Re-review: All 🔴 resolved. No new issues introduced.
-Remaining: 4 🟡 Should Fix, 1 🟢 Can Skip
+Claude：发现 8 个问题：
+- 🔴 3 个必须修复（SQL 注入、空 catch、缺少认证）
+- 🟡 4 个应当修复（DRY 违规、N+1 查询）
+- 🟢 1 个可跳过（命名风格）
 ```
 
-**Iteration 3: Fix Should Fix + Re-Review**
+**迭代 2：修复必须修复 + 重新审查**
 ```
-Claude: Fixed 4 Should Fix issues.
-Re-review: All 🟡 resolved. No new issues.
-Remaining: 1 🟢 Can Skip (optional improvement)
-```
-
-**Convergence**
-```
-Claude: Converged. Only optional improvements remain.
-Changes this iteration: 2 lines (below threshold).
-Review complete. ✅
+Claude：修复了 3 个必须修复问题。
+重新审查：所有 🔴 已解决。没有引入新问题。
+剩余：4 个 🟡 应当修复，1 个 🟢 可跳过
 ```
 
-### Comparison: One-Pass vs Convergence Loop
+**迭代 3：修复应当修复 + 重新审查**
+```
+Claude：修复了 4 个应当修复问题。
+重新审查：所有 🟡 已解决。没有新问题。
+剩余：1 个 🟢 可跳过（可选改进）
+```
 
-| Aspect | One-Pass Review | Convergence Loop |
+**收敛**
+```
+Claude：已收敛。只剩可选改进。
+本次迭代更改：2 行（低于阈值）。
+审查完成。 ✅
+```
+
+### 对比：单次审查 vs 收敛循环
+
+| 方面 | 单次审查 | 收敛循环 |
 |--------|-----------------|------------------|
-| **Detection** | Find all issues once | Find issues → fix → verify → repeat |
-| **Follow-up awareness** | Check git log for "Co-Authored-By: Claude" | Each iteration is aware of previous |
-| **False positives** | Can suggest fixes for already-fixed code | Re-review catches this |
-| **Confidence** | Single validation | Multiple validation passes |
-| **Time cost** | Fastest (1 review) | Slower (3+ reviews) |
-| **Quality** | Good for experienced devs | Better for critical code |
+| **检测** | 一次找到所有问题 | 找到问题 → 修复 → 验证 → 重复 |
+| **后续意识** | 检查 git log 查找 "Co-Authored-By: Claude" | 每次迭代都知道前一次的情况 |
+| **误报** | 可能对已修复代码建议修复 | 重新审查会捕获这一点 |
+| **置信度** | 单次验证 | 多次验证通过 |
+| **时间成本** | 最快（1 次审查） | 较慢（3+ 次审查） |
+| **质量** | 对有经验的开发者适用 | 对关键代码更好 |
 
-**When to use**:
-- **One-pass**: Simple PRs, experienced team, time-sensitive
-- **Convergence loop**: Security-critical code, junior team, high-stakes production
+**何时使用**：
+- **单次审查**：简单 PR、经验丰富的团队、时间紧迫
+- **收敛循环**：安全关键代码、初级团队、高风险生产代码
 
-### Integration with Multi-Agent Review
+### 与多智能体审查的集成
 
-Combine convergence loop with multi-agent review for maximum quality:
+将收敛循环与多智能体审查结合以获得最高质量：
 
 ```
-Each iteration:
-├─ Agent 1: Consistency Auditor
-├─ Agent 2: SOLID Principles Analyst
-└─ Agent 3: Defensive Code Auditor
+每次迭代：
+├─ 智能体 1：一致性审计员
+├─ 智能体 2：SOLID 原则分析师
+└─ 智能体 3：防御性代码审计员
      ↓
-  Fix issues
+  修复问题
      ↓
-  Re-run 3 agents
+  重新运行 3 个智能体
      ↓
-  Verify fixes + check for new issues
+  验证修复 + 检查新问题
      ↓
-  Repeat until convergence
+  重复直到收敛
 ```
 
-### Convergence Criteria
+### 收敛标准
 
-Stop iterating when ANY of these is true:
+当以下任一条件成立时停止迭代：
 
-1. **No issues remaining** (ideal outcome)
-2. **Max iterations reached** (3 iterations default)
-3. **Change threshold** (iteration changed <5 lines)
-4. **Quality gate failure** (tsc/lint fails after fix)
-5. **Manual stop** (user requests halt)
+1. **没有问题剩余**（理想结果）
+2. **达到最大迭代次数**（默认 3 次）
+3. **更改阈值**（迭代更改 <5 行）
+4. **质量门禁失败**（修复后 tsc/lint 失败）
+5. **手动停止**（用户请求停止）
 
-### Anti-Patterns in Review Loops
+### 审查循环中的反模式
 
-| Anti-Pattern | Problem | Solution |
-|--------------|---------|----------|
-| **Infinite loop** | No convergence criteria | Set max iterations + change threshold |
-| **Scope creep** | Each iteration adds new requirements | Lock scope before starting loop |
-| **Breaking fixes** | Fix introduces new bugs | Re-review after each fix + quality gates |
-| **Protected file changes** | Modifies package.json, migrations | Explicit skip list for protected files |
-| **Context loss** | Forgets original issues after iteration 3 | Maintain issue tracker across iterations |
+| 反模式 | 问题 | 解决方案 |
+|--------------|---------|------------|
+| **无限循环** | 无收敛标准 | 设置最大迭代次数 + 更改阈值 |
+| **范围蔓延** | 每次迭代添加新需求 | 开始前锁定范围 |
+| **破坏性修复** | 修复引入新 bug | 每次修复后重新审查 + 质量门禁 |
+| **受保护文件更改** | 修改 package.json、迁移 | 受保护文件的显式跳过列表 |
+| **上下文丢失** | 迭代 3 后忘记原始问题 | 在迭代间维护问题跟踪器 |
 
 ---
 
-## Example Session
+## 示例会话
 
-### Initial Request
+### 初始请求
 ```
-Create a debounce function in TypeScript.
-```
-
-### Iteration 1
-```
-Looks good. Add:
-- Generic type support for any function signature
-- Option to execute on leading edge
+用 TypeScript 创建一个防抖函数。
 ```
 
-### Iteration 2
+### 迭代 1
 ```
-Better. Issues:
-- The return type should preserve the original function's return type
-- Add cancellation support
-```
-
-### Iteration 3
-```
-Almost there. Final polish:
-- Add JSDoc comments
-- Export the types separately
-- Add unit tests
+看起来不错。添加：
+- 泛型类型支持任意函数签名
+- 执行时机的选项
 ```
 
-### Completion
+### 迭代 2
 ```
-Perfect. Commit this as "feat: add debounce utility with full TypeScript support"
+好。问题：
+- 返回类型应该保留原始函数的返回类型
+- 添加取消支持
+```
+
+### 迭代 3
+```
+差不多了。最后完善：
+- 添加 JSDoc 注释
+- 单独导出类型
+- 添加单元测试
+```
+
+### 完成
+```
+完美。用 "feat: 添加具有完整 TypeScript 支持的防抖工具" 提交。
 ```
 
 ---
 
-## Community Patterns & Known Limitations
+## 社区模式与已知局限
 
-The community has built several patterns on top of Claude Code's iterative loop. Some solve real pain points, others expose current limitations worth knowing about.
+社区在 Claude Code 的迭代循环之上构建了多种模式。有些解决了真正的痛点，有些则暴露了当前值得了解的局限。
 
-### Ralph Loop (Test-Driven Autonomous Iteration)
+### Ralph 循环（测试驱动的自主迭代）
 
-Source: nathanonn.com, February 2026.
+来源：nathanonn.com，2026 年 2 月。
 
-The Ralph Loop constrains autonomous iteration to one test case per cycle instead of running the full suite every time. This keeps each cycle focused and prevents the agent from chasing multiple failures at once.
+Ralph 循环将自主迭代约束为每个周期一个测试用例，而不是每次运行完整测试套件。这使每个周期都保持专注，防止智能体同时追逐多个失败。
 
-How it works:
+工作原理：
 
-1. Pick one failing test case
-2. Fix it, verify it passes
-3. Save progress to a JSON state file
-4. Move to the next failing test case
-5. After 3 failed attempts on the same case, mark it as `known_issue` and skip it
+1. 选择一个失败的测试用例
+2. 修复它，验证它通过
+3. 将进度保存到 JSON 状态文件
+4. 转到下一个失败的测试用例
+5. 同一用例 3 次失败后，标记为 `known_issue` 并跳过
 
 ```json
 {
@@ -539,38 +540,38 @@ How it works:
 }
 ```
 
-The state file is the key innovation here. It survives context resets, `/compact` operations, and even full session restarts. The agent reads the file at the start of each cycle to know exactly where it left off, which cases are done, and which ones to skip.
+状态文件是关键创新。它在上下文重置、`/compact` 操作甚至完整会话重启后依然存在。智能体在每个周期开始时读取文件，准确知道从哪里继续、哪些用例已完成、哪些要跳过。
 
-The 3-attempt limit prevents the infinite loop trap that plagues naive autonomous loops. Rather than burning tokens on a stubborn test case, the agent moves forward and flags the issue for human review later.
+3 次尝试限制防止了 naive 自主循环的无限循环陷阱。智能体不会在顽固的测试用例上消耗 token，而是继续前进并将问题标记给人工后续处理。
 
-### Auto-Continue Skill
+### 自动继续技能
 
-Source: mcpmarket.com.
+来源：mcpmarket.com。
 
-A confidence-based continuation system that decides whether the agent should keep going or stop for human input. Instead of a fixed iteration count, it evaluates the situation after each cycle:
+一种基于置信度的继续系统，决定智能体是继续还是停止等待人工输入。不是使用固定的迭代次数，而是在每个周期后评估情况：
 
-**Auto-continues when**:
-- Tests pass
-- Build succeeds
-- No new error types detected
-- Confidence score remains above threshold
+**自动继续当**：
+- 测试通过
+- 构建成功
+- 没有检测到新的错误类型
+- 置信度保持在阈值以上
 
-**Stops for human input when**:
-- Confidence drops below threshold
-- A new category of error appears (not just a new instance of a known error)
-- Build or type-check fails in a way the agent hasn't seen before
+**停止等待人工输入当**：
+- 置信度降到阈值以下
+- 出现新的错误类别（不仅仅是已知错误的新实例）
+- 构建或类型检查以智能体未曾见过的方式失败
 
-This pairs well with Claude Code's Stop hooks. The skill can trigger post-task verification and decide whether to resume based on the results.
+这与 Claude Code 的 Stop hooks 配合得很好。该技能可以触发任务后验证，并根据结果决定是否恢复。
 
-### Stop Hooks for Automatic Verification
+### 用于自动验证的 Stop Hooks
 
-A pattern that turns Claude Code's hook system into an automatic quality gate between iterations:
+一种将 Claude Code 的 hook 系统转变为迭代间自动质量门禁的模式：
 
-1. Claude finishes a task (or an iteration)
-2. A `PostToolUse` hook on `TodoWrite` triggers a verification script
-3. The script runs type-check, lint, and tests
-4. Errors get piped back to Claude automatically
-5. Claude fixes the issues without human intervention
+1. Claude 完成一个任务（或一次迭代）
+2. `TodoWrite` 上的 `PostToolUse` hook 触发验证脚本
+3. 脚本运行类型检查、lint 和测试
+4. 错误被自动传回 Claude
+5. Claude 在无需人工干预的情况下修复问题
 
 ```json
 {
@@ -585,54 +586,54 @@ A pattern that turns Claude Code's hook system into an automatic quality gate be
 }
 ```
 
-The hook fires every time Claude marks a task as done. If the verification catches something, Claude sees the output and can self-correct before moving to the next task.
+每次 Claude 将任务标记为完成时，hook 就会触发。如果验证发现问题，Claude 会看到输出并可以在转到下一个任务之前自我修正。
 
-### Escalation Strategy
+### 升级策略
 
-What to do when 3 iterations fail on the same problem. Instead of looping forever or giving up, follow a structured escalation path:
+当 3 次迭代在同一问题上失败时该怎么做。不要无限循环或放弃，而是遵循结构化的升级路径：
 
-1. **Decompose**: Break the failing task into 2-3 smaller sub-tasks that can be tackled independently
-2. **Collect context**: Dump all error messages, stack traces, and attempted fixes into a structured file
-3. **Model escalation**: If using Sonnet, retry the specific failing case with Opus for deeper reasoning
-4. **Human escalation**: If the model upgrade doesn't help, create a GitHub issue with the full error context and mark the task as `known_issue`
+1. **分解**：将失败的任务分解为 2-3 个可以独立处理的小子任务
+2. **收集上下文**：将所有错误消息、堆栈跟踪和尝试的修复转储到结构化文件中
+3. **模型升级**：如果使用 Sonnet，用 Opus 重试特定失败用例以获得更深入的推理
+4. **人工升级**：如果模型升级没有帮助，创建一个包含完整错误上下文的 GitHub issue，并将任务标记为 `known_issue`
 
 ```bash
-# Escalation in practice
+# 实践中的升级
 if [ "$ATTEMPT_COUNT" -ge 3 ]; then
-    # Collect context
+    # 收集上下文
     cat errors.log attempts.log > escalation-context.md
 
-    # Try with Opus
+    # 使用 Opus 尝试
     claude --model claude-opus-4-6 \
-        "Fix this failing test. Context: $(cat escalation-context.md)"
+        "修复这个失败的测试。上下文：$(cat escalation-context.md)"
 
-    # If still failing, create issue
+    # 如果仍然失败，创建 issue
     if [ $? -ne 0 ]; then
         gh issue create \
-            --title "Auto-escalation: $TEST_NAME fails after 3 attempts" \
+            --title "自动升级：$TEST_NAME 在 3 次尝试后失败" \
             --body "$(cat escalation-context.md)" \
             --label "known_issue,needs-human"
     fi
 fi
 ```
 
-The goal is never to silently drop work. Every failure either gets resolved, escalated, or explicitly tracked.
+目标是永远不要无声无息地放弃工作。每个失败要么被解决、升级，要么被明确跟踪。
 
-### Known Limitations
+### 已知局限
 
-Being honest about what doesn't work yet, so you don't waste time reinventing solutions that don't exist.
+诚实面对尚不起作用的部分，这样你就不会浪费时间去重新发明不存在的解决方案。
 
-**No built-in retry/verify/resume** (GitHub issue #28489): Headless automation in Claude Code lacks native support for retry logic, verification gates, and session resumption. Every team implementing autonomous loops builds their own version of this. State files, hook-based verification, and escalation scripts are all community workarounds for a gap in the platform.
+**没有内置的重试/验证/恢复**（GitHub issue #28489）：Claude Code 的无头自动化缺乏对重试逻辑、验证门禁和会话恢复的原生支持。每个实现自主循环的团队都要自己构建这个版本。状态文件、基于 hook 的验证和升级脚本都是社区对这个平台缺口的变通方案。
 
-**Agent iterations can be lost** (GitHub issue #28843): In multi-day workflows, agent iterations and their accumulated context can be destroyed. If you're running a workflow that spans multiple sessions or days, save explicit state files every N iterations. Do not rely on Claude's conversation memory as your only source of truth.
+**智能体迭代可能丢失**（GitHub issue #28843）：在多天工作流中，智能体迭代及其累积上下文可能被销毁。如果你正在运行跨越多个会话或天数的工作流，每 N 次迭代保存显式状态文件。不要将 Claude 的对话内存作为唯一的真相来源。
 
-**Multi-day workflow fragility**: Long-running automation needs checkpointing discipline. Save state to disk (JSON files, git commits, issue comments) at regular intervals. The pattern is simple but easy to forget: if you can't reconstruct the agent's progress from files on disk alone, your workflow will break on session boundaries.
+**多天工作流的脆弱性**：长期运行的自动化需要检查点纪律。定期将状态保存到磁盘（JSON 文件、git 提交、issue 评论）。模式很简单，但很容易忘记：如果你不能仅从磁盘上的文件重建智能体的进度，你的工作流将在会话边界上崩溃。
 
 ---
 
-## See Also
+## 相关参考
 
-- [exploration-workflow.md](./exploration-workflow.md) — Explore alternatives before iterating
-- [tdd-with-claude.md](./tdd-with-claude.md) — TDD is iterative refinement with tests
-- [plan-driven.md](./plan-driven.md) — Plan before iterating
-- [../core/methodologies.md](../core/methodologies.md) — Iterative Loops methodology
+- [exploration-workflow.md](./exploration-workflow.md) — 在迭代之前探索替代方案
+- [tdd-with-claude.md](./tdd-with-claude.md) — TDD 是带测试的迭代优化
+- [plan-driven.md](./plan-driven.md) — 在迭代之前制定计划
+- [../core/methodologies.md](../core/methodologies.md) — 迭代循环方法论

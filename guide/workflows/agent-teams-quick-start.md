@@ -1,80 +1,81 @@
+<!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
 ---
-title: "Agent Teams Quick Start Guide"
-description: "Practical 5-minute setup guide with copy-paste patterns for agent teams"
+title: "智能体团队快速入门指南"
+description: "5 分钟设置指南，包含智能体团队的复制粘贴模式"
 tags: [workflow, agents, tutorial]
 ---
 
-# Agent Teams Quick Start Guide
+# 智能体团队快速入门指南
 
-> **Practical guide for using agent teams in your projects**
-> **Reading time**: 8-10 min | **Full documentation**: [Agent Teams](./agent-teams.md) (30 min overview)
+> **在你项目中使用智能体团队的实用指南**
+> **阅读时间**：8-10 分钟 | **完整文档**：[智能体团队](./agent-teams.md)（30 分钟概述）
 
-## What is This?
+## 这是什么？
 
-You know agent teams exist. You've read the theory. But **when should you actually use them in your projects?**
+你知道智能体团队存在。你读过理论。但**你实际上什么时候应该在项目中使用它们？**
 
-This guide gives you:
-- ✅ **5-minute setup** (environment → first test)
-- ✅ **4 copy-paste patterns** for real projects (Guide + RTK)
-- ✅ **Decision matrix** (when YES, when NO)
-- ✅ **Metrics** to measure ROI
-- ✅ **Red flags** to avoid waste
+本指南提供：
+- ✅ **5 分钟设置**（环境 → 首次测试）
+- ✅ **4 个复制粘贴模式**用于真实项目（Guide + RTK）
+- ✅ **决策矩阵**（何时用，何时不用）
+- ✅ **指标**用于衡量 ROI
+- ✅ **红旗**避免浪费
 
-**Skip if**: You want theory → Read [Agent Teams full doc](./agent-teams.md) instead.
-
----
-
-## Table of Contents
-
-1. [5-Minute Setup](#1-5-minute-setup)
-2. [Patterns for Your Projects](#2-patterns-for-your-projects)
-   - 2.1 [Claude Code Guide - Pre-Release Review](#21-claude-code-guide---pre-release-review)
-   - 2.2 [Claude Code Guide - Landing Sync](#22-claude-code-guide---landing-sync)
-   - 2.3 [Claude Code Guide - Multi-File Doc Update](#23-claude-code-guide---multi-file-doc-update)
-   - 2.4 [RTK - Security PR Review](#24-rtk---security-pr-review)
-3. [Decision Matrix: When to Use](#3-decision-matrix-when-to-use)
-4. [Minimal Workflow Template](#4-minimal-workflow-template)
-5. [Success Metrics](#5-success-metrics)
-6. [Limitations & Red Flags](#6-limitations--red-flags)
+**如果你想理论**：阅读[智能体团队完整文档](./agent-teams.md)。
 
 ---
 
-## 1. 5-Minute Setup
+## 目录
 
-### Step 1: Prerequisites Check
+1. [5 分钟设置](#1-5-分钟设置)
+2. [项目模式](#2-项目模式)
+   - 2.1 [Claude Code 指南 - 发布前审查](#21-claude-code-指南---发布前审查)
+   - 2.2 [Claude Code 指南 - Landing 同步](#22-claude-code-指南---landing-同步)
+   - 2.3 [Claude Code 指南 - 多文件文档更新](#23-claude-code-指南---多文件文档更新)
+   - 2.4 [RTK - 安全 PR 审查](#24-rtk---安全-pr-审查)
+3. [决策矩阵：何时使用](#3-决策矩阵何时使用)
+4. [最小工作流模板](#4-最小工作流模板)
+5. [成功指标](#5-成功指标)
+6. [限制与红旗](#6-限制与红旗)
+
+---
+
+## 1. 5 分钟设置
+
+### 步骤 1：前置条件检查
 
 ```bash
-# Check Claude Code version (v2.1.32+ required)
+# 检查 Claude Code 版本（需要 v2.1.32+）
 claude --version
 
-# Check model availability
+# 检查模型可用性
 claude
 > /model opus
-# Should show: "Model changed to opus (claude-opus-4-6-20250624)"
+# 应显示："Model changed to opus (claude-opus-4-6-20250624)"
 ```
 
-**Minimum requirements**:
+**最低要求**：
 - Claude Code v2.1.32+
-- Opus 4.6 model
-- Git repository (agent teams use git for coordination)
+- Opus 4.6 模型
+- Git 仓库（智能体团队使用 git 进行协调）
 
-### Step 2: Enable Feature
+### 步骤 2：启用功能
 
 ```bash
-# Set environment variable (add to ~/.bashrc or ~/.zshrc for persistence)
+# 设置环境变量（添加到 ~/.bashrc 或 ~/.zshrc 以持久化）
 export CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1
 
-# Launch Claude Code
+# 启动 Claude Code
 claude
 ```
 
-### Step 3: Verification
+### 步骤 3：验证
 
 ```
 > Are agent teams enabled?
 ```
 
-**Expected response**:
+**预期响应**：
 ```
 Yes, agent teams are enabled in this session. I can create teams
 of agents to work in parallel on complex tasks using:
@@ -83,9 +84,9 @@ of agents to work in parallel on complex tasks using:
 - Autonomous team coordination
 ```
 
-**If disabled**: Check environment variable is set (`echo $CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS`).
+**如果已禁用**：检查环境变量是否设置（`echo $CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS`）。
 
-### Step 4: First Test (2 agents)
+### 步骤 4：首次测试（2 个智能体）
 
 ```
 > Create a simple test team to analyze this README:
@@ -93,38 +94,38 @@ of agents to work in parallel on complex tasks using:
 > - Agent 2: Check content quality (clarity, examples, completeness)
 ```
 
-**What happens**:
-1. Claude spawns 2 agents (you'll see "Creating team..." message)
-2. Agents work in parallel (you may see "Idle" messages - this is normal)
-3. Claude presents consolidated findings (convergence + unique insights)
+**发生了什么**：
+1. Claude 生成 2 个智能体（你会看到"Creating team..."消息）
+2. 智能体并行工作（你可能看到"Idle"消息——这是正常的）
+3. Claude 呈现合并发现（收敛 + 独特洞察）
 
-**Navigation**:
-- `Shift+Down`: Cycle through teammate outputs (in-process mode)
-- Main view: Consolidated synthesis
+**导航**：
+- `Shift+Down`：循环切换队友输出（进程中模式）
+- 主视图：合并汇总
 
-**Duration**: 1-2 min for simple 2-agent task.
+**时长**：简单 2 智能体任务 1-2 分钟。
 
 ---
 
-## 2. Patterns for Your Projects
+## 2. 项目模式
 
-### 2.1 Claude Code Guide - Pre-Release Review
+### 2.1 Claude Code 指南 - 发布前审查
 
-**Use case**: Systematic audit before version bump to catch consistency issues (broken links, desync counts, wrong versions)
+**用例**：版本升级前的系统性审计，发现一致性问题（链接断开、计数不同步、版本错误）
 
-**Trigger**: Before every `/release` command execution
+**触发**：每次执行 `/release` 命令前
 
-**Duration**: 3-5 min
+**时长**：3-5 分钟
 
-**Team composition**:
+**团队组成**：
 ```
 Team: pre-release-audit (3 agents)
-├─ accuracy-auditor → Verify claims, stats, versions, external links
-├─ consistency-checker → Check template count, eval count, guide lines match across files
-└─ breaking-checker → Identify breaking changes vs last release
+├─ accuracy-auditor → 验证声明、统计、版本、外部链接
+├─ consistency-checker → 检查模板数量、评估数量、指南行数是否跨文件匹配
+└─ breaking-checker → 识别与上一版本的 Breaking Changes
 ```
 
-**Copy-paste prompt**:
+**复制粘贴提示**：
 ```
 > Create a pre-release audit team:
 > - Accuracy: Check all claims, stats, version numbers, external links in CHANGELOG.md, README.md, and guide/ultimate-guide.md
@@ -132,15 +133,15 @@ Team: pre-release-audit (3 agents)
 > - Breaking: Identify breaking changes vs v3.23.0 by analyzing CHANGELOG.md [Unreleased] section
 ```
 
-**ROI**: Catches bugs like:
-- LinkedIn URL corruption (caught in real audit today)
-- Desync between guide/landing (template counts)
-- Wrong version numbers in multiple files
-- Broken external links
+**ROI**：发现的 bug 示例：
+- LinkedIn URL 损坏（今天的真实审计中发现）
+- guide/landing 之间不同步（模板计数）
+- 多个文件中版本号错误
+- 外部链接断开
 
-**When to skip**: Simple typo fixes (no version/count/link changes).
+**何时跳过**：简单的拼写错误修复（无版本/计数/链接更改）。
 
-**Real example** (test from 2026-02-08):
+**真实示例**（2026-02-08 测试）：
 ```
 Findings:
 - Accuracy: 1 critical (LinkedIn URL malformed), 3 warnings (external links to verify)
@@ -154,22 +155,22 @@ Verdict: ✅ High value, found 3 criticals that would've shipped
 
 ---
 
-### 2.2 Claude Code Guide - Landing Sync
+### 2.2 Claude Code 指南 - Landing 同步
 
-**Use case**: Verify guide/landing synchronization (version, counts, content) without running manual script
+**用例**：验证 guide/landing 同步（版本、计数、内容），无需运行手动脚本
 
-**Trigger**: After significant guide modifications (version bump, template additions, FAQ changes)
+**触发**：重大指南修改后（版本升级、模板添加、FAQ 更改）
 
-**Duration**: 2-3 min
+**时长**：2-3 分钟
 
-**Team composition**:
+**团队组成**：
 ```
 Team: landing-sync (2 agents)
-├─ guide-scanner → Extract version, template count, eval count, guide lines, FAQ content
-└─ landing-scanner → Compare with index.html, examples.html, check sync status
+├─ guide-scanner → 提取版本、模板计数、评估计数、指南行数、FAQ 内容
+└─ landing-scanner → 与 index.html、examples.html 比较，检查同步状态
 ```
 
-**Copy-paste prompt**:
+**复制粘贴提示**：
 ```
 > Validate guide/landing synchronization:
 > - Guide scanner: Extract version from VERSION file, template count (find examples/ -type f | wc -l), eval count (find docs/resource-evaluations/ -name "*.md" | wc -l), guide lines (wc -l guide/ultimate-guide.md), FAQ entries from README.md
@@ -178,14 +179,14 @@ Team: landing-sync (2 agents)
 > Report: Synced ✅ / Mismatches with line numbers
 ```
 
-**ROI**:
-- Zero desync shipped to production
-- Avoids manual `./scripts/check-landing-sync.sh` execution
-- Faster than script (2 min vs 5 min to run script + fix)
+**ROI**：
+- 零不同步发送到生产环境
+- 避免手动执行 `./scripts/check-landing-sync.sh`
+- 比脚本更快（2 分钟 vs 运行脚本 + 修复 5 分钟）
 
-**When to skip**: Pure code changes (no docs/counts affected).
+**何时跳过**：纯代码更改（不影响文档/计数）。
 
-**Success criteria**:
+**成功标准**：
 ```
 ✅ All synced: Version, template count, eval count match
 ⚠️ Mismatch: Specific line numbers in index.html to fix
@@ -193,23 +194,23 @@ Team: landing-sync (2 agents)
 
 ---
 
-### 2.3 Claude Code Guide - Multi-File Doc Update
+### 2.3 Claude Code 指南 - 多文件文档更新
 
-**Use case**: Add new feature documentation across multiple files (ultimate-guide.md, reference.yaml, README.md) with cross-reference consistency
+**用例**：跨多个文件（ultimate-guide.md、reference.yaml、README.md）添加新功能文档，确保交叉引用一致性
 
-**Trigger**: New feature section (>50 lines), breaking changes, architecture updates
+**触发**：新功能部分（>50 行）、Breaking Changes、架构更新
 
-**Duration**: 5-8 min
+**时长**：5-8 分钟
 
-**Team composition**:
+**团队组成**：
 ```
 Team: doc-update (3 agents)
-├─ content-writer → Write main section in ultimate-guide.md with examples
-├─ index-updater → Update TOC, reference.yaml entries, README navigation
-└─ consistency-checker → Verify cross-references, line numbers, anchors work
+├─ content-writer → 在 ultimate-guide.md 中编写主要部分，包含示例
+├─ index-updater → 更新 TOC、reference.yaml 条目、README 导航
+└─ consistency-checker → 验证交叉引用、行号、锚点是否正常工作
 ```
 
-**Copy-paste prompt**:
+**复制粘贴提示**：
 ```
 > Update documentation for new "[FEATURE NAME]" feature:
 > - Content Scope: Write section [X.Y] in guide/ultimate-guide.md with:
@@ -231,14 +232,14 @@ Team: doc-update (3 agents)
 >   Context: All modified files for cross-reference validation
 ```
 
-**ROI**:
-- Zero broken links (consistency-checker catches all)
-- 60% faster than sequential (write → index → verify)
-- Parallel work reduces waiting time
+**ROI**：
+- 零链接断开（consistency-checker 捕获全部）
+- 比顺序快 60%（写 → 索引 → 验证）
+- 并行工作减少等待时间
 
-**When to skip**: Single-file edits (<50 lines), no cross-references needed.
+**何时跳过**：单文件编辑（<50 行），无需交叉引用。
 
-**Real example** (Agent Teams section addition):
+**真实示例**（智能体团队部分添加）：
 ```
 Task: Add "Agent Teams" as section 9.20 (300 lines)
 Files touched: 3 (ultimate-guide.md, reference.yaml, README.md)
@@ -250,23 +251,23 @@ Savings: 40% time + zero manual cross-ref checks
 
 ---
 
-### 2.4 RTK - Security PR Review
+### 2.4 RTK - 安全 PR 审查
 
-**Use case**: Review external contributor PR for security issues (injection, token leaks), Rust idioms, and performance
+**用例**：审查外部贡献者的 PR 安全问题（注入、令牌泄漏）、Rust 惯用法和性能
 
-**Trigger**: PR opened by non-core contributor, PR touches sensitive code (auth, external commands, regex)
+**触发**：非核心贡献者打开的 PR，PR 触及敏感代码（认证、外部命令、正则）
 
-**Duration**: 5-8 min
+**时长**：5-8 分钟
 
-**Team composition**:
+**团队组成**：
 ```
 Team: security-pr-review (3 agents)
-├─ rust-expert → Check ownership patterns, error handling (anyhow/thiserror), idiomatic code
-├─ security-auditor → Scan for injection risks, token leaks, input sanitization
-└─ perf-analyzer → Review allocations, async patterns, compiled regex
+├─ rust-expert → 检查所有权模式、错误处理（anyhow/thiserror）、惯用代码
+├─ security-auditor → 扫描注入风险、令牌泄漏、输入清理
+└─ perf-analyzer → 审查内存分配、异步模式、编译正则
 ```
 
-**Copy-paste prompt**:
+**复制粘贴提示**：
 ```
 > Review PR #[NUMBER] with scope-focused analysis:
 > - Rust Scope: Check:
@@ -289,21 +290,21 @@ Team: security-pr-review (3 agents)
 >   Context: Hot paths, loops, async functions
 ```
 
-**ROI**:
-- Blind spots detection: Security + Rust + Perf = areas solo reviewer would miss
-- Consistent review quality (not dependent on reviewer mood/focus)
-- Faster than sequential (3 agents parallel vs 3-pass review)
+**ROI**：
+- 盲点检测：Security + Rust + Perf = 单个审查者会遗漏的区域
+- 一致的审查质量（不依赖于审查者情绪/专注度）
+- 比顺序快（3 个智能体并行 vs 3 轮审查）
 
-**When to skip**: Internal PRs from trusted contributors, trivial changes (docs, comments, tests only).
+**何时跳过**：来自可信贡献者的内部 PR，简单更改（仅文档、注释、测试）。
 
-**Success criteria**:
+**成功标准**：
 ```
 ✅ Convergence: 2+ agents flag same critical issue (high confidence)
 ✅ Unique insights: Each agent finds domain-specific issues (Rust/Security/Perf)
 ❌ False positives: <20% of findings are invalid
 ```
 
-**Real example** (hypothetical external PR):
+**真实示例**（假设的外部 PR）：
 ```
 PR: Add new git filter command
 Agents findings:
@@ -318,50 +319,50 @@ Verdict: ✅ Critical security issues caught, PR requires revision
 
 ---
 
-## 3. Decision Matrix: When to Use
+## 3. 决策矩阵：何时使用
 
-| Situation | Agent Teams ? | Raison |
+| 情况 | 智能体团队？ | 原因 |
 |-----------|---------------|--------|
-| **Pre-release review (Guide)** | ✅ YES | Multi-layer audit (accuracy + consistency + breaking) requires parallel perspectives |
-| **Simple typo fix** | ❌ NO | Overkill, 1 agent = 10 sec, 3 agents = cost bloat |
-| **External PR (RTK)** | ✅ YES | Security + Rust + Perf = blind spots detection, high-stakes review |
-| **Multi-file doc update (Guide)** | ✅ YES | Content + Index + Consistency = zero broken links, parallel work |
-| **Landing sync check** | ⚠️ MAYBE | Use agent teams if desync suspected, else `./scripts/check-landing-sync.sh` faster |
-| **CHANGELOG update** | ❌ NO | Sequential task (linear writing), no parallelization benefit |
-| **Single file edit (RTK)** | ❌ NO | No coordination needed, sequential OK |
-| **Small README tweak (<50 lines)** | ❌ NO | No cross-references, no complexity, single agent faster |
-| **Architecture design** | ✅ YES | Multiple perspectives (frontend, backend, infra, security) reveal blind spots |
-| **Bug investigation** | ⚠️ MAYBE | Simple bugs → NO, complex multi-component failures → YES |
+| **发布前审查（指南）** | ✅ 是 | 多层审计（准确性 + 一致性 + Breaking）需要并行视角 |
+| **简单拼写错误修复** | ❌ 否 | 大材小用，1 个智能体 = 10 秒，3 个智能体 = 成本浪费 |
+| **外部 PR（RTK）** | ✅ 是 | Security + Rust + Perf = 盲点检测，高风险审查 |
+| **多文件文档更新（指南）** | ✅ 是 | Content + Index + Consistency = 零链接断开，并行工作 |
+| **Landing 同步检查** | ⚠️ 可能 | 如果怀疑不同步使用智能体团队，否则 `./scripts/check-landing-sync.sh` 更快 |
+| **CHANGELOG 更新** | ❌ 否 | 顺序任务（线性写作），无并行化收益 |
+| **单文件编辑（RTK）** | ❌ 否 | 无需协调，顺序即可 |
+| **小型 README 调整（<50 行）** | ❌ 否 | 无交叉引用，无复杂性，单个智能体更快 |
+| **架构设计** | ✅ 是 | 多视角（前端、后端、基础设施、安全）揭示盲点 |
+| **Bug 调查** | ⚠️ 可能 | 简单 bug → 否，复杂多组件故障 → 是 |
 
-### Rule of Thumb
+### 经验法则
 
-**Use Agent Teams when**:
-- ✅ You'd naturally think "I should check X, Y, and Z"
-- ✅ High stakes (production release, external contributor, security-sensitive)
-- ✅ Multi-scope analysis needed (Rust scope + Security scope + Performance scope)
-- ✅ Cross-file consistency matters (links, counts, versions sync)
-- ✅ Parallel work possible (independent tasks, no sequential dependency)
+**使用智能体团队当**：
+- ✅ 你自然会想"我应该检查 X、Y 和 Z"
+- ✅ 高风险（生产发布、外部贡献者、安全敏感）
+- ✅ 需要多范围分析（Rust 范围 + 安全范围 + 性能范围）
+- ✅ 跨文件一致性重要（链接、计数、版本同步）
+- ✅ 并行工作可能（独立任务，无顺序依赖）
 
-**Don't use Agent Teams when**:
-- ❌ Simple task (<5 files, <100 lines, 1 domain)
-- ❌ Sequential workflow (step B depends on step A result)
-- ❌ Budget tight (3x tokens, reserve for high-value tasks)
-- ❌ Write-heavy (many edits to same files = merge conflicts)
+**不要使用智能体团队当**：
+- ❌ 简单任务（<5 个文件，<100 行，1 个领域）
+- ❌ 顺序工作流（B 取决于 A 结果）
+- ❌ 预算紧张（3x tokens，为高价值任务保留）
+- ❌ 写密集型（许多编辑相同文件 = 合并冲突）
 
 ---
 
-## 4. Minimal Workflow Template
+## 4. 最小工作流模板
 
-### Bash Template (reusable)
+### Bash 模板（可重用）
 
 ```bash
-# 1. Setup (once per session)
+# 1. 设置（每会话一次）
 export CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1
 
-# 2. Launch Claude
+# 2. 启动 Claude
 claude
 
-# 3. Create team (prompt template)
+# 3. 创建团队（提示模板）
 > Create a team to [TASK]:
 > - Agent 1 ([SCOPE/CONTEXT]): [SPECIFIC MISSION]
 > - Agent 2 ([SCOPE/CONTEXT]): [SPECIFIC MISSION]
@@ -369,19 +370,19 @@ claude
 >
 > [FILES/DIRECTORIES TO ANALYZE]
 
-# 4. Observe (optional)
-# Shift+Down to cycle through teammate outputs (in-process mode)
+# 4. 观察（可选）
+# Shift+Down 循环切换队友输出（进程中模式）
 
-# 5. Synthesis
-# Claude presents consolidated findings automatically
+# 5. 汇总
+# Claude 自动呈现合并发现
 
-# 6. Act
-# Fix critical findings, skip minor ones
+# 6. 行动
+# 修复关键发现，跳过次要发现
 ```
 
-### Example Prompts (copy-paste ready)
+### 示例提示（可直接复制）
 
-#### Pre-Release Guide Audit
+#### 发布前指南审计
 
 ```
 > Create a pre-release audit team:
@@ -390,7 +391,7 @@ claude
 > - Breaking: Identify breaking changes vs v3.23.0 by analyzing CHANGELOG.md [Unreleased] section
 ```
 
-#### Security PR Review (RTK)
+#### 安全 PR 审查（RTK）
 
 ```
 > Review PR #42 with scope-focused analysis:
@@ -399,7 +400,7 @@ claude
 > - Performance Scope: Review allocations, async patterns, compiled regex (context: hot paths, loops)
 ```
 
-#### Multi-File Doc Update
+#### 多文件文档更新
 
 ```
 > Update documentation for new "Agent Teams Quick Start" feature:
@@ -408,7 +409,7 @@ claude
 > - Consistency Scope: Verify all cross-refs work, line numbers match, no broken links (context: all modified files)
 ```
 
-#### Landing Sync Validation
+#### Landing 同步验证
 
 ```
 > Validate guide/landing synchronization:
@@ -418,19 +419,19 @@ claude
 
 ---
 
-## 5. Success Metrics
+## 5. 成功指标
 
-### How to Measure Agent Teams ROI
+### 如何衡量智能体团队 ROI
 
-| Metric | Target | How to Measure |
+| 指标 | 目标 | 如何衡量 |
 |--------|--------|----------------|
-| **Convergence rate** | >50% | Count findings flagged by 2+ agents / total findings. High convergence = high confidence. |
-| **Unique insights** | Each agent ≥1 | Each agent must find at least 1 unique issue in their domain. If agent finds 0 unique = wasted tokens. |
-| **False positive rate** | <20% | Count invalid findings / total findings. Too many false positives = poor prompts. |
-| **Time saving** | 60-70% | Compare agent teams time vs sequential (estimate 3x single-agent time for 3 tasks). |
-| **Bug catch rate** | >80% | Count critical bugs found by agents / total bugs found post-ship. High = effective prevention. |
+| **收敛率** | >50% | 2+ 智能体标记的发现 / 总发现。收敛 = 高置信度。 |
+| **独特洞察** | 每个智能体 ≥1 | 每个智能体必须在其领域找到至少 1 个独特问题。如果智能体找到 0 个独特 = 浪费 tokens。 |
+| **误报率** | <20% | 无效发现 / 总发现。太多误报 = 提示质量差。 |
+| **时间节省** | 60-70% | 比较智能体团队时间 vs 顺序（估计 3 个任务 3 倍单智能体时间）。 |
+| **Bug 捕获率** | >80% | 智能体发现的关键 bug / 发售后发现的总 bug。高 = 有效预防。 |
 
-### Real Example: Pre-Release Review Test (2026-02-08)
+### 真实示例：发布前审查测试（2026-02-08）
 
 ```
 Task: Pre-release audit for v3.23.1
@@ -465,18 +466,18 @@ Metrics:
 Verdict: ✅ High value for pre-release audits
 ```
 
-### How to Track Your Metrics
+### 如何跟踪你的指标
 
-**After each agent teams task**:
+**每个智能体团队任务后**：
 
-1. **Count findings**: Note raw findings per agent, then deduplicate
-2. **Mark convergence**: Which issues were flagged by 2+ agents?
-3. **Check unique insights**: Did each agent find at least 1 domain-specific issue?
-4. **Verify false positives**: How many findings were invalid/noise?
-5. **Time comparison**: Agent teams duration vs estimated sequential time
-6. **Post-ship validation**: Did agent teams catch bugs that would've shipped?
+1. **计数发现**：记录每个智能体的原始发现，然后去重
+2. **标记收敛**：哪些问题被 2+ 智能体标记？
+3. **检查独特洞察**：每个智能体是否找到至少 1 个领域特定问题？
+4. **验证误报**：有多少发现是无效/噪音？
+5. **时间对比**：智能体团队时长 vs 估计顺序时间
+6. **发售后验证**：智能体团队是否捕获了会发货的关键 bug？
 
-**Keep a log** (Markdown table in project docs):
+**保持日志**（项目文档中的 Markdown 表格）：
 
 ```markdown
 | Date | Task | Agents | Duration | Findings | Convergence | Unique | False+ | Time Saved | Bugs Caught |
@@ -484,60 +485,60 @@ Verdict: ✅ High value for pre-release audits
 | 2026-02-08 | Pre-release v3.23.1 | 3 | 4m12s | 30 | 13% (4 critical) | 3/3 | 6.6% | 66% | 3 |
 ```
 
-**Adjust prompts** if metrics fail:
-- Low convergence (<30%) → Scopes too narrow, overlap context boundaries more
-- No unique insights → Scopes too similar, diversify analysis angles
-- High false positives (>20%) → Prompts too vague, add concrete criteria
+**如果指标不达标，调整提示**：
+- 低收敛（<30%）→ 范围太窄，更多重叠上下文边界
+- 无独特洞察→ 范围太相似，多样化分析角度
+- 高误报（>20%）→ 提示太模糊，添加具体标准
 
 ---
 
-## 6. Limitations & Red Flags
+## 6. 限制与红旗
 
-### What Agent Teams DON'T Do
+### 智能体团队不能做什么
 
-| Limitation | What It Means | Mitigation |
+| 限制 | 含义 | 缓解 |
 |------------|---------------|-----------|
-| **3x tokens** | Each agent = separate model call = 3x cost | Reserve for high-stakes tasks (pre-release, security PRs, not typo fixes) |
-| **Idle spam** | Agents show "Idle" messages during coordination | Normal behavior, not a bug, ignore the spam |
-| **Experimental** | Research preview = stability not guaranteed | Expect bugs, don't rely on agent teams for production-critical workflows |
-| **Coordination overhead** | 3-5 agents max, not 10 (coordination complexity grows) | Stick to 2-4 agents, avoid "team of 10" prompts |
-| **Context isolation** | Agents don't see each other's discoveries (work independently) | Claude synthesizes findings, but agents can't build on each other's work mid-task |
+| **3x tokens** | 每个智能体 = 独立模型调用 = 3x 成本 | 为高风险任务保留（发布前、安全 PR，不是拼写错误修复） |
+| **空闲spam** | 智能体在协调期间显示"Idle"消息 | 正常行为，不是 bug，忽略 spam |
+| **实验性** | 研究预览 = 不保证稳定性 | 预期有 bug，不要依赖智能体团队进行生产关键工作流 |
+| **协调开销** | 最多 3-5 个智能体，不是 10（协调复杂性增长） | 坚持 2-4 个智能体，避免"10 个智能体团队"提示 |
+| **上下文隔离** | 智能体看不到彼此的发现（独立工作） | Claude 汇总发现，但智能体不能在任务中途相互构建工作 |
 
-### Red Flags: When NOT to Use
+### 红旗：何时不使用
 
-❌ **Simple task** (<5 files, <100 lines, 1 domain)
-- Example: Fix typo in README.md
-- Why avoid: 3x tokens for 10-second task = waste
+❌ **简单任务**（<5 个文件，<100 行，1 个领域）
+- 示例：修复 README.md 中的拼写错误
+- 为什么避免：10 秒任务的 3x tokens = 浪费
 
-❌ **Sequential workflow** (step B depends on step A result)
-- Example: Implement feature → Write tests → Deploy
-- Why avoid: Agents work in parallel, can't handle dependencies
+❌ **顺序工作流**（B 取决于 A 结果）
+- 示例：实现功能 → 写测试 → 部署
+- 为什么避免：智能体并行工作，不能处理依赖
 
-❌ **Budget tight** (3x tokens, optimize cost)
-- Example: Personal project with limited API credits
-- Why avoid: Agent teams = luxury for high-stakes tasks, not daily workflow
+❌ **预算紧张**（3x tokens，优化成本）
+- 示例：API 额度有限的个人项目
+- 为什么避免：智能体团队是高风险任务的奢侈品，不是日常工作流
 
-❌ **Write-heavy** (many edits to same files)
-- Example: Refactor entire codebase structure
-- Why avoid: Merge conflicts, coordination overhead, agents stepping on each other
+❌ **写密集型**（许多编辑相同文件）
+- 示例：重构整个代码库结构
+- 为什么避免：合并冲突，协调开销，智能体互相踩踏
 
-❌ **Low-stakes review** (internal PR, trusted contributor, simple change)
-- Example: Team member fixes small bug
-- Why avoid: Overkill, single-agent review faster + cheaper
+❌ **低风险审查**（内部 PR、可信贡献者、简单更改）
+- 示例：团队成员修复小 bug
+- 为什么避免：大材小用，单智能体审查更快更便宜
 
-### When You SHOULD Use (despite costs)
+### 尽管有成本但应该使用的情况
 
-✅ **High-stakes** (production release, security-sensitive, external contributor)
-✅ **Multi-domain** (Rust + Security + Performance = blind spots)
-✅ **Parallel-friendly** (independent tasks, no sequential dependencies)
-✅ **Consistency-critical** (cross-file sync, counts, versions)
-✅ **Learning opportunity** (understand blind spots, improve prompts)
+✅ **高风险**（生产发布、安全敏感、外部贡献者）
+✅ **多领域**（Rust + Security + Performance = 盲点）
+✅ **并行友好**（独立任务，无顺序依赖）
+✅ **一致性关键**（跨文件同步、计数、版本）
+✅ **学习机会**（理解盲点，改进提示）
 
 ---
 
-## Summary: Quick Reference
+## 总结：快速参考
 
-### Setup (5 min once)
+### 设置（一次 5 分钟）
 
 ```bash
 export CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1
@@ -545,48 +546,48 @@ claude
 > Are agent teams enabled?  # Verify
 ```
 
-### When to Use (decision rule)
+### 何时使用（决策规则）
 
-**YES if**:
-- High stakes + Multi-domain + Parallel-friendly
+**是如果**：
+- 高风险 + 多领域 + 并行友好
 
-**NO if**:
-- Simple task + Sequential + Budget tight
+**否如果**：
+- 简单任务 + 顺序 + 预算紧张
 
-### Patterns (4 ready-to-use)
+### 模式（4 个可直接使用）
 
-1. **Pre-Release Review** (Guide) → Accuracy + Consistency + Breaking
-2. **Landing Sync** (Guide) → Guide scanner + Landing scanner
-3. **Multi-File Doc Update** (Guide) → Content + Index + Consistency
-4. **Security PR Review** (RTK) → Rust + Security + Performance
+1. **发布前审查**（指南）→ 准确性 + 一致性 + Breaking
+2. **Landing 同步**（指南）→ 指南扫描器 + Landing 扫描器
+3. **多文件文档更新**（指南）→ Content + Index + Consistency
+4. **安全 PR 审查**（RTK）→ Rust + Security + Performance
 
-### Metrics (track ROI)
+### 指标（跟踪 ROI）
 
-- Convergence: >50% (findings by 2+ agents)
-- Unique insights: Each agent ≥1
-- False positives: <20%
-- Time saving: 60-70%
-- Bug catch: >80%
+- 收敛：>50%（2+ 智能体的发现）
+- 独特洞察：每个智能体 ≥1
+- 误报：<20%
+- 时间节省：60-70%
+- Bug 捕获：>80%
 
-### Red Flags (avoid waste)
+### 红旗（避免浪费）
 
-- ❌ Simple task (<5 files)
-- ❌ Sequential workflow
-- ❌ Budget tight
-- ❌ Write-heavy (merge conflicts)
+- ❌ 简单任务（<5 个文件）
+- ❌ 顺序工作流
+- ❌ 预算紧张
+- ❌ 写密集型（合并冲突）
 
 ---
 
-## Next Steps
+## 下一步
 
-1. **Try first test** (5 min setup + simple 2-agent task)
-2. **Pick 1 pattern** from your project (Guide or RTK)
-3. **Measure metrics** (convergence, unique insights, time saved)
-4. **Adjust prompts** based on results
-5. **Read full doc** for advanced patterns: [Agent Teams](./agent-teams.md)
+1. **尝试首次测试**（5 分钟设置 + 简单 2 智能体任务）
+2. **从你的项目选择一个模式**（指南或 RTK）
+3. **衡量指标**（收敛、独特洞察、时间节省）
+4. **根据结果调整提示**
+5. **阅读完整文档**了解高级模式：[智能体团队](./agent-teams.md)
 
-**Got questions?** Check [full documentation](./agent-teams.md) for:
-- Architecture deep-dive (how git coordination works)
-- Advanced use cases (15+ production scenarios)
-- Troubleshooting (common issues + solutions)
-- Best practices (team size, prompt design, conflict resolution)
+**有问题？** 查看[完整文档](./agent-teams.md)了解：
+- 架构深入解析（git 协调如何工作）
+- 高级用例（15+ 生产场景）
+- 故障排查（常见问题 + 解决方案）
+- 最佳实践（团队规模、提示设计、冲突解决）
