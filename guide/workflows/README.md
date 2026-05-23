@@ -1,251 +1,252 @@
+<!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
 ---
-title: "Claude Code Workflows"
-description: "Step-by-step guides for common development patterns with Claude Code"
+title: "Claude Code 工作流"
+description: "使用 Claude Code 的常见开发模式分步指南"
 tags: [workflow, guide, reference]
 ---
 
-# Claude Code Workflows
+# Claude Code 工作流
 
-Step-by-step guides for common development patterns with Claude Code.
-
----
-
-## 🔍 Search & Discovery
-
-### [Search Tools Mastery](./search-tools-mastery.md) ⭐ NEW
-
-**Master the art of code search by combining rg, grepai, Serena & ast-grep**
-
-Learn when to use each tool, how to combine them for maximum efficiency, and real-world workflows including:
-- Exploring unknown codebases
-- Large-scale refactoring
-- Security audits
-- Framework migrations
-- Performance optimization
-
-**Key Topics**:
-- Quick decision matrix
-- Complete feature comparison
-- 5 combined workflows
-- Performance benchmarks
-- Common pitfalls
-- Tool selection cheatsheet
+使用 Claude Code 的常见开发模式分步指南。
 
 ---
 
-## 🎯 Development Workflows
+## 🔍 搜索与探索
 
-### [Plan-Driven Development](./plan-driven.md)
+### [搜索工具精通](./search-tools-mastery.md) ⭐ 新增
 
-Structure complex tasks with planning mode before execution.
+**通过组合 rg、grepai、Serena 和 ast-grep 掌握代码搜索艺术**
 
-**When to use**: Multi-step features, architectural changes, uncertainty about approach
+学习何时使用每个工具、如何组合使用以获得最大效率，以及包括以下内容的真实工作流：
+- 探索未知代码库
+- 大规模重构
+- 安全审计
+- 框架迁移
+- 性能优化
 
-### [TDD with Claude](./tdd-with-claude.md)
-
-Test-Driven Development workflow: write tests first, implement after.
-
-**When to use**: Critical functionality, regression prevention, API design
-
-### [Spec-First Development](./spec-first.md)
-
-Write specifications before code for better requirements clarity.
-
-**When to use**: Team collaboration, complex features, documentation-first projects
-
-### [Iterative Refinement](./iterative-refinement.md)
-
-Improve code through multiple refinement cycles.
-
-**When to use**: Quality improvements, performance optimization, code cleanup
-
-### [Skeleton Projects](./skeleton-projects.md) ⭐ NEW
-
-Use existing battle-tested repositories as scaffolding for new projects.
-
-**When to use**: Starting new projects, standardizing team patterns, rapid prototyping from proven foundations
-
-### [Team AI Instructions](./team-ai-instructions.md)
-
-Scale CLAUDE.md across a multi-developer, multi-tool team with profile-based module assembly.
-
-**When to use**: Team 5+ devs, multiple AI tools (Claude Code + Cursor/Windsurf), mixed OS
-
-### [Changelog Fragments](./changelog-fragments.md) ⭐ NEW
-
-**Enforce per-PR documentation with a 3-layer system: CLAUDE.md rule + UserPromptSubmit hook + CI gate**
-
-Eliminates merge conflicts on `CHANGELOG.md`, captures context at implementation time, and ensures DB migrations are never silently deployed. Includes a reusable `UserPromptSubmit` hook pattern for enforcing any mandatory workflow step.
-
-**Key Topics**:
-- CLAUDE.md workflow rule for autonomous fragment creation
-- `UserPromptSubmit` hook with 3-tier priority (enforcement, discovery, contextual)
-- Conditional suggestion pattern: "if PR-intent without fragment-mention"
-- CI enforcement with independent migration check job
-
-### [RPI: Research → Plan → Implement](./rpi.md) ⭐ NEW
-
-**3-phase feature development with explicit validation gates between phases**
-
-Build features in three locked phases: Research feasibility first, plan the implementation second, write code third. Each phase produces a concrete artifact (RESEARCH.md → PLAN.md → code). Each gate requires an explicit GO before the next phase starts.
-
-**When to use**: Features with unclear feasibility, more than a day of work, unknown technical territory, or anywhere discovering a wrong assumption late is costly
-
-### [GitHub Actions Workflows](./github-actions.md) ⭐ NEW
-
-**5 production-ready patterns for automating PR reviews, issue triage, and quality gates**
-
-Connect Claude directly to your GitHub workflow via the official `claude-code-action`. Two modes: interactive (`@claude` mentions) and fully automated (push/schedule triggers).
-
-**Key Topics**:
-- Setup via `/install-github-app` (30-second quickstart)
-- Pattern 1: On-demand PR review via `@claude` mention
-- Pattern 2: Automatic review on every push
-- Pattern 3: Issue triage and labeling
-- Pattern 4: Security-focused review on sensitive paths
-- Pattern 5: Scheduled weekly repo health check
-- Cost control, concurrency, fork safety
-
-**When to use**: Any team wanting AI-powered code review without managing infrastructure
+**关键主题**：
+- 快速决策矩阵
+- 完整功能对比
+- 5 个组合工作流
+- 性能基准
+- 常见陷阱
+- 工具选择速查表
 
 ---
 
-### [Cognitive Mode Switching](./gstack-workflow.md) ⭐ NEW
+## 🎯 开发工作流
 
-Switch between specialist roles across your ship cycle: strategic product gate, architecture review, paranoid code review, automated release, native browser QA, and retrospective.
+### [计划驱动开发](./plan-driven.md)
 
-**When to use**: Ship cycles where you want explicit separation between product direction, engineering rigor, review, and release — rather than one generic assistant handling all phases
+执行前先用计划模式结构化复杂任务。
 
----
+**何时使用**：多步骤功能、架构变更、方案不确定
 
-## 🎨 Design & Content
+### [使用 Claude 进行 TDD](./tdd-with-claude.md)
 
-### [Design to Code](./design-to-code.md)
+测试驱动开发工作流：先写测试，后实现。
 
-Convert design mockups (Figma, wireframes) into working code.
+**何时使用**：关键功能、回归预防、API 设计
 
-**When to use**: Frontend development, UI implementation, design system work
+### [规范优先开发](./spec-first.md)
 
-### [OG Image Generation](./og-image-generation.md)
+代码前先写规范，以获得更清晰的需求。
 
-Generate social preview images dynamically at build time with Satori and resvg.
+**何时使用**：团队协作、复杂功能、文档先行项目
 
-**When to use**: Astro projects, keeping social previews accurate without maintaining static PNGs
+### [迭代优化](./iterative-refinement.md)
 
-### [PDF Generation](./pdf-generation.md)
+通过多个优化循环改进代码。
 
-Generate professional PDFs using Quarto/Typst with Claude Code.
+**何时使用**：质量改进、性能优化、代码清理
 
-**When to use**: Reports, documentation, whitepapers, technical documents
+### [脚手架项目](./skeleton-projects.md) ⭐ 新增
 
-### [Talk Preparation Pipeline](./talk-pipeline.md) ⭐ NEW
+使用已有的、经过实战检验的仓库作为新项目的脚手架。
 
-6-stage skill pipeline: raw material → structured talk → AI-generated slides via Kimi.
+**何时使用**：启动新项目、标准化团队模式、从可靠基础快速原型
 
-**When to use**: Conference talks, meetup presentations, internal tech talks — from article, transcript, or notes
+### [团队 AI 指令](./team-ai-instructions.md)
 
-### [TTS Setup](./tts-setup.md)
+通过基于配置文件的模块组装跨多开发者、多工具团队扩展 CLAUDE.md。
 
-Configure Text-to-Speech for Claude Code responses (Agent Vibes integration).
+**何时使用**：5 人以上团队、多个 AI 工具（Claude Code + Cursor/Windsurf）、混合操作系统
 
-**When to use**: Audio feedback, accessibility, hands-free coding
+### [变更日志片段](./changelog-fragments.md) ⭐ 新增
 
----
+**通过三层系统强制每个 PR 文档化：CLAUDE.md 规则 + UserPromptSubmit 钩子 + CI 门禁**
 
-## 🔬 Code Exploration
+消除 `CHANGELOG.md` 上的合并冲突，在实现时捕获上下文，确保数据库迁移永远不会被静默部署。包括一个可复用的 `UserPromptSubmit` 钩子模式，用于强制任何必选工作流步骤。
 
-### [Exploration Workflow](./exploration-workflow.md)
+**关键主题**：
+- 用于自主创建片段的 CLAUDE.md 工作流规则
+- 三层优先级的 `UserPromptSubmit` 钩子（强制、发现、上下文）
+- 条件建议模式："如果有 PR 意图但未提及片段"
+- 带独立迁移检查作业的 CI 强制执行
 
-Systematically explore and understand unfamiliar codebases.
+### [RPI：研究 → 计划 → 实现](./rpi.md) ⭐ 新增
 
-**When to use**: New projects, legacy code, documentation gaps
+**三阶段功能开发，各阶段之间有明确的验证门禁**
 
-**Related**: See [Search Tools Mastery](./search-tools-mastery.md) for advanced multi-tool exploration strategies.
+以三个锁定阶段构建功能：先研究可行性，再计划实现，最后写代码。每个阶段产生一个具体产物（RESEARCH.md → PLAN.md → 代码）。每个门禁需要明确的 GO 才能进入下一阶段。
 
----
+**何时使用**：可行性不明确的功能、工作量超过一天、不熟悉的技术领域，或在任何发现错误假设代价高昂的地方
 
-## Multi-Agent & Advanced
+### [GitHub Actions 工作流](./github-actions.md) ⭐ 新增
 
-### [Agent Teams](./agent-teams.md)
+**5 个可用于生产环境的模式，用于自动化 PR 评审、问题分类和质量门禁**
 
-Orchestrate multiple specialized agents working in parallel on complex tasks.
+通过官方 `claude-code-action` 将 Claude 直接连接到你的 GitHub 工作流。两种模式：交互式（`@claude` 提及）和完全自动化（push/定时触发）。
 
-**When to use**: Tasks that benefit from parallelism, specialized expertise, or independent verification
+**关键主题**：
+- 通过 `/install-github-app` 设置（30 秒快速开始）
+- 模式 1：通过 `@claude` 提及按需 PR 评审
+- 模式 2：每次 push 时自动评审
+- 模式 3：问题分类和标签
+- 模式 4：敏感路径的安全聚焦评审
+- 模式 5：定时每周仓库健康检查
+- 成本控制、并发、fork 安全
 
-### [Agent Teams Quick Start](./agent-teams-quick-start.md)
-
-Fast-track guide to setting up your first agent team in under 30 minutes.
-
-**When to use**: New to multi-agent patterns, want to experiment before committing to full setup
-
-### [Dual-Instance Planning](./dual-instance-planning.md)
-
-Run Opus for planning and Sonnet for execution in two coordinated Claude Code instances.
-
-**When to use**: Complex features needing deep reasoning for architecture, cost-effective execution
-
-### [Event-Driven Agents](./event-driven-agents.md)
-
-Coordinate agents through hook events rather than direct orchestration.
-
-**When to use**: Reactive workflows, hook-triggered automation, loosely-coupled agent pipelines
-
-### [Plan Pipeline](./plan-pipeline.md)
-
-Full end-to-end plan pipeline: /plan-start, /plan-validate, /plan-execute as a coherent workflow.
-
-**When to use**: Any significant feature where planning rigor pays off before writing code
-
-### [Task Management](./task-management.md)
-
-Multi-session task tracking with TodoWrite, tasks API, and context persistence across sessions.
-
-**When to use**: Long-running tasks spanning multiple sessions, team coordination, complex backlogs
+**何时使用**：任何想要 AI 驱动的代码评审而无需管理基础设施的团队
 
 ---
 
-## Quick Selection Guide
+### [认知模式切换](./gstack-workflow.md) ⭐ 新增
 
-| Your Situation | Recommended Workflow |
+在交付周期中切换专家角色：战略产品门禁、架构评审、多疑代码评审、自动化发布、本地浏览器 QA 和回顾。
+
+**何时使用**：交付周期中需要在产品方向、工程严谨、评审和发布之间有明确分离，而不是一个通用助手处理所有阶段
+
+---
+
+## 🎨 设计与内容
+
+### [设计转代码](./design-to-code.md)
+
+将设计模型（Figma、线框图）转换为可用代码。
+
+**何时使用**：前端开发、UI 实现、设计系统工作
+
+### [OG 图片生成](./og-image-generation.md)
+
+使用 Satori 和 resvg 在构建时动态生成社交预览图片。
+
+**何时使用**：Astro 项目、保持社交预览准确而无需维护静态 PNG
+
+### [PDF 生成](./pdf-generation.md)
+
+使用 Quarto/Typst 和 Claude Code 生成专业 PDF。
+
+**何时使用**：报告、文档、白皮书、技术文档
+
+### [演讲准备管道](./talk-pipeline.md) ⭐ 新增
+
+6 阶段技能管道：原材料 → 结构化演讲 → 通过 Kimi 生成 AI 幻灯片。
+
+**何时使用**：会议演讲、meetup 演示、内部技术演讲——从文章、转录稿或笔记
+
+### [TTS 设置](./tts-setup.md)
+
+配置 Claude Code 响应的文字转语音（Agent Vibes 集成）。
+
+**何时使用**：音频反馈、无障碍、免手动编码
+
+---
+
+## 🔬 代码探索
+
+### [探索工作流](./exploration-workflow.md)
+
+系统地探索和理解陌生的代码库。
+
+**何时使用**：新项目、遗留代码、文档缺失
+
+**相关**：高级多工具探索策略见 [搜索工具精通](./search-tools-mastery.md)。
+
+---
+
+## 多智能体与高级
+
+### [智能体团队](./agent-teams.md)
+
+编排多个专用智能体并行处理复杂任务。
+
+**何时使用**：从并行、专业知识或独立验证中受益的任务
+
+### [智能体团队快速入门](./agent-teams-quick-start.md)
+
+在 30 分钟内设置第一个智能体团队的快速指南。
+
+**何时使用**：多智能体模式新手、想在投入完整设置之前先尝试
+
+### [双实例计划](./dual-instance-planning.md)
+
+在两个协调的 Claude Code 实例中运行 Opus 进行计划，Sonnet 进行执行。
+
+**何时使用**：需要深度推理的复杂功能架构、成本有效的执行
+
+### [事件驱动智能体](./event-driven-agents.md)
+
+通过钩子事件而非直接编排来协调智能体。
+
+**何时使用**：响应式工作流、钩子触发的自动化、松耦合智能体管道
+
+### [计划管道](./plan-pipeline.md)
+
+完整的端到端计划管道：/plan-start、/plan-validate、/plan-execute 作为连贯工作流。
+
+**何时使用**：任何在写代码前计划严谨性有回报的重要功能
+
+### [任务管理](./task-management.md)
+
+使用 TodoWrite、Tasks API 和跨会话上下文持久化的多会话任务跟踪。
+
+**何时使用**：跨多个会话的长期运行任务、团队协调、复杂待办事项
+
+---
+
+## 快速选择指南
+
+| 你的情况 | 推荐工作流 |
 |----------------|---------------------|
-| **New to codebase** | [Exploration Workflow](./exploration-workflow.md) + [Search Tools Mastery](./search-tools-mastery.md) |
-| **Complex feature** | [Plan-Driven](./plan-driven.md) or [Spec-First](./spec-first.md) |
-| **Need reliability** | [TDD with Claude](./tdd-with-claude.md) |
-| **Large refactoring** | [Search Tools Mastery](./search-tools-mastery.md) |
-| **UI implementation** | [Design to Code](./design-to-code.md) |
-| **Code quality** | [Iterative Refinement](./iterative-refinement.md) |
-| **New project from template** | [Skeleton Projects](./skeleton-projects.md) |
-| **Team AI instructions** | [Team AI Instructions](./team-ai-instructions.md) |
-| **Enforce mandatory workflow steps** | [Changelog Fragments](./changelog-fragments.md) |
-| **Unknown feasibility, multi-day feature** | [RPI: Research → Plan → Implement](./rpi.md) |
-| **Documentation** | [PDF Generation](./pdf-generation.md) |
-| **Social previews** | [OG Image Generation](./og-image-generation.md) |
-| **Conference talk from raw material** | [Talk Preparation Pipeline](./talk-pipeline.md) |
-| **Audio feedback** | [TTS Setup](./tts-setup.md) |
-| **Multi-agent tasks** | [Agent Teams](./agent-teams.md) |
-| **First agent team** | [Agent Teams Quick Start](./agent-teams-quick-start.md) |
-| **Cost-optimized planning** | [Dual-Instance Planning](./dual-instance-planning.md) |
-| **Hook-driven automation** | [Event-Driven Agents](./event-driven-agents.md) |
-| **Full plan workflow** | [Plan Pipeline](./plan-pipeline.md) |
-| **Multi-session tracking** | [Task Management](./task-management.md) |
-| **Strategic gate before coding** | [Cognitive Mode Switching](./gstack-workflow.md) |
-| **Non-MCP browser automation** | [Cognitive Mode Switching](./gstack-workflow.md) |
+| **代码库新手** | [探索工作流](./exploration-workflow.md) + [搜索工具精通](./search-tools-mastery.md) |
+| **复杂功能** | [计划驱动](./plan-driven.md) 或 [规范优先](./spec-first.md) |
+| **需要可靠性** | [使用 Claude 进行 TDD](./tdd-with-claude.md) |
+| **大规模重构** | [搜索工具精通](./search-tools-mastery.md) |
+| **UI 实现** | [设计转代码](./design-to-code.md) |
+| **代码质量** | [迭代优化](./iterative-refinement.md) |
+| **从模板开始新项目** | [脚手架项目](./skeleton-projects.md) |
+| **团队 AI 指令** | [团队 AI 指令](./team-ai-instructions.md) |
+| **强制必选工作流步骤** | [变更日志片段](./changelog-fragments.md) |
+| **可行性不明确、多日功能** | [RPI：研究 → 计划 → 实现](./rpi.md) |
+| **文档** | [PDF 生成](./pdf-generation.md) |
+| **社交预览** | [OG 图片生成](./og-image-generation.md) |
+| **从原材料准备会议演讲** | [演讲准备管道](./talk-pipeline.md) |
+| **音频反馈** | [TTS 设置](./tts-setup.md) |
+| **多智能体任务** | [智能体团队](./agent-teams.md) |
+| **第一个智能体团队** | [智能体团队快速入门](./agent-teams-quick-start.md) |
+| **成本优化计划** | [双实例计划](./dual-instance-planning.md) |
+| **钩子驱动自动化** | [事件驱动智能体](./event-driven-agents.md) |
+| **完整计划工作流** | [计划管道](./plan-pipeline.md) |
+| **多会话跟踪** | [任务管理](./task-management.md) |
+| **编码前的战略门禁** | [认知模式切换](./gstack-workflow.md) |
+| **非 MCP 浏览器自动化** | [认知模式切换](./gstack-workflow.md) |
 
 ---
 
-## Contributing
+## 贡献
 
-New workflow ideas? Open an issue or PR in the main repository.
+有新工作流想法？在主仓库开 issue 或 PR。
 
-**Workflow Template Structure**:
-1. Title & Purpose
-2. When to Use
-3. Prerequisites
-4. Step-by-Step Guide
-5. Real-World Examples
-6. Common Pitfalls
-7. Related Workflows
+**工作流模板结构**：
+1. 标题和目的
+2. 何时使用
+3. 先决条件
+4. 分步指南
+5. 真实世界示例
+6. 常见陷阱
+7. 相关工作流
 
 ---
 
-**Last updated**: March 2026
+**最后更新**：2026 年 3 月

@@ -1,36 +1,37 @@
+<!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
 ---
-title: "Event-Driven Agent Automation"
-description: "Trigger Claude Code agents from external events like Kanban card moves, GitHub issues, and Jira transitions"
+title: "事件驱动智能体自动化"
+description: "从外部事件如看板卡片移动、GitHub issues 和 Jira 转换触发 Claude Code 智能体"
 tags: [workflow, agents, automation, event-driven, kanban]
 ---
 
-# Event-Driven Agent Automation
+# 事件驱动智能体自动化
 
-> **Confidence**: Tier 3 — Emerging pattern, early adopters report positive results but tooling is still maturing.
+> **可信度**：第 3 层 — 新兴模式，早期采用者报告积极结果但工具仍在成熟中。
 
-Instead of manually invoking Claude Code for each task, let external events drive the work. A card moves to "In Progress" in Linear, and Claude picks it up automatically. A GitHub issue gets labeled `claude-fix`, and an agent starts working on it within seconds.
+不要手动为每个任务调用 Claude Code，让外部事件驱动工作。卡片在 Linear 中移动到"In Progress"，Claude 自动接取。GitHub issue 被标记 `claude-fix`，智能体在几秒内开始工作。
 
-This is the shift from pull-based ("hey Claude, do this") to push-based ("events trigger agents").
-
----
-
-## Table of Contents
-
-1. [Core Concept](#core-concept)
-2. [The Linear-Driven Agent Loop](#the-linear-driven-agent-loop)
-3. [Generic Event-to-Agent Pattern](#generic-event-to-agent-pattern)
-4. [Implementation Example](#implementation-example)
-5. [Event Source Compatibility](#event-source-compatibility)
-6. [Guardrails](#guardrails)
-7. [Anti-Patterns](#anti-patterns)
-8. [Tools & Resources](#tools--resources)
-9. [See Also](#see-also)
+这是从拉取式（"嘿 Claude，做这个"）到推送式（"事件触发智能体"）的转变。
 
 ---
 
-## Core Concept
+## 目录
 
-Traditional Claude Code usage is interactive: you open a terminal, type a prompt, iterate. Event-driven automation removes the human from the trigger step. The human still reviews output (PRs, code changes), but initiation happens through your existing project management workflow.
+1. [核心概念](#核心概念)
+2. [Linear 驱动的智能体循环](#linear-驱动的智能体循环)
+3. [通用事件到智能体模式](#通用事件到智能体模式)
+4. [实现示例](#实现示例)
+5. [事件源兼容性](#事件源兼容性)
+6. [护栏](#护栏)
+7. [反模式](#反模式)
+8. [工具与资源](#工具与资源)
+9. [另见](#另见)
+
+---
+
+## 核心概念
+
+传统 Claude Code 使用是交互式的：你打开终端，输入提示词，迭代。事件驱动自动化将人从触发步骤中移除。人仍然审查输出（PR、代码变更），但启动是通过你现有的项目管理流程。
 
 ```mermaid
 flowchart LR
@@ -46,15 +47,15 @@ flowchart LR
     style F fill:#bfb,stroke:#333
 ```
 
-The loop is self-reinforcing: the agent's output (a PR, a status update) feeds back into the event source, which can trigger the next step.
+循环是自我强化的：智能体的输出（PR、状态更新）反馈到事件源，可以触发下一步。
 
 ---
 
-## The Linear-Driven Agent Loop
+## Linear 驱动的智能体循环
 
-The most documented pattern comes from Damian Galarza's workflow (damiangalarza.com, February 2026). Linear serves as the single source of truth for what needs doing, and Claude Code handles implementation end to end.
+最成熟的模式来自 Damian Galarza 的工作流（damiangalarza.com，2026 年 2 月）。Linear 作为需要做什么的单一真相来源，Claude Code 端到端处理实现。
 
-### Flow
+### 流程
 
 ```mermaid
 flowchart TD
@@ -70,62 +71,62 @@ flowchart TD
     H -->|request changes| D
 ```
 
-### What makes it work
+### 什么让它工作
 
-The card description acts as the prompt. Good cards with clear acceptance criteria produce good code. Vague cards produce vague code, same as with human developers. The quality of your tickets directly determines the quality of the automation.
+卡片描述作为提示词。具有清晰验收标准的卡片产生好的代码。模糊的卡片产生模糊的代码，与人类开发者相同。你的票据质量直接决定自动化质量。
 
-Linear's structured fields (description, acceptance criteria, labels, priority) map naturally to Claude Code's needs: what to build, how to verify it, and what constraints apply.
+Linear 的结构化字段（描述、验收标准、标签、优先级）自然映射到 Claude Code 的需求：构建什么、如何验证、什么约束适用。
 
-### Key requirements
+### 关键要求
 
-- Cards must have clear acceptance criteria (not just a title)
-- The repo needs a solid test suite for automated verification
-- Branch naming conventions should be deterministic (e.g., `feat/LINEAR-123-card-title`)
-- PR templates help standardize the agent's output
+- 卡片必须有清晰的验收标准（不仅仅是标题）
+- 仓库需要有可靠的测试套件用于自动化验证
+- 分支命名约定应该是确定性的（例如 `feat/LINEAR-123-card-title`）
+- PR 模板有助于标准化智能体的输出
 
 ---
 
-## Generic Event-to-Agent Pattern
+## 通用事件到智能体模式
 
-The Linear example is specific, but the pattern generalizes to any event source. Five components make up the pipeline:
+Linear 示例是具体的，但模式泛化到任何事件源。五个组件组成管道：
 
-### 1. Event Source
+### 1. 事件源
 
-Where the trigger originates. Could be a project management tool, a CI system, a monitoring alert, or a custom webhook.
+触发从哪里发起。可能是项目管理工具、CI 系统、监控警报或自定义 webhook。
 
-### 2. Event Filter
+### 2. 事件过滤器
 
-Not every event should spawn an agent. Filters determine which events are actionable:
+不是每个事件都应该生成智能体。过滤器决定哪些事件是可操作的：
 
 ```bash
-# Example: only process cards with the "claude-auto" label
+# 示例：只处理带有 "claude-auto" 标签的卡片
 if [[ "$CARD_LABELS" != *"claude-auto"* ]]; then
     echo "Skipping: no claude-auto label"
     exit 0
 fi
 ```
 
-### 3. Context Extraction
+### 3. 上下文提取
 
-Pull the relevant data from the event payload and format it as a Claude Code prompt. This is where you translate from your tool's schema to natural language instructions.
+从事件负载中拉取相关数据并格式化为 Claude Code 提示词。这是你从工具 schema 翻译到自然语言指令的地方。
 
-### 4. Agent Selection
+### 4. 智能体选择
 
-Different event types might need different agent configurations. A bug report needs a different CLAUDE.md context than a feature request. You might use different allowed tools, different models, or different safety constraints.
+不同事件类型可能需要不同的智能体配置。错误报告需要的 CLAUDE.md 上下文不同于功能请求。你可能使用不同的允许工具、不同的模型或不同的安全约束。
 
-### 5. Output Routing
+### 5. 输出路由
 
-Where do the results go? Typically a combination of:
-- Git branch + PR (code changes)
-- Comment on the original issue/card (status updates)
-- State transition on the card (moving to next column)
-- Slack notification (human awareness)
+结果去哪里？通常是以下组合：
+- Git 分支 + PR（代码变更）
+- 原始 issue/卡片的评论（状态更新）
+- 卡片状态转换（移动到下一列）
+- Slack 通知（人工意识）
 
 ---
 
-## Implementation Example
+## 实现示例
 
-A minimal bash loop that polls Linear for "In Progress" cards and spawns Claude Code agents:
+一个最小的 bash 循环，轮询 Linear 的"In Progress"卡片并生成 Claude Code 智能体：
 
 ```bash
 #!/bin/bash
@@ -133,7 +134,7 @@ A minimal bash loop that polls Linear for "In Progress" cards and spawns Claude 
 # Polls Linear for cards in "In Progress" state and spawns Claude agents
 
 LINEAR_API_KEY="${LINEAR_API_KEY:?Missing LINEAR_API_KEY}"
-TEAM_ID="${LINEAR_TEAM_ID:?Missing LINEAR_TEAM_ID}"
+TEAM_ID="${TEAM_ID:?Missing LINEAR_TEAM_ID}"
 PROCESSED_FILE="/tmp/linear-agent-processed.txt"
 MAX_CONCURRENT=3
 
@@ -189,51 +190,51 @@ while true; do
 done
 ```
 
-This is a starting point, not production code. Real deployments need proper error handling, a persistent state store (not a text file), and webhook-based triggers instead of polling.
+这是一个起点，不是生产代码。真实部署需要适当的错误处理、持久状态存储（不是文本文件）和基于 webhook 的触发而不是轮询。
 
 ---
 
-## Event Source Compatibility
+## 事件源兼容性
 
-| Event Source | Trigger Events | Agent Use Case | Integration Method |
+| 事件源 | 触发事件 | 智能体用例 | 集成方式 |
 |-------------|----------------|----------------|-------------------|
-| **Linear** | Card state change, label added | Feature implementation, bug fix | GraphQL API / MCP server |
-| **GitHub Issues** | Issue created, labeled | Bug triage, investigation, fix PR | GitHub Actions / webhooks |
-| **GitHub PR** | PR opened, review requested | Code review, automated fixes | GitHub Actions |
-| **Jira** | Transition, sprint assignment | Feature work, tech debt cleanup | REST API / webhooks |
-| **Slack** | Message in channel, emoji reaction | Quick fixes, investigations | Slack API / bot |
-| **PagerDuty** | Incident created | Diagnostic scripts, initial triage | Webhooks |
-| **Custom webhook** | Any HTTP POST | Anything | Direct HTTP endpoint |
+| **Linear** | 卡片状态变更、标签添加 | 功能实现、bug 修复 | GraphQL API / MCP 服务器 |
+| **GitHub Issues** | Issue 创建、标签 | Bug 分类、调查、修复 PR | GitHub Actions / webhooks |
+| **GitHub PR** | PR 打开、请求评审 | 代码评审、自动化修复 | GitHub Actions |
+| **Jira** | 转换、Sprint 分配 | 功能工作、技术债务清理 | REST API / webhooks |
+| **Slack** | 频道消息、emoji 反应 | 快速修复、调查 | Slack API / bot |
+| **PagerDuty** | Incident 创建 | 诊断脚本、初始分类 | Webhooks |
+| **自定义 webhook** | 任何 HTTP POST | 任何事情 | 直接 HTTP 端点 |
 
 ---
 
-## Guardrails
+## 护栏
 
-Event-driven agents run with less human oversight by design, so guardrails become critical.
+事件驱动的智能体设计上以更少的人工监督运行，所以护栏变得关键。
 
-### Idempotency
+### 幂等性
 
-An agent might process the same event twice (network retry, duplicate webhook). The agent must check if work already exists before starting:
+智能体可能处理同一事件两次（网络重试、重复 webhook）。智能体必须在开始前检查工作是否已存在：
 
 ```bash
-# Check if branch already exists for this card
+# 检查此卡片的分支是否已存在
 if git ls-remote --heads origin "feat/$ISSUE_ID" | grep -q "feat/$ISSUE_ID"; then
     echo "Branch already exists, skipping"
     exit 0
 fi
 ```
 
-### Rate Limiting
+### 速率限制
 
-Don't let a burst of events spawn 50 agents simultaneously. Set hard limits:
+不要让事件突发同时生成 50 个智能体。设置硬限制：
 
-- **Max concurrent agents**: 3-5 for most teams
-- **Cooldown period**: Minimum 30 seconds between agent spawns
-- **Daily budget cap**: Set a maximum token spend per day
+- **最大并发智能体**：大多数团队 3-5 个
+- **冷却期**：智能体生成之间最少 30 秒
+- **每日预算上限**：设置每天最大 token 消费
 
-### Circuit Breaker
+### 断路器
 
-If agents keep failing on a particular type of task, stop trying:
+如果智能体在特定类型任务上持续失败，停止尝试：
 
 ```bash
 FAILURE_COUNT=$(grep -c "FAILED" "/tmp/agent-failures.log" 2>/dev/null || echo 0)
@@ -244,50 +245,50 @@ if [ "$FAILURE_COUNT" -gt 5 ]; then
 fi
 ```
 
-### Human-in-the-Loop Checkpoints
+### 人工介入检查点
 
-Even in fully automated flows, keep humans in the loop at critical points:
+即使在完全自动化流程中，在关键点保持人工介入：
 
-- PR review remains manual (agents create PRs, humans approve them)
-- Database migrations never auto-apply
-- Deployment is a separate, human-triggered step
-- Any card touching auth, billing, or PII requires explicit human approval
-
----
-
-## Anti-Patterns
-
-| Anti-Pattern | Problem | Solution |
-|-------------|---------|----------|
-| **Aggressive polling** | Hammering the API every 5 seconds wastes resources, gets you rate-limited | Use webhooks when available, poll no faster than every 60 seconds |
-| **No circuit breaker** | Agent fails repeatedly on same task, burning tokens indefinitely | Track failures per task, stop after 3 attempts, alert human |
-| **No dead letter queue** | Failed events disappear, nobody knows work was missed | Log failed events to a persistent store for manual review |
-| **Unbounded concurrency** | 20 cards move at once, 20 agents spawn, machine melts | Hard cap on concurrent agents (3-5 is reasonable) |
-| **Vague cards as prompts** | "Fix the thing" produces garbage code | Enforce card quality standards, skip cards without acceptance criteria |
-| **No state persistence** | Script restarts, re-processes everything from scratch | Store processed event IDs in a database, not in-memory |
-| **Skipping PR review** | Agent pushes directly to main | Always go through PR flow, humans review the output |
+- PR 评审保持手动（智能体创建 PR，人类批准）
+- 数据库迁移永远不自动应用
+- 部署是单独的、人工触发的步骤
+- 任何涉及 auth、计费或 PII 的卡片需要明确的人工批准
 
 ---
 
-## Tools & Resources
+## 反模式
 
-### MCP Servers
-
-- **linear-kanban-mcp** (0xikarus on GitHub): Exposes the Linear API for kanban board management directly from Claude Code. Enables reading cards, updating states, and managing labels without leaving the agent context.
-
-### Skills & Platforms
-
-- **skillsllm.com**: Offers a skill that orchestrates the full planning, validation, and execution cycle starting from a Linear card. Handles the translation from card metadata to structured Claude Code prompts.
-
-### Agent Templates
-
-- **Scrum Master Agent** (lobehub.com): Auto-detects whether it is running inside Claude Desktop or Claude Code and adapts its behavior accordingly. Useful as a starting point for context-aware agent design.
+| 反模式 | 问题 | 解决方案 |
+|-------------|---------|---------|
+| **激进轮询** | 每 5 秒敲打 API 浪费资源，被限流 | 尽可能使用 webhook，轮询不快于每 60 秒 |
+| **无断路器** | 智能体在相同任务上重复失败，无限燃烧 token | 按任务跟踪失败，3 次尝试后停止，提醒人工 |
+| **无死信队列** | 失败事件消失，没人知道工作被遗漏 | 将失败事件记录到持久存储供人工审查 |
+| **无界并发** | 20 张卡片同时移动，20 个智能体生成，机器熔化 | 并发硬上限（3-5 个是合理的） |
+| **模糊卡片作为提示词** | "修复那个东西"产生垃圾代码 | 强制卡片质量标准，跳过没有验收标准的卡片 |
+| **无状态持久化** | 脚本重启，从头重新处理一切 | 在数据库而非内存中存储已处理的事件 ID |
+| **跳过 PR 评审** | 智能体直接推送到 main | 始终通过 PR 流程，人类审查输出 |
 
 ---
 
-## See Also
+## 工具与资源
 
-- [agent-teams.md](./agent-teams.md) — Multi-agent parallel coordination
-- [iterative-refinement.md](./iterative-refinement.md) — The core prompt-observe-reprompt loop
-- [plan-driven.md](./plan-driven.md) — Plan before executing
-- [../../examples/agents/](../../examples/agents/) — Ready-to-use agent templates
+### MCP 服务器
+
+- **linear-kanban-mcp**（0xikarus on GitHub）：从 Claude Code 直接暴露 Linear API 用于看板管理。能够在智能体上下文中读取卡片、更新状态和管理标签。
+
+### 技能与平台
+
+- **skillsllm.com**：提供一个技能，协调从 Linear 卡片开始的完整计划、验证和执行循环。处理从卡片元数据到结构化 Claude Code 提示词的转换。
+
+### 智能体模板
+
+- **Scrum Master Agent**（lobehub.com）：自动检测是在 Claude Desktop 还是 Claude Code 中运行，并相应地调整行为。作为上下文感知智能体设计的起点有用。
+
+---
+
+## 另见
+
+- [agent-teams.md](./agent-teams.md) — 多智能体并行协调
+- [iterative-refinement.md](./iterative-refinement.md) — 核心提示-观察-重新提示循环
+- [plan-driven.md](./plan-driven.md) — 执行前先计划
+- [../../examples/agents/](../../examples/agents/) — 可用的智能体模板

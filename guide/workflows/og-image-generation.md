@@ -1,39 +1,46 @@
-# Dynamic OG Image Generation with Astro
+<!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
+---
+title: "Astro 动态 OG 图片生成"
+description: "在构建时自动生成社交预览图片，而不是维护过时的静态 PNG"
+tags: [workflow, astro, og-image, static-generation]
+---
 
-Generate social preview images automatically at build time instead of maintaining stale static PNGs. Every share on Twitter/X, LinkedIn, or Slack will show accurate, up-to-date stats.
+# Astro 动态 OG 图片生成
 
-## Why bother
+在构建时自动生成社交预览图片，而不是维护过时的静态 PNG。每次在 Twitter/X、LinkedIn 或 Slack 上分享都会显示准确、最新的数据。
 
-Static OG images go stale. The day you add your 200th template or hit 1k GitHub stars, your social preview still shows the old numbers. Dynamic generation solves this once and stays accurate forever.
+## 为什么要麻烦
 
-The pattern below uses Satori (Vercel) to render a React-like tree to SVG, then resvg to convert to PNG. It runs at build time in Astro — zero runtime cost, no external service.
+静态 OG 图片会过时。当你添加第 200 个模板或达到 1k GitHub stars 时，你的社交预览仍然显示旧数字。动态生成一劳永逸地解决这个问题，并保持准确。
 
-## Stack
+下面的模式使用 Satori（Vercel）将类似 React 的树渲染为 SVG，然后用 resvg 转换为 PNG。它在 Astro 构建时运行 — 零运行时成本，无外部服务。
 
-| Package | Role |
+## 技术栈
+
+| 包 | 角色 |
 |---------|------|
-| `satori` | Renders JSX-like object tree to SVG |
-| `@resvg/resvg-js` | Converts SVG to PNG (Rust, fast) |
-| `@fontsource/inter` | Local font files (woff1 format required) |
+| `satori` | 将 JSX 类对象树渲染为 SVG |
+| `@resvg/resvg-js` | 将 SVG 转换为 PNG（Rust，快速） |
+| `@fontsource/inter` | 本地字体文件（需要 woff1 格式） |
 
-## Setup
+## 设置
 
 ```bash
 pnpm add satori @resvg/resvg-js @fontsource/inter
 ```
 
-Create the file at `src/pages/og-image.png.ts`. Astro automatically serves it at `/og-image.png`.
+在 `src/pages/og-image.png.ts` 创建文件。Astro 自动在 `/og-image.png` 提供服务。
 
-Reference it from your layout:
+从你的布局引用它：
 
 ```html
 <meta property="og:image" content="/og-image.png" />
 <meta name="twitter:image" content="/og-image.png" />
 ```
 
-See the ready-to-use template: [`examples/scripts/og-image-astro.ts`](../../examples/scripts/og-image-astro.ts)
+见可用的模板：[`examples/scripts/og-image-astro.ts`](../../examples/scripts/og-image-astro.ts)
 
-## The pattern
+## 模式
 
 ```typescript
 import type { APIRoute } from 'astro'
@@ -63,9 +70,9 @@ export const GET: APIRoute = () => {
 }
 ```
 
-## Dynamic stats from content
+## 动态统计数据
 
-Count your content files at build time instead of hardcoding:
+在构建时统计你的内容文件，而不是硬编码：
 
 ```typescript
 function countQuestions(): number {
@@ -81,69 +88,69 @@ function countQuestions(): number {
 }
 ```
 
-Stats you can auto-count:
-- Markdown files in a content directory (questions, articles, docs)
-- YAML entries in a data file
-- Line count of a large document
+可以自动统计的数据：
+- 内容目录中的 Markdown 文件（问题、文章、文档）
+- 数据文件中的 YAML 条目
+- 大文档的行数
 
-Stats to keep hardcoded (update manually):
-- GitHub stars (dynamic, use `1.1k+` as a conservative label)
-- Templates from another repo
-- Performance benchmarks
+保持硬编码的统计数据（手动更新）：
+- GitHub stars（动态，使用 `1.1k+` 作为保守标签）
+- 来自另一个仓库的模板
+- 性能基准
 
-## Gotchas
+## 注意事项
 
-### Font format matters
+### 字体格式重要
 
-Satori requires **woff1** or **TTF**. It will silently fail or throw an error with woff2 or remote CDN URLs that redirect to HTML.
+Satori 需要 **woff1** 或 **TTF**。使用 woff2 或重定向到 HTML 的远程 CDN URL 会静默失败或抛出错误。
 
 ```typescript
-// Correct — local woff1 from @fontsource
+// 正确 — @fontsource 的本地 woff1
 readFileSync('node_modules/@fontsource/inter/files/inter-latin-400-normal.woff')
 
-// Fails — woff2 not supported by resvg
+// 失败 — resvg 不支持 woff2
 readFileSync('node_modules/@fontsource/inter/files/inter-latin-400-normal.woff2')
 
-// Fails — CDN may return HTML (redirects, auth walls)
+// 失败 — CDN 可能返回 HTML（重定向、auth walls）
 await fetch('https://fonts.gstatic.com/s/inter/...')
 ```
 
-### Static files shadow API routes
+### 静态文件遮挡 API 路由
 
-Astro dev server serves static files in `public/` **before** API routes. If you have a `public/og-image.png`, it will always be served instead of your dynamic endpoint.
+Astro dev server 在 API 路由**之前**服务 `public/` 中的静态文件。如果你有 `public/og-image.png`，它将始终被服务而不是你的动态端点。
 
-**Delete it:**
+**删除它：**
 ```bash
 rm public/og-image.png
 ```
 
-Also check the project root and `dist/` — files there can shadow the route too. Diagnose with `curl -I http://localhost:4321/og-image.png`: if the response has a `Last-Modified` header, you are hitting a static file, not the API route.
+还要检查项目根和 `dist/` — 那里的文件也可能遮挡路由。用 `curl -I http://localhost:4321/og-image.png` 诊断：如果响应有 `Last-Modified` 头，你遇到的是静态文件，而非 API 路由。
 
-### Browser cache
+### 浏览器缓存
 
-After removing the static file, do a hard refresh (`Cmd+Shift+R`) or test in a fresh incognito window. The browser may have cached the old PNG aggressively.
+删除静态文件后，进行硬刷新（`Cmd+Shift+R`）或在新的隐身窗口中测试。浏览器可能已经积极缓存了旧 PNG。
 
-### `satori` is synchronous in newer versions
+### 较新版本的 `satori` 是同步的
 
-Some versions of satori return a `Promise<string>`, others return `string`. If you get a `[object Promise]` PNG, add `await`:
+某些版本的 satori 返回 `Promise<string>`，其他返回 `string`。如果你得到 `[object Promise]` PNG，添加 `await`：
 
 ```typescript
 const svg = await satori(tree, options)
 ```
 
-## Testing
+## 测试
 
-**Local preview** — visit directly in the browser:
+**本地预览** — 直接在浏览器中访问：
 ```
 http://localhost:4321/og-image.png
 ```
 
-**Social preview simulation** — paste your prod URL into:
-- [opengraph.xyz](https://www.opengraph.xyz) — generic OG debugger
-- LinkedIn Post Inspector (`linkedin.com/post-inspector/`) — forces cache refresh for LinkedIn
-- Twitter Card Validator (`cards-dev.twitter.com/validator`)
+**社交预览模拟** — 将你的生产 URL 粘贴到：
+- [opengraph.xyz](https://www.opengraph.xyz) — 通用 OG 调试器
+- LinkedIn Post Inspector（`linkedin.com/post-inspector/`）— 强制 LinkedIn 缓存刷新
+- Twitter Card Validator（`cards-dev.twitter.com/validator`）
 
-**CI check** — if you want to catch regressions, you can add a build step that checks the generated PNG file size is above a threshold:
+**CI 检查** — 如果你想捕获回归，可以添加构建步骤检查生成的 PNG 文件大小是否超过阈值：
 
 ```bash
 # In CI after pnpm build
@@ -154,9 +161,9 @@ if [ "$SIZE" -lt 10000 ]; then
 fi
 ```
 
-## Variants
+## 变体
 
-### Personal branding (no stats grid)
+### 个人品牌（无统计网格）
 
 ```typescript
 children: [
@@ -166,7 +173,7 @@ children: [
 ]
 ```
 
-### Project list badges
+### 项目列表徽章
 
 ```typescript
 ['project-a.com', 'project-b.com', 'project-c.com'].map(label => ({
@@ -178,7 +185,7 @@ children: [
 }))
 ```
 
-### Terminal-style badge (for CLI tools)
+### 终端风格徽章（用于 CLI 工具）
 
 ```typescript
 {
@@ -190,8 +197,8 @@ children: [
 }
 ```
 
-## Keeping stats in sync
+## 保持统计数据同步
 
-Maintain a single source of truth. When you update stats in the OG image, update them everywhere (landing page badges, README, etc.) in the same commit.
+维护单一真相来源。当你在 OG 图片中更新统计数据时，在同一提交中更新它们无处不在（landing page 徽章、README 等）。
 
-For projects with multiple landings, create a slash command `/update-stats-image-landings` that walks each repo and prompts you to verify each stat. This prevents drift across sites.
+对于有多个 landing 的项目，创建一个斜杠命令 `/update-stats-image-landings` 遍历每个仓库并提示你验证每个统计数据。这防止站点之间的漂移。

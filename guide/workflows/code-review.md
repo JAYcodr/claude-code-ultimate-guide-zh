@@ -1,158 +1,159 @@
+<!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
 ---
-title: "Code Review (Claude Code feature)"
-description: "Automated multi-agent PR review for Teams and Enterprise — setup, triggers, REVIEW.md configuration, and cost management"
+title: "代码评审（Claude Code 功能）"
+description: "面向团队和企业计划的多智能体 PR 评审自动化 — 设置、触发器、REVIEW.md 配置和成本管理"
 tags: [feature, teams, enterprise, github, code-review]
 ---
 
-# Code Review
+# 代码评审
 
-> **Availability**: Research preview — Teams and Enterprise plans only. Not available on Free/Pro accounts, nor for organizations with Zero Data Retention (ZDR) enabled.
-> **Launched**: March 9, 2026
+> **可用性**：研究预览版 — 仅限团队和企业计划。免费/专业计划不可用，也不适用于启用零数据保留（ZDR）的组织。
+> **发布日期**：2026 年 3 月 9 日
 
-Claude Code's Code Review feature runs a multi-agent review on every GitHub pull request. A fleet of specialized agents examines the diff in the context of the full codebase, each looking for a different class of issue (logic errors, security vulnerabilities, edge cases, regressions), followed by a verification pass that filters false positives.
+Claude Code 的代码评审功能对每个 GitHub Pull Request 运行多智能体评审。一组专用智能体在完整代码库的上下文中检查 diff，每个关注不同类别的问题（逻辑错误、安全漏洞、边缘情况、回归），随后进行验证步骤过滤误报。
 
-Findings are posted as inline PR comments on the specific lines where issues were found, tagged by severity. Reviews don't approve or block PRs, so existing review workflows stay intact.
+发现问题会在找到问题的具体行上以内联 PR 评论形式发布，并标记严重性。评审不会批准或阻止 PR，因此现有的评审工作流保持完整。
 
 ---
 
-## How it works
+## 工作原理
 
-1. Trigger fires (PR opened, push, or manual `@claude review` comment)
-2. Multiple agents analyze the diff and surrounding code in parallel on Anthropic infrastructure
-3. Each agent targets a different class of issue
-4. A verification step checks candidates against actual code behavior to remove false positives
-5. Results are deduplicated, ranked by severity, and posted as inline PR comments
-6. If no issues are found, Claude posts a short confirmation comment
+1. 触发器触发（PR 打开、push 或手动 `@claude review` 评论）
+2. 多个智能体在 Anthropic 基础设施上并行分析 diff 和周围代码
+3. 每个智能体针对不同类别的问题
+4. 验证步骤对照实际代码行为检查候选问题，移除误报
+5. 结果去重，按严重性排序，作为内联 PR 评论发布
+6. 如果没有问题，Claude 发布一条简短确认评论
 
-Reviews complete in **20 minutes on average**, scaling with PR size and complexity.
+评审平均 **20 分钟完成**，规模随 PR 大小和复杂度增加。
 
-### Severity levels
+### 严重性级别
 
-| Marker | Severity | Meaning |
+| 标记 | 严重性 | 含义 |
 |:-------|:---------|:--------|
-| 🔴 | Normal | A bug that should be fixed before merging |
-| 🟡 | Nit | Minor issue, worth fixing but not blocking |
-| 🟣 | Pre-existing | A bug in the codebase not introduced by this PR |
+| 🔴 | Normal | 应该合并前修复的 bug |
+| 🟡 | Nit | 次要问题，值得修复但不阻塞 |
+| 🟣 | Pre-existing | 代码库中非本 PR 引入的 bug |
 
-Each finding includes a collapsible extended reasoning section explaining why Claude flagged the issue and how it verified the problem.
+每个发现都包含一个可折叠的扩展推理部分，解释 Claude 标记问题的原因以及如何验证问题。
 
 ---
 
-## Setup
+## 设置
 
-An admin enables Code Review once for the organization and selects which repositories to include.
+管理员为组织启用一次代码评审，选择要包含的仓库。
 
-### 1. Open admin settings
+### 1. 打开管理员设置
 
-Go to [claude.ai/admin-settings/claude-code](https://claude.ai/admin-settings/claude-code) and find the **Code Review** section. Requires admin access to both your Claude organization and permission to install GitHub Apps in your GitHub organization.
+转到 [claude.ai/admin-settings/claude-code](https://claude.ai/admin-settings/claude-code) 找到 **Code Review** 部分。需要对 Claude 组织和 GitHub 组织都有管理员访问权限，以及在 GitHub 组织安装 GitHub Apps 的权限。
 
-### 2. Click Setup
+### 2. 点击设置
 
-This begins the GitHub App installation flow.
+这开始 GitHub App 安装流程。
 
-### 3. Install the Claude GitHub App
+### 3. 安装 Claude GitHub App
 
-Follow the prompts to install the Claude GitHub App on your GitHub organization. The app requests:
+按照提示在 GitHub 组织上安装 Claude GitHub App。App 请求：
 
-- **Contents**: read and write
-- **Issues**: read and write
-- **Pull requests**: read and write
+- **Contents**：读和写
+- **Issues**：读和写
+- **Pull requests**：读和写
 
-Code Review uses read access to contents and write access to pull requests. This permission set also supports [GitHub Actions](./github-actions.md) if you enable that later.
+代码评审使用读取权限访问 contents，写权限访问 pull requests。此权限集也支持 [GitHub Actions](./github-actions.md)（如果以后启用）。
 
-### 4. Select repositories
+### 4. 选择仓库
 
-Choose which repositories to enable. If a repo is missing, ensure you granted the GitHub App access during installation. You can add more repositories later from the admin settings table.
+选择要启用的仓库。如果仓库缺失，确保在安装过程中授予了 GitHub App 访问权限。以后可以从管理员设置表格添加更多仓库。
 
-### 5. Set review triggers per repo
+### 5. 为每个仓库设置评审触发器
 
-For each repository, choose when reviews run:
+对于每个仓库，选择何时运行评审：
 
-| Trigger | When it runs | Cost profile |
+| 触发器 | 何时运行 | 成本配置 |
 |---------|-------------|--------------|
-| **Once after PR creation** | Once when PR opens or is marked ready | Lowest |
-| **After every push** | On every push to the PR branch | Highest (multiplied by push count) |
-| **Manual** | Only when someone comments `@claude review` | Controlled |
+| **PR 创建后一次** | PR 打开或标记 ready 时一次 | 最低 |
+| **每次 push 后** | PR 分支每次 push | 最高（乘以 push 次数） |
+| **手动** | 仅当有人评论 `@claude review` | 可控 |
 
-After the `@claude review` comment, subsequent pushes to that PR trigger reviews automatically regardless of the configured trigger.
+`@claude review` 评论后，该 PR 的后续 push 会自动触发评审，不管配置的触发器是什么。
 
-**Manual mode** is useful for high-traffic repos where you want to opt specific PRs into review, or only start reviewing when the PR is ready for review.
-
----
-
-## Manual trigger
-
-Comment `@claude review` on any open, non-draft PR to start a review immediately. Requirements:
-
-- Top-level PR comment (not an inline diff comment)
-- `@claude review` at the start of the comment
-- Owner, member, or collaborator access on the repository
-
-If a review is already running, the request queues until the in-progress review completes.
+**手动模式**适用于高流量仓库，在那里你想选择特定的 PR 进行评审，或者只在 PR 准备好评审时才开始评审。
 
 ---
 
-## Configure reviews
+## 手动触发
 
-Two files control what Claude flags. Both are additive on top of the default correctness checks.
+在任何打开的、非草稿的 PR 上评论 `@claude review` 立即开始评审。要求：
+
+- 顶层 PR 评论（不是内联 diff 评论）
+- 评论开头是 `@claude review`
+- 对仓库有 owner、member 或 collaborator 访问权限
+
+如果评审已在运行，请求会排队直到进行中的评审完成。
+
+---
+
+## 配置评审
+
+两个文件控制 Claude 标记什么。两者都在默认正确性检查之上叠加。
 
 ### CLAUDE.md
 
-Claude reads all `CLAUDE.md` files in your directory hierarchy. Newly-introduced violations are flagged as nit-level findings. Bidirectional: if a PR makes a `CLAUDE.md` statement outdated, Claude flags that the docs need updating too.
+Claude 读取目录层次结构中的所有 `CLAUDE.md` 文件。新引入的违规被标记为 nit 级别发现。双向的：如果 PR 使 `CLAUDE.md` 声明过时，Claude 会标记文档也需要更新。
 
-Use `CLAUDE.md` for guidance that also applies to interactive Claude Code sessions.
+用于也适用于交互式 Claude Code 会话的指导。
 
 ### REVIEW.md
 
-Add `REVIEW.md` to your **repository root** for review-only rules. Auto-discovered, no configuration needed.
+在**仓库根目录**添加 `REVIEW.md` 用于仅评审规则。自动发现，无需配置。
 
 ```markdown
-# Code Review Guidelines
+# 代码评审指南
 
-## Always check
-- New API endpoints have corresponding integration tests
-- Database migrations are backward-compatible
-- Error messages don't leak internal details to users
+## 始终检查
+- 新 API 端点有相应的集成测试
+- 数据库迁移向后兼容
+- 错误消息不向用户暴露内部细节
 
-## Style
-- Prefer early returns over nested conditionals
-- Use structured logging, not f-string interpolation in log calls
+## 风格
+- 优先使用 early return 而非嵌套条件
+- 使用结构化日志，而非日志调用中的 f-string 插值
 
-## Skip
-- Generated files under `src/gen/`
-- Formatting-only changes in `*.lock` files
-- Migration files in `db/migrations/`
+## 跳过
+- `src/gen/` 下的生成文件
+- `*.lock` 文件中仅格式更改
+- `db/migrations/` 中的迁移文件
 ```
 
-Use `REVIEW.md` for rules that would clutter `CLAUDE.md` for general sessions (linter conventions, skip lists, team-specific patterns).
+用于会污染 `CLAUDE.md`（对常规会话）的规则（linter 约定、跳过列表、特定团队模式）。
 
 ---
 
-## Pricing
+## 定价
 
-Code Review is billed on token usage, **separately from your plan's included usage** (via [extra usage](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans)).
+代码评审按 token 使用量计费，**与你计划包含的使用量分开**（通过[额外使用量](https://support.claude.com/en/articles/12429409-extra-usage-for-paid-claude-plans)）。
 
-- Average cost: **$15–25 per review**, scaling with PR size, codebase complexity, and the number of issues requiring verification
-- "After every push" multiplies cost by push count
-- To set a monthly spend cap: [claude.ai/admin-settings/usage](https://claude.ai/admin-settings/usage) → configure limit for the "Claude Code Review" service
-- Monitor spend: [claude.ai/analytics/code-review](https://claude.ai/analytics/code-review) (daily PR count, weekly spend, per-repo breakdown)
-
----
-
-## Cross-reference
-
-For manual code review workflows (CLI, no Teams/Enterprise required):
-- [Multi-agent code review workflow](#split-role-sub-agents) — DIY agent teams via CLI
-- [GitHub Actions integration](./github-actions.md) — custom CI/CD automation (self-hosted alternative to this managed service)
-- GitLab CI/CD — self-hosted Claude integration for GitLab pipelines
-- Code Review plugin — on-demand local reviews before pushing (available in the plugin marketplace)
+- 平均成本：**每次评审 $15-25**，随 PR 大小、代码库复杂度和需要验证的问题数量缩放
+- "每次 push 后" 会将成本乘以 push 次数
+- 设置月度消费上限：[claude.ai/admin-settings/usage](https://claude.ai/admin-settings/usage) → 为 "Claude Code Review" 服务配置限制
+- 监控消费：[claude.ai/analytics/code-review](https://claude.ai/analytics/code-review)（每日 PR 数量、每周消费、按仓库细分）
 
 ---
 
-## Known limitations (research preview)
+## 交叉参考
 
-- Teams and Enterprise only — no Free/Pro access
-- Not available for organizations with Zero Data Retention (ZDR) enabled
-- GitHub only for the managed service (GitLab supported via CI/CD integration, not this feature)
-- Full-repo indexing latency on first activation for large repos
-- Anthropic internal stats: ~7.5 issues found per PR >1000 lines, <1% false positive rate — self-reported, not independently verified
+对于手动代码评审工作流（CLI，无需团队/企业计划）：
+- [多智能体代码评审工作流](#split-role-sub-agents) — 通过 CLI 的 DIY 智能体团队
+- [GitHub Actions 集成](./github-actions.md) — 自定义 CI/CD 自动化（相对于此托管服务的自托管替代方案）
+- GitLab CI/CD — GitLab 管道的自托管 Claude 集成
+- 代码评审插件 — 推送前的按需本地评审（可在插件市场获取）
+
+---
+
+## 已知限制（研究预览版）
+
+- 仅限团队和企业 — 免费/专业计划不可用
+- 不适用于启用零数据保留（ZDR）的组织
+- 托管服务仅限 GitHub（GitLab 通过 CI/CD 集成支持，非此功能）
+- 大仓库首次激活时全仓库索引延迟
+- Anthropic 内部统计：>1000 行的 PR 平均发现 ~7.5 个问题，<1% 误报率 — 自行报告，未经独立验证

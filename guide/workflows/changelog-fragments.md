@@ -1,104 +1,112 @@
-# Changelog Fragments: Enforced Per-PR Documentation
+<!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
+---
+title: "变更日志片段：每个 PR 强制文档化"
 
-A 3-layer enforcement pattern that ensures every PR is documented at write time, never at release time.
+description: "三层强制模式，确保每个 PR 在编写时文档化，而不是在发布时"
+tags: [workflow, changelog, automation, ci, git]
+---
+
+# 变更日志片段：每个 PR 强制文档化
+
+三层强制模式，确保每个 PR 在编写时文档化，而不是在发布时。
 
 ---
 
-## The Problem
+## 问题
 
-Single `CHANGELOG.md` files break on active teams. Three open feature branches all touching the same file means merge conflicts on every merge. Someone resolves the conflict, drops a line, and release notes are wrong before they're published.
+单一的 `CHANGELOG.md` 文件在活跃团队中会出问题。三个开放的功能分支都修改同一个文件意味着每次合并都有冲突。有人解决冲突、删掉一行，发布说明在发布前就错了。
 
-The deeper problem is timing. "Document at release time" sounds reasonable until you're staring at PR #840 three weeks after it merged, trying to reconstruct what changed for users. The commit says `fix session handling`. The developer is in a different timezone. Context is gone.
+更深层的问题是时机。"在发布时文档化"听起来合理，直到你在 PR #840 合并三周后盯着它，试图为用户重建变更。提交说 `fix session handling`。开发者在不同 timezone。上下文没了。
 
-Enforcement without CI gates means changelogs become a nag job. Someone has to chase people before every release, under time pressure, filling in blanks from git log.
+没有 CI 门禁的强制执行意味着变更日志变成追着人跑的任务。每次发布前，在时间压力下，有人得追着人从 git log 填补空白。
 
-The solution: one YAML fragment per PR, written while implementing, validated by CI, assembled automatically at release.
+解决方案：每个 PR 一个 YAML 片段，在实现时编写，由 CI 验证，在发布时自动组装。
 
 ---
 
-## The 3-Layer Architecture
+## 三层架构
 
-The system works because enforcement happens at three independent levels. Each layer catches a different failure mode.
+系统之所以有效，是因为强制发生在三个独立层级。每个层级捕获不同的失败模式。
 
-### Layer 1: CLAUDE.md Workflow Rule
+### 第 1 层：CLAUDE.md 工作流规则
 
-The first layer is a rule loaded into Claude Code's context at every session. It encodes the entire fragment workflow so Claude can complete it autonomously when asked to create a PR.
+第一层是在每个会话加载到 Claude Code 上下文的规则。它编码整个片段工作流，以便在要求创建 PR 时 Claude 可以自主完成。
 
 ```markdown
-# git-workflow.md (loaded via CLAUDE.md)
+# git-workflow.md（通过 CLAUDE.md 加载）
 
-## Changelog Fragment — Required Before Every PR
+## 变更日志片段 — 每个 PR 前必填
 
-Before creating a PR, always generate a changelog fragment.
+创建 PR 前，始终生成变更日志片段。
 
-### Steps
+### 步骤
 
-1. **Infer from git diff** — analyze `git diff main...HEAD` to determine:
-   - `type`: feat | fix | perf | refactor | security | docs | chore
-   - `scope`: the functional area affected (auth, sessions, api, etc.)
-   - `title`: one-line user-facing summary (< 80 chars)
+1. **从 git diff 推断** — 分析 `git diff main...HEAD` 确定：
+   - `type`：feat | fix | perf | refactor | security | docs | chore
+   - `scope`：受影响的功能区域（auth、sessions、api 等）
+   - `title`：一行用户面向摘要（< 80 字符）
 
-2. **Create the fragment** — run `pnpm changelog:add` or write directly:
+2. **创建片段** — 运行 `pnpm changelog:add` 或直接写入：
    ```
    changelog/fragments/{PR_NUMBER}-{slug}.yml
    ```
 
-3. **Validate** — run `pnpm changelog:validate changelog/fragments/{file}.yml`
+3. **验证** — 运行 `pnpm changelog:validate changelog/fragments/{file}.yml`
 
-4. **Commit alongside the PR** — include the fragment in the same branch
+4. **与 PR 一起提交** — 将片段包含在同一分支中
 
-### Fragment schema
+### 片段 schema
 
 ```yaml
-pr: 886                    # must match filename prefix
+pr: 886                    # 必须匹配文件名前缀
 type: fix                  # feat|fix|perf|refactor|security|docs|chore
 scope: "visiochat"
-title: "Fix empty chat after SSE race condition"   # < 80 chars
-description: |             # optional — explain user impact, not implementation
+title: "Fix empty chat after SSE race condition"   # < 80 字符
+description: |             # 可选 — 解释用户影响，而非实现
   SSE workplan fires before AI stream completes, causing ChatWrapper
   to mount with 0 messages.
 breaking: false
-migration: false           # set true if PR adds a DB migration
+migration: false           # 如果 PR 添加数据库迁移设为 true
 ```
 
-### Bypass
+### 绕过
 
-Add label `skip-changelog` for PRs with no user impact (CI config, deps updates, release commits).
+对没有用户影响的 PR 添加标签 `skip-changelog`（CI 配置、依赖更新、发布提交）。
 ```
 
-This rule makes Claude Code a participant in enforcement, not just a coding tool. When a developer says "make the PR," Claude infers the fragment content from the diff and creates it before opening the PR.
+这条规则使 Claude Code 成为强制执行的参与者，而不仅仅是一个编码工具。当开发者说"创建 PR"时，Claude 从 diff 推断片段内容并在打开 PR 前创建它。
 
-### Layer 2: UserPromptSubmit Hook (Behavioral Detection)
+### 第 2 层：UserPromptSubmit 钩子（行为检测）
 
-The second layer intercepts intent before it becomes action. When the developer types something that signals PR creation intent, the hook checks whether a changelog fragment was mentioned.
+第二层在实际行动之前拦截意图。当开发者输入表示 PR 创建意图的内容时，钩子检查是否提到了变更日志片段。
 
 ```bash
-# .claude/hooks/smart-suggest.sh (excerpt — Tier 0 enforcement)
+# .claude/hooks/smart-suggest.sh（节选 — 第 0 层强制）
 
-# PR creation intent detected
+# 检测到 PR 创建意图
 if echo "$PROMPT_LC" | grep -qE '(create.*pr|open.*pr|make.*pr|pull.?request|push.*pr)'; then
-    # Fragment not mentioned → redirect to creation step first
+    # 未提到片段 → 先重定向到创建步骤
     if ! echo "$PROMPT_LC" | grep -qE '(changelog|fragment|skip-changelog)'; then
         suggest "pnpm changelog:add" \
             "REQUIRED before merge — creates changelog/fragments/{PR}-{slug}.yml"
     else
-        # Already mentioned → suggest the PR command normally
+        # 已提到 → 正常建议 PR 命令
         suggest "/pr" "PR creation with structured description"
     fi
 fi
 ```
 
-The hook is `UserPromptSubmit`: non-blocking, max one suggestion per prompt, silent on no match. It runs before Claude Code processes the prompt, so the developer sees the reminder inline before Claude starts doing anything.
+钩子是 `UserPromptSubmit`：非阻塞，每个提示最多一个建议，匹配时静默。它在 Claude Code 处理提示之前运行，所以开发者在 Claude 开始做任何事情之前在行内看到提醒。
 
-The conditional logic (`if X without Y`) is the key pattern here. It's not a blanket blocker — it adapts to context. If the developer already mentioned the fragment, they get the normal suggestion. If they didn't, they get the enforcement reminder.
+条件逻辑（`if X without Y`）是关键模式。不是全面阻塞 — 它适应上下文。如果开发者已经提到片段，他们得到正常建议。如果没有，他们得到强制提醒。
 
-**Full hook with 3-tier architecture**: [`examples/hooks/bash/smart-suggest.sh`](../../examples/hooks/bash/smart-suggest.sh)
+**带三层架构的完整钩子**：见 [`examples/hooks/bash/smart-suggest.sh`](../../examples/hooks/bash/smart-suggest.sh)
 
-### Layer 3: CI Enforcement (GitHub Actions)
+### 第 3 层：CI 强制执行（GitHub Actions）
 
-The third layer is the hard gate. Two independent jobs run on every PR targeting the main branch.
+第三层是硬门禁。两个独立作业在每个针对 main 分支的 PR 上运行。
 
-**`check-fragment` job**: checks bypass labels first (closed list), then requires `changelog/fragments/{PR_NUMBER}-*.yml` to exist and pass structural validation.
+**`check-fragment` 作业**：首先检查绕过标签（封闭列表），然后要求 `changelog/fragments/{PR_NUMBER}-*.yml` 存在并通过结构验证。
 
 ```yaml
 - name: Check fragment exists and is valid
@@ -123,29 +131,29 @@ The third layer is the hard gate. Two independent jobs run on every PR targeting
     pnpm tsx changelog/scripts/validate.ts "$FRAGMENT"
 ```
 
-**`check-migration-flag` job** (runs independently, no bypass): detects new SQL migration files with `git diff --name-only --diff-filter=A`. If migrations are present and `migration: false` in the fragment, it fails. This job cannot be bypassed by labels — a `skip-changelog` PR that adds a migration still triggers the check.
+**`check-migration-flag` 作业**（独立运行，无绕过）：用 `git diff --name-only --diff-filter=A` 检测新的 SQL 迁移文件。如果存在迁移而片段中 `migration: false`，则失败。这个作业不能被标签绕过 — 添加了迁移的 `skip-changelog` PR 仍会触发检查。
 
-The two jobs are independent by design. A PR can bypass fragment creation (via label) but still fail the migration check.
+两个作业设计为独立的。PR 可以绕过片段创建（通过标签）但仍会失败迁移检查。
 
 ---
 
-## Fragment Assembly at Release
+## 发布时片段组装
 
-Fragments accumulate in `changelog/fragments/` as PRs merge. At release time, one command assembles them into a versioned CHANGELOG section.
+片段在 PR 合并时积累在 `changelog/fragments/` 中。在发布时，一个命令将它们组装成版本化的 CHANGELOG 部分。
 
 ```bash
 pnpm changelog:assemble --version 1.8.0 [--dry-run]
 ```
 
-What it does:
-1. Reads all `changelog/fragments/*.yml`
-2. Groups by type in fixed order (feat, fix, perf, refactor, security, docs, chore)
-3. Pulls `breaking: true` entries into a dedicated `🔨 Breaking Changes` section
-4. Annotates `migration: true` entries inline with `⚠️ Migration DB.`
-5. Replaces the `## [Next Release]` placeholder in `CHANGELOG.md`
-6. Archives fragments to `changelog/fragments/released/{version}/`
+作用：
+1. 读取所有 `changelog/fragments/*.yml`
+2. 按固定顺序按 type 分组（feat、fix、perf、refactor、security、docs、chore）
+3. 将 `breaking: true` 条目提取到专用的 `🔨 Breaking Changes` 部分
+4. 用 `⚠️ Migration DB.` 内联标注 `migration: true` 条目
+5. 替换 `CHANGELOG.md` 中的 `## [Next Release]` 占位符
+6. 将片段存档到 `changelog/fragments/released/{version}/`
 
-Output:
+输出：
 ```markdown
 ## [1.8.0] - 2026-03-15
 
@@ -162,39 +170,39 @@ Output:
 
 ---
 
-## Why 3 Layers, Not 1
+## 为什么是 3 层，而不是 1 层
 
-Each layer catches a different failure mode:
+每层捕获不同的失败模式：
 
-| Layer | Failure caught | When |
+| 层级 | 捕获的失败 | 何时 |
 |-------|---------------|------|
-| CLAUDE.md rule | Claude forgets the workflow | Every session |
-| UserPromptSubmit hook | Developer types "make the PR" without thinking | Pre-prompt |
-| CI gate | Fragment was skipped or corrupt | Pre-merge |
+| CLAUDE.md 规则 | Claude 忘记工作流 | 每个会话 |
+| UserPromptSubmit 钩子 | 开发者在不考虑时输入"创建 PR" | 预提示 |
+| CI 门禁 | 片段被跳过或损坏 | 预合并 |
 
-A single CI gate catches the issue too late — the developer has to context-switch back after their PR is already open. The hook catches it at intent time. The CLAUDE.md rule means Claude handles it autonomously when given the task.
+单一的 CI 门禁捕获问题太晚 — 开发者必须在 PR 打开后切换回上下文。钩子在意图时捕获。CLAUDE.md 规则意味着 Claude 在被赋予任务时自主处理它。
 
-The layers don't conflict. They reinforce each other. A developer who sees the hook suggestion will run `pnpm changelog:add`. Claude will follow the CLAUDE.md rule and validate the output. CI confirms everything before merge.
-
----
-
-## Adopting This Pattern
-
-The TypeScript scripts (add, validate, assemble, audit) are specific to the Méthode Aristote stack. The 3-layer enforcement pattern is not — it works with any fragment format, any CI system, any assembler.
-
-**Minimum viable setup:**
-
-1. **Define your fragment schema** (YAML, JSON, whatever fits your stack)
-2. **Add a CLAUDE.md rule** encoding the creation workflow so Claude can handle it autonomously
-3. **Add a `UserPromptSubmit` hook** with the `if PR-intent without fragment-mention → suggest` pattern
-4. **Add a CI job** that checks for fragment existence before merge
-
-The hook pattern generalizes to any mandatory workflow step. Substitute "changelog fragment" with "ADR", "migration flag", "test coverage check" — the conditional detection logic is the same.
+各层不冲突。它们相互加强。看到钩子建议的开发者会运行 `pnpm changelog:add`。Claude 会遵循 CLAUDE.md 规则并验证输出。CI 在合并前确认一切。
 
 ---
 
-## Related
+## 采用此模式
 
-- Hook example: [`examples/hooks/bash/smart-suggest.sh`](../../examples/hooks/bash/smart-suggest.sh)
-- Hook documentation: [UserPromptSubmit Hooks](../ultimate-guide.md) (search "UserPromptSubmit")
-- Fragment validator and assembler scripts: available in the Méthode Aristote repository
+TypeScript 脚本（add、validate、assemble、audit）特定于 Méthode Aristote 堆栈。三层强制模式不是 — 它适用于任何片段格式、任何 CI 系统、任何组装器。
+
+**最小可行设置：**
+
+1. **定义你的片段 schema**（YAML、JSON，或任何适合你堆栈的格式）
+2. **添加 CLAUDE.md 规则** 编码创建工作流以便 Claude 可以自主处理
+3. **添加 `UserPromptSubmit` 钩子** 带有 `if PR-intent without fragment-mention → suggest` 模式
+4. **添加 CI 作业** 在合并前检查片段存在
+
+钩子模式泛化到任何必选工作流步骤。将"变更日志片段"替换为"ADR"、"迁移标志"、"测试覆盖率检查" — 条件检测逻辑相同。
+
+---
+
+## 相关
+
+- 钩子示例：[`examples/hooks/bash/smart-suggest.sh`](../../examples/hooks/bash/smart-suggest.sh)
+- 钩子文档：[UserPromptSubmit 钩子](../ultimate-guide.md)（搜索 "UserPromptSubmit"）
+- 片段验证器和组装器脚本：在 Méthode Aristote 仓库可用
