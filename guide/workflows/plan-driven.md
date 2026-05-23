@@ -1,428 +1,429 @@
+<!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
 ---
-title: "Plan-Driven Development"
-description: "Use /plan mode for non-trivial tasks to explore and propose implementation plans"
+title: "使用 Claude Code 进行计划驱动开发"
+description: "使用 /plan 模式探索非平凡任务并提出实现计划"
 tags: [workflow, guide, architecture]
 ---
 
-# Plan-Driven Development
+# 使用 Claude Code 进行计划驱动开发
 
-> **Confidence**: Tier 1 — Based on Claude Code's native /plan mode functionality.
+> **可信度**：第 1 层 — 基于 Claude Code 原生 /plan 模式功能。
 
-Use `/plan` mode for anything non-trivial. Claude explores the codebase (read-only), then proposes an implementation plan for your approval.
+对任何非平凡任务使用 `/plan` 模式。Claude 探索代码库（只读），然后为你提出实现计划供你批准。
 
 ---
 
-## Table of Contents
+## 目录
 
 1. [TL;DR](#tldr)
-2. [The /plan Workflow](#the-plan-workflow)
-3. [When to Use](#when-to-use)
-4. [Plan File Structure](#plan-file-structure)
-5. [Integration with Other Workflows](#integration-with-other-workflows)
-6. [Tips](#tips)
-7. [Advanced: Custom Markdown Plans (Boris Tane Pattern)](#advanced-custom-markdown-plans-boris-tane-pattern)
-8. [See Also](#see-also)
+2. [/plan 工作流](#plan-工作流)
+3. [何时使用](#何时使用)
+4. [计划文件结构](#计划文件结构)
+5. [与其他工作流集成](#与其他工作流集成)
+6. [技巧](#技巧)
+7. [高级：自定义 Markdown 计划（Boris Tane 模式）](#高级自定义-markdown-计划-boris-tane-模式)
+8. [另见](#另见)
 
 ---
 
 ## TL;DR
 
 ```
-1. Enter Plan Mode (Shift+Tab twice) or ask complex question
-2. Claude explores codebase (read-only)
-3. Claude writes plan to .claude/plans/
-4. You review and approve
-5. Claude executes
+1. 进入计划模式（Shift+Tab 两次）或问复杂问题
+2. Claude 探索代码库（只读）
+3. Claude 将计划写入 .claude/plans/
+4. 你审查并批准
+5. Claude 执行
 ```
 
 ---
 
-## The /plan Workflow
+## /plan 工作流
 
-### Step 1: Enter Plan Mode
+### 步骤 1：进入计划模式
 
-Toggle Plan Mode with `Shift+Tab` (press twice to cycle Normal → Auto-Accept → Plan):
+用 `Shift+Tab` 切换计划模式（按两次循环 Normal → Auto-Accept → Plan）：
 ```
-# Press Shift+Tab twice to enter Plan Mode
-# (Plan Mode indicator appears in the UI)
-```
-
-Or ask a complex question that triggers plan mode automatically:
-```
-How should I refactor the authentication system to support OAuth?
+# 按 Shift+Tab 两次进入计划模式
+#（计划模式指示器出现在 UI 中）
 ```
 
-### Step 2: Claude Explores
+或问一个自动触发计划模式的复杂问题：
+```
+我应该如何重构认证系统以支持 OAuth？
+```
 
-In plan mode, Claude:
-- Reads relevant files
-- Searches for patterns
-- Understands existing architecture
-- CANNOT make any changes
+### 步骤 2：Claude 探索
 
-### Step 3: Claude Writes Plan
+在计划模式中，Claude：
+- 读取相关文件
+- 搜索模式
+- 理解现有架构
+- 不能做任何更改
 
-Claude creates a plan file at `.claude/plans/[name].md`:
+### 步骤 3：Claude 编写计划
+
+Claude 在 `.claude/plans/[name].md` 创建计划文件：
 
 ```markdown
-# Plan: Refactor Authentication for OAuth
+# 计划：为 OAuth 重构认证
 
-## Summary
-Add OAuth support while maintaining existing email/password auth.
+## 摘要
+在保持现有邮箱/密码认证的同时添加 OAuth 支持。
 
-## Files to Modify
-- src/auth/providers/index.ts (add OAuth provider)
-- src/auth/middleware.ts (handle OAuth tokens)
-- src/config/auth.ts (OAuth config)
+## 要修改的文件
+- src/auth/providers/index.ts（添加 OAuth 提供者）
+- src/auth/middleware.ts（处理 OAuth 令牌）
+- src/config/auth.ts（OAuth 配置）
 
-## Files to Create
+## 要创建的文件
 - src/auth/providers/oauth.ts
 - src/auth/providers/google.ts
 
-## Implementation Steps
-1. Create OAuth provider interface
-2. Implement Google OAuth provider
-3. Update middleware to detect token type
-4. Add OAuth routes
-5. Update config schema
+## 实现步骤
+1. 创建 OAuth 提供者接口
+2. 实现 Google OAuth 提供者
+3. 更新中间件检测令牌类型
+4. 添加 OAuth 路由
+5. 更新配置 schema
 
-## Risks
-- Breaking existing sessions during migration
-- Token format differences between providers
+## 风险
+- 迁移期间破坏现有会话
+- 提供者之间的令牌格式差异
 ```
 
-### Step 4: You Review
+### 步骤 4：你审查
 
-Review the plan for:
-- Completeness (all requirements covered)
-- Correctness (right approach for your codebase)
-- Scope (not over-engineering)
+审查计划：
+- 完整性（所有需求已覆盖）
+- 正确性（适合你代码库的方法）
+- 范围（没有过度工程）
 
-### Step 5: Approve and Execute
+### 步骤 5：批准并执行
 
 ```
-Looks good. Proceed with the plan.
+看起来不错。按计划执行。
 ```
 
-Or request changes:
+或请求更改：
 ```
-Modify the plan: also add support for GitHub OAuth, not just Google.
+修改计划：也添加 GitHub OAuth 支持，而不仅仅是 Google。
 ```
 
 ---
 
-## When to Use
+## 何时使用
 
-### Use Plan Mode
+### 使用计划模式
 
-| Scenario | Why |
-|----------|-----|
-| Multi-file changes | See all affected files upfront |
-| Architecture changes | Validate approach before coding |
-| New features | Ensure complete implementation |
-| Unfamiliar codebase | Let Claude explore first |
-| Risky operations | Review before execution |
+| 场景 | 为什么 |
+|----------|---------|
+| 多文件变更 | 预先查看所有受影响文件 |
+| 架构变更 | 编码前验证方法 |
+| 新功能 | 确保完整实现 |
+| 陌生代码库 | 让 Claude 先探索 |
+| 风险操作 | 执行前审查 |
 
-### Skip Plan Mode
+### 跳过计划模式
 
-| Scenario | Why |
-|----------|-----|
-| Single-line fixes | Obvious, low risk |
-| Typo corrections | No planning needed |
-| Simple questions | Exploration, not implementation |
-| Adding comments | Trivial change |
+| 场景 | 为什么 |
+|----------|---------|
+| 单行修复 | 显而易见，低风险 |
+| 拼写修正 | 无需计划 |
+| 简单问题 | 探索，而非实现 |
+| 添加注释 | 微小变更 |
 
 ---
 
-## Plan File Structure
+## 计划文件结构
 
-Plans are stored in `.claude/plans/` with auto-generated names.
+计划以自动生成的名称存储在 `.claude/plans/` 中。
 
-### Typical Plan Sections
+### 典型计划部分
 
 ```markdown
-# Plan: [Title]
+# 计划：[标题]
 
-## Summary
-[1-2 sentence overview]
+## 摘要
+[1-2 句概述]
 
-## Context
-[Why this change is needed]
+## 上下文
+[为什么需要这个变更]
 
-## Files to Modify
-[List of existing files that will change]
+## 要修改的文件
+[将变更的现有文件列表]
 
-## Files to Create
-[List of new files]
+## 要创建的文件
+[新文件列表]
 
-## Files to Delete
-[List of files to remove, if any]
+## 要删除的文件
+[要删除的文件列表（如果有）]
 
-## Implementation Steps
-[Ordered list of steps]
+## 实现步骤
+[有序步骤列表]
 
-## Testing Strategy
-[How to verify the changes]
+## 测试策略
+[如何验证变更]
 
-## Risks & Mitigations
-[What could go wrong and how to handle it]
+## 风险和缓解措施
+[可能出错的事情及如何处理]
 
-## Open Questions
-[Things to clarify before proceeding]
+## 未解决的问题
+[继续前要澄清的事情]
 ```
 
 ---
 
-## Integration with Other Workflows
+## 与其他工作流集成
 
-### Plan + TDD
-
-```
-# Enter Plan Mode (Shift+Tab twice), then:
-
-I need to implement a rate limiter.
-Plan the test cases first, then the implementation.
-```
-
-Claude plans both tests and implementation in proper TDD order.
-
-### Plan + Spec-First
+### 计划 + TDD
 
 ```
-# Enter Plan Mode (Shift+Tab twice), then:
+# 进入计划模式（Shift+Tab 两次），然后：
 
-Review the Payment Processing spec in CLAUDE.md.
-Create an implementation plan that satisfies all acceptance criteria.
+我需要实现一个速率限制器。
+先计划测试用例，然后是实现。
 ```
 
-### Plan + Task Tool
+Claude 以正确的 TDD 顺序计划测试和实现。
 
-After plan approval, Claude can break down into tasks:
+### 计划 + 规范优先
 
 ```
-Approved. Create tasks from this plan and start implementing.
+# 进入计划模式（Shift+Tab 两次），然后：
+
+审查 CLAUDE.md 中的支付处理规范。
+创建一个满足所有验收标准的实现计划。
+```
+
+### 计划 + 任务工具
+
+批准后，Claude 可以分解为任务：
+
+```
+批准。从这个计划创建任务并开始实现。
 ```
 
 ---
 
-## Tips
+## 技巧
 
-### Be Specific About Scope
-
-```
-# Too vague (after entering Plan Mode via Shift+Tab twice)
-Improve the API
-
-# Better
-Add pagination to the /users endpoint with cursor-based navigation.
-Maintain backwards compatibility with existing clients.
-```
-
-### Request Plan Modifications
+### 明确范围
 
 ```
-The plan looks good but:
-- Add error handling for network failures
-- Skip the caching optimization for now
-- Include rollback procedure
+# 太模糊（通过 Shift+Tab 两次进入计划模式后）
+改进 API
+
+# 更好
+在 /users 端点添加游标导航分页。
+保持与现有客户端的向后兼容性。
 ```
 
-### Use for Architecture Decisions
+### 请求计划修改
 
 ```
-# Enter Plan Mode (Shift+Tab twice), then:
+计划看起来不错，但：
+- 为网络失败添加错误处理
+- 暂时跳过缓存优化
+- 包含回滚程序
+```
 
-I'm considering two approaches for state management:
+### 用于架构决策
+
+```
+# 进入计划模式（Shift+Tab 两次），然后：
+
+我正在考虑两种状态管理方法：
 A) Redux Toolkit
 B) Zustand
 
-Explore the codebase and recommend which fits better.
+探索代码库并推荐哪种更适合。
 ```
 
-### Save Plans for Documentation
+### 保存计划用于文档
 
-Plans in `.claude/plans/` serve as decision documentation:
-- Why certain approaches were chosen
-- What files were expected to change
-- Implementation order rationale
+`.claude/plans/` 中的计划作为决策文档：
+- 为什么选择某些方法
+- 预期变更哪些文件
+- 实现顺序原理
 
 ---
 
-## Advanced: Custom Markdown Plans (Boris Tane Pattern)
+## 高级：自定义 Markdown 计划（Boris Tane 模式）
 
-> **Source**: Boris Tane, Engineering Lead @ Cloudflare — ["How I use Claude Code"](https://boristane.com/blog/how-i-use-claude-code/) (Feb 2026). 9 months of production usage.
-> **Confidence**: Tier 2 — Practitioner-validated pattern, not official Anthropic documentation.
+> **来源**：Boris Tane，Cloudflare 工程主管 — ["How I use Claude Code"](https://boristane.com/blog/how-i-use-claude-code/)（2026 年 2 月）。9 个月生产使用。
+> **可信度**：第 2 层 — 从业者验证模式，非官方 Anthropic 文档。
 
-When Plan Mode isn't enough, iterative human/agent planning before any code is written.
+当计划模式不够用时，在写任何代码之前进行迭代式人/代理计划。
 
-### Why Custom Plans Over /plan
+### 为什么自定义计划优于 /plan
 
-| Factor | Plan Mode (native) | Custom .md plan |
+| 因素 | 计划模式（原生）| 自定义 .md 计划 |
 |--------|----------------|-----------------|
-| **Persistence** | Lost on context compaction | Survives compaction, shareable |
-| **Review surface** | Chat-based, linear | Structured file, diffs |
-| **Iteration** | Back-and-forth in conversation | Annotate file, re-run |
-| **Shared state** | Per-session | "Shared mutable state" between human and agent |
-| **Best for** | Standard features, <30 min tasks | Complex features, architectural decisions |
+| **持久性** | 上下文压缩时丢失 | 存活，可共享 |
+| **审查面** | 基于聊天，线性 | 结构化文件，diff |
+| **迭代** | 对话中来回 | 注释文件，重新运行 |
+| **共享状态** | 每个会话 | "共享可变状态"在人/代理之间 |
+| **最适合** | 标准功能，<30 分钟任务 | 复杂功能，架构决策 |
 
-**Decision rule**: Use Plan Mode (Shift+Tab twice) for known scope. Use custom `.md` plans when you expect misunderstandings or want explicit sign-off on approach before a single line of code.
+**决策规则**：已知范围使用计划模式（Shift+Tab 两次）。当期望误解或想在任何代码行之前明确批准方法时使用自定义 `.md` 计划。
 
 ---
 
-### The Three-Phase Workflow
+### 三阶段工作流
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│  Phase 1: RESEARCH                                              │
-│  → Emphatic prompt → research.md (written, not verbal)          │
+│  阶段 1: 研究                                              │
+│  → 强调提示 → research.md（写入，而非口头）                  │
 ├─────────────────────────────────────────────────────────────────┤
-│  Phase 2: PLANNING (Annotation Cycle)                           │
-│  → plan.md draft → human annotates → agent updates → repeat    │
-│  → Exit: plan approved, no open questions                       │
+│  阶段 2: 计划（注释循环）                                    │
+│  → plan.md 草稿 → 人类注释 → 代理更新 → 重复               │
+│  → 退出：计划批准，无开放问题                                │
 ├─────────────────────────────────────────────────────────────────┤
-│  Phase 3: IMPLEMENTATION                                        │
-│  → Mechanical execution, decisions already made                 │
+│  阶段 3: 实现                                              │
+│  → 机械执行，决策已做出                                      │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-### Phase 1: Emphatic Research
+### 阶段 1：强调研究
 
-Claude skims without strong signal. Use emphatic language to force depth:
+Claude 没有强信号会浏览。使用强调语言强制深度：
 
 ```
-Research the authentication system in this codebase deeply.
-Understand the intricacies of how sessions are managed, in great detail.
-Cover edge cases, existing patterns, and any non-obvious dependencies.
+深入研究这个代码库中的认证系统。
+非常详细地理解会话是如何管理的。
+涵盖边缘情况、现有模式和任何非显而易见的依赖。
 
-Write your findings to research.md — do not implement anything.
+将你的发现写入 research.md — 不要实现任何东西。
 ```
 
-**Why it works**: "deeply", "in great detail", "intricacies" shift Claude from surface scan to thorough investigation. Output must be written to a file — verbal summaries disappear on context compaction.
+**为什么有效**："深入"、"非常详细"、"复杂性"将 Claude 从表面扫描转向深入调查。输出必须写入文件——口头摘要在上下文压缩时消失。
 
-**Research.md should include**:
-- Existing patterns and conventions
-- File paths and key functions
-- Non-obvious dependencies
-- Constraints and risks identified
+**research.md 应该包括**：
+- 现有模式和约定
+- 文件路径和关键函数
+- 非显而易见的依赖
+- 识别的约束和风险
 
 ---
 
-### Phase 2: The Annotation Cycle
+### 阶段 2：注释循环
 
-The core of the Boris Tane pattern. Iterate on `plan.md` until ready, **before any implementation**.
+Boris Tane 模式的核心。在准备就绪之前迭代 `plan.md`，**在实现之前**。
 
 ```
 ┌──────────────────────────────────────────────────────────────┐
-│                    ANNOTATION CYCLE                           │
+│                    注释循环                                      │
 │                                                              │
-│  Human prompt ──→ Agent writes plan.md                       │
-│       ↑                    ↓                                 │
-│  Annotate plan    Human reviews plan.md                      │
-│  (add comments,          ↓                                   │
-│   ask questions,   Issues found?                             │
-│   flag trade-offs)       ├─ Yes → Annotate → loop           │
-│                          └─ No  → Approved → Phase 3        │
+│  人类提示 ──→ 代理写 plan.md                                │
+│       ↑                    ↓                                    │
+│  注释计划    人类审查 plan.md                                │
+│  （添加评论，        ↓                                        │
+│   问问题，    发现问题？                                      │
+│   标记权衡）        ├─ 是 → 注释 → 循环                      │
+│                      └─ 否 → 批准 → 阶段 3                   │
 │                                                              │
-│  Typical: 1-6 iterations before approval                     │
+│  典型：批准前 1-6 次迭代                                      │
 └──────────────────────────────────────────────────────────────┘
 ```
 
-**Guard prompt** — always include this to prevent premature implementation:
+**保护提示** — 始终包含以防止过早实现：
 
 ```
-Based on research.md, write a plan for implementing [feature].
+基于 research.md，写一个实现 [功能] 的计划。
 
-Include: approach, affected file paths, code snippets for key decisions,
-trade-offs considered, and open questions.
+包括：方法、受影响的文件路径、关键决策的代码片段、
+权衡的考虑和开放问题。
 
-Write to plan.md. Do NOT implement anything yet.
+写入 plan.md。还不要实现任何东西。
 ```
 
-**What plan.md should contain**:
+**plan.md 应该包含**：
 
 ```markdown
-# Plan: [Feature Name]
+# 计划：[功能名称]
 
-## Approach
-[Strategy and rationale]
+## 方法
+[策略和原理]
 
-## Files Affected
-- path/to/file.ts — what changes and why
-- path/to/other.ts — what changes and why
+## 受影响的文件
+- path/to/file.ts — 什么变更及原因
+- path/to/other.ts — 什么变更及原因
 
-## Key Implementation Details
-[Code snippets for non-obvious parts — not the full implementation]
+## 关键实现细节
+[非显而易见部分的代码片段 — 不是完整实现]
 
-## Trade-offs
-- Option A vs B: chose A because X
-- Considered but rejected: Y (reason)
+## 权衡
+- 选项 A vs B：选择 A 因为 X
+- 考虑但拒绝：Y（原因）
 
-## Open Questions
-- [ ] Should we handle edge case Z?
-- [ ] Does this affect the mobile client?
+## 开放问题
+- [ ] 我们应该处理边缘情况 Z 吗？
+- [ ] 这会影响移动客户端吗？
 ```
 
-**Annotation example**:
+**注释示例**：
 
 ```markdown
-## Approach
-Use JWT tokens stored in httpOnly cookies.
-<!-- Human annotation: ✓ Agreed. But also consider refresh token rotation -->
+## 方法
+使用存储在 httpOnly cookie 中的 JWT 令牌。
+<!-- 人类注释：✓ 同意。但也考虑刷新令牌轮换 -->
 
-## Open Questions
-- [ ] Should we handle token expiry in middleware?
-<!-- Human annotation: Yes, centralize this — don't leave it to each route -->
+## 开放问题
+- [ ] 我们应该在中间件中处理令牌过期吗？
+<!-- 人类注释：是的，集中化 — 不要留给每个路由 -->
 ```
 
-**Exit criteria** — plan is ready when:
-- No open questions remain
-- Trade-offs are documented and agreed
-- File paths are specific (not "some auth file")
-- Key snippets show the approach, not just describe it
+**退出标准** — 计划就绪当：
+- 没有剩余的开放问题
+- 权衡已记录并同意
+- 文件路径具体（不是"某个 auth 文件"）
+- 关键片段显示方法，而不只描述它
 
-> "The markdown file acts as shared mutable state between you and the agent." — Boris Tane
+> "Markdown 文件作为你和代理之间的共享可变状态。" — Boris Tane
 
 ---
 
-### Phase 3: Mechanical Implementation
+### 阶段 3：机械实现
 
-Once the plan is approved, implementation becomes execution — no creative decisions left.
+一旦计划批准，实现变成执行 — 没有剩余的创意决策。
 
 ```
-Implement everything in plan.md.
-Work through each item sequentially.
-Mark tasks as completed as you go with [x].
-Do not stop between tasks to ask for confirmation — keep going until done.
+实现 plan.md 中的所有内容。
+按顺序处理每个项目。
+用 [x] 标记完成的任务。
+不要在任务之间停下来等待确认 — 继续直到完成。
 ```
 
-**Feedback during implementation**:
-- Keep it terse: short phrases or screenshots, not paragraphs
-- Decisions are already made — redirect scope changes back to plan.md
-- If something unexpected comes up: pause, update plan.md, continue
+**实现期间的反馈**：
+- 保持简洁：短语或截图，而非段落
+- 决策已做出 — 将范围变更重定向回 plan.md
+- 如果出现意外情况：暂停，更新 plan.md，继续
 
-**Mindset shift**: Phase 3 is mechanical. All thinking happened in Phase 2.
+**心态转变**：阶段 3 是机械的。所有思考都发生在阶段 2。
 
 ---
 
-### Complementary Techniques
+### 补充技术
 
-| Technique | What | When |
+| 技术 | 什么 | 何时 |
 |-----------|------|------|
-| **Cherry-picking** | Implement subset of plan.md | Plan too large, ship incrementally |
-| **Scope trimming** | Remove items from plan before implementing | Reduce risk, focus on core |
-| **Reference-based guidance** | Point to existing code: "do it like auth.ts" | Enforce consistency |
-| **Revert & re-scope** | `git revert` + restart with narrower plan | Plan went wrong, reset cleanly |
+| **樱桃采摘** | 实现 plan.md 的子集 | 计划太大，增量发布 |
+| **范围修剪** | 实现前从计划中移除项目 | 降低风险，专注核心 |
+| **基于参考的指导** | 指向现有代码："像 auth.ts 那样做" | 强制一致性 |
+| **回滚和重新范围** | `git revert` + 用更窄计划重新开始 | 计划出错，干净重置 |
 
 ---
 
-## See Also
+## 另见
 
-- [exploration-workflow.md](./exploration-workflow.md) — Explore alternatives before planning
-- [../ultimate-guide.md](../ultimate-guide.md) — Section 2.3 Plan Mode
-- [tdd-with-claude.md](./tdd-with-claude.md) — Combine with TDD
-- [spec-first.md](./spec-first.md) — Combine with Spec-First
-- [iterative-refinement.md](./iterative-refinement.md) — Post-plan iteration
-- [task-management.md](./task-management.md) — Track plan execution across sessions with Tasks API
-- [dual-instance-planning.md](./dual-instance-planning.md) — Advanced: Use two Claude instances (planner + implementer) for quality-focused workflows
+- [exploration-workflow.md](./exploration-workflow.md) — 计划前探索替代方案
+- [../ultimate-guide.md](../ultimate-guide.md) — 第 2.3 节 计划模式
+- [tdd-with-claude.md](./tdd-with-claude.md) — 与 TDD 结合
+- [spec-first.md](./spec-first.md) — 与规范优先结合
+- [iterative-refinement.md](./iterative-refinement.md) — 计划后迭代
+- [task-management.md](./task-management.md) — 使用 Tasks API 跨会话跟踪计划执行
+- [dual-instance-planning.md](./dual-instance-planning.md) — 高级：使用两个 Claude 实例（计划者 + 实现者）进行质量聚焦工作流

@@ -1,38 +1,39 @@
+<!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
 ---
-title: "GitHub Actions Workflows with Claude Code"
-description: "Production-ready patterns for automating PR reviews, issue triage, and quality gates with claude-code-action"
+title: "GitHub Actions 工作流与 Claude Code"
+description: "使用 claude-code-action 自动化 PR 评审、问题分类和质量门禁的生产就绪模式"
 tags: [workflow, ci-cd, github-actions, automation]
 ---
 
-# GitHub Actions Workflows with Claude Code
+# GitHub Actions 工作流与 Claude Code
 
-> **Confidence**: Tier 1 — Official Anthropic action (`anthropics/claude-code-action`, 6.2k stars, v1.0).
+> **可信度**：第 1 层 — 官方 Anthropic action（`anthropics/claude-code-action`，6.2k stars，v1.0）。
 
-Automate code reviews, issue triage, and quality gates by connecting Claude directly to your GitHub workflow. Two trigger models: `@claude` mentions (human-initiated) and scheduled/event automations (fully autonomous).
+通过将 Claude 直接连接到你的 GitHub 工作流来自动化代码评审、问题分类和质量门禁。两种触发模式：`@claude` 提及（人工发起）和预定/事件自动化（完全自主）。
 
 ---
 
-## Table of Contents
+## 目录
 
 1. [TL;DR](#tldr)
-2. [Two Models](#two-models)
-3. [Setup](#setup)
-4. [Pattern 1: PR Code Review on @claude Mention](#pattern-1-pr-code-review-on-claude-mention)
-5. [Pattern 2: Automatic PR Review on Push](#pattern-2-automatic-pr-review-on-push)
-6. [Pattern 3: Issue Triage and Labeling](#pattern-3-issue-triage-and-labeling)
-7. [Pattern 4: Security-Focused Review](#pattern-4-security-focused-review)
-8. [Pattern 5: Scheduled Repo Maintenance](#pattern-5-scheduled-repo-maintenance)
-9. [Authentication Alternatives](#authentication-alternatives)
-10. [Cost Control](#cost-control)
-11. [Security Checklist](#security-checklist)
-12. [See Also](#see-also)
+2. [两种模式](#两种模式)
+3. [设置](#设置)
+4. [模式 1：@claude 提及的 PR 代码评审](#模式-1claude-提及的-pr-代码评审)
+5. [模式 2：Push 时自动 PR 评审](#模式-2push-时自动-pr-评审)
+6. [模式 3：问题分类和标签](#模式-3问题分类和标签)
+7. [模式 4：安全聚焦评审](#模式-4安全聚焦评审)
+8. [模式 5：预定仓库维护](#模式-5预定仓库维护)
+9. [认证替代方案](#认证替代方案)
+10. [成本控制](#成本控制)
+11. [安全检查清单](#安全检查清单)
+12. [另见](#另见)
 
 ---
 
 ## TL;DR
 
 ```yaml
-# Minimal working example — paste into .github/workflows/claude.yml
+# 最小工作示例 — 粘贴到 .github/workflows/claude.yml
 name: Claude Code Review
 on:
   issue_comment:
@@ -52,44 +53,44 @@ jobs:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
 ```
 
-Comment `@claude review this PR` on any PR → Claude reads the diff and posts a review.
+在任意 PR 上评论 `@claude review this PR` → Claude 读取 diff 并发布评审。
 
 ---
 
-## Two Models
+## 两种模式
 
-| Model | Trigger | Use case |
-|-------|---------|----------|
-| **Interactive** | `@claude` mention in PR/issue comment | On-demand reviews, questions, fixes |
-| **Automated** | Push, PR open, schedule, label | Continuous quality gates, triage |
+| 模式 | 触发器 | 用例 |
+|-------|---------|------|
+| **交互式** | PR/issue 评论中的 `@claude` 提及 | 按需评审、问题、修复 |
+| **自动化** | Push、PR 打开、定时、标签 | 持续质量门禁、分类 |
 
-Both use the same action — the difference is the `on:` block and whether you include an `if:` condition.
+两者使用相同的 action — 区别在于 `on:` 块以及是否包含 `if:` 条件。
 
 ---
 
-## Setup
+## 设置
 
-### Quickstart (30 seconds)
+### 快速开始（30 秒）
 
-In your Claude Code terminal, inside any project connected to a GitHub repo:
+在你的 Claude Code 终端中，在任何连接到 GitHub 仓库的项目内：
 
 ```
 /install-github-app
 ```
 
-This guides you through creating the GitHub App, adding `ANTHROPIC_API_KEY` to your repo secrets, and generating the base `claude.yml` workflow.
+这指导你创建 GitHub App、将 `ANTHROPIC_API_KEY` 添加到仓库 secrets，并生成基础 `claude.yml` 工作流。
 
-### Manual Setup
+### 手动设置
 
-1. Add `ANTHROPIC_API_KEY` to your GitHub repository secrets
-2. Create `.github/workflows/claude.yml` (see patterns below)
-3. Grant the workflow permissions: `contents: write`, `pull-requests: write`, `issues: write`
+1. 将 `ANTHROPIC_API_KEY` 添加到你的 GitHub 仓库 secrets
+2. 创建 `.github/workflows/claude.yml`（见下面的模式）
+3. 授予工作流权限：`contents: write`、`pull-requests: write`、`issues: write`
 
 ---
 
-## Pattern 1: PR Code Review on @claude Mention
+## 模式 1：@claude 提及的 PR 代码评审
 
-Human-initiated. A developer comments `@claude review this PR` and Claude responds inline.
+人工发起。开发者评论 `@claude review this PR`，Claude 在行内响应。
 
 ```yaml
 # .github/workflows/claude-review.yml
@@ -118,16 +119,16 @@ jobs:
             GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
 ```
 
-**Usage examples:**
-- `@claude review this PR` — full diff analysis with suggestions
-- `@claude is this change backwards compatible?` — targeted question
-- `@claude fix the failing test in src/auth.test.ts` — Claude opens a follow-up PR with the fix
+**使用示例：**
+- `@claude review this PR` — 完整 diff 分析带建议
+- `@claude is this change backwards compatible?` — 针对性问题
+- `@claude fix the failing test in src/auth.test.ts` — Claude 打开带有修复的跟进 PR
 
 ---
 
-## Pattern 2: Automatic PR Review on Push
+## 模式 2：Push 时自动 PR 评审
 
-Every PR gets a review the moment it opens or updates. No mention required.
+每个 PR 在打开或更新时立即获得评审。无需提及。
 
 ```yaml
 # .github/workflows/claude-auto-review.yml
@@ -135,7 +136,7 @@ name: Claude Auto PR Review
 on:
   pull_request:
     types: [opened, synchronize]
-    # Optional: only trigger on specific paths
+    # 可选：仅在特定路径触发
     # paths:
     #   - 'src/**'
     #   - '!**/*.md'
@@ -170,13 +171,13 @@ jobs:
             Keep it under 400 words. Be direct.
 ```
 
-**Tip**: Add `paths:` to avoid triggering on doc-only PRs, or `if: github.event.pull_request.draft == false` to skip drafts.
+**提示**：添加 `paths:` 以避免在仅文档 PR 上触发，或 `if: github.event.pull_request.draft == false` 跳过草稿。
 
 ---
 
-## Pattern 3: Issue Triage and Labeling
+## 模式 3：问题分类和标签
 
-Claude reads new issues, assigns labels, and posts a structured triage comment.
+Claude 读取新问题、分配标签并发布结构化分类评论。
 
 ```yaml
 # .github/workflows/claude-triage.yml
@@ -210,9 +211,9 @@ jobs:
 
 ---
 
-## Pattern 4: Security-Focused Review
+## 模式 4：安全聚焦评审
 
-Runs specifically for PRs touching sensitive paths (auth, payments, config).
+专门针对触摸敏感路径（auth、payments、config）的 PR 运行。
 
 ```yaml
 # .github/workflows/claude-security.yml
@@ -254,17 +255,17 @@ jobs:
 
 ---
 
-## Pattern 5: Scheduled Repo Maintenance
+## 模式 5：预定仓库维护
 
-Weekly health check — runs without any human trigger.
+每周健康检查 — 无需任何人工触发运行。
 
 ```yaml
 # .github/workflows/claude-maintenance.yml
 name: Weekly Repo Health Check
 on:
   schedule:
-    - cron: '0 9 * * 1'  # Every Monday at 9am UTC
-  workflow_dispatch:       # Also allows manual trigger
+    - cron: '0 9 * * 1'  # 每周一 UTC 9am
+  workflow_dispatch:       # 也允许手动触发
 
 jobs:
   maintenance:
@@ -292,11 +293,11 @@ jobs:
 
 ---
 
-## Authentication Alternatives
+## 认证替代方案
 
-The examples above use `ANTHROPIC_API_KEY` directly. For teams using cloud providers:
+上述示例直接使用 `ANTHROPIC_API_KEY`。对于使用云提供商的团队：
 
-**Amazon Bedrock:**
+**Amazon Bedrock：**
 ```yaml
 - uses: anthropics/claude-code-action@v1
   with:
@@ -308,7 +309,7 @@ The examples above use `ANTHROPIC_API_KEY` directly. For teams using cloud provi
     ANTHROPIC_MODEL: 'anthropic.claude-3-5-sonnet-20241022-v2:0'
 ```
 
-**Google Vertex AI:**
+**Google Vertex AI：**
 ```yaml
 - uses: anthropics/claude-code-action@v1
   with:
@@ -319,40 +320,40 @@ The examples above use `ANTHROPIC_API_KEY` directly. For teams using cloud provi
     ANTHROPIC_MODEL: 'claude-3-5-sonnet-v2@20241022'
 ```
 
-Cloud providers benefit from data residency compliance and can leverage existing IAM policies instead of managing a separate API key.
+云提供商受益于数据驻留合规性，可以利用现有 IAM 策略而不是管理单独的 API 密钥。
 
 ---
 
-## Cost Control
+## 成本控制
 
-Automated workflows run without a human in the loop — set explicit limits.
+自动化工作流在无人工介入的情况下运行 — 设置明确限制。
 
 ```yaml
 - uses: anthropics/claude-code-action@v1
   with:
     anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
-    # Cap spend per workflow run
+    # 限制每次工作流运行的消费
     claude_args: '--max-budget-usd 0.50'
-    # Use Haiku for triage, Sonnet for reviews — don't default to Opus
+    # 分类用 Haiku，评审用 Sonnet — 不要默认用 Opus
     prompt: |
       ...
 ```
 
-**Budget guidance by pattern:**
+**按模式的预算指导：**
 
-| Pattern | Model | Approx. cost / run |
+| 模式 | 模型 | 约每次成本 |
 |---------|-------|--------------------|
-| PR review (medium PR) | Sonnet | $0.05–0.15 |
-| Issue triage | Haiku | $0.01–0.03 |
-| Security review (large PR) | Sonnet | $0.10–0.25 |
-| Scheduled maintenance | Sonnet | $0.05–0.20 |
+| PR 评审（中等 PR）| Sonnet | $0.05–0.15 |
+| 问题分类 | Haiku | $0.01–0.03 |
+| 安全评审（大 PR）| Sonnet | $0.10–0.25 |
+| 预定维护 | Sonnet | $0.05–0.20 |
 
-Monitor actual spend with `ccusage` or the Anthropic Console usage dashboard.
+用 `ccusage` 或 Anthropic Console 使用仪表板监控实际消费。
 
-**Prevent runaway costs:**
-- Use `paths:` filters to avoid triggering on irrelevant changes
-- Add `if: github.event.pull_request.draft == false` to skip draft PRs
-- Set `concurrency:` to prevent parallel runs on the same PR
+**防止成本失控：**
+- 使用 `paths:` 过滤器避免在不相关的变更上触发
+- 添加 `if: github.event.pull_request.draft == false` 跳过草稿 PR
+- 设置 `concurrency:` 防止在同一 PR 上并行运行
 
 ```yaml
 jobs:
@@ -364,30 +365,30 @@ jobs:
 
 ---
 
-## Security Checklist
+## 安全检查清单
 
-Before deploying to a team repo:
+部署到团队仓库前：
 
-- [ ] `ANTHROPIC_API_KEY` stored as a GitHub secret, never in workflow YAML
-- [ ] Workflow permissions are minimal — use `contents: read` unless writes are required
-- [ ] For public repos: add `if: github.event.pull_request.head.repo.full_name == github.repository` to prevent fork PRs from triggering API calls
-- [ ] Review what the workflow posts publicly — Claude's comments are visible to all contributors
-- [ ] Use `pull_request_target` with caution — it runs with write permissions even from forks
+- [ ] `ANTHROPIC_API_KEY` 存储为 GitHub secret，绝不在工作流 YAML 中
+- [ ] 工作流权限最小化 — 除非需要写权限，否则使用 `contents: read`
+- [ ] 对于公共仓库：添加 `if: github.event.pull_request.head.repo.full_name == github.repository` 防止 fork PR 触发 API 调用
+- [ ] 审查工作流公开发布的内容 — Claude 的评论对所有贡献者可见
+- [ ] 谨慎使用 `pull_request_target` — 它即使从 fork 运行也以写权限运行
 
-**Fork safety pattern (public repos):**
+**公共仓库 fork 安全模式：**
 ```yaml
 jobs:
   claude:
-    # Only run on PRs from the same repo, not forks
+    # 仅在同一仓库的 PR 上运行，而非 fork
     if: github.event.pull_request.head.repo.full_name == github.repository
 ```
 
 ---
 
-## See Also
+## 另见
 
-- [Section 9.3 CI/CD Integration](#93-cicd-integration) — headless mode, Unix piping, `--output-format json`
-- [Production Safety](../security/production-safety.md) — guardrails for automated agents
-- [Security Hardening](../security/security-hardening.md) — MCP and webhook security
-- [Official action docs](https://github.com/anthropics/claude-code-action) — solutions guide, migration, cloud providers
-- [Community workflow blueprint](https://github.com/alirezarezvani/claude-code-github-workflow) — 8 workflows + 4 autonomous agents for advanced teams
+- [第 9.3 节 CI/CD 集成](#93-cicd-集成) — 无头模式、Unix 管道、`--output-format json`
+- [生产安全](../security/production-safety.md) — 自动化智能体的护栏
+- [安全加固](../security/security-hardening.md) — MCP 和 webhook 安全
+- [官方 action 文档](https://github.com/anthropics/claude-code-action) — 解决方案指南、迁移、云提供商
+- [社区工作流蓝图](https://github.com/alirezarezvani/claude-code-github-workflow) — 高级团队的 8 个工作流 + 4 个自主智能体

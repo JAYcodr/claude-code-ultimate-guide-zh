@@ -1,371 +1,372 @@
+<!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
 ---
-title: "Plan-Validate-Execute Pipeline"
-description: "Production-grade 3-command workflow with dynamic agent teams, ADR learning loop, and automated execution from PRD to merged PR"
+title: "计划验证执行管道"
+description: "从 PRD 到合并 PR 的带动态智能体团队、ADR 学习循环和自动化执行的生产级 3 命令工作流"
 tags: [workflow, agents, architecture, advanced]
 ---
 
-# Plan-Validate-Execute Pipeline
+# 计划验证执行管道
 
-> **Confidence**: Tier 2 — Battle-tested by production teams shipping AI-first products at scale. Extends native `/plan` mode with structured agent orchestration and institutional memory.
+> **可信度**：第 2 层 — 经生产团队在规模上发布 AI 优先产品的实战测试。扩展原生 `/plan` 模式，带结构化智能体编排和制度记忆。
 
-A complete development workflow in 3 commands: plan with a dynamic research team, validate with independent specialist reviewers, execute with parallel agents. Each run improves the next through an ADR learning loop that progressively reduces human interruptions.
+完整开发工作流，分 3 个命令：用动态研究团队计划，用独立专家评审验证，用并行智能体执行。每次运行通过 ADR 学习循环改进，逐步减少人工中断。
 
-**Reading time**: ~25 min
-**Prerequisites**: Sub-agents, Task tool, worktrees, basic ADR concepts
-**Related**: [Plan-Driven Development](./plan-driven.md), [Agent Teams](./agent-teams.md), [Spec-First](./spec-first.md)
+**阅读时间**：约 25 分钟
+**先决条件**：子智能体、任务工具、worktree、基本 ADR 概念
+**相关**：[计划驱动开发](./plan-driven.md)、[智能体团队](./agent-teams.md)、[规范优先](./spec-first.md)
 
 ---
 
-## Table of Contents
+## 目录
 
 1. [TL;DR](#tldr)
-2. [Philosophy](#philosophy)
-3. [The Three Commands](#the-three-commands)
-4. [Dynamic Agent Pool](#dynamic-agent-pool)
-5. [ADR Learning Loop](#adr-learning-loop)
-6. [CLAUDE.md Discipline](#claudemd-discipline)
-7. [Context Management](#context-management)
-8. [When to Use](#when-to-use)
-9. [Cost Profile](#cost-profile)
-10. [See Also](#see-also)
+2. [理念](#理念)
+3. [三个命令](#三个命令)
+4. [动态智能体池](#动态智能体池)
+5. [ADR 学习循环](#adr-学习循环)
+6. [CLAUDE.md 纪律](#claudemd-纪律)
+7. [上下文管理](#上下文管理)
+8. [何时使用](#何时使用)
+9. [成本配置](#成本配置)
+10. [另见](#另见)
 
 ---
 
 ## TL;DR
 
 ```
-/plan-start    → 5-phase planning: PRD analysis + dynamic research team + ADRs
-/plan-validate → 2-layer review: structural checks + trigger-based specialist agents
-/plan-execute  → worktree + TDD + parallel execution + PR + merge + cleanup
+/plan-start    → 5 阶段计划：PRD 分析 + 动态研究团队 + ADR
+/plan-validate → 2 层评审：结构检查 + 基于触发器的专家智能体
+/plan-execute  → worktree + TDD + 并行执行 + PR + 合并 + 清理
 ```
 
-**What makes this different from `/plan` mode**:
-- Research is done by specialized agents in parallel, not one agent sequentially
-- Validation is independent from planning (no confirmation bias)
-- Every significant decision generates an ADR that auto-resolves future decisions
-- Execution spawns per-task agents in a git worktree, commits per task, handles everything through to merged PR
+**这与 `/plan` 模式的不同之处**：
+- 研究由专用智能体并行完成，而非一个智能体顺序完成
+- 验证独立于计划（无确认偏差）
+- 每个重要决策生成一个 ADR，自动解决未来决策
+- 执行在 git worktree 中生成每个任务智能体，每任务提交，处理直到合并 PR
 
-**Run `/clear` between each command** to reset context and avoid compacting overhead.
+**在每个命令之间运行 `/clear`** 重置上下文并避免压缩开销。
 
 ---
 
-## Philosophy
+## 理念
 
-### Non-Prescriptive AI-First
+### 非规定性 AI 优先
 
-Tell Claude **what** to achieve, never **how** to implement it. The moment you prescribe implementation details, you're using your knowledge as a ceiling instead of Claude's as a floor.
+告诉 Claude **要实现什么**，而不是**如何实现**。一旦你规定实现细节，你就在用你的知识作为上限而不是 Claude 的作为下限。
 
-A good opening prompt for a new project:
+新项目的好开场提示：
 ```
 How should I use you most effectively to build this platform?
 ```
 
-Let Claude propose the architecture. Your job is to validate decisions, not dictate them.
+让 Claude 提出架构。你的工作是验证决策，而不是规定它们。
 
-### No Bandaids, No Workarounds
+### 无权宜之计，无变通
 
-Hard rule for every agent in the pipeline:
+管道中每个智能体的硬规则：
 
-> We build state-of-the-art software. Always choose the best-in-class architecture, the most robust pattern, and the industry-standard approach.
+> 我们构建最先进的软件。始终选择同类最佳的架构、最稳健的模式和行业标准方法。
 
-Build time and effort are irrelevant to architectural decisions. Never factor implementation complexity into option assessments. The right solution is always the best solution.
+构建时间和精力与架构决策无关。永远不要将实现复杂性计入选项评估。正确的解决方案始终是最好的解决方案。
 
-**Enforcement checklist** (apply before implementing):
-- [ ] Am I using a backward-compatibility flag, shim, or legacy mode?
-- [ ] Would a new project following current official docs do it this way?
-- [ ] Am I porting old patterns instead of learning the new ones?
-- [ ] Am I patching one component when the fix belongs at the system level?
+**执行前应用检查清单**：
+- [ ] 我在使用向后兼容标志、垫片或遗留模式吗？
+- [ ] 按当前官方文档的新项目会这样做吗？
+- [ ] 我在移植旧模式而不是学习新模式吗？
+- [ ] 我在修补一个组件而修复属于系统层面吗？
 
-If any answer is yes: stop, fix at the correct level.
+任何答案为是：停止，在正确层面修复。
 
-### Why Independent Validation?
+### 为什么独立验证？
 
-Validators that didn't write the plan are not anchored to its assumptions. Research shows multi-agent review with adversarial framing catches significantly more issues than self-review. The average plan produces ~18 issues when challenged by an independent team — ~95% auto-resolve from existing ADRs and first principles.
+没有写计划的验证者不会锚定在其假设上。研究表明，带对抗性框架的多智能体评审比自我评审捕获更多问题。平均计划在被独立团队挑战时产生约 18 个问题——约 95% 从现有 ADR 和第一原则自动解决。
 
 ---
 
-## The Three Commands
+## 三个命令
 
-### `/plan-start` — 5-Phase Planning
+### `/plan-start` — 5 阶段计划
 
-**Phase 1: PRD & Design Analysis** *(interactive, no agents)*
+**阶段 1：PRD 和设计分析**（*交互式，无智能体*）
 
-Read the PRD and surface issues in 3 buckets before any agent work:
-- Missing requirements (unclear acceptance criteria, unspecified edge cases)
-- Ambiguous requirements (multiple valid interpretations)
-- Compliance concerns (security, data privacy, API contracts)
+在任何智能体工作之前，在 3 个桶中暴露问题：
+- 缺失需求（模糊的验收标准、未指定的边缘情况）
+- 模糊需求（多种有效解释）
+- 合规问题（安全、数据隐私、API 契约）
 
-Present options with pros/cons, record decisions. Skip for non-PRD work (refactors, infra, bug fixes).
+提出带优缺点的选项并记录决策。对于非 PRD 工作跳过（重构、infra、bug 修复）。
 
-If UI changes are in scope, extend to design analysis: screen inventory, state catalog (empty/loading/populated/error), interaction specs, animation patterns, accessibility (ARIA), design token updates.
+如果有 UI 变更在范围内，扩展到设计分析：屏幕清单、状态目录（空/加载/填充/错误）、交互规范、动画模式、无障碍（ARIA）、设计令牌更新。
 
-**Phase 2: Technical Analysis** *(1-2 Explore agents + interactive)*
+**阶段 2：技术分析**（*1-2 个 Explore 智能体 + 交互式*）
 
-Check existing ADRs and PATTERNS.md first. If 3+ confirmed ADRs match the decision → auto-resolve without asking. Otherwise:
-- Spawn Explore agents for targeted codebase research
-- Present architecture decisions with options and recommendations
-- Create ADR documents for significant decisions (see [ADR Learning Loop](#adr-learning-loop))
-- Update PATTERNS.md
+首先检查现有 ADR 和 PATTERNS.md。如果 3+ 个已确认 ADR 匹配决策 → 自动解决无需询问。否则：
+- 生成 Explore 智能体进行针对性代码库研究
+- 提出带选项和建议的架构决策
+- 为重要决策创建 ADR 文档（见 [ADR 学习循环](#adr-学习循环)）
+- 更新 PATTERNS.md
 
-**Phase 3: Scope Assessment** *(automatic + user approval)*
+**阶段 3：范围评估**（*自动 + 用户批准*）
 
-Apply trigger rules against the agent pool (see [Dynamic Agent Pool](#dynamic-agent-pool)). Present the proposed team with justification for each agent. User can add or remove agents before research starts.
+对智能体池应用触发规则（见 [动态智能体池](#动态智能体池)）。展示拟议团队及每个智能体的理由。用户可以在研究开始前添加或移除智能体。
 
-| Tier | Agent Count | Label |
+| 层级 | 智能体数量 | 标签 |
 |------|-------------|-------|
-| 0 | 0 | Solo (inline research) |
-| 1 | 1-3 | Focused |
-| 2 | 4-6 | Standard |
-| 3 | 7-9 | Comprehensive |
-| 4 | 10+ | Full Spectrum |
+| 0 | 0 | 独立（内联研究）|
+| 1 | 1-3 | 聚焦 |
+| 2 | 4-6 | 标准 |
+| 3 | 7-9 | 全面 |
+| 4 | 10+ | 全谱 |
 
-**Phase 4: Research & Plan Creation** *(dynamic team)*
+**阶段 4：研究和计划创建**（*动态团队*）
 
-- Tier 0: inline research, no agents
-- Tier 1+: spawn approved agents in parallel (background), lead monitors via TaskOutput loop
-- `planning-coordinator` (Opus) synthesizes all reports into final plan
-- Commit plan file, ADRs, and creation artifacts
+- 层级 0：内联研究，无智能体
+- 层级 1+：并行生成批准智能体（后台），lead 通过 TaskOutput 循环监控
+- `planning-coordinator`（Opus）综合所有报告为最终计划
+- 提交计划文件、ADR 和创建产物
 
-Output: `docs/plans/plan-{name}.md` + `docs/adr/ADR-XXXX.md` + `docs/plans/metrics/{name}.json`
+输出：`docs/plans/plan-{name}.md` + `docs/adr/ADR-XXXX.md` + `docs/plans/metrics/{name}.json`
 
-**Auto-transition**: no unresolved ambiguity → auto-start `/plan-validate`
-
----
-
-### `/plan-validate` — 2-Layer Validation
-
-**Layer 1: Structural** *(inline, instant)*
-
-Mechanical checks that don't need agents:
-- Plan format and completeness (all required sections present)
-- Task ordering and dependency chain (no circular deps)
-- File existence checks (files listed for modification actually exist)
-- ADR consistency (plan aligns with its ADRs)
-- CLAUDE.md rule compliance
-
-**Layer 2: Specialist Review** *(trigger-based, 0-8 agents)*
-
-| Agent | Trigger | Model |
-|-------|---------|-------|
-| `security-reviewer` | Auth, payments, PII, RBAC, new APIs | Opus |
-| `db-migration-reviewer` | New tables, columns, indexes, migrations | Opus |
-| `performance-reviewer` | New resolvers, queries, routes, new deps | Sonnet |
-| `design-system-reviewer` | New UI components, visual styling | Sonnet |
-| `ux-reviewer` | New pages, forms, interactions | Sonnet |
-| `cross-platform-reviewer` | Web + mobile, or shared packages | Sonnet |
-| `native-app-reviewer` | Mobile screens, native UI packages | Sonnet |
-| `integration-reviewer` | New services, libraries, OTEL config | Opus |
-
-No agents selected automatically for trivial plans. A payments feature might trigger 4+.
-
-**Auto-Fix Phase**
-
-Every issue must be resolved — no skipping. Triage:
-1. Issues matching existing ADR decisions → auto-resolve
-2. Issues matching confirmed PATTERNS.md entries → auto-resolve
-3. Issues resolvable from first principles → auto-resolve
-4. Residual → human decision → new rule → auto-resolved next time
-
-**Auto-transition**: all issues resolved → auto-start `/plan-execute`
+**自动转换**：无未解决的歧义 → 自动启动 `/plan-validate`
 
 ---
 
-### `/plan-execute` — Execution to Merged PR
+### `/plan-validate` — 2 层验证
 
-Single command handles everything:
+**第 1 层：结构**（*内联，即时*）
 
-1. **Worktree creation** — isolated branch from current branch
-2. **TDD scaffolding** — write failing tests first for TDD-marked tasks
-3. **Level-based parallel execution** — detect independent tasks, spawn per-task agents, commit per task
-4. **Drift detection** — flag if implementation diverges from plan
-5. **Quality gate** — parallel tests + integration smoke test (GraphQL probe, container log scan, plan-defined smoke commands)
-6. **Pre-PR docs update** — PRD reconciliation + plan archival (in worktree)
-7. **PR creation and merge** — squash merge, clean commit message
-8. **Post-merge metrics** — execution data committed to metrics file
-9. **Worktree cleanup** — remove branch and worktree
+不需要智能体的机械检查：
+- 计划格式和完整性（所有必需部分存在）
+- 任务排序和依赖链（无循环依赖）
+- 文件存在检查（列出修改的文件实际存在）
+- ADR 一致性（计划与其 ADR 一致）
+- CLAUDE.md 规则合规
 
-If quality gate fails: up to 3 auto-fix attempts by dedicated debug agents. Still failing → notify human.
+**第 2 层：专家评审**（*基于触发器，0-8 个智能体*）
 
----
+| 智能体 | 触发器 | 模型 |
+|-------|---------|------|
+| `security-reviewer` | Auth、payments、PII、RBAC、新 API | Opus |
+| `db-migration-reviewer` | 新表、列、索引、迁移 | Opus |
+| `performance-reviewer` | 新解析器、查询、路由、新依赖 | Sonnet |
+| `design-system-reviewer` | 新 UI 组件、视觉样式 | Sonnet |
+| `ux-reviewer` | 新页面、表单、交互 | Sonnet |
+| `cross-platform-reviewer` | Web + 移动，或共享包 | Sonnet |
+| `native-app-reviewer` | 移动屏幕、本机 UI 包 | Sonnet |
+| `integration-reviewer` | 新服务、库、OTEL 配置 | Opus |
 
-## Dynamic Agent Pool
+平凡计划不自动选择智能体。支付功能可能触发 4+ 个。
 
-Agents are **not** hardcoded in CLAUDE.md. They are defined at invocation time — description, trigger criteria, and model selection embedded in the plan phase where they're spawned. This keeps CLAUDE.md lightweight while giving each agent full context for its role.
+**自动修复阶段**
 
-### Research Pool (`/plan-start`)
+每个问题必须解决 — 不能跳过。分类：
+1. 匹配现有 ADR 决策的问题 → 自动解决
+2. 匹配已确认 PATTERNS.md 条目的问题 → 自动解决
+3. 可从第一原则解决的问题 → 自动解决
+4. 残留 → 人工决策 → 新规则 → 下次自动解决
 
-| Agent | Trigger | Model |
-|-------|---------|-------|
-| `code-explorer` | Always | Sonnet |
-| `arch-researcher` | Multi-layer changes (2+ layers) | Sonnet |
-| `database-analyst` | Any DB schema changes | Sonnet |
-| `security-analyst` | Auth, payments, PII, RBAC | Opus |
-| `test-analyzer` | Non-trivial feature | Sonnet |
-| `cross-platform-specialist` | Mobile parity needed | Sonnet |
-| `native-app-specialist` | Tasks touch mobile/UI | Sonnet |
-| `design-system-researcher` | UI changes in scope | Sonnet |
-| `dependency-researcher` | New packages being added | Sonnet |
-| `devops-specialist` | Docker, env vars, CI/CD | Sonnet |
-| `integration-researcher` | New services, libraries, OTEL | Opus |
-| `planning-coordinator` | Always (when 2+ agents) | Opus |
-
-**Key design choices**:
-- Opus only for high-stakes roles (security, integration, coordination)
-- Sonnet for standard research (good quality, lower cost)
-- `planning-coordinator` only spawned when 2+ agents are selected — it synthesizes, it doesn't research
-
-### Validation Pool (`/plan-validate`)
-
-See Layer 2 table above. These are different agents from the research pool — validators are not biased by the creation process.
+**自动转换**：所有问题解决 → 自动启动 `/plan-execute`
 
 ---
 
-## ADR Learning Loop
+### `/plan-execute` — 执行到合并 PR
 
-Every significant architectural decision generates an ADR. Over time, ADRs compound into institutional memory that reduces human interruptions.
+单个命令处理一切：
 
-### What Triggers an ADR
+1. **Worktree 创建** — 从当前分支隔离分支
+2. **TDD 脚手架** — TDD 标记任务先写失败测试
+3. **基于层级的并行执行** — 检测独立任务，生成每任务智能体，每任务提交
+4. **漂移检测** — 标记如果实现偏离计划
+5. **质量门禁** — 并行测试 + 集成冒烟测试（GraphQL 探测、容器日志扫描、计划定义的冒烟命令）
+6. **预 PR 文档更新** — PRD 协调 + 计划归档（在 worktree 中）
+7. **PR 创建和合并** — 压缩合并、干净提交消息
+8. **合并后指标** — 执行数据提交到指标文件
+9. **Worktree 清理** — 移除分支和 worktree
 
-**Always create an ADR for:**
-- Choice between multiple valid interaction patterns (overlay vs page, drawer vs modal)
-- New animation or transition patterns not in existing conventions
-- Platform divergence decisions (web vs mobile behavior)
-- Loading state strategy that introduces a new pattern
-- Auth strategy, DB schema approach, service boundary decisions
-- New dependency selections with architectural implications
+如果质量门禁失败：最多 3 次自动修复尝试由专用调试智能体。仍然失败 → 通知人工。
 
-**Do NOT create an ADR for:**
-- Decisions dictated by an approved source or existing convention
-- Minor layout choices within established patterns
-- Obvious state catalog entries (standard empty/loading/error states)
+---
 
-### Maturity Levels
+## 动态智能体池
+
+智能体**不**硬编码在 CLAUDE.md 中。它们在调用时定义 — 描述、触发标准和模型选择在它们生成的计划阶段嵌入。这保持 CLAUDE.md 轻量，同时给每个智能体其角色所需的完整上下文。
+
+### 研究池（`/plan-start`）
+
+| 智能体 | 触发器 | 模型 |
+|-------|---------|------|
+| `code-explorer` | 始终 | Sonnet |
+| `arch-researcher` | 多层变更（2+ 层）| Sonnet |
+| `database-analyst` | 任何数据库 schema 变更 | Sonnet |
+| `security-analyst` | Auth、payments、PII、RBAC | Opus |
+| `test-analyzer` | 非平凡功能 | Sonnet |
+| `cross-platform-specialist` | 需要移动 parity | Sonnet |
+| `native-app-specialist` | 任务触摸移动/UI | Sonnet |
+| `design-system-researcher` | UI 变更在范围内 | Sonnet |
+| `dependency-researcher` | 添加的新包 | Sonnet |
+| `devops-specialist` | Docker、env vars、CI/CD | Sonnet |
+| `integration-researcher` | 新服务、库、OTEL | Opus |
+| `planning-coordinator` | 始终（当 2+ 智能体时）| Opus |
+
+**关键设计选择**：
+- Opus 仅用于高风险角色（安全、集成、协调）
+- Sonnet 用于标准研究（好质量，更低成本）
+- `planning-coordinator` 仅在选择 2+ 智能体时生成 — 它综合，不研究
+
+### 验证池（`/plan-validate`）
+
+见上面的第 2 层表。这些与研究池是不同的智能体 — 验证者不受创建过程偏见。
+
+---
+
+## ADR 学习循环
+
+每个重要架构决策生成一个 ADR。随着时间推移，ADR 复合为制度记忆，减少人工中断。
+
+### 什么触发 ADR
+
+**始终为以下创建 ADR：**
+- 多种有效交互模式之间的选择（overlay vs 页面、drawer vs modal）
+- 现有约定中没有的新动画或过渡模式
+- 平台分歧决策（web vs 移动行为）
+- 引入新模式的加载状态策略
+- Auth 策略、数据库 schema 方法、服务边界决策
+- 具有架构影响的新依赖选择
+
+**不要为以下创建 ADR：**
+- 由批准来源或现有约定规定的决策
+- 现有模式内的次要布局选择
+- 明显的状态目录条目（标准空/加载/错误状态）
+
+### 成熟度层级
 
 ```
-1 ADR  → Watching   — tracked, not yet prescriptive
-2 ADRs → Emerging   — presented as recommended default with precedent context
-3+ ADRs → Confirmed — auto-resolved during planning (no human input needed)
-          → Candidate for promotion to CLAUDE.md as hard rule
+1 ADR  → 观察中   — 跟踪，尚非规定性
+2 ADRs → 浮现中   — 作为推荐默认值呈现，带先例上下文
+3+ ADRs → 已确认   — 在计划期间自动解决（无需人工输入）
+          → 晋升为 CLAUDE.md 硬规则的候选
 ```
 
-### The Loop
+### 循环
 
 ```
-/plan-start Phase 2     →  ADR created
+/plan-start 阶段 2     →  ADR 创建
                                ↓
-                        PATTERNS.md updated
+                        PATTERNS.md 更新
                                ↓
-/adr-review (periodic)  →  Detect patterns across ADRs
+/adr-review（定期）  →  检测跨 ADR 的模式
                                ↓
-                        Propose CLAUDE.md promotions
+                        提议 CLAUDE.md 晋升
                                ↓
-Future /plan-start      ←  Confirmed rules auto-resolve decisions
+未来 /plan-start      ←  确认规则自动解决决策
 ```
 
-Run `/adr-review` every 10-15 plans to batch-analyze patterns and propose CLAUDE.md additions.
+每 10-15 个计划运行 `/adr-review` 以批量分析模式并提议 CLAUDE.md 添加。
 
-**The compounding effect**: a project with 20 plans auto-resolves ~80% of architecture decisions. Human input focuses on genuinely novel decisions only.
+**复合效应**：有 20 个计划的项目自动解决约 80% 的架构决策。人工输入仅聚焦于真正新颖的决策。
 
 ---
 
-## CLAUDE.md Discipline
+## CLAUDE.md 纪律
 
-### Hard Limit: 120 Lines
+### 硬限制：120 行
 
-Every line in CLAUDE.md costs context on every request. A 300-line CLAUDE.md is overhead that runs before every single prompt. Set and enforce a hard limit.
+CLAUDE.md 中每行在每个请求时都消耗上下文。300 行的 CLAUDE.md 是在每个单一提示之前运行的开销。设置并强制硬限制。
 
-**What earns a line in CLAUDE.md:**
-- First principles (hard rules that override agent preferences)
-- Confirmed ADR patterns (3+ occurrences)
-- Project-specific conventions that agents cannot infer from the codebase
-- Pointers to sub-files
+**什么值得在 CLAUDE.md 中占一行：**
+- 第一原则（覆盖智能体偏好的硬规则）
+- 已确认 ADR 模式（3+ 次出现）
+- 智能体无法从代码库推断的项目特定约定
+- 指向子文件的指针
 
-**What should NOT be in CLAUDE.md:**
-- Full content of design systems, env configs, architecture docs
-- Rules that apply to <10% of tasks
-- Explanations and rationale (write those in ADRs)
+**什么不应该在 CLAUDE.md 中：**
+- 设计系统、env 配置、架构文档的完整内容
+- 适用于 <10% 任务的规则
+- 解释和理由（写在 ADR 中）
 
-### Pointer Strategy
+### 指针策略
 
-Instead of loading all context into CLAUDE.md, use pointers:
+不要将所有上下文加载到 CLAUDE.md，使用指针：
 
 ```markdown
 ## Context Files (load only when relevant)
-- @docs/DESIGN_SYSTEM.md    — when UI changes are in scope
-- @docs/ARCHITECTURE.md     — when service boundaries are touched
-- @docs/ENV_CONFIG.md       — when Docker or env vars are modified
-- @docs/ADR_PATTERNS.md     — during planning phases
+- @docs/DESIGN_SYSTEM.md    — UI 变更在范围内时
+- @docs/ARCHITECTURE.md     — 服务边界被触摸时
+- @docs/ENV_CONFIG.md       — Docker 或 env 变量被修改时
+- @docs/ADR_PATTERNS.md     — 计划阶段期间
 ```
 
-Agents load only what their task requires. A backend task never loads the design system. Context stays clean.
+智能体仅加载其任务需要的。backend 任务从不加载设计系统。上下文保持干净。
 
-### Regular Trimming
+### 定期修剪
 
-Review CLAUDE.md every 10-15 plans alongside `/adr-review`. Promote confirmed patterns, remove rules that have become obvious through codebase conventions, trim anything that hasn't been referenced.
-
----
-
-## Context Management
-
-### `/clear` Between Steps
-
-Run `/clear` between `/plan-start`, `/plan-validate`, and `/plan-execute`. Each command is self-contained — the plan file on disk is the handoff artifact, not in-memory context.
-
-Without `/clear`: context accumulates across all phases, compacting triggers earlier, agents inherit irrelevant context from previous phases, and token costs increase significantly.
-
-### Why This Works
-
-Each command reads its inputs from disk (plan files, ADRs, codebase). There's no state that needs to live in the context window between steps. The discipline of clearing between steps is what makes the pipeline scale to large projects without hitting context limits mid-execution.
+每 10-15 个计划与 `/adr-review` 一起审查 CLAUDE.md。晋升确认模式，移除通过代码库约定已成为显而易见的规则，修剪任何未被引用的内容。
 
 ---
 
-## When to Use
+## 上下文管理
 
-### ✅ Use This Pipeline When
+### 步骤之间 `/clear`
 
-- Feature requires multiple files and layers (API + DB + UI)
-- Security-sensitive changes (auth, payments, PII)
-- Complex DB migrations
-- New external service integrations
-- Anything where a planning mistake would be expensive to undo
-- Team projects where decision history matters
+在 `/plan-start`、`/plan-validate` 和 `/plan-execute` 之间运行 `/clear`。每个命令是自包含的 — 计划文件在磁盘上是交接产物，而非内存上下文。
 
-### ❌ Don't Use When
+没有 `/clear`：上下文在所有阶段累积，压缩更早触发，智能体继承来自先前阶段的不相关上下文，token 成本显著增加。
 
-- Typo fix, trivial refactor (use standard `/plan` mode)
-- Exploratory prototyping where requirements are unknown
-- Hotfix under time pressure (use dual-instance planning instead)
-- Changes touching ≤2 files with no architectural decisions
+### 为什么有效
 
-### ⚡ Tier 0 Shortcut
-
-For small but non-trivial changes, still run the pipeline but the system will detect Tier 0 scope and skip agent spawning — research happens inline, validation is Layer 1 only, execution is single-agent. Same commands, lower overhead.
+每个命令从磁盘（计划文件、ADR、代码库）读取其输入。步骤之间没有需要在内存上下文中存活的状态。步骤之间清除的纪律使管道扩展到大项目而不会在执行中途达到上下文限制。
 
 ---
 
-## Cost Profile
+## 何时使用
 
-| Phase | Cost Driver | Approximate Range |
+### ✅ 使用此管道当
+
+- 功能需要多个文件和层（API + 数据库 + UI）
+- 安全敏感变更（auth、payments、PII）
+- 复杂数据库迁移
+- 新外部服务集成
+- 任何计划错误代价高昂的地方
+- 团队项目中决策历史很重要
+
+### ❌ 不要在以下情况使用
+
+- 拼写修正、微小重构（使用标准 `/plan` 模式）
+- 需求未知的探索性原型
+- 时间压力下的热修复（改用双实例计划）
+- 变更触摸 ≤2 个文件且无架构决策
+
+### ⚡ 层级 0 快捷方式
+
+对于小但非平凡的变更，仍运行管道但系统将检测层级 0 范围并跳过智能体生成 — 研究发生内联，验证仅第 1 层，执行是单智能体。相同命令，更低开销。
+
+---
+
+## 成本配置
+
+| 阶段 | 成本驱动 | 约范围 |
 |-------|-------------|-------------------|
-| `/plan-start` Tier 0 | Inline research only | $0.10-0.30 |
-| `/plan-start` Tier 1-2 | 2-6 Sonnet agents | $0.50-2.00 |
-| `/plan-start` Tier 3 | 7+ agents + Opus coordinator | $2.00-8.00 |
-| `/plan-validate` | 0-8 agents | $0.20-3.00 |
-| `/plan-execute` | Per-task agents + quality gate | $0.50-5.00 |
-| **Typical feature (Tier 2)** | Full pipeline | **$2-10** |
+| `/plan-start` 层级 0 | 仅内联研究 | $0.10-0.30 |
+| `/plan-start` 层级 1-2 | 2-6 个 Sonnet 智能体 | $0.50-2.00 |
+| `/plan-start` 层级 3 | 7+ 智能体 + Opus 协调器 | $2.00-8.00 |
+| `/plan-validate` | 0-8 个智能体 | $0.20-3.00 |
+| `/plan-execute` | 每任务智能体 + 质量门禁 | $0.50-5.00 |
+| **典型功能（层级 2）** | 完整管道 | **$2-10** |
 
-Cost compounds as ADR coverage grows: fewer agents needed, fewer validation issues, faster execution.
+成本随 ADR 覆盖增长而复合：需要更少的智能体、更少的验证问题、更快的执行。
 
-Use `/plan-metrics` periodically to review historical cost trends and calibrate estimates.
+定期使用 `/plan-metrics` 审查历史成本趋势并校准估算。
 
 ---
 
-## See Also
+## 另见
 
-- [Plan-Driven Development](./plan-driven.md) — native `/plan` mode, lighter alternative
-- [Dual-Instance Planning](./dual-instance-planning.md) — simpler 2-instance pattern
-- [Agent Teams](./agent-teams.md) — native parallel coordination (experimental)
-- [Task Management](./task-management.md) — Tasks API for cross-session coordination
-- [Spec-First Development](./spec-first.md) — CLAUDE.md as specification contract
-- [ADR Writer Agent](../../examples/agents/adr-writer.md) — standalone ADR generation
-- [Plan Challenger Agent](../../examples/agents/plan-challenger.md) — adversarial plan review
+- [计划驱动开发](./plan-driven.md) — 原生 `/plan` 模式，更轻替代
+- [双实例计划](./dual-instance-planning.md) — 更简单的 2 实例模式
+- [智能体团队](./agent-teams.md) — 原生并行协调（实验性）
+- [任务管理](./task-management.md) — 用于跨会话协调的 Tasks API
+- [规范优先开发](./spec-first.md) — CLAUDE.md 作为规范契约
+- [ADR 编写器智能体](../../examples/agents/adr-writer.md) — 独立 ADR 生成
+- [计划挑战者智能体](../../examples/agents/plan-challenger.md) — 对抗性计划评审
