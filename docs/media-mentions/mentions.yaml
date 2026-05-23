@@ -11,7 +11,6 @@ meta:
 # Status: active | dead | paywall
 
 mentions:
-
   # ─── Articles / Blogs / Newsletters ───────────────────────────────────────
 
   - id: "001"
@@ -447,4 +446,3 @@ mentions:
     status: active
     notes: "French article. Links both cc.bruniaux.com AND github.com/FlorianBruniaux/claude-code-ultimate-guide. Strong practitioner endorsement — hooks cited by name."
     first_seen: "2026-04-14"
-
