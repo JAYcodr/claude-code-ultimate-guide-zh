@@ -57,7 +57,7 @@
 
 | 文件 | 行数 | 状态 | 上游 commit | 完成日期 | 备注 |
 |------|------|------|------------|---------|------|
-| examples/hooks/ + examples/scripts/ | ~200 | ❌ | - | - | |
+| examples/hooks/ + examples/scripts/ | ~200 | ✅ | dbeb30c | 2026-05-23 | READMEs 已翻译 |
 | docs/resource-evaluations/ | ~3,000 | ❌ | - | - | 151 个文件 |
 
 ### P4 — 低优先级
@@ -109,3 +109,5 @@
 | 2026-05-23 | TRANSLATION_STATUS.md | P1 完成 + 重排优先级 | 712599c |
 | 2026-05-23 | guide/diagrams/*.md | 汉化全部 12 个图表文件 | 8700277 |
 | 2026-05-23 | tools/（7 个提示词模板） | 汉化全部提示词模板 | 46459ad |
+| 2026-05-23 | IDEAS.md + examples/hooks/scripts | 汉化 | 35dcc17 |
+| 2026-05-23 | TRANSLATION_PLAN.md | 创建翻译计划文档 | - |
