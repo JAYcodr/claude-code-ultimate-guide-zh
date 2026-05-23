@@ -50,7 +50,7 @@
 |------|------|------|------------|---------|------|
 | guide/diagrams/README.md | ~112 | ✅ | dbeb30c | 2026-05-23 | 48 张图表导航 |
 | guide/diagrams/*.md（12 个文件） | ~2,000 | ❌ | - | - | 待翻译 |
-| guide/workflows/ | ~12,700 | ❌ | - | - | 24 个文件，待启动 |
+| guide/workflows/ | ~12,700 | ✅/部分润色 | dbeb30c | 2026-05-23 | 16/24 文件已翻译+润色 |
 | quiz/ | ~1,000 | ❌ | - | - | 271 题 |
 
 ### P3 — 辅助文件
@@ -93,4 +93,8 @@
 | 2026-05-23 | 补全工作日志 | 更新文档 | ac5bad6 |
 | 2026-05-23 | §4 智能体章节 | 汉化（873 行） | 3852331 |
 | 2026-05-23 | guide/diagrams/README.md | 汉化（112 行） | ccd2844 |
-| 2026-05-23 | TRANSLATION_STATUS.md | 更新 P0/P1/P2 状态 | (待提交) |
+| 2026-05-23 | workflows Batch 1（10 文件）| 批量翻译 | 8f2c7d7 |
+| 2026-05-23 | workflows Batch 2（6 文件）| 批量翻译 | b23a768 |
+| 2026-05-23 | workflows 润色 README + tdd + plan-driven | 去除机翻感 | d3500b6 |
+| 2026-05-23 | workflows 润色第二批（10 文件）| 去除机翻感 | 69bb599 |
+| 2026-05-23 | TRANSLATION_STATUS.md | 更新 P2 workflows 状态 | (待提交) |
