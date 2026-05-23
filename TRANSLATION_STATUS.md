@@ -18,8 +18,10 @@
 | 优先级 | 文件 | 行数 | 状态 | 上游 commit | 完成日期 | 备注 |
 |--------|------|------|------|------------|---------|------|
 | P0 | README.md | ~945 | ✅ | dbeb30c | 2026-05-23 | 已润色 |
-| P0 | guide/learning-path/ | ~500 | ❌ | - | - | 含 README.md + 7 模块 |
+| P0 | guide/learning-path/README.md | ~263 | ✅ | dbeb30c | 2026-05-23 | |
 | P0 | guide/cheatsheet.md | ~677 | ✅ | dbeb30c | 2026-05-23 | |
+| P0 | guide/learning-path/01-installation.md | ~256 | ✅ | dbeb30c | 2026-05-23 | |
+| P0 | guide/learning-path/02-core-loop.md | ~334 | ✅ | dbeb30c | 2026-05-23 | |
 | P0 | guide/ultimate-guide.md §1-3 | ~5,000 | ❌ | - | - | Quick Start / Core Concepts / Memory Files |
 | P1 | examples/skills/ | ~200 | ❌ | - | - | 注释翻译 |
 | P1 | examples/agents/ | ~300 | ❌ | - | - | 注释翻译 |

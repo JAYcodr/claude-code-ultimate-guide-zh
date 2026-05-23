@@ -1,31 +1,33 @@
-# Module 01: Installation & Setup
+<!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
 
-**Time**: 15 minutes | **Complexity**: ⭐ Beginner
+# 模块 01：安装与设置
 
-## Goal
+**时间**: 15 分钟 | **难度**: ⭐ 入门
 
-Get Claude Code installed and running on your system. Verify it works with your first command.
+## 目标
 
----
-
-## What You'll Learn
-
-- Install Claude Code for your platform (macOS / Linux / Windows)
-- Understand the basic prompt → response loop
-- Run your first command
-- Access the help system
+在你的系统上安装 Claude Code 并让它跑起来。用第一条命令验证是否正常工作。
 
 ---
 
-## Installation
+## 你将学到
 
-### macOS (Recommended)
+- 在你的平台安装 Claude Code（macOS / Linux / Windows）
+- 理解基本的提示词 → 响应循环
+- 运行你的第一个命令
+- 使用帮助系统
+
+---
+
+## 安装
+
+### macOS（推荐）
 
 ```bash
 brew install anthropic/tap/claude-code
 ```
 
-Verify:
+验证：
 ```bash
 claude --version
 ```
@@ -36,20 +38,20 @@ claude --version
 curl -sSL https://dl.claudecode.com/install.sh | bash
 ```
 
-Verify:
+验证：
 ```bash
 claude --version
 ```
 
 ### Windows
 
-Download the installer from https://dl.claudecode.com/windows or use:
+从 https://dl.claudecode.com/windows 下载安装包，或用：
 
 ```powershell
 iex ((New-Object System.Net.WebClient).DownloadString('https://dl.claudecode.com/install.ps1'))
 ```
 
-### Docker (Any Platform)
+### Docker（任何平台）
 
 ```bash
 docker run -it anthropic/claude-code:latest
@@ -57,16 +59,16 @@ docker run -it anthropic/claude-code:latest
 
 ---
 
-## First Run
+## 首次运行
 
-Navigate to any project directory and start Claude:
+进入任意项目目录，启动 Claude：
 
 ```bash
 cd ~/my-project
 claude
 ```
 
-You'll see:
+你会看到：
 
 ```
 Claude Code v2.x.x ready
@@ -79,178 +81,177 @@ Type /help for commands or ask me anything
 
 ---
 
-## Essential Commands
+## 常用命令
 
-| Command | Purpose |
-|---------|---------|
-| `/help` | Show all available commands |
-| `/status` | Check context usage and session state |
-| `/clear` | Start fresh (clears conversation history) |
-| `Ctrl+C` | Cancel the current operation |
-| `/exit` | Close Claude Code |
+| 命令 | 用途 |
+|------|------|
+| `/help` | 显示所有可用命令 |
+| `/status` | 查看上下文用量和会话状态 |
+| `/clear` | 从头开始（清空对话历史） |
+| `Ctrl+C` | 取消当前操作 |
+| `/exit` | 关闭 Claude Code |
 
 ---
 
-## Your First 5 Minutes
+## 前 5 分钟
 
-### Exercise 1: View Available Commands
+### 练习 1：查看可用命令
 ```bash
 /help
 ```
 
-Review the command list. Notice:
-- **Workflow**: `/plan`, `/rewind`, `/think`
-- **Navigation**: `/goto`, `/read`
-- **Memory**: memory loading at startup
-- **Advanced**: `/model`, `/mode`
+浏览命令列表。注意：
+- **工作流**：`/plan`、`/rewind`、`/think`
+- **导航**：`/goto`、`/read`
+- **记忆**：启动时加载记忆
+- **进阶**：`/model`、`/mode`
 
-### Exercise 2: Check Session State
+### 练习 2：查看会话状态
 ```bash
 /status
 ```
 
-You'll see:
-- Context usage percentage
-- Available tokens
-- Current project
-- Git branch
+你会看到：
+- 上下文使用占比
+- 可用 token 数
+- 当前项目
+- Git 分支
 
-### Exercise 3: Ask Claude Something
-
-```
-What files are in my project?
-```
-
-Claude will read the project structure and respond. This is the core loop:
+### 练习 3：问 Claude 一个问题
 
 ```
-Your prompt → Claude reads files → Claude suggests changes → You review → Apply
+我的项目里有哪些文件？
 ```
 
-### Exercise 4: Review a Suggested Change
+Claude 会读取项目结构并回复。这就是核心循环：
 
-If Claude suggests code changes, you'll see:
-1. A description of the change
-2. A `diff` view (what's being added/removed)
-3. A prompt to accept or reject
+```
+你的提示词 → Claude 读取文件 → Claude 建议变更 → 你审查 → 应用
+```
 
-**Rule**: Always review diffs before accepting. This protects you from unexpected changes.
+### 练习 4：审查一个建议的变更
+
+如果 Claude 建议改代码，你会看到：
+1. 变更说明
+2. `diff` 视图（加/删了什么）
+3. 接受或拒绝的提示
+
+**规则**：接受前一定看完 diff。这是你防止意外变更的保障。
 
 ---
 
-## The Core Concept: The Loop
+## 核心概念：循环
 
-Every interaction follows this pattern:
+每次交互都遵循这个模式：
 
 ```
 ┌─────────────┐
-│ You ask     │
+│ 你提问       │
 └──────┬──────┘
        │
        ▼
 ┌─────────────┐
 │ Claude      │
-│ reads files │
+│ 读取文件    │
 └──────┬──────┘
        │
        ▼
 ┌─────────────┐
 │ Claude      │
-│ suggests    │
-│ changes     │
+│ 建议变更    │
 └──────┬──────┘
        │
        ▼
 ┌──────────────────┐
-│ You review diff  │
-│ and approve      │
+│ 你审查 diff       │
+│ 并批准            │
 └──────┬───────────┘
        │
        ▼
 ┌──────────────────┐
-│ Changes applied  │
-│ to your files    │
+│ 变更已应用       │
+│ 到你的文件        │
 └──────────────────┘
 ```
 
 ---
 
-## Key Concepts
+## 关键概念
 
-### Sessions
+### 会话
 
-Each time you run `claude`, you start a new **session**. A session is a conversation with Claude that persists while you're using Claude Code.
+每次执行 `claude`，你都会开始一个新的**会话**。会话是你和 Claude 的对话，在你使用 Claude Code 期间一直存在。
 
-- Sessions are **not saved** by default (they end when you exit)
-- Sessions are **scoped to one project** at a time
-- Your context grows as you ask more questions (max ~200K tokens)
+- 会话默认**不保存**（退出即结束）
+- 会话一次**只对一个项目**有效
+- 你的上下文会随着提问增多而增长（最多 ~200K tokens）
 
-### Context
+### 上下文
 
-**Context** is how much of the conversation Claude remembers. It's shown as a percentage (0-100%).
+**上下文**是 Claude 能记住的对话内容量，以百分比显示（0-100%）。
 
-- 0-50%: Plenty of room, work freely
-- 50-70%: Be selective, `/compact` optional
-- 70%+: Run `/compact` to free space
-- 90%+: You'll be forced to clean up
+- 0-50%：空间充足，放心干活
+- 50-70%：开始精打细算，可以考虑 `/compact`
+- 70%+：执行 `/compact` 释放空间
+- 90%+：会被强制清理
 
-### Git Awareness
+### Git 感知
 
-Claude Code is **git-aware**. It:
-- Detects your current branch
-- Shows uncommitted changes
-- Helps with commits and reviews
-- Prevents accidental breaking changes
-
----
-
-## Validation: You're Ready If...
-
-✓ You can run `claude --version` and see your installed version
-✓ You can start Claude in a project with `claude`
-✓ You understand the prompt → response loop
-✓ You can see `/status` and understand what it shows
-✓ You've reviewed at least one diff from Claude
+Claude Code 是**知道 git 的**。它能：
+- 检测你当前所在分支
+- 显示未提交的变更
+- 帮你提交和审查代码
+- 防止意外破坏性变更
 
 ---
 
-## What's Next?
+## 验证：完成本模块的标志
 
-Once you're comfortable with this module, move to **Module 02: Core Loop** to understand:
-- How Claude reads your project
-- How context works in depth
-- How to structure requests for better results
-- Planning mode and thinking modes
-
-**Time to next module**: Ready immediately (no prerequisites beyond running Claude once)
+✓ 你能执行 `claude --version` 并看到已安装的版本
+✓ 你能在项目中用 `claude` 启动 Claude
+✓ 你理解了提示词 → 响应的循环
+✓ 你能执行 `/status` 并理解它的输出
+✓ 你至少审查过一次 Claude 的 diff
 
 ---
 
-## Troubleshooting
+## 下一步
+
+学完本模块后，进入**模块 02：核心循环**，了解：
+- Claude 如何读取你的项目
+- 上下文的工作原理
+- 如何写出更有效的请求
+- 计划模式与思考模式
+
+**到下一模块的时间**：随时可以开始（只需跑过一次 Claude）
+
+---
+
+## 故障排查
 
 ### "claude: command not found"
-Your installation didn't complete. Try:
-- **macOS**: `brew install anthropic/tap/claude-code` again
-- **Linux**: Re-run the install script
-- **Windows**: Download the installer from https://dl.claudecode.com/windows
+安装未完成。试试：
+- **macOS**：重新执行 `brew install anthropic/tap/claude-code`
+- **Linux**：重新执行安装脚本
+- **Windows**：从 https://dl.claudecode.com/windows 下载安装包
 
 ### "Project not found"
-Make sure you're in a directory with a `package.json`, `.git`, or other project file. Claude Code works best in projects.
+确认你所在的目录包含 `package.json`、`.git` 或其他项目文件。Claude Code 在项目目录中工作效果最好。
 
-### "Permission denied" (macOS)
-Try:
+### "Permission denied"（macOS）
+试试：
 ```bash
 chmod +x /usr/local/bin/claude
 ```
 
 ---
 
-## Resources
+## 资源
 
-- **Official Docs**: https://code.claude.com/docs
-- **FAQ**: See `guide/ultimate-guide.md` Appendix B
-- **Examples**: `examples/` directory in this guide
+- **官方文档**：https://code.claude.com/docs
+- **常见问题**：参见 `guide/ultimate-guide.md` 附录 B
+- **示例**：本指南的 `examples/` 目录
 
 ---
 
-**Completed Module 01?** → Ready for Module 02: Core Loop
+**已完成模块 01？** → 准备进入模块 02：核心循环
