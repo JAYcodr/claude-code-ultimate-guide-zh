@@ -798,7 +798,7 @@ Claude Code │ Ctx(u): 45% │ Cost: $0.23 │ Session: 1h 23m
 `ccusage` CLI 工具提供 `/cost` 命令之外的详细成本分析（自 v2.1.118 起使用 `/usage`）：
 
 ```bash
-ccusage                    # 所有时期概览
+ccusage                    # 所有时间段概览
 ccusage --today            # 今日成本
 ccusage --month            # 当月成本
 ccusage --session          # 活跃会话明细
