@@ -6,42 +6,66 @@
 
 | 优先级 | 总计 | ✅ 完成 | 🔄 进行中 | ❌ 未开始 |
 |--------|------|--------|-----------|----------|
-| P0 | 14 | 14 | 0 | 0 |
-| P1 | 4 | 0 | 4 | 0 |
-| P2 | 2 | 0 | 0 | 2 |
+| P0 | 15 | 15 | 0 | 0 |
+| P1 | 4 | 4 | 0 | 0 |
+| P2 | 3 | 1 | 1 | 1 |
 | P3 | 2 | 0 | 0 | 2 |
 | P4 | 2 | 0 | 0 | 2 |
-| **合计** | **24** | **14** | **4** | **6** |
+| **合计** | **26** | **20** | **1** | **5** |
 
 ## 详细状态
 
-| 优先级 | 文件 | 行数 | 状态 | 上游 commit | 完成日期 | 备注 |
-|--------|------|------|------|------------|---------|------|
-| P0 | README.md | ~945 | ✅ | dbeb30c | 2026-05-23 | 已润色 |
-| P0 | guide/learning-path/README.md | ~263 | ✅ | dbeb30c | 2026-05-23 | |
-| P0 | guide/learning-path/01-installation.md | ~256 | ✅ | dbeb30c | 2026-05-23 | |
-| P0 | guide/learning-path/02-core-loop.md | ~334 | ✅ | dbeb30c | 2026-05-23 | |
-| P0 | guide/learning-path/03-memory.md | ~415 | ✅ | dbeb30c | 2026-05-23 | |
-| P0 | guide/learning-path/04-agents.md | ~461 | ✅ | dbeb30c | 2026-05-23 | |
-| P0 | guide/learning-path/05-skills.md | ~492 | ✅ | dbeb30c | 2026-05-23 | |
-| P0 | guide/learning-path/06-hooks.md | ~435 | ✅ | dbeb30c | 2026-05-23 | |
-| P0 | guide/learning-path/07-advanced.md | ~580 | ✅ | dbeb30c | 2026-05-23 | |
-| P0 | guide/cheatsheet.md | ~677 | ✅ | dbeb30c | 2026-05-23 | |
-| P0 | guide/ultimate-guide.md | ~240 | ✅ | dbeb30c | 2026-05-23 | TOC 导航页（分章后） |
-| P0 | guide/ultimate-guide/01-quick-start.md | ~1,416 | ✅ | dbeb30c | 2026-05-23 | |
-| P0 | guide/ultimate-guide/02-core-concepts.md | ~3,200 | ✅ | dbeb30c | 2026-05-23 | |
-| P0 | guide/ultimate-guide/03-memory-settings.md | ~1,692 | ✅ | dbeb30c | 2026-05-23 | |
-| P1 | examples/skills/ | ~200 | 🔄 | dbeb30c | - | 已翻译，待审查提交 |
-| P1 | examples/agents/ | ~300 | 🔄 | dbeb30c | - | 已翻译，待审查提交 |
-| P1 | guide/core/architecture.md | ~200 | 🔄 | dbeb30c | - | 已翻译，待审查提交 |
-| P1 | guide/core/methodologies.md | ~300 | 🔄 | dbeb30c | - | 已翻译，待审查提交 |
-| P2 | guide/workflows/ | ~500 | ❌ | - | - | |
-| P2 | guide/diagrams/ | ~200 | ❌ | - | - | |
-| P2 | quiz/ | ~1,000 | ❌ | - | - | 271 题 |
-| P3 | examples/hooks/ + examples/scripts/ | ~200 | ❌ | - | - | |
-| P3 | docs/resource-evaluations/ | ~3,000 | ❌ | - | - | 151 个文件 |
-| P4 | machine-readable/ | ~967 | ❌ | - | - | 评估后决定 |
-| P4 | tools/ | ~50 | ❌ | - | - | 评估后决定 |
+### P0 — 核心文档
+
+| 文件 | 行数 | 状态 | 上游 commit | 完成日期 | 备注 |
+|------|------|------|------------|---------|------|
+| README.md | ~945 | ✅ | dbeb30c | 2026-05-23 | 已润色 |
+| guide/learning-path/README.md | ~263 | ✅ | dbeb30c | 2026-05-23 | |
+| guide/learning-path/01-installation.md | ~256 | ✅ | dbeb30c | 2026-05-23 | |
+| guide/learning-path/02-core-loop.md | ~334 | ✅ | dbeb30c | 2026-05-23 | |
+| guide/learning-path/03-memory.md | ~415 | ✅ | dbeb30c | 2026-05-23 | |
+| guide/learning-path/04-agents.md | ~461 | ✅ | dbeb30c | 2026-05-23 | |
+| guide/learning-path/05-skills.md | ~492 | ✅ | dbeb30c | 2026-05-23 | |
+| guide/learning-path/06-hooks.md | ~435 | ✅ | dbeb30c | 2026-05-23 | |
+| guide/learning-path/07-advanced.md | ~580 | ✅ | dbeb30c | 2026-05-23 | |
+| guide/cheatsheet.md | ~677 | ✅ | dbeb30c | 2026-05-23 | |
+| guide/ultimate-guide.md | ~240 | ✅ | dbeb30c | 2026-05-23 | TOC 导航页（分章后） |
+| guide/ultimate-guide/01-quick-start.md | ~1,416 | ✅ | dbeb30c | 2026-05-23 | |
+| guide/ultimate-guide/02-core-concepts.md | ~3,200 | ✅ | dbeb30c | 2026-05-23 | |
+| guide/ultimate-guide/03-memory-settings.md | ~1,692 | ✅ | dbeb30c | 2026-05-23 | |
+| guide/ultimate-guide/04-agents.md | ~873 | ✅ | dbeb30c | 2026-05-23 | 智能体系统 |
+
+### P1 — 模板与架构
+
+| 文件 | 行数 | 状态 | 上游 commit | 完成日期 | 备注 |
+|------|------|------|------------|---------|------|
+| examples/skills/*.md（5 个独立文件） | ~1,200 | ✅ | dbeb30c | 2026-05-23 | ast-grep、pdf-generator、security-checklist、smart-explore、tdd-workflow |
+| examples/agents/*.md（15 个文件） | ~1,000 | ✅ | dbeb30c | 2026-05-23 | 代码评审员、架构师、规划师等 |
+| guide/core/architecture.md | ~85KB | 🔄 | dbeb30c | - | 已翻译，待润色 |
+| guide/core/methodologies.md | ~30KB | ✅ | dbeb30c | 2026-05-23 | |
+
+### P2 — 工作流与图表
+
+| 文件 | 行数 | 状态 | 上游 commit | 完成日期 | 备注 |
+|------|------|------|------------|---------|------|
+| guide/diagrams/README.md | ~112 | ✅ | dbeb30c | 2026-05-23 | 48 张图表导航 |
+| guide/diagrams/*.md（12 个文件） | ~2,000 | ❌ | - | - | 待翻译 |
+| guide/workflows/ | ~12,700 | ❌ | - | - | 24 个文件，待启动 |
+| quiz/ | ~1,000 | ❌ | - | - | 271 题 |
+
+### P3 — 辅助文件
+
+| 文件 | 行数 | 状态 | 上游 commit | 完成日期 | 备注 |
+|------|------|------|------------|---------|------|
+| examples/hooks/ + examples/scripts/ | ~200 | ❌ | - | - | |
+| docs/resource-evaluations/ | ~3,000 | ❌ | - | - | 151 个文件 |
+
+### P4 — 低优先级
+
+| 文件 | 行数 | 状态 | 上游 commit | 完成日期 | 备注 |
+|------|------|------|------------|---------|------|
+| machine-readable/ | ~967 | ❌ | - | - | 评估后决定 |
+| tools/ | ~50 | ❌ | - | - | 评估后决定 |
 
 ## 工作日志
 
@@ -66,3 +90,7 @@
 | 2026-05-23 | 添加 index.md | GitHub Pages 入口页 | 3f7b2dd |
 | 2026-05-23 | 修正 index.md 链接 | 修复链接指向 | 2e496f5 |
 | 2026-05-23 | 修复 index → index.html | 修复 GitHub Pages 404 | ebbdc24 |
+| 2026-05-23 | 补全工作日志 | 更新文档 | ac5bad6 |
+| 2026-05-23 | §4 智能体章节 | 汉化（873 行） | 3852331 |
+| 2026-05-23 | guide/diagrams/README.md | 汉化（112 行） | ccd2844 |
+| 2026-05-23 | TRANSLATION_STATUS.md | 更新 P0/P1/P2 状态 | (待提交) |
