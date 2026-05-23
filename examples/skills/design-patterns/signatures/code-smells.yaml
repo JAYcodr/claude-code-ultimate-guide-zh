@@ -3,11 +3,11 @@ description: Mapping from code smells to applicable design patterns with detecti
 
 # Code Smell Categories
 categories:
-  - bloaters           # Code that has grown too large
-  - oo_abusers         # Misuse of object-oriented principles
-  - change_preventers  # Changes require modifications in many places
-  - dispensables       # Pointless code that should be removed
-  - couplers           # Excessive coupling between classes
+  - bloaters # Code that has grown too large
+  - oo_abusers # Misuse of object-oriented principles
+  - change_preventers # Changes require modifications in many places
+  - dispensables # Pointless code that should be removed
+  - couplers # Excessive coupling between classes
 
 # Code Smells with Pattern Suggestions
 code_smells:
@@ -59,7 +59,7 @@ code_smells:
 
     detection:
       patterns:
-        - "function\\s+\\w+\\s*\\([^)]{100,}\\)"  # Heuristic: >100 chars
+        - "function\\s+\\w+\\s*\\([^)]{100,}\\)" # Heuristic: >100 chars
         - "constructor\\s*\\([^)]{80,}\\)"
       context: "Count commas in parameter list"
 
@@ -178,7 +178,7 @@ code_smells:
 
     detection:
       patterns:
-        - "new\\s+\\w+\\([^)]{80,}\\)"  # Long constructor call
+        - "new\\s+\\w+\\([^)]{80,}\\)" # Long constructor call
         - "const\\s+\\w+\\s*=\\s*new\\s+\\w+\\(\\);[^}]{50,}\\w+\\.set\\w+"
       context: "Construction spans multiple lines with setters"
 
@@ -226,7 +226,7 @@ code_smells:
 
     detection:
       patterns:
-        - "\\{\\s*\\w+:\\s*\\w+\\.\\w+,.*\\w+:\\s*\\w+\\.\\w+"  # Object mapping
+        - "\\{\\s*\\w+:\\s*\\w+\\.\\w+,.*\\w+:\\s*\\w+\\.\\w+" # Object mapping
       context: "Same mapping logic repeated in multiple places"
 
     suggested_patterns:
@@ -241,7 +241,7 @@ code_smells:
 
     detection:
       patterns:
-        - "class\\s+\\w+\\s+extends\\s+\\w+\\s+extends\\s+\\w+"  # Multi-level inheritance
+        - "class\\s+\\w+\\s+extends\\s+\\w+\\s+extends\\s+\\w+" # Multi-level inheritance
       context: "Inheritance hierarchy >3 levels deep"
 
     suggested_patterns:
@@ -283,8 +283,8 @@ code_smells:
 
     detection:
       patterns:
-        - "if\\s*\\([^)]*&&[^)]*&&[^)]*\\)"  # Multiple conditions
-        - "if\\s*\\(.*if\\s*\\(.*if\\s*\\("  # Nested ifs
+        - "if\\s*\\([^)]*&&[^)]*&&[^)]*\\)" # Multiple conditions
+        - "if\\s*\\(.*if\\s*\\(.*if\\s*\\(" # Nested ifs
       context: "Cyclomatic complexity >10"
 
     suggested_patterns:
@@ -346,7 +346,7 @@ code_smells:
 
     detection:
       patterns:
-        - "this\\.(\\w+\\.){3,}"  # Multiple chained accesses
+        - "this\\.(\\w+\\.){3,}" # Multiple chained accesses
       context: "Method heavily accesses another object's data"
 
     suggested_patterns:

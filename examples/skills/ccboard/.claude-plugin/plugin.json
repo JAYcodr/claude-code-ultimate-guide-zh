@@ -20,11 +20,7 @@
     "analytics",
     "visualization"
   ],
-  "categories": [
-    "productivity",
-    "development-tools",
-    "monitoring"
-  ],
+  "categories": ["productivity", "development-tools", "monitoring"],
   "commands": [
     "/dashboard",
     "/mcp-status",

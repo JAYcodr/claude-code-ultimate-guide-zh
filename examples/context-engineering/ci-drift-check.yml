@@ -15,19 +15,19 @@ name: Context Drift Check
 
 on:
   schedule:
-    - cron: '0 9 * * 1'   # Every Monday at 9:00 AM UTC
-  workflow_dispatch:        # Allow manual trigger from GitHub UI
+    - cron: "0 9 * * 1" # Every Monday at 9:00 AM UTC
+  workflow_dispatch: # Allow manual trigger from GitHub UI
     inputs:
       project_dir:
-        description: 'Project directory to check (relative to repo root)'
+        description: "Project directory to check (relative to repo root)"
         required: false
-        default: '.'
+        default: "."
   push:
     paths:
       # Standard: fire when AI config changes
-      - 'CLAUDE.md'
-      - '.claude/**'
-      - 'doc/guides/ai-instructions/**'
+      - "CLAUDE.md"
+      - ".claude/**"
+      - "doc/guides/ai-instructions/**"
       # Code-level trigger: fire when the code that AI docs describe changes.
       # Without this, a developer can add a new Prisma model or API router
       # and the drift check never runs — docs go stale invisibly.
@@ -53,13 +53,13 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      issues: write       # Required to open issues on failure
+      issues: write # Required to open issues on failure
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0   # Full history needed for git log checks
+          fetch-depth: 0 # Full history needed for git log checks
 
       - name: Make canary script executable
         run: chmod +x ./examples/context-engineering/canary-check.sh
@@ -69,7 +69,7 @@ jobs:
         run: |
           PROJECT_DIR="${{ github.event.inputs.project_dir || '.' }}"
           ./examples/context-engineering/canary-check.sh "$PROJECT_DIR"
-        continue-on-error: true  # Capture exit code without stopping workflow
+        continue-on-error: true # Capture exit code without stopping workflow
 
       - name: Check CLAUDE.md size against thresholds
         id: size_check

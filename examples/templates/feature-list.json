@@ -18,12 +18,7 @@
       "evidence": ""
     }
   ],
-  "_status_values": [
-    "not_started",
-    "active",
-    "blocked",
-    "passing"
-  ],
+  "_status_values": ["not_started", "active", "blocked", "passing"],
   "_rules": [
     "Only ONE feature can be active at a time (WIP=1).",
     "Evidence field must contain the verification command and output before status moves to passing.",

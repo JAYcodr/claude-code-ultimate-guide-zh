@@ -34,7 +34,7 @@
         },
         "constraints": {
           "type": "array",
-          "items": {"type": "string"},
+          "items": { "type": "string" },
           "description": "Constraints or requirements for execution"
         },
         "files_context": {
@@ -76,7 +76,7 @@
           },
           "depends_on": {
             "type": "array",
-            "items": {"type": "integer"},
+            "items": { "type": "integer" },
             "default": [],
             "description": "Step IDs that must complete before this one"
           },
@@ -90,7 +90,7 @@
               },
               "keys": {
                 "type": "array",
-                "items": {"type": "string"},
+                "items": { "type": "string" },
                 "description": "Required keys for contains_keys validation"
               }
             },

@@ -24,7 +24,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Full history for better context
+          fetch-depth: 0 # Full history for better context
           ref: ${{ github.event.pull_request.head.sha }}
 
       - name: Get changed files

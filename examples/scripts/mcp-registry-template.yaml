@@ -18,17 +18,16 @@ metadata:
 # APPROVED MCPs
 # ─────────────────────────────────────────────────────────────────
 approved:
-
   # Example: Read-only documentation lookup (LOW risk)
   - name: context7
-    version: "1.2.3"                # Pin exact version — never "latest"
+    version: "1.2.3" # Pin exact version — never "latest"
     source: "https://github.com/context7/mcp-server"
     npm_package: "@context7/mcp-server"
     approved_by: "john.doe@company.com"
     approved_date: "2026-01-15"
-    expires: "2026-07-15"           # 6 months default
-    data_scope: PUBLIC              # PUBLIC | INTERNAL | CONFIDENTIAL | RESTRICTED
-    risk: LOW                       # LOW | MEDIUM | HIGH
+    expires: "2026-07-15" # 6 months default
+    data_scope: PUBLIC # PUBLIC | INTERNAL | CONFIDENTIAL | RESTRICTED
+    risk: LOW # LOW | MEDIUM | HIGH
     rationale: "Read-only documentation lookup. No data egress, no credentials."
     config:
       command: npx
@@ -54,10 +53,10 @@ approved:
   # Example: Read-only internal database (MEDIUM risk, shorter expiry)
   - name: internal-db-readonly
     version: "2.1.0"
-    source: "internal"              # "internal" for company-built MCPs
+    source: "internal" # "internal" for company-built MCPs
     approved_by: "security@company.com"
     approved_date: "2026-02-01"
-    expires: "2026-05-01"           # Shorter expiry for higher risk
+    expires: "2026-05-01" # Shorter expiry for higher risk
     data_scope: CONFIDENTIAL
     risk: MEDIUM
     rationale: "Read-only replica. Allowlisted tables exclude PII, payments, audit."
@@ -77,14 +76,13 @@ approved:
 # PENDING REVIEW
 # ─────────────────────────────────────────────────────────────────
 pending_review:
-
   - name: github-mcp
     requested_by: "dev@company.com"
     requested_date: "2026-03-05"
     source: "https://github.com/modelcontextprotocol/servers"
     use_case: "Automated PR creation, issue management"
     proposed_data_scope: INTERNAL
-    status: under_review            # under_review | sandbox_trial | awaiting_security
+    status: under_review # under_review | sandbox_trial | awaiting_security
     reviewer: "jane.smith@company.com"
     expected_decision: "2026-03-20"
     notes: "Check GitHub token scope — should be limited to specific repos"
@@ -93,7 +91,6 @@ pending_review:
 # DENIED
 # ─────────────────────────────────────────────────────────────────
 denied:
-
   - name: browser-automation-mcp
     denied_date: "2026-02-10"
     requested_by: "dev2@company.com"
@@ -115,15 +112,15 @@ denied:
 # VERSION BUMP POLICY
 # ─────────────────────────────────────────────────────────────────
 version_bump_policy:
-  patch:                            # e.g., 1.2.3 → 1.2.4
-    requires: check_release_notes   # Check for CVEs/breaking changes, then auto-approve
+  patch: # e.g., 1.2.3 → 1.2.4
+    requires: check_release_notes # Check for CVEs/breaking changes, then auto-approve
     approver: tech_lead
     turnaround: "48h"
-  minor:                            # e.g., 1.2.3 → 1.3.0
+  minor: # e.g., 1.2.3 → 1.3.0
     requires: full_security_review
     approver: security_team
     turnaround: "1 week"
-  major:                            # e.g., 1.2.3 → 2.0.0
+  major: # e.g., 1.2.3 → 2.0.0
     requires: full_security_review + sandbox_trial
     approver: security_team + engineering_director
     turnaround: "2 weeks"

@@ -170,4 +170,4 @@ scoring_guide:
   "16-17": "Good — minor gaps, address the failing questions this sprint"
   "13-15": "Needs work — coverage or quality issues affecting Claude's output"
   "10-12": "Significant issues — likely causing frequent corrections or rework"
-  "0-9":   "Critical — CLAUDE.md is not serving its purpose, rebuild from skeleton"
+  "0-9": "Critical — CLAUDE.md is not serving its purpose, rebuild from skeleton"

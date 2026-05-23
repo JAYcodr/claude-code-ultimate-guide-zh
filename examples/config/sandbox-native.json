@@ -6,10 +6,7 @@
     "allowUnsandboxedCommands": false,
 
     "filesystem": {
-      "allowedWritePaths": [
-        "${CWD}",
-        "/tmp"
-      ],
+      "allowedWritePaths": ["${CWD}", "/tmp"],
       "deniedReadPaths": [
         "${HOME}/.ssh",
         "${HOME}/.aws",
@@ -35,12 +32,7 @@
       ]
     },
 
-    "excludedCommands": [
-      "docker",
-      "kubectl",
-      "podman",
-      "vagrant"
-    ]
+    "excludedCommands": ["docker", "kubectl", "podman", "vagrant"]
   },
 
   "comments": {

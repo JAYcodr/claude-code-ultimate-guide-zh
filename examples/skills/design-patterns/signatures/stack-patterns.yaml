@@ -34,8 +34,8 @@ stacks:
       extensions: [".jsx", ".tsx"]
 
     version_detection:
-      hooks_era: ">=16.8.0"  # useState, useEffect introduced
-      concurrent: ">=18.0.0"  # Concurrent features
+      hooks_era: ">=16.8.0" # useState, useEffect introduced
+      concurrent: ">=18.0.0" # Concurrent features
 
     native_patterns:
       singleton:
@@ -110,8 +110,8 @@ stacks:
       extensions: [".ts"]
 
     version_detection:
-      standalone: ">=14.0.0"  # Standalone components
-      signals: ">=16.0.0"     # Signals API
+      standalone: ">=14.0.0" # Standalone components
+      signals: ">=16.0.0" # Signals API
 
     native_patterns:
       singleton:
@@ -243,8 +243,8 @@ stacks:
       extensions: [".vue"]
 
     version_detection:
-      composition_api: ">=3.0.0"  # Composition API default
-      script_setup: ">=3.2.0"     # <script setup> sugar
+      composition_api: ">=3.0.0" # Composition API default
+      script_setup: ">=3.2.0" # <script setup> sugar
 
     native_patterns:
       singleton:

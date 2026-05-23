@@ -21,7 +21,7 @@ reviews:
     - "!**/dist/**"
     - "!**/build/**"
     - "!**/__generated__/**"
-    - "!**/migrations/**"     # Remove this if you want DB migration reviews
+    - "!**/migrations/**" # Remove this if you want DB migration reviews
 
   path_instructions:
     # Focus deeper on security-sensitive paths

@@ -21,7 +21,7 @@
 #     implementation task: new file, new route, new component |
 
 version: "1.0.0"
-generated: "YYYY-MM-DDTHH:MM:SS.000Z"   # auto-filled by generation script
+generated: "YYYY-MM-DDTHH:MM:SS.000Z" # auto-filled by generation script
 
 # One-line description of your architecture flow.
 # Helps Claude orient quickly when navigating unfamiliar layers.
@@ -35,7 +35,7 @@ layers:
   api:
     root: "src/api"
     description: "Input validation + delegation to service. No business logic."
-    count: 0   # auto-generated
+    count: 0 # auto-generated
 
   services:
     root: "src/services"
@@ -65,9 +65,9 @@ layers:
 # Gives Claude a fast answer to "where does this feature live?"
 # count: number of component files in that domain directory.
 component_domains:
-  - { name: "auth",        path: "src/components/auth",        count: 0 }
-  - { name: "dashboard",   path: "src/components/dashboard",   count: 0 }
-  - { name: "settings",    path: "src/components/settings",    count: 0 }
+  - { name: "auth", path: "src/components/auth", count: 0 }
+  - { name: "dashboard", path: "src/components/dashboard", count: 0 }
+  - { name: "settings", path: "src/components/settings", count: 0 }
   # Add one entry per feature domain. Remove this comment block once filled in.
   # Keep names short (match the directory name exactly).
 
@@ -79,8 +79,8 @@ component_domains:
 # lines: line count of the file — auto-generated.
 # focus: first H1 heading of the file — auto-generated.
 nested_contexts:
-  - { path: "src/CLAUDE.md",        lines: 0, focus: "Replace with H1 from that file" }
-  - { path: "tests/CLAUDE.md",      lines: 0, focus: "Replace with H1 from that file" }
+  - { path: "src/CLAUDE.md", lines: 0, focus: "Replace with H1 from that file" }
+  - { path: "tests/CLAUDE.md", lines: 0, focus: "Replace with H1 from that file" }
   # Add entries for each CLAUDE.md / AI_INSTRUCTIONS.md in subdirectories.
   # Remove any entry whose file no longer exists — the generation script handles this.
 
@@ -88,8 +88,8 @@ nested_contexts:
 # Aggregate numbers Claude can answer in one lookup without browsing the FS.
 # All auto-generated.
 stats:
-  total_source_files: 0    # e.g. all .ts + .tsx
-  total_test_files: 0      # e.g. **/*.test.ts + **/*.spec.ts
+  total_source_files: 0 # e.g. all .ts + .tsx
+  total_test_files: 0 # e.g. **/*.test.ts + **/*.spec.ts
   # Optional: add counts meaningful to your stack.
   # prisma_models: 0       # grep "^model\s+\w+\s*{" schema.prisma | wc -l
   # api_routes: 0          # count of route files in layers.api.root
@@ -99,7 +99,7 @@ stats:
 # Canonical paths Claude needs when creating new files or navigating.
 # Prevents it from inferring wrong paths from partial context.
 key_paths:
-  entry_point: "src/index.ts"          # or src/app/layout.tsx, main.ts, etc.
+  entry_point: "src/index.ts" # or src/app/layout.tsx, main.ts, etc.
   shared_utils: "src/lib/utils.ts"
   # Add any paths Claude frequently gets wrong:
   # schema: "prisma/schema.prisma"

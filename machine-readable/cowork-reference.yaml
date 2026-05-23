@@ -26,10 +26,10 @@ docs:
 # PROMPTS LIBRARY (60+ ready-to-use)
 # ════════════════════════════════════════════════════════════════
 prompts:
-  file_ops: "cowork/prompts/file-ops.md"  # 20 prompts
-  document_creation: "cowork/prompts/document-creation.md"  # 15 prompts
-  data_extraction: "cowork/prompts/data-extraction.md"  # 15 prompts
-  research: "cowork/prompts/research.md"  # 17 prompts
+  file_ops: "cowork/prompts/file-ops.md" # 20 prompts
+  document_creation: "cowork/prompts/document-creation.md" # 15 prompts
+  data_extraction: "cowork/prompts/data-extraction.md" # 15 prompts
+  research: "cowork/prompts/research.md" # 17 prompts
 
 # ════════════════════════════════════════════════════════════════
 # WORKFLOWS (step-by-step guides)

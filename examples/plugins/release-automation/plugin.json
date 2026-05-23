@@ -5,9 +5,14 @@
   "description": "Automated versioning, changelog generation, and release management for continuous delivery.",
   "minimum_claude_code_version": "2.1.0",
   "includes": {
-    "commands": [{"name": "release", "file": "commands/release.md"}, {"name": "changelog", "file": "commands/changelog.md"}],
-    "skills": [{"name": "release-notes-generator", "file": "skills/release-notes-generator.md"}],
-    "hooks": [{"name": "version-sync", "file": "hooks/bash/version-sync.sh", "type": "PostToolUse"}]
+    "commands": [
+      { "name": "release", "file": "commands/release.md" },
+      { "name": "changelog", "file": "commands/changelog.md" }
+    ],
+    "skills": [{ "name": "release-notes-generator", "file": "skills/release-notes-generator.md" }],
+    "hooks": [
+      { "name": "version-sync", "file": "hooks/bash/version-sync.sh", "type": "PostToolUse" }
+    ]
   },
   "install_time_estimate": "3 minutes",
   "learning_curve": "Beginner",
