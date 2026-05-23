@@ -1,31 +1,31 @@
 ---
 name: handoff-resume
-description: Load a handoff document and resume work from where a previous session left off. Parses scope, file references, completed work, and next steps, then confirms understanding before proceeding.
-argument-hint: <handoff-file-path>
+description: 加载交接文档并从上一会话中断处继续工作。解析范围、文件引用、已完成工作和下一步，在继续前确认理解。
+argument-hint: <交接文档路径>
 effort: low
 disable-model-invocation: true
 ---
 
-Read and load the handoff document at `$ARGUMENTS[0]`.
+读取并加载位于 `$ARGUMENTS[0]` 的交接文档。
 
-## Steps
+## 步骤
 
-1. **Read the file** at the provided path. If the path does not exist, list files in `claudedocs/handoffs/` and ask the user which one to load.
+1. **读取文件**（指定路径）。如果路径不存在，列出 `claudedocs/handoffs/` 中的文件，询问用户加载哪一个。
 
-2. **Parse and confirm**:
-   - Task and scope
-   - Files involved (with line numbers)
-   - Key discoveries
-   - Work completed so far
-   - Current status
-   - Next steps (ordered)
+2. **解析并确认**：
+   - 任务和范围
+   - 涉及的文件（含行号）
+   - 关键发现
+   - 目前为止已完成的工作
+   - 当前状态
+   - 下一步（按顺序）
 
-3. **Confirm understanding**: Summarize what you have loaded in 3-5 bullet points. Ask: "Should I proceed with the next step, or do you want to adjust the plan first?"
+3. **确认理解**：用 3-5 个要点总结已加载的内容。询问："是否继续执行下一步，还是想先调整计划？"
 
-4. **Do not start working** until the user confirms. The confirmation step is mandatory.
+4. **在用户确认前不要开始工作**。确认步骤是强制性的。
 
-## Notes
+## 说明
 
-- If the handoff file references commits (`commit: abc1234`), note them but do not re-run the work.
-- If next steps are unclear or conflicting, flag it before proceeding.
-- The "Work Done" section is the authoritative record of what has been completed. Trust it.
+- 如果交接文档引用了提交（`commit：abc1234`），记录它们但不重新执行工作。
+- 如果下一步不清晰或存在冲突，在继续前指出。
+- "已完成工作"章节是已完成内容的权威记录。信任它。

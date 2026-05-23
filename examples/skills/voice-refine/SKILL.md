@@ -1,96 +1,94 @@
 ---
 name: voice-refine
-description: "Transform verbose voice input into structured, token-efficient Claude prompts. Use when cleaning up voice memos, dictation output, or speech-to-text transcriptions that contain filler words, repetitions, and unstructured thoughts."
+description: "将冗长的语音输入转化为结构化的、token 高效的 Claude prompt。用于整理语音备忘录、听写输出或包含填充词、重复和非结构化思维的语音转文字转录。"
 allowed-tools: Read
 effort: low
 ---
 
-# Voice Refine Skill
+# 语音精炼技能
 
-Transform verbose, stream-of-consciousness voice dictation into structured,
-token-efficient prompts for Claude Code.
+将冗长的意识流语音听写转化为结构化的、token 高效的 Claude Code prompt。
 
-## When to Use
+## 何时使用
 
-- Input from voice dictation (Wispr Flow, Superwhisper, macOS Dictation)
-- Verbose text >150 words
-- Contains filler words, repetitions, or tangents
-- Natural speech patterns that need structure
+- 来自语音听写的输入（Wispr Flow、Superwhisper、macOS 听写）
+- 超过 150 词的冗长文本
+- 包含填充词、重复或跑题
+- 需要结构化的自然语言模式
 
-## Transformation Pipeline
+## 转化流程
 
 ```
-1. DEDUPE    → Remove repetitions and filler words
-2. EXTRACT   → Identify core requirements and constraints
-3. STRUCTURE → Organize into standard sections
-4. COMPRESS  → Reduce to ~30% of original while preserving intent
+1. 去重     → 去除重复和填充词
+2. 提取     → 识别核心需求和约束
+3. 结构化   → 组织成标准章节
+4. 压缩     → 压缩至原文约 30%，保留意图
 ```
 
-## Output Format
+## 输出格式
 
 ```markdown
-## Contexte
-[Project context, existing stack, relevant files]
+## 上下文
+[项目背景、现有技术栈、相关文件]
 
-## Objectif
-[Single sentence: what needs to be built/changed]
+## 目标
+[一句话：需要构建/修改什么]
 
-## Contraintes
-- [Constraint 1]
-- [Constraint 2]
-- [etc.]
+## 约束
+- [约束 1]
+- [约束 2]
+- [等]
 
-## Output attendu
-[Expected deliverables: files, format, tests]
+## 预期输出
+[预期交付物：文件、格式、测试]
 ```
 
-## Flags
+## 标志
 
-| Flag | Effect |
+| 标志 | 效果 |
 |------|--------|
-| `--confirm` | Show refined prompt before sending to Claude (default) |
-| `--direct` | Send refined prompt directly without confirmation |
-| `--verbose` | Keep more detail, less compression |
-| `--en` | Output in English (default: matches input language) |
+| `--confirm` | 发送到 Claude 前显示精炼后的 prompt（默认） |
+| `--direct` | 不确认直接发送精炼后的 prompt |
+| `--verbose` | 保留更多细节，更少压缩 |
+| `--en` | 以英文输出（默认：匹配输入语言） |
 
-## Usage Examples
+## 使用示例
 
-### Basic Usage
+### 基本用法
 
 ```
 /voice-refine
 
-Alors euh j'aimerais que tu m'aides à faire un truc, en fait j'ai une API
-qui renvoie des données utilisateurs et je voudrais les afficher dans un
-tableau React, mais attention il faut que ça soit paginé parce que y'a
-beaucoup de données, genre des milliers d'utilisateurs, et aussi faudrait
-pouvoir trier par nom ou par date d'inscription, ah et on utilise Tailwind
-dans le projet donc faut que ça matche avec ça...
+就是嗯我想让你帮我做一个东西，就是我现在有一个 API
+返回用户数据，我想把它显示在一个 React 表格里，
+但是要注意必须分页因为数据很多，大概几千个用户，
+还有最好能按姓名或注册日期排序，哦对了我们项目用 Tailwind
+所以样式要匹配...
 ```
 
-### With Flags
+### 带标志
 
 ```
 /voice-refine --direct --en
 
-[voice input in any language → sends English prompt directly]
+[任意语言的语音输入 → 直接发送英文 prompt]
 ```
 
-## Compression Metrics
+## 压缩指标
 
-| Metric | Target |
+| 指标 | 目标 |
 |--------|--------|
-| Token reduction | 60-70% |
-| Information retention | >95% |
-| Structure clarity | High |
+| Token 减少 | 60-70% |
+| 信息保留 | >95% |
+| 结构清晰度 | 高 |
 
-## Filtering Rules
+## 筛选规则
 
-**Remove**: filler words ("euh", "um", "like", "basically"), repetitions, tangents, hedging ("maybe", "probably" unless relevant), politeness padding ("please", "could you").
+**去除**：填充词（"嗯"、"那个"、"like"、"basically"）、重复、跑题、模糊用词（"maybe"、"probably"，除非相关）、客套话（"麻烦"、"能不能"）。
 
-**Preserve**: technical requirements, constraints, existing code context, expected output format, edge cases, business logic rules.
+**保留**：技术要求、约束、现有代码上下文、预期输出格式、边缘用例、业务逻辑规则。
 
-## See Also
+## 另见
 
-- `guide/ai-ecosystem.md` - Voice-to-Text Tools section
-- `examples/before-after.md` - Full transformation examples
+- `guide/ai-ecosystem.md` — 语音转文字工具章节
+- `examples/before-after.md` — 完整的转化示例

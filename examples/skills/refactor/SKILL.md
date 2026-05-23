@@ -1,217 +1,217 @@
 ---
 name: refactor
-description: Analyze code for SOLID violations and suggest targeted improvements
-argument-hint: "<file_or_module> [--pattern <name>]"
+description: 分析代码中的 SOLID 违规并建议有针对性的改进
+argument-hint: "<文件或模块> [--pattern <名称>]"
 effort: medium
 disable-model-invocation: true
 ---
 
-# SOLID Refactoring Assistant
+# SOLID 重构助手
 
-Analyze code for SOLID violations and suggest targeted improvements.
+分析代码中的 SOLID 违规并建议有针对性的改进。
 
-## Purpose
+## 目的
 
-Identify refactoring opportunities based on:
-- SOLID principle violations
-- Code smells and anti-patterns
-- Complexity metrics
-- Duplication detection
+基于以下方面识别重构机会：
+- SOLID 原则违规
+- 代码异味和反模式
+- 复杂度指标
+- 重复检测
 
-## Instructions
+## 使用说明
 
-### Step 1: Scope Analysis
+### 步骤 1：范围分析
 
-Determine the refactoring scope from user input:
-- Single file: Deep analysis
-- Directory: Pattern detection across files
-- Function/class: Focused extraction suggestions
+根据用户输入确定重构范围：
+- 单个文件：深度分析
+- 目录：跨文件模式检测
+- 函数/类：聚焦提取建议
 
 ```bash
-# Get file/directory stats
+# 获取文件/目录统计
 if [ -f "$TARGET" ]; then
   wc -l "$TARGET"
-  echo "Single file analysis"
+  echo "单文件分析"
 elif [ -d "$TARGET" ]; then
   find "$TARGET" -type f \( -name "*.ts" -o -name "*.js" -o -name "*.py" \) | wc -l
-  echo "Directory analysis"
+  echo "目录分析"
 fi
 ```
 
-### Step 2: SOLID Violations Detection
+### 步骤 2：SOLID 违规检测
 
-#### S - Single Responsibility
+#### S - 单一职责
 
-Look for:
-- Files > 300 lines
-- Functions > 50 lines
-- Classes with > 10 methods
-- Mixed concerns (data + UI + business logic)
+查找：
+- 超过 300 行的文件
+- 超过 50 行的函数
+- 超过 10 个方法的类
+- 混合关注点（数据 + UI + 业务逻辑）
 
 ```bash
-# Find large files
+# 查找大文件
 find . -name "*.{ts,js,py}" -exec wc -l {} + 2>/dev/null | sort -rn | head -10
 
-# Functions with high line count (approximate)
+# 行数多的函数（近似）
 grep -rn "function\|def \|fn " --include="*.{ts,js,py,rs}" . | head -20
 ```
 
-#### O - Open/Closed Principle
+#### O - 开闭原则
 
-Look for:
-- Switch/case statements on types
-- Repeated if/else type checking
-- Direct modifications vs extensions
+查找：
+- 对类型使用 switch/case
+- 重复的 if/else 类型检查
+- 直接修改而非扩展
 
-#### L - Liskov Substitution
+#### L - 里氏替换
 
-Look for:
-- Overridden methods that throw "not implemented"
-- Type checks before method calls
-- Empty method overrides
+查找：
+- 抛出"not implemented"的重写方法
+- 方法调用前的类型检查
+- 空方法重写
 
-#### I - Interface Segregation
+#### I - 接口隔离
 
-Look for:
-- Large interfaces (> 10 methods)
-- Classes implementing unused interface methods
-- Fat service classes
+查找：
+- 大接口（超过 10 个方法）
+- 实现了未使用的接口方法的类
+- 臃肿的服务类
 
-#### D - Dependency Inversion
+#### D - 依赖反转
 
-Look for:
-- Direct instantiation of dependencies (`new Service()`)
-- Hardcoded class references
-- Missing dependency injection
+查找：
+- 直接实例化依赖（`new Service()`）
+- 硬编码的类引用
+- 缺少依赖注入
 
-### Step 3: Code Smells
+### 步骤 3：代码异味
 
 ```bash
-# Duplication patterns
+# 重复模式
 grep -rn --include="*.{ts,js,py}" . 2>/dev/null | \
   awk -F: '{print $3}' | sort | uniq -c | sort -rn | head -10
 
-# Long parameter lists (> 4 params)
+# 长参数列表（> 4 个参数）
 grep -rn "function.*,.*,.*,.*," --include="*.{ts,js}" . 2>/dev/null | head -10
 
-# Deep nesting (4+ levels)
+# 深度嵌套（4 层以上）
 grep -rn "^\s\{16,\}" --include="*.{ts,js,py}" . 2>/dev/null | head -10
 ```
 
-### Step 4: Complexity Assessment
+### 步骤 4：复杂度评估
 
-For each issue found, assess:
-- **Impact**: How much code is affected?
-- **Risk**: What could break?
-- **Effort**: Lines to change, tests needed?
+对发现的每个问题评估：
+- **影响**：影响多少代码？
+- **风险**：可能破坏什么？
+- **工作量**：需要改多少行、需要多少测试？
 
-## Output Format
+## 输出格式
 
 ---
 
-### 🔧 Refactoring Analysis
+### 🔧 重构分析
 
-**Target**: [file/directory]
-**Lines Analyzed**: [count]
+**目标**：[文件/目录]
+**分析行数**：[数量]
 
-### 📊 SOLID Scorecard
+### 📊 SOLID 评分卡
 
-| Principle | Status | Issues Found |
+| 原则 | 状态 | 发现的问题数 |
 |-----------|--------|--------------|
-| Single Responsibility | 🟡 | 3 large classes |
-| Open/Closed | 🟢 | OK |
-| Liskov Substitution | 🟢 | OK |
-| Interface Segregation | 🔴 | 2 fat interfaces |
-| Dependency Inversion | 🟡 | 5 direct instantiations |
+| 单一职责 | 🟡 | 3 个大类 |
+| 开闭原则 | 🟢 | OK |
+| 里氏替换 | 🟢 | OK |
+| 接口隔离 | 🔴 | 2 个臃肿接口 |
+| 依赖反转 | 🟡 | 5 处直接实例化 |
 
-### 🎯 Priority Refactorings
+### 🎯 优先重构项
 
-#### 1. [Highest Impact] - Extract class from `UserService`
+#### 1. [影响最大] - 从 `UserService` 提取类
 
-**Violation**: Single Responsibility
-**Current**: 450 lines handling auth + profile + notifications
-**Suggested**:
+**违规**：单一职责
+**当前**：450 行，处理 auth + profile + notifications
+**建议**：
 ```
-UserService.ts (450 lines)
-    ↓ Extract
-AuthService.ts (~150 lines)
-ProfileService.ts (~150 lines)
-NotificationService.ts (~100 lines)
+UserService.ts (450 行)
+    ↓ 提取
+AuthService.ts (~150 行)
+ProfileService.ts (~150 行)
+NotificationService.ts (~100 行)
 ```
-**Risk**: Medium (update imports)
-**Tests Needed**: Update dependency injection in tests
+**风险**：中（更新导入）
+**需要的测试**：更新测试中的依赖注入
 
-#### 2. [Second Priority] - Replace switch with polymorphism
+#### 2. [第二优先级] - 用多态替换 switch
 
-**Location**: `src/handlers/payment.ts:45`
-**Current**:
+**位置**：`src/handlers/payment.ts:45`
+**当前**：
 ```typescript
 switch (paymentType) {
-  case 'card': // 50 lines
-  case 'bank': // 50 lines
-  case 'crypto': // 50 lines
+  case 'card': // 50 行
+  case 'bank': // 50 行
+  case 'crypto': // 50 行
 }
 ```
-**Suggested**: Strategy pattern with `PaymentProcessor` interface
-**Risk**: Low (isolated change)
+**建议**：使用 `PaymentProcessor` 接口的策略模式
+**风险**：低（隔离变更）
 
-### 📝 Code Smells
+### 📝 代码异味
 
-| Smell | Location | Severity |
+| 异味 | 位置 | 严重性 |
 |-------|----------|----------|
-| Long Method | `api.ts:calculateTotal` (120 lines) | 🟠 High |
-| Duplicate Code | `utils/*.ts` (3 similar blocks) | 🟡 Medium |
-| Deep Nesting | `parser.ts:parse` (6 levels) | 🟡 Medium |
+| 长方法 | `api.ts:calculateTotal`（120 行） | 🟠 高 |
+| 重复代码 | `utils/*.ts`（3 个相似块） | 🟡 中 |
+| 深度嵌套 | `parser.ts:parse`（6 层） | 🟡 中 |
 
-### 🚀 Quick Wins (Low Risk, High Value)
+### 🚀 速胜（低风险、高价值）
 
-1. Extract `validateEmail()` to shared utils (used in 4 places)
-2. Replace magic numbers with named constants
-3. Add early returns to reduce nesting in `processOrder()`
+1. 将 `validateEmail()` 提取到共享工具（在 4 处使用）
+2. 用命名常量替换魔法数字
+3. 添加提前返回到 `processOrder()` 以减少嵌套
 
-### ⚠️ Technical Debt Notes
+### ⚠️ 技术债务说明
 
-- [Item to track for future sprints]
+- [要在未来迭代中跟踪的条目]
 
 ---
 
-## Refactoring Safety Checklist
+## 重构安全清单
 
-Before applying suggestions:
+应用建议前：
 
-- [ ] Tests exist for affected code
-- [ ] Create feature branch
-- [ ] Commit current state
-- [ ] Apply one refactoring at a time
-- [ ] Run tests after each change
-- [ ] Review diff before committing
+- [ ] 受影响代码存在测试
+- [ ] 创建功能分支
+- [ ] 提交当前状态
+- [ ] 一次只应用一个重构
+- [ ] 每次修改后运行测试
+- [ ] 提交前审查 diff
 
-## Usage
+## 用法
 
-**Analyze specific file:**
+**分析特定文件：**
 ```
 /refactor src/services/user.ts
 ```
 
-**Analyze directory:**
+**分析目录：**
 ```
 /refactor src/api/
 ```
 
-**Focus on specific principle:**
+**关注特定原则：**
 ```
 /refactor --focus=srp src/services/
 ```
 
-**With complexity threshold:**
+**带复杂度阈值：**
 ```
 /refactor --threshold=high
 ```
 
-## References
+## 参考
 
-- Martin Fowler's Refactoring Catalog
-- Clean Code by Robert C. Martin
-- SOLID principles by Robert C. Martin
+- Martin Fowler 的 Refactoring Catalog
+- 《代码整洁之道》Robert C. Martin
+- SOLID 原则 by Robert C. Martin
 
 $ARGUMENTS

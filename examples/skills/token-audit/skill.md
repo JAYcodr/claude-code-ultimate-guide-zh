@@ -1,44 +1,45 @@
+<!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
 ---
 name: token-audit
-description: "Audit Claude Code configuration to measure fixed-context token overhead and produce a prioritized action plan. Use when hitting rate limits, experiencing early context compression, or after adding significant config files."
+description: "审计 Claude Code 配置以测量固定上下文的 token 开销，并生成带优先级的行为计划。在遇到速率限制、早期上下文压缩或添加重要配置后使用。"
 effort: medium
 allowed-tools: Read Grep Glob Bash
 ---
 
-# /token-audit — Context Token Audit
+# /token-audit — 上下文 Token 审计
 
-**Purpose**: Measure how many tokens your Claude Code configuration consumes before any user task begins. Identify the biggest sources of overhead. Produce a concrete action plan with savings estimates.
+**目的**：测量在任何用户任务开始之前，你的 Claude Code 配置消耗了多少 token。识别最大的开销来源。生成带有节省估计的具体行动计划。
 
-**When to use**:
-- You're hitting rate limits before end of day
-- Sessions feel slow or context compresses early
-- You've added a lot of rules files and want to know the real cost
-- After a major config change
+**何时使用**：
+- 在一天结束前就遇到速率限制
+- 会话感觉变慢或上下文过早压缩
+- 你添加了许多规则文件并想知道实际成本
+- 在重大配置变更后
 
 ---
 
-## What You Will Measure
+## 你将测量什么
 
-| Component | Loaded when | Typical range |
+| 组件 | 加载时机 | 典型范围 |
 |-----------|-------------|---------------|
-| `~/.claude/CLAUDE.md` + @imports | Always | 5-15K tokens |
-| Project `CLAUDE.md` | Always | 2-8K tokens |
-| `.claude/rules/*.md` | Always (all files) | 5-40K tokens |
-| `MEMORY.md` | Always | 1-3K tokens |
-| Claude Code system prompt | Always | ~7,500 tokens |
-| Hook stdout | Per tool call | variable |
-| Commands, agents, skills | On invocation only | 0 by default |
+| `~/.claude/CLAUDE.md` + @imports | 始终 | 5-15K tokens |
+| 项目 `CLAUDE.md` | 始终 | 2-8K tokens |
+| `.claude/rules/*.md` | 始终（所有文件） | 5-40K tokens |
+| `MEMORY.md` | 始终 | 1-3K tokens |
+| Claude Code 系统提示 | 始终 | ~7,500 tokens |
+| 钩子 stdout | 每次工具调用 | 可变 |
+| 命令、智能体、技能 | 仅调用时 | 默认为 0 |
 
-Key insight: `.claude/rules/` loads every `.md` file at session start, regardless of relevance. Commands and agents are lazy-loaded — they cost zero until invoked. Rules files are the most common source of unexpected overhead.
+关键洞见：`.claude/rules/` 在会话开始时加载每个 `.md` 文件，无论是否相关。命令和智能体是惰性加载的 — 它们在被调用前成本为零。规则文件是最常见的意外开销来源。
 
 ---
 
-## Step 1 — Run the Measurement
+## 步骤 1 — 运行测量
 
-Execute these commands from the project root:
+从项目根目录执行这些命令：
 
 ```bash
-# Component sizes
+# 组件大小
 echo "=== PROJECT CLAUDE.md ===" && wc -c CLAUDE.md 2>/dev/null || echo "none"
 
 echo ""
@@ -50,7 +51,7 @@ echo "=== GLOBAL ~/.claude ===" && ls -la ~/.claude/*.md 2>/dev/null \
   | awk '{print $5, $9}' | sort -rn
 ```
 
-Then calculate the full budget:
+然后计算完整预算：
 
 ```bash
 GLOBAL=$(cat ~/.claude/CLAUDE.md ~/.claude/*.md 2>/dev/null | wc -c)
@@ -73,39 +74,39 @@ echo "% of 200K window   : $(( TOTAL / 4 * 100 / 200000 ))%"
 
 ---
 
-## Step 2 — Classify Rules Files
+## 步骤 2 — 分类规则文件
 
-For each file in `.claude/rules/`, classify it:
+对于 `.claude/rules/` 中的每个文件，进行分类：
 
-| Class | Definition | Action |
+| 类别 | 定义 | 操作 |
 |-------|------------|--------|
-| **ALWAYS** | Applies to most tasks (conventions, output format, safety) | Keep auto-loaded |
-| **SOMETIMES** | Relevant in 20-40% of sessions | Keep if small (<3K chars); lazy-load if large |
-| **RARELY** | Relevant in <10% of sessions (Figma, Windows, design system) | Remove from auto-load |
-| **NEVER** | Outdated or covered elsewhere | Delete or archive |
+| **始终** | 适用于大多数任务（约定、输出格式、安全） | 保持自动加载 |
+| **有时** | 在 20-40% 的会话中相关 | 如果小（<3K chars）则保留；如果大则惰性加载 |
+| **很少** | 在 <10% 的会话中相关（Figma、Windows、设计系统） | 从自动加载移除 |
+| **从不** | 过时或已被其他文件覆盖 | 删除或归档 |
 
-Run this classification prompt:
+运行此分类提示：
 
 ```
-Read every file in .claude/rules/. For each file, output a table row:
+读取 .claude/rules/ 中的每个文件。对每个文件，输出一个表格行：
 
-| File | Size (chars) | Class (ALWAYS/SOMETIMES/RARELY/NEVER) | Reasoning (one sentence) |
+| 文件 | 大小（字符） | 类别（始终/有时/很少/从不） | 理由（一句话） |
 
-Sort by size descending within each class.
-At the end, calculate: total chars that would leave the fixed context if all
-RARELY and NEVER files were excluded. Convert to tokens (÷ 4).
+在每个类别内按大小降序排序。
+最后，计算：如果所有很少和从不类别的文件都被排除，
+将从固定上下文中减少多少字符。转换为 tokens（÷ 4）。
 ```
 
 ---
 
-## Step 3 — Audit Hook Overhead
+## 步骤 3 — 审计钩子开销
 
-Hooks on `PreToolUse` and `PostToolUse` fire on every tool call. Each invocation injects its stdout into context. A hook outputting 500 chars on 150 tool calls per session = 75K chars ≈ 19K extra tokens.
+`PreToolUse` 和 `PostToolUse` 上的钩子每次工具调用都会触发。每次调用将其 stdout 注入上下文。一个输出 500 字符的钩子，在 150 次工具调用下 = 75K 字符 ≈ 19K 额外 token。
 
-Check what you have:
+检查你有哪些：
 
 ```bash
-# List hooks by event type
+# 按事件类型列出钩子
 python3 - << 'EOF'
 import json, os
 for path in [os.path.expanduser("~/.claude/settings.json"), ".claude/settings.json"]:
@@ -120,95 +121,95 @@ for path in [os.path.expanduser("~/.claude/settings.json"), ".claude/settings.js
 EOF
 ```
 
-For each `PreToolUse` or `PostToolUse` hook, estimate its stdout size by running it manually. Multiply by your average tool call count per session (visible in `/cost` after a session).
+对于每个 `PreToolUse` 或 `PostToolUse` 钩子，通过手动运行来估计其 stdout 大小。乘以你的平均每次会话工具调用数（在会话后可在 `/cost` 中查看）。
 
-**Red flags**:
-- Hooks that `cat` files unconditionally
-- `git status` or `git log` on every call
-- Multi-line echo output for debugging that was never removed
-- JSON blobs injected as context
+**红旗**：
+- 无条件 `cat` 文件的钩子
+- 每次调用都执行 `git status` 或 `git log`
+- 从未移除的调试用多行 echo 输出
+- 作为上下文注入的 JSON blobs
 
 ---
 
-## Step 4 — Build the Action Plan
+## 步骤 4 — 构建行动计划
 
-Produce a prioritized table. Rule of thumb: only include actions achievable without external infrastructure (no RAG, no vector databases, no custom MCP servers).
+生成一个带优先级的表格。经验法则：只包含无需外部基础设施即可实现的操作（无需 RAG、无向量数据库、无自定义 MCP 服务器）。
 
-| Action | Estimated token savings | Effort | Risk |
+| 操作 | 估计 token 节省 | 工作量 | 风险 |
 |--------|------------------------|--------|------|
-| Remove RARELY files from auto-load | varies | 30 min | Low |
-| Split large rules into core + detail | varies | 1-2h | Low |
-| Trim hook stdout to essential fields | varies | 1h | Low |
-| Compress verbose rules (see §8 context-engineering.md) | 20-30% of rules | 1-2h | Low |
-| Archive outdated MEMORY.md entries | 500-1K tokens | 30 min | Low |
+| 从自动加载移除很少使用的文件 | 视情况 | 30 分钟 | 低 |
+| 将大规则拆分为核心+详情 | 视情况 | 1-2h | 低 |
+| 将钩子 stdout 裁剪到必要字段 | 视情况 | 1h | 低 |
+| 压缩冗长规则（见 §8 context-engineering.md） | 规则的 20-30% | 1-2h | 低 |
+| 归档过时的 MEMORY.md 条目 | 500-1K tokens | 30 分钟 | 低 |
 
 ---
 
-## Step 5 — The RAG Question
+## 步骤 5 — RAG 问题
 
-Lazy-loading via a vector database (RAG) is sometimes pitched as the solution. Assess it honestly before committing:
+通过向量数据库的惰性加载（RAG）有时被宣传为解决方案。在承诺之前诚实地评估：
 
-1. What fixed-context tokens remain after Steps 1-4? (Measure this first.)
-2. Is RAG justified? A pgvector + custom MCP setup is a 1-2 week project.
-3. Break-even: if you have 10 rules files averaging 3K chars each, classification (30 min) saves as much as RAG would. RAG earns its cost at 50+ rule files where intent-based routing is the only scalable solution.
+1. 经过步骤 1-4 后，还有多少固定上下文 token？（先测量这个）
+2. RAG 合理吗？一个 pgvector + 自定义 MCP 设置需要 1-2 周。
+3. 盈亏平衡点：如果你有 10 个平均 3K 字符的规则文件，分类（30 分钟）节省的和 RAG 一样多。当规则文件超过 50 个且基于意图的路由是唯一可扩展的解决方案时，RAG 才值回成本。
 
 ---
 
-## Output Format
+## 输出格式
 
-After running the audit, produce this report:
+运行审计后，生成此报告：
 
 ```markdown
-## Token Audit — [PROJECT] — [DATE]
+## Token 审计 — [项目] — [日期]
 
-### Budget Summary
+### 预算总结
 
-| Component | Tokens | % of total |
+| 组件 | Tokens | 占总数的 % |
 |-----------|--------|------------|
 | Global ~/.claude | X | Y% |
-| Project CLAUDE.md | X | Y% |
-| Rules (auto-loaded) | X | Y% |
+| 项目 CLAUDE.md | X | Y% |
+| 规则文件（自动加载） | X | Y% |
 | MEMORY.md | X | Y% |
-| System prompt | 7,500 | Y% |
-| **TOTAL** | **X** | **100%** |
+| 系统提示 | 7,500 | Y% |
+| **总计** | **X** | **100%** |
 
-Context window used before any task: X% of 200K
+在任何任务开始前使用的上下文窗口：200K 的 X%
 
-### Rules Classification
+### 规则文件分类
 
-| File | Chars | Class | Action |
+| 文件 | 字符 | 类别 | 操作 |
 |------|-------|-------|--------|
-| ... | ... | ALWAYS/SOMETIMES/RARELY | keep/lazy-load/remove |
+| ... | ... | 始终/有时/很少 | 保留/惰性加载/移除 |
 
-### Hook Overhead
+### 钩子开销
 
-| Hook | Event | Est. stdout | Calls/session | Total tokens/session |
+| 钩子 | 事件 | 估计 stdout | 调用/会话 | 总 tokens/会话 |
 |------|-------|-------------|---------------|----------------------|
-| ... | PreToolUse | X chars | ~Y | ~Z tokens |
+| ... | PreToolUse | X 字符 | ~Y | ~Z tokens |
 
-### Action Plan
+### 行动计划
 
-| Action | Savings | Effort | Risk |
+| 操作 | 节省 | 工作量 | 风险 |
 |--------|---------|--------|------|
-| ... | -X tokens | 30 min | Low |
+| ... | -X tokens | 30 分钟 | 低 |
 
-**Total achievable without infrastructure**: -X tokens → from Y to Z (N% reduction)
+**无需基础设施即可实现的总节省**：-X tokens → 从 Y 到 Z（减少 N%）
 
-### RAG Verdict
+### RAG 判断
 
-[One paragraph: remaining overhead after action plan, whether RAG is justified,
-estimated setup cost vs savings.]
+[一段：经过行动计划后剩余的开销、RAG 是否合理、
+估计的设置成本 vs 节省。]
 ```
 
 ---
 
-## Interpreting Results
+## 解读结果
 
-| Fixed context | Assessment |
+| 固定上下文 | 评估 |
 |---------------|------------|
-| < 20K tokens | Healthy — no urgent action needed |
-| 20-40K tokens | Moderate — run the classification pass, grab easy wins |
-| 40-60K tokens | High — rules audit is worth an afternoon |
-| > 60K tokens | Critical — you are burning 30%+ of your window before any task |
+| < 20K tokens | 健康 — 无需紧急操作 |
+| 20-40K tokens | 中等 — 运行分类流程，获取轻松收益 |
+| 40-60K tokens | 高 — 值得花一个下午做规则审计 |
+| > 60K tokens | 关键 — 你在任何任务开始前就已经烧掉了 30%+ 的窗口 |
 
-A 48% reduction is typical after a first-pass audit on a heavily configured project, with no infrastructure changes — just removing the RARELY-used files from auto-load.
+在配置较重的项目上经过首次审计后，通常可实现 48% 的减少，且无需基础设施变更 — 只需从自动加载中移除很少使用的文件即可。

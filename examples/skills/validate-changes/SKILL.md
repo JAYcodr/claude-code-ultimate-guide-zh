@@ -1,116 +1,116 @@
 ---
 name: validate-changes
-description: Evaluate staged changes using LLM-as-a-Judge before committing
+description: 在提交前用 LLM-as-a-Judge 评估暂存的更改
 effort: low
 disable-model-invocation: true
 ---
 
-# Validate Changes Before Commit
+# 提交前验证更改
 
-Evaluate staged git changes using the output-evaluator agent to catch issues before committing.
+使用 output-evaluator agent 评估暂存的 git 更改，在提交前发现问题。
 
-## Process
+## 流程
 
-### Step 1: Check for Staged Changes
+### 步骤 1：检查暂存更改
 
-Run `git diff --cached --stat` to see what's staged. If nothing is staged, inform the user and exit.
+运行 `git diff --cached --stat` 查看已暂存的内容。如果未暂存任何内容，告知用户并退出。
 
-### Step 2: Get the Full Diff
+### 步骤 2：获取完整 diff
 
-Run `git diff --cached` to get the complete diff of all staged changes.
+运行 `git diff --cached` 获取所有暂存更改的完整 diff。
 
-### Step 3: Invoke the Evaluator
+### 步骤 3：调用评估器
 
-Use the Task tool to launch the `output-evaluator` agent with the diff:
+使用 Task 工具启动 `output-evaluator` agent 并传入 diff：
 
 ```
-Evaluate these staged changes for correctness, completeness, and safety.
-Return a JSON verdict with scores and issues.
+评估这些暂存的更改的正确性、完整性和安全性。
+返回包含评分和问题的 JSON 评审结果。
 
-Changes:
-[paste the git diff here]
+更改：
+[在此处粘贴 git diff]
 ```
 
-### Step 4: Parse and Act on Verdict
+### 步骤 4：解析评审结果并行动
 
-Based on the evaluation result:
+根据评估结果处理：
 
-**If APPROVE:**
-- Tell the user the changes passed evaluation
-- Show the summary and scores
-- Ask if they want to proceed with commit
+**如果 APPROVE（通过）：**
+- 告知用户更改已通过评估
+- 显示总结和评分
+- 询问是否继续提交
 
-**If NEEDS_REVIEW:**
-- Show all issues found (grouped by severity)
-- Show the suggestion from the evaluator
-- Ask the user how to proceed:
-  - Fix issues and re-evaluate
-  - Commit anyway (acknowledge risks)
-  - Abort
+**如果 NEEDS_REVIEW（需要审查）：**
+- 显示所有发现的问题（按严重性分组）
+- 显示评估者的建议
+- 询问用户如何处理：
+  - 修复问题并重新评估
+  - 无论如何提交（确认风险）
+  - 中止
 
-**If REJECT:**
-- Clearly state the changes were rejected
-- Show critical issues that caused rejection
-- Do NOT offer to commit anyway
-- Suggest specific fixes
+**如果 REJECT（拒绝）：**
+- 明确声明更改被拒绝
+- 显示导致拒绝的关键问题
+- 不提供"无论如何提交"的选项
+- 建议具体的修复方案
 
-### Step 5: Commit (if approved)
+### 步骤 5：提交（如通过）
 
-If user confirms, create the commit using the standard commit flow.
+如果用户确认，使用标准的提交流程创建提交。
 
-## Usage Examples
+## 使用示例
 
 ```
 /validate-changes
 ```
 
-Output:
+输出：
 ```
-Evaluating 3 staged files...
+正在评估 3 个暂存文件...
 
-VERDICT: NEEDS_REVIEW
+评审结果：NEEDS_REVIEW
 
-Scores:
-  Correctness:  8/10
-  Completeness: 6/10
-  Safety:       9/10
+评分：
+  正确性：  8/10
+  完整性： 6/10
+  安全性：  9/10
 
-Issues Found:
-  [MEDIUM] src/api/handler.ts:45
-    Missing error handling for network failures
+发现的问题：
+  [中] src/api/handler.ts:45
+    缺少网络故障的错误处理
 
-  [LOW] src/utils/format.ts:12
-    Consider adding input validation
+  [低] src/utils/format.ts:12
+    建议添加输入验证
 
-Suggestion: Add try-catch around the fetch call in handler.ts
+建议：在 handler.ts 中的 fetch 调用周围添加 try-catch
 
-How would you like to proceed?
-  1. Fix issues and re-evaluate
-  2. Commit anyway (1 medium issue)
-  3. Abort
+如何处理？
+  1. 修复问题并重新评估
+  2. 无论如何提交（1 个中等问题）
+  3. 中止
 ```
 
-## Cost Awareness
+## 成本意识
 
-This command invokes an LLM evaluation, which uses API tokens:
-- **Typical cost**: $0.01-0.05 per evaluation (using Haiku)
-- **Larger diffs**: May cost more due to increased token usage
+此命令调用了 LLM 评估，会消耗 API token：
+- **典型成本**：每次评估 $0.01-0.05（使用 Haiku）
+- **较大 diff**：由于 token 使用增加，成本可能更高
 
-## When to Use
+## 何时使用
 
-- After significant code changes before committing
-- When working on unfamiliar parts of the codebase
-- For changes that affect security-sensitive code
-- Before pushing to shared branches
+- 提交前做了重大代码更改后
+- 在不熟悉的代码库部分工作时
+- 影响安全敏感代码的更改
+- 推送到共享分支前
 
-## When to Skip
+## 何时跳过
 
-- Trivial changes (typos, formatting)
-- Documentation-only changes
-- When you've already manually reviewed thoroughly
-- When iterating quickly on a feature branch
+- 琐碎更改（拼写、格式）
+- 仅文档更改
+- 已手动全面审查过时
+- 在功能分支上快速迭代时
 
-## Integration with Git Hooks
+## 与 Git Hooks 集成
 
-For automatic evaluation on every commit, see `pre-commit-evaluator.sh` hook.
-This command is the manual alternative when you want control over when evaluation runs.
+如需每次提交时自动评估，请参见 `pre-commit-evaluator.sh` 钩子。
+此命令是在需要控制评估运行时机时的手动替代方案。

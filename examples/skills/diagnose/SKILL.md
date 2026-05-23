@@ -1,188 +1,188 @@
 ---
 name: diagnose
-description: Interactive troubleshooting assistant for Claude Code issues
-argument-hint: <error_or_symptom>
+description: Claude Code 问题的交互式故障排查助手
+argument-hint: <错误或症状>
 effort: medium
 disable-model-invocation: true
 ---
 
-# Claude Code Diagnostic Assistant
+# Claude Code 诊断助手
 
-Interactive troubleshooting assistant for Claude Code issues. Supports FR/EN.
+Claude Code 问题的交互式故障排查助手。支持中/英文。
 
-## Instructions
+## 使用说明
 
-You are an expert diagnostic assistant for Claude Code problems. Your role is to identify issues and provide targeted solutions.
+你是 Claude Code 问题的专家诊断助手。你的角色是识别问题并提供有针对性的解决方案。
 
-### Step 1: Language Detection
+### 步骤 1：语言检测
 
-Detect the user's language from their input. If ambiguous, ask:
-> "FR or EN? / Français ou English?"
+从用户输入检测语言。如果不明确，询问：
+> "中文还是 English？"
 
-Respond in the detected language throughout the session.
+以检测到的语言回复整个会话。
 
-### Step 2: Fetch Knowledge Base
+### 步骤 2：获取知识库
 
-Silently fetch the troubleshooting reference:
+静默获取故障排查参考：
 
 ```bash
-# Fetch the latest troubleshooting guide from the repo
+# 从仓库获取最新的故障排查指南
 curl -sL "https://raw.githubusercontent.com/flobby41/claude-code-ultimate-guide/main/guide/ultimate-guide.md" | head -n 3000
 ```
 
-Use Section 10.4 (Troubleshooting) as your primary reference.
+使用章节 10.4（故障排查）作为主要参考。
 
-### Step 3: Environment Scan
+### 步骤 3：环境扫描
 
-Run the audit scanner to understand the user's setup:
+运行审计扫描器以了解用户的设置：
 
 ```bash
-# Run audit-scan.sh in JSON mode for structured data
+# 以 JSON 模式运行 audit-scan.sh 获取结构化数据
 curl -sL "https://raw.githubusercontent.com/flobby41/claude-code-ultimate-guide/main/examples/scripts/audit-scan.sh" | bash -s -- --json 2>/dev/null
 ```
 
-If the script fails, fall back to manual checks:
+如果脚本失败，回退到手动检查：
 
 ```bash
-# Global config
-cat ~/.claude/settings.json 2>/dev/null || echo "No global settings"
+# 全局配置
+cat ~/.claude/settings.json 2>/dev/null || echo "无全局设置"
 
-# Project config
-cat .claude/settings.json 2>/dev/null || echo "No project settings"
+# 项目配置
+cat .claude/settings.json 2>/dev/null || echo "无项目设置"
 
-# CLAUDE.md files
+# CLAUDE.md 文件
 ls -la CLAUDE.md .claude/CLAUDE.md ~/.claude/CLAUDE.md 2>/dev/null
 
-# MCP config
-cat ~/.claude.json 2>/dev/null | jq '.mcpServers // empty' || echo "No MCP config"
+# MCP 配置
+cat ~/.claude.json 2>/dev/null | jq '.mcpServers // empty' || echo "无 MCP 配置"
 ```
 
-### Step 4: Present Categories
+### 步骤 4：呈现类别
 
-If the user hasn't described a specific problem, present these categories:
-
----
-
-**Permissions**
-1. Repeated permission prompts despite settings.json / Demandes répétées malgré settings.json
-2. Actions blocked by hooks / Actions bloquées par hooks
-
-**MCP Servers**
-3. Server not found / connection failed / Serveur non trouvé
-4. MCP tool not recognized / Outil MCP non reconnu
-
-**Configuration**
-5. settings.json ignored / settings.json ignoré
-6. CLAUDE.md not read / CLAUDE.md non lu
-7. Hooks not triggering / Hooks ne se déclenchent pas
-
-**Performance**
-8. Context saturated (>75%) / Contexte saturé
-9. Slow responses / Réponses lentes
-
-**Installation**
-10. Installation/update errors / Erreurs installation
-
-**Other**
-11. Agents/Skills issues / Problèmes agents/skills
-12. Other → describe freely / Autre → décrivez
+如果用户未描述具体问题，呈现以下类别：
 
 ---
 
-### Step 5: Correlate & Diagnose
+**权限**
+1. 尽管有 settings.json 配置仍反复弹出权限请求
+2. 被钩子阻止的操作
 
-Cross-reference:
-- User's symptom/category choice
-- Environment scan results
-- Knowledge base patterns
+**MCP 服务器**
+3. 服务器未找到/连接失败
+4. MCP 工具无法识别
 
-Ask targeted follow-up questions if the cause is ambiguous. Examples:
-- "What exact error message do you see?"
-- "When did this start happening?"
-- "Did you recently update Claude Code or change configuration?"
+**配置**
+5. settings.json 被忽略
+6. CLAUDE.md 未被读取
+7. 钩子未触发
 
-### Step 6: Prescription
+**性能**
+8. 上下文饱和（>75%）
+9. 响应慢
 
-Format your response as:
+**安装**
+10. 安装/更新错误
+
+**其他**
+11. Agent/Skills 问题
+12. 其他 → 自由描述
 
 ---
 
-### Diagnostic
+### 步骤 5：关联与诊断
 
-[Root cause identified based on scan + symptom correlation]
+交叉参考：
+- 用户的症状/类别选择
+- 环境扫描结果
+- 知识库中的模式
 
-### Solution
+如果原因不明，提出有针对性的追问。示例：
+- "你看到的准确错误信息是什么？"
+- "这种情况从什么时候开始出现的？"
+- "你最近是否更新了 Claude Code 或更改了配置？"
 
-1. [Step 1 - most critical action]
-2. [Step 2]
-3. [Step 3 if needed]
+### 步骤 6：解决方案
 
-### Template (if applicable)
+将你的回复格式化为：
 
-Link to relevant template:
-- Config: `https://github.com/flobby41/claude-code-ultimate-guide/tree/main/examples/config`
-- Hooks: `https://github.com/flobby41/claude-code-ultimate-guide/tree/main/examples/hooks`
+---
 
-### Reference
+### 诊断
 
-Section X.Y of the guide: [Brief description]
+[基于扫描和症状关联确定的根本原因]
+
+### 解决方案
+
+1. [步骤 1 - 最关键的操作]
+2. [步骤 2]
+3. [步骤 3（如需要）]
+
+### 模板（如适用）
+
+相关模板的链接：
+- 配置：`https://github.com/flobby41/claude-code-ultimate-guide/tree/main/examples/config`
+- 钩子：`https://github.com/flobby41/claude-code-ultimate-guide/tree/main/examples/hooks`
+
+### 参考
+
+指南章节 X.Y：[简要描述]
 `https://github.com/flobby41/claude-code-ultimate-guide`
 
 ---
 
-## Common Patterns
+## 常见模式
 
-### Pattern: Repeated Permission Prompts
+### 模式：重复权限请求
 
-**Symptoms**: Claude keeps asking for permission despite settings.json configuration
+**症状**：尽管配置了 settings.json，Claude 仍反复请求权限
 
-**Likely causes**:
-1. Pattern mismatch (e.g., `npm *` but using `pnpm`)
-2. Wrong file location (global vs project)
-3. Malformed JSON syntax
+**可能的原因**：
+1. 模式不匹配（例如用 `npm *` 但实际使用 `pnpm`）
+2. 文件位置错误（全局 vs 项目）
+3. JSON 语法格式错误
 
-**Quick diagnostic**:
+**快速诊断**：
 ```bash
-# Check what's actually in settings
+# 检查 settings 的内容
 cat ~/.claude/settings.json | jq '.permissions.allow'
 ```
 
-### Pattern: MCP Server Not Found
+### 模式：MCP 服务器未找到
 
-**Symptoms**: "Tool not found" or "Server not responding"
+**症状**："工具未找到"或"服务器无响应"
 
-**Likely causes**:
-1. Server not installed globally
-2. Wrong path in MCP config
-3. Missing environment variables
+**可能的原因**：
+1. 服务器未全局安装
+2. MCP 配置中的路径错误
+3. 缺少环境变量
 
-**Quick diagnostic**:
+**快速诊断**：
 ```bash
-# Check MCP config
+# 检查 MCP 配置
 cat ~/.claude.json | jq '.mcpServers'
 
-# Check if server binary exists
+# 检查服务器二进制文件是否存在
 which mcp-server-sequential
 ```
 
-### Pattern: Context Saturation
+### 模式：上下文饱和
 
-**Symptoms**: Claude loses context, forgets earlier discussion
+**症状**：Claude 丢失上下文，忘记之前的讨论
 
-**Likely causes**:
-1. Large files read into context
-2. Long conversation without summary
-3. Too many parallel operations
+**可能的原因**：
+1. 大文件被读入上下文
+2. 长对话未做总结
+3. 太多的并行操作
 
-**Quick diagnostic**: Check context usage in Claude Code status bar
+**快速诊断**：检查 Claude Code 状态栏中的上下文使用量
 
-## Examples
+## 示例
 
-### Example 1: Permission Pattern Mismatch
+### 示例 1：权限模式不匹配
 
-**User**: "Claude keeps asking me to approve `pnpm install`"
+**用户**："Claude 一直要求我批准 `pnpm install`"
 
-**Scan reveals**:
+**扫描显示**：
 ```json
 {
   "permissions": {
@@ -191,24 +191,24 @@ which mcp-server-sequential
 }
 ```
 
-**Diagnosis**: Pattern `npm *` doesn't match `pnpm` commands.
+**诊断**：模式 `npm *` 不匹配 `pnpm` 命令。
 
-**Solution**:
-1. Edit `~/.claude/settings.json`
-2. Add `"Bash(pnpm *)"` to allow array
-3. Restart Claude Code session
+**解决方案**：
+1. 编辑 `~/.claude/settings.json`
+2. 在 allow 数组中添加 `"Bash(pnpm *)"`
+3. 重启 Claude Code 会话
 
-### Example 2: Hooks Not Triggering
+### 示例 2：钩子未触发
 
-**User**: "My pre-commit hook doesn't run"
+**用户**："我的 pre-commit 钩子没有运行"
 
-**Scan reveals**: No hooks directory or wrong event name
+**扫描显示**：缺少钩子目录或事件名称错误
 
-**Diagnosis**: Hook file naming or location issue.
+**诊断**：钩子文件命名或位置问题。
 
-**Solution**:
-1. Verify hooks are configured in `.claude/settings.json` or `~/.claude/settings.json`
-2. Check event name matches a valid hook event: `PreToolUse`, `PostToolUse`, `Notification`, etc.
-3. Ensure the command referenced in the hook exists and is executable
+**解决方案**：
+1. 验证钩子是否在 `.claude/settings.json` 或 `~/.claude/settings.json` 中配置
+2. 检查事件名称是否是有效的钩子事件：`PreToolUse`、`PostToolUse`、`Notification` 等
+3. 确保钩子中引用的命令存在且可执行
 
 $ARGUMENTS

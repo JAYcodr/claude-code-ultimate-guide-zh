@@ -1,166 +1,166 @@
 ---
 name: ship
-description: Comprehensive pre-deployment verification to ensure release readiness
+description: 全面的部署前验证，确保发布就绪
 argument-hint: "[--no-push] [--changelog-only] [--dry-run]"
 effort: medium
 disable-model-invocation: true
 ---
 
-# Ship Command - Pre-Deploy Checklist
+# 发布命令 - 部署前检查清单
 
-Comprehensive pre-deployment verification to ensure release readiness.
+全面的部署前验证，确保发布就绪。
 
-## Purpose
+## 目的
 
-Run before every production deployment to verify:
-- Code quality gates
-- Test coverage
-- Security checks
-- Documentation updates
-- Environment readiness
+每次生产部署前运行，验证：
+- 代码质量门
+- 测试覆盖率
+- 安全检查
+- 文档更新
+- 环境就绪
 
-## Pre-Deploy Checklist
+## 部署前检查清单
 
-### 🔴 Blockers (Must Pass)
+### 🔴 阻塞项（必须通过）
 
 ```bash
-# 1. All tests passing
+# 1. 所有测试通过
 npm test 2>/dev/null || pnpm test 2>/dev/null || yarn test 2>/dev/null
-echo "Exit code: $?"
+echo "退出码：$?"
 
-# 2. No TypeScript/lint errors
+# 2. 无 TypeScript/lint 错误
 npm run typecheck 2>/dev/null || npx tsc --noEmit
 npm run lint 2>/dev/null || npx eslint .
 
-# 3. Build succeeds
+# 3. 构建成功
 npm run build 2>/dev/null || pnpm build 2>/dev/null
 
-# 4. No secrets in code
+# 4. 代码中无密钥
 grep -rn "API_KEY=\|SECRET=\|PASSWORD=" --include="*.{ts,js,json}" . 2>/dev/null | grep -v node_modules | grep -v ".env.example"
 ```
 
-### 🟠 High Priority (Should Pass)
+### 🟠 高优先级（应通过）
 
 ```bash
-# 5. Security audit
-npm audit --audit-level=high 2>/dev/null || echo "Run manually: npm audit"
+# 5. 安全审计
+npm audit --audit-level=high 2>/dev/null || echo "手动运行：npm audit"
 
-# 6. No console.log in production code
+# 6. 生产代码中无 console.log
 grep -rn "console\.log\|console\.debug" --include="*.{ts,js,tsx,jsx}" src/ 2>/dev/null | grep -v "// allowed" | head -10
 
-# 7. No TODO/FIXME in critical paths
+# 7. 关键路径中无 TODO/FIXME
 grep -rn "TODO\|FIXME\|XXX\|HACK" --include="*.{ts,js}" src/ 2>/dev/null | head -10
 
-# 8. Database migrations ready
-[ -d "prisma/migrations" ] && echo "Prisma migrations: $(ls prisma/migrations | wc -l) total"
-[ -d "migrations" ] && echo "Migrations: $(ls migrations | wc -l) total"
+# 8. 数据库迁移就绪
+[ -d "prisma/migrations" ] && echo "Prisma migrations：$(ls prisma/migrations | wc -l) 个"
+[ -d "migrations" ] && echo "迁移：$(ls migrations | wc -l) 个"
 ```
 
-### 🟡 Recommended (Nice to Have)
+### 🟡 建议项（锦上添花）
 
 ```bash
-# 9. Documentation updated
+# 9. 文档更新
 git diff --name-only HEAD~5 | grep -E "README|CHANGELOG|docs/" | head -10
 
-# 10. Version bumped
-cat package.json | jq -r '.version' 2>/dev/null || echo "Check version manually"
+# 10. 版本号更新
+cat package.json | jq -r '.version' 2>/dev/null || echo "手动检查版本"
 
-# 11. Environment variables documented
-[ -f ".env.example" ] && echo "✅ .env.example exists" || echo "⚠️ Missing .env.example"
+# 11. 环境变量已文档化
+[ -f ".env.example" ] && echo "✅ .env.example 存在" || echo "⚠️ 缺少 .env.example"
 ```
 
-## Output Format
+## 输出格式
 
 ---
 
-### 🚀 Ship Readiness Report
+### 🚀 发布就绪报告
 
-**Branch**: [current branch]
-**Commit**: [HEAD short hash]
-**Target**: [production/staging]
-**Timestamp**: [date/time]
+**分支**：[当前分支]
+**提交**：[HEAD 短 hash]
+**目标**：[生产/预发布]
+**时间戳**：[日期/时间]
 
-### Blockers (Must Fix Before Deploy)
+### 阻塞项（部署前必须修复）
 
-| Check | Status | Details |
+| 检查项 | 状态 | 详情 |
 |-------|--------|---------|
-| Tests | ✅/❌ | X passed, Y failed |
-| TypeScript | ✅/❌ | X errors |
-| Lint | ✅/❌ | X warnings, Y errors |
-| Build | ✅/❌ | Success/Failed |
-| Secrets | ✅/❌ | X potential leaks |
+| 测试 | ✅/❌ | X 通过，Y 失败 |
+| TypeScript | ✅/❌ | X 个错误 |
+| Lint | ✅/❌ | X 个警告，Y 个错误 |
+| 构建 | ✅/❌ | 成功/失败 |
+| 密钥 | ✅/❌ | X 个潜在泄露 |
 
-### High Priority
+### 高优先级
 
-| Check | Status | Action |
+| 检查项 | 状态 | 操作 |
 |-------|--------|--------|
-| Security Audit | ⚠️/✅ | X vulnerabilities |
-| Console Logs | ⚠️/✅ | X found in src/ |
-| TODOs | ⚠️/✅ | X critical TODOs |
-| Migrations | ⚠️/✅ | X pending |
+| 安全审计 | ⚠️/✅ | X 个漏洞 |
+| Console Log | ⚠️/✅ | src/ 中发现 X 个 |
+| TODOs | ⚠️/✅ | X 个关键 TODO |
+| 迁移 | ⚠️/✅ | X 个待处理 |
 
-### Recommended
+### 建议项
 
-| Check | Status | Note |
+| 检查项 | 状态 | 说明 |
 |-------|--------|------|
-| Docs Updated | ⚠️/✅ | CHANGELOG updated |
-| Version Bumped | ⚠️/✅ | Current: X.Y.Z |
-| Env Documented | ⚠️/✅ | .env.example present |
+| 文档更新 | ⚠️/✅ | CHANGELOG 已更新 |
+| 版本号更新 | ⚠️/✅ | 当前：X.Y.Z |
+| 环境变量文档 | ⚠️/✅ | .env.example 存在 |
 
-### 📊 Summary
+### 📊 总结
 
 ```
-🔴 Blockers:    X/5 passed
-🟠 High:        X/4 passed
-🟡 Recommended: X/3 passed
+🔴 阻塞项：    X/5 通过
+🟠 高优先级：  X/4 通过
+🟡 建议项：    X/3 通过
 ─────────────────────────
-Overall:        [READY TO SHIP / NOT READY]
+总体：        [可以发布/不可发布]
 ```
 
-### 🎯 Action Items
+### 🎯 操作项
 
-1. [Most critical fix needed]
-2. [Second priority]
-3. [Third priority]
+1. [最需要修复的关键问题]
+2. [第二优先级]
+3. [第三优先级]
 
 ---
 
-## Environment-Specific Checks
+## 环境特定检查
 
-### Production Deploy
+### 生产部署
 
 ```bash
-# Verify production env vars
-[ -f ".env.production" ] && echo "Production env exists"
+# 验证生产环境变量
+[ -f ".env.production" ] && echo "生产环境配置存在"
 
-# Check for debug flags
+# 检查调试标志
 grep -rn "DEBUG=true\|NODE_ENV=development" .env* 2>/dev/null
 
-# Verify API endpoints point to production
+# 验证 API 端点指向生产环境
 grep -rn "localhost\|127\.0\.0\.1" --include="*.{ts,js,json}" src/ 2>/dev/null | grep -v test | head -5
 ```
 
-### Staging Deploy
+### 预发布部署
 
 ```bash
-# Staging-specific checks
-[ -f ".env.staging" ] && echo "Staging env exists"
+# 预发布特定检查
+[ -f ".env.staging" ] && echo "预发布环境配置存在"
 
-# Feature flags for staging
+# 预发布功能标志
 grep -rn "FEATURE_FLAG\|ENABLE_" .env* 2>/dev/null
 ```
 
-## CI/CD Integration
+## CI/CD 集成
 
-Add to your pipeline:
+添加到你的流水线：
 
 ```yaml
-# GitHub Actions example
+# GitHub Actions 示例
 ship-check:
   runs-on: ubuntu-latest
   steps:
     - uses: actions/checkout@v4
-    - name: Run ship checklist
+    - name: 运行发布检查清单
       run: |
         npm ci
         npm test
@@ -170,71 +170,71 @@ ship-check:
         npm audit --audit-level=high
 ```
 
-## Post-Deploy Verification
+## 部署后验证
 
-After deployment, verify:
+部署后，验证：
 
 ```bash
-# 1. Health check
+# 1. 健康检查
 curl -s https://your-app.com/health | jq .
 
-# 2. Version check
+# 2. 版本检查
 curl -s https://your-app.com/version | jq .
 
-# 3. Smoke tests
-npm run test:smoke 2>/dev/null || echo "Run smoke tests manually"
+# 3. 冒烟测试
+npm run test:smoke 2>/dev/null || echo "手动运行冒烟测试"
 ```
 
-## Rollback Preparation
+## 回滚准备
 
-Before shipping, ensure you can rollback:
+发布前，确保可以回滚：
 
 ```bash
-# Note current production tag
+# 记下当前生产标签
 git describe --tags --abbrev=0
 
-# Verify rollback procedure exists
-[ -f "docs/runbooks/rollback.md" ] && echo "✅ Rollback docs exist"
+# 验证回滚流程存在
+[ -f "docs/runbooks/rollback.md" ] && echo "✅ 回滚文档存在"
 
-# Check database migration reversibility
-# Prisma: prisma migrate diff
-# Rails: rails db:rollback (dry-run)
+# 检查数据库迁移可逆性
+# Prisma：prisma migrate diff
+# Rails：rails db:rollback (dry-run)
 ```
 
-## Usage
+## 用法
 
-**Full checklist:**
+**完整检查清单：**
 ```
 /ship
 ```
 
-**Production deploy:**
+**生产部署：**
 ```
 /ship --production
 ```
 
-**Quick check (blockers only):**
+**快速检查（仅阻塞项）：**
 ```
 /ship --quick
 ```
 
-**With specific target:**
+**指定目标：**
 ```
 /ship --target=staging
 ```
 
-## Tips
+## 提示
 
-1. **Run early, run often**: Don't wait until deploy day
-2. **Automate in CI**: Make blockers fail the pipeline
-3. **Team agreement**: Define what's a blocker vs warning
-4. **Document exceptions**: If skipping a check, note why
-5. **Monitor after deploy**: Ship is not done until monitoring confirms success
+1. **尽早频繁运行**：不要等到部署当天
+2. **在 CI 中自动化**：使阻塞项导致流水线失败
+3. **团队约定**：定义什么是阻塞项 vs 警告
+4. **记录例外情况**：如果跳过检查，说明原因
+5. **部署后持续监控**：监控确认成功才算发布完成
 
-## Related Commands
+## 相关命令
 
-- `/release-notes` - Generate changelog and announcements
-- `/validate-changes` - LLM-based code review
-- `/security` - Deep security audit
+- `/release-notes` - 生成变更日志和公告
+- `/validate-changes` - 基于 LLM 的代码审查
+- `/security` - 深度安全审计
 
 $ARGUMENTS

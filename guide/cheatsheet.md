@@ -10,11 +10,11 @@ tags: [cheatsheet, reference]
 
 **1 页可打印** — 日常高频操作，一张纸搞定
 
-**作者**: Florian BRUNIAUX | Founding Engineer [@Méthode Aristote](https://methode-aristote.fr)
+**作者**: Florian BRUNIAUX | 创始工程师 [@Méthode Aristote](https://methode-aristote.fr)
 
 **写作工具**: Claude (Anthropic)
 
-**版本**: 3.40.0 | **最后更新**: 2026 年 5 月
+**版本**: 3.41.0 | **最后更新**: 2026 年 5 月
 
 ---
 
@@ -676,4 +676,4 @@ where.exe claude; claude doctor; claude mcp list
 
 **作者**: Florian BRUNIAUX | [@Méthode Aristote](https://methode-aristote.fr) | 写作工具: Claude
 
-*最后更新: 2026 年 5 月 | 版本 3.40.0*
+*最后更新: 2026 年 5 月 | 版本 3.41.0*

@@ -1,106 +1,106 @@
 ---
 name: routines-discover
-description: "Analyzes the current project to surface high-value Routines use cases across the three trigger types (schedule, API, GitHub events). Usage: /routines-discover"
+description: "分析当前项目，在三种触发器类型（定时、API、GitHub 事件）下挖掘高价值的 Routine 用例。用法：/routines-discover"
 effort: medium
 disable-model-invocation: true
 ---
 
-# Routines Use Case Discovery
+# Routine 用例发现
 
-Analyzes this codebase and surfaces actionable Routine candidates across the three trigger types.
+分析当前代码库并挖掘三种触发器类型下的可操作 Routine 候选。
 
-**Usage**: `/routines-discover` — no arguments needed. Run it in the root of any project.
+**用法**：`/routines-discover` — 无需参数。在任何项目根目录运行。
 
 ---
 
-## What Are Routines
+## 什么是 Routine
 
-A Routine is an autonomous Claude Code session running on Anthropic-managed cloud infrastructure, triggered in three ways:
+Routine 是在 Anthropic 管理的云基础设施上运行的自主 Claude Code 会话，通过三种方式触发：
 
-| Trigger | How it fires |
+| 触发器 | 触发方式 |
 |---------|-------------|
-| **Schedule** | Recurring cron cadence (min 1 hour) |
-| **API** | HTTP POST to a per-routine endpoint with bearer token |
-| **GitHub events** | Repository events: PR opened/merged, push, issue, workflow run, etc. |
+| **定时** | 按 cron 周期执行（最小 1 小时） |
+| **API** | HTTP POST 到每 Routine 专用的带 bearer token 的端点 |
+| **GitHub 事件** | 仓库事件：PR 打开/合并、推送、issue、工作流运行等 |
 
-Each run clones a fresh copy of the GitHub repository, runs a full Claude Code session with configured MCP connectors (Slack, Linear, GitHub, Google Drive…), and can create branches, open PRs, post messages, and call external APIs. No local machine required.
+每次运行克隆一份全新的 GitHub 仓库副本，运行完整的 Claude Code 会话（已配置 MCP 连接器：Slack、Linear、GitHub、Google Drive 等），并可创建分支、打开 PR、发送消息、调用外部 API。无需本地机器。
 
-**Daily limits**: Pro 5/day · Max 15/day · Team/Enterprise 25/day.
-
----
-
-## Instructions
-
-### Step 1 — Read the codebase
-
-Before generating any output, silently read:
-- `README.md` or `CLAUDE.md` to understand the project purpose and stack
-- `package.json`, `Cargo.toml`, `pyproject.toml`, or equivalent for dependencies
-- `.github/workflows/` to understand existing CI/CD automation
-- Any monitoring, deploy, or ops configuration you find
-
-If MCP connectors are configured in `.claude/settings.json`, note which external services are connected.
-
-### Step 2 — Analyze against five dimensions
-
-For each dimension, think concretely about this specific project before writing anything.
-
-**1. Scheduled maintenance**
-What recurring work currently requires a human to run manually or remember to do?
-Think: dependency audits, stale issue/PR triage, test flakiness reports, coverage drift, TODO comment tracking, dead code detection, daily or weekly summaries.
-
-**2. Event-driven reactions**
-What should happen automatically when a PR is opened, merged, or closed — but doesn't today because no one gets to it?
-Think: review checklists, changelog updates, cross-repo sync, Slack notifications with context, label enforcement, docs updates on API changes.
-
-**3. Alert and incident response**
-What monitoring signals exist? When something breaks, what is the first thing a developer does?
-Think: correlating an alert with recent commits, triaging a failing build, drafting a postmortem skeleton, routing an error to the right team.
-
-**4. Cross-system sync**
-What drifts today because the sync between two systems is manual?
-Think: keeping two SDKs in sync, updating a doc site when an API changes, syncing GitHub issues with Linear, keeping a README stats section current.
-
-**5. Release and deploy automation**
-What steps happen before or after a deploy that a human runs by hand?
-Think: smoke tests, release notes, version bumps, stakeholder notifications, go/no-go summaries.
-
-### Step 3 — Output
-
-For each use case identified, produce a card in this format:
+**每日限制**：Pro 5 次/天 · Max 15 次/天 · Team/Enterprise 25 次/天。
 
 ---
 
-**[Name]** · `schedule` / `api` / `github`
+## 使用说明
 
-*Trigger*: [what fires it — cron expression, which event, which external system]
+### 步骤 1 — 读取代码库
 
-*Input*: [what Claude receives — repo state, event payload, alert body]
+在生成任何输出前，静默读取：
+- `README.md` 或 `CLAUDE.md` 了解项目目的和技术栈
+- `package.json`、`Cargo.toml`、`pyproject.toml` 或类似文件了解依赖
+- `.github/workflows/` 了解现有 CI/CD 自动化
+- 找到的任何监控、部署或运维配置
 
-*Output*: [what Claude produces — PR opened, message posted, file updated, issue created]
+如果 `.claude/settings.json` 中配置了 MCP 连接器，记录已连接的外部服务。
 
-*Value*: [time saved or risk reduced — be specific]
+### 步骤 2 — 按五个维度分析
 
-*Blockers*: [missing connector, secrets needed, GitHub App required, etc. — or "none"]
+对每个维度，在编写任何内容前针对此具体项目进行具体思考。
+
+**1. 定时维护**
+哪些重复性工作目前需要人类手动运行或记住去做？
+思考：依赖审计、过期 issue/PR 分类、测试稳定性报告、覆盖度漂移、TODO 注释跟踪、死代码检测、每日或每周总结。
+
+**2. 事件驱动响应**
+当 PR 打开、合并或关闭时，应该自动发生什么——但因为没时间做而至今未做？
+思考：审查清单、更新日志更新、跨仓库同步、带上下文的 Slack 通知、标签强制执行、API 变更时的文档更新。
+
+**3. 告警和事件响应**
+存在哪些监控信号？当出问题时，开发者做的第一件事是什么？
+思考：将告警与最近提交关联、对失败构建进行分类、起草事后复盘框架、将错误路由到正确团队。
+
+**4. 跨系统同步**
+目前因两个系统之间的同步是手动的而产生的漂移？
+思考：保持两个 SDK 同步、API 变更时更新文档站点、同步 GitHub issue 与 Linear、保持 README 统计部分最新。
+
+**5. 发布和部署自动化**
+部署前后有哪些步骤是人类手动执行的？
+思考：冒烟测试、发布说明、版本号更新、干系人通知、放行/不放行总结。
+
+### 步骤 3 — 输出
+
+为每个识别到的用例生成一张卡片：
 
 ---
 
-Sort cards by **value-to-effort ratio** — highest first.
+**[名称]** · `schedule` / `api` / `github`
 
-After all cards, add a **Quick Wins** section: the two or three use cases that could be set up in under 15 minutes with the current repo and connector configuration.
+*触发器*：[什么触发它 — cron 表达式、哪个事件、哪个外部系统]
+
+*输入*：[Claude 收到什么 — 仓库状态、事件 payload、告警内容]
+
+*输出*：[Claude 产出什么 — 打开的 PR、发送的消息、更新的文件、创建的 issue]
+
+*价值*：[节省的时间或降低的风险 — 请具体]
+
+*阻塞项*：[缺少的连接器、需要的密钥、需要 GitHub App 等 — 或"无"]
 
 ---
 
-## Example Output (for reference only — do not copy, analyze the actual project)
+按**价值工作量比**排序卡片——最高的排最前。
 
-**Nightly stale PR report** · `schedule`
+所有卡片后添加**快速制胜**部分：当前仓库和连接器配置下可在 15 分钟内设置好的两三用例。
 
-*Trigger*: Every weekday at 8am
+---
 
-*Input*: Repo state — all open PRs older than 5 days
+## 示例输出（仅供参考 — 不要复制，分析实际项目）
 
-*Output*: Slack message to #engineering with list of stale PRs, assignee, and last activity
+**夜间陈旧 PR 报告** · `schedule`
 
-*Value*: Saves ~15min of manual triage each morning, reduces PR rot
+*触发器*：每个工作日上午 8 点
 
-*Blockers*: Requires Slack MCP connector
+*输入*：仓库状态 — 所有超过 5 天的开放 PR
+
+*输出*：Slack 消息发送到 #engineering，列出陈旧 PR、负责人和最后活动时间
+
+*价值*：每天节省约 15 分钟的手动分类，减少 PR 腐烂
+
+*阻塞项*：需要 Slack MCP 连接器

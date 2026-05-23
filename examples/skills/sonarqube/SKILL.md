@@ -1,61 +1,61 @@
 ---
 name: sonarqube
-description: Analyze SonarCloud quality issues for a specific PR
+description: 分析特定 PR 的 SonarCloud 质量问题
 argument-hint: "[project_key]"
 effort: medium
 disable-model-invocation: true
 ---
 
-# SonarQube Analysis
+# SonarQube 分析
 
-Analyze SonarCloud quality issues for a specific PR. Generates comprehensive report with metrics, top violators, and action plan.
+分析特定 PR 的 SonarCloud 质量问题。生成包含指标、主要违规者和操作计划的综合报告。
 
-**Core principle:** Analysis-only = no code changes, pure insight.
+**核心原则**：仅分析 = 无代码更改，纯洞察。
 
-## Process
+## 流程
 
-1. **Verify Token**: Check `$SONARQUBE_TOKEN` environment variable
-2. **Fetch Issues**: Call SonarCloud API for PR issues
-3. **Parse Data**: Group by severity, type, file, rule
-4. **Generate Report**: Structured output with action plan
-5. **Cleanup**: Remove temporary files
+1. **验证 Token**：检查 `$SONARQUBE_TOKEN` 环境变量
+2. **获取问题**：调用 SonarCloud API 获取 PR 问题
+3. **解析数据**：按严重性、类型、文件、规则分组
+4. **生成报告**：结构化的输出及操作计划
+5. **清理**：删除临时文件
 
-## Prerequisites
+## 前置条件
 
-### Environment Variable
+### 环境变量
 
 ```bash
-# Set SonarQube token (add to ~/.bashrc or ~/.zshrc)
+# 设置 SonarQube token（添加到 ~/.bashrc 或 ~/.zshrc）
 export SONARQUBE_TOKEN="your_token_here"
 
-# Verify token is set
+# 验证 token 已设置
 echo $SONARQUBE_TOKEN
 ```
 
-**To get token:**
-1. Go to SonarCloud → My Account → Security
-2. Generate new token
-3. Copy and export as environment variable
+**获取 token：**
+1. 前往 SonarCloud → My Account → Security
+2. 生成新 token
+3. 复制并导出为环境变量
 
-### Project Configuration
+### 项目配置
 
-Configure your SonarCloud project details:
+配置你的 SonarCloud 项目详情：
 
 ```bash
-# Add to project's CLAUDE.md or as environment variables
+# 添加到项目的 CLAUDE.md 或作为环境变量
 SONAR_ORGANIZATION="your-org-name"
 SONAR_PROJECT_KEY="your-org_your-project"
 SONAR_BASE_URL="https://sonarcloud.io/api"
 ```
 
-**If not set:** Ask user to provide organization and project key.
+**如未设置：** 询问用户提供组织和项目 key。
 
-## Fetch Issues
+## 获取问题
 
-**Important:** Direct curl with `-u "$SONARQUBE_TOKEN:"` fails in zsh due to authentication parsing. Use bash script wrapper:
+**重要：** 在 zsh 中直接使用 `-u "$SONARQUBE_TOKEN:"` 的 curl 会因身份验证解析失败。使用 bash 脚本包装器：
 
 ```bash
-# Create temporary bash script to handle authentication
+# 创建临时 bash 脚本处理身份验证
 cat > /tmp/fetch_sonar.sh << 'SCRIPT'
 #!/bin/bash
 curl -s -u "${SONARQUBE_TOKEN}:" \
@@ -66,16 +66,16 @@ chmod +x /tmp/fetch_sonar.sh
 /tmp/fetch_sonar.sh $PR_NUMBER > /tmp/sonar_pr_$PR_NUMBER.json
 ```
 
-**API Parameters:**
-- `componentKeys`: Your project key
-- `pullRequest`: PR number
-- `issueStatuses`: OPEN,CONFIRMED (exclude resolved)
-- `sinceLeakPeriod`: Only new issues in this PR
-- `ps`: Page size (max 500)
+**API 参数：**
+- `componentKeys`：你的项目 key
+- `pullRequest`：PR 编号
+- `issueStatuses`：OPEN,CONFIRMED（排除已解决的）
+- `sinceLeakPeriod`：仅此 PR 中的新问题
+- `ps`：页面大小（最多 500）
 
-## Analysis Script
+## 分析脚本
 
-Create Node.js analysis script at `/tmp/sonar_analyze.js`:
+在 `/tmp/sonar_analyze.js` 创建 Node.js 分析脚本：
 
 ```javascript
 const fs = require('fs');
@@ -83,26 +83,26 @@ const prNumber = process.argv[2];
 const data = JSON.parse(fs.readFileSync(`/tmp/sonar_pr_${prNumber}.json`, 'utf8'));
 const issues = data.issues || [];
 
-// Group by severity
+// 按严重性分组
 const bySeverity = issues.reduce((acc, i) => {
   acc[i.severity] = (acc[i.severity] || 0) + 1;
   return acc;
 }, {});
 
-// Group by type
+// 按类型分组
 const byType = issues.reduce((acc, i) => {
   acc[i.type] = (acc[i.type] || 0) + 1;
   return acc;
 }, {});
 
-// Group by file
+// 按文件分组
 const byFile = issues.reduce((acc, i) => {
   const file = i.component.split(':')[1] || i.component;
   acc[file] = (acc[file] || 0) + 1;
   return acc;
 }, {});
 
-// Group by rule
+// 按规则分组
 const byRule = issues.reduce((acc, i) => {
   if (!acc[i.rule]) {
     acc[i.rule] = {
@@ -115,7 +115,7 @@ const byRule = issues.reduce((acc, i) => {
   return acc;
 }, {});
 
-// Output structured data
+// 输出结构化数据
 console.log(JSON.stringify({
   total: data.total,
   bySeverity,
@@ -130,36 +130,36 @@ console.log(JSON.stringify({
 }, null, 2));
 ```
 
-**Run analysis:**
+**运行分析：**
 ```bash
 node /tmp/sonar_analyze.js $PR_NUMBER > /tmp/sonar_analysis_$PR_NUMBER.json
 ```
 
-## Report Format
+## 报告格式
 
-Generate formatted report from analysis:
+从分析生成格式化的报告：
 
 ```
-📊 SonarCloud Analysis - PR #XXX
+📊 SonarCloud 分析 - PR #XXX
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-📈 EXECUTIVE SUMMARY
+📈 执行摘要
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Total Issues: {TOTAL}
+总问题数：{TOTAL}
 
-By Severity:
-🔴 Blocker/Critical: {COUNT} ({PERCENTAGE}%)
-🟡 Major: {COUNT} ({PERCENTAGE}%)
-🔵 Minor/Info: {COUNT} ({PERCENTAGE}%)
+按严重性：
+🔴 Blocker/Critical：{COUNT}（{PERCENTAGE}%）
+🟡 Major：{COUNT}（{PERCENTAGE}%）
+🔵 Minor/Info：{COUNT}（{PERCENTAGE}%）
 
-By Type:
-🐛 Bugs: {COUNT}
-🛡️ Vulnerabilities: {COUNT}
-🧹 Code Smells: {COUNT}
+按类型：
+🐛 Bug：{COUNT}
+🛡️ 漏洞：{COUNT}
+🧹 代码异味：{COUNT}
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-📂 TOP 10 FILES WITH ISSUES
+📂 问题最多的前 10 个文件
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 1. src/components/UserProfile.tsx - 8 issues
@@ -168,65 +168,65 @@ By Type:
 ...
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-⚠️ TOP 5 VIOLATED RULES
+⚠️ 违反最多的前 5 条规则
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-1. typescript:S1854 (MAJOR) - 12 occurrences
-   "Dead stores should be removed"
+1. typescript:S1854 (MAJOR) - 12 次
+   "应移除死存储"
 
-2. typescript:S3776 (CRITICAL) - 8 occurrences
-   "Cognitive Complexity of functions should not be too high"
+2. typescript:S3776 (CRITICAL) - 8 次
+   "函数的认知复杂度不应过高"
 
-3. typescript:S1186 (MINOR) - 6 occurrences
-   "Functions should not be empty"
+3. typescript:S1186 (MINOR) - 6 次
+   "函数不应为空"
 ...
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-✅ ACTION PLAN
+✅ 操作计划
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Priority 1 - CRITICAL/BLOCKER ({COUNT} issues):
-  • Fix immediately before merge
-  • Focus on: {TOP_FILES}
+优先级 1 - CRITICAL/BLOCKER（{COUNT} 个问题）：
+  • 合并前立即修复
+  • 重点关注：{TOP_FILES}
 
-Priority 2 - MAJOR ({COUNT} issues):
-  • Address in this PR if possible
-  • Consider technical debt ticket if extensive
+优先级 2 - MAJOR（{COUNT} 个问题）：
+  • 如有可能在此 PR 中处理
+  • 范围大则考虑提技术债务工单
 
-Priority 3 - MINOR/INFO ({COUNT} issues):
-  • Can be addressed in follow-up PR
-  • Add to backlog for refactoring sprint
+优先级 3 - MINOR/INFO（{COUNT} 个问题）：
+  • 可在后续 PR 中处理
+  • 添加到重构迭代的待办列表
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-🔗 LINKS
+🔗 链接
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-View in SonarCloud:
+在 SonarCloud 中查看：
 https://sonarcloud.io/project/pull_requests_list?id={PROJECT_KEY}&pullRequest={PR_NUMBER}
 ```
 
-## Severity Mapping
+## 严重性映射
 
-| SonarCloud | Symbol | Priority | Action |
+| SonarCloud | 符号 | 优先级 | 操作 |
 |------------|--------|----------|--------|
-| BLOCKER | 🔴 | P0 | Fix immediately |
-| CRITICAL | 🔴 | P0 | Fix immediately |
-| MAJOR | 🟡 | P1 | Fix in this PR |
-| MINOR | 🔵 | P2 | Consider for follow-up |
-| INFO | 🔵 | P3 | Optional improvement |
+| BLOCKER | 🔴 | P0 | 立即修复 |
+| CRITICAL | 🔴 | P0 | 立即修复 |
+| MAJOR | 🟡 | P1 | 在此 PR 中修复 |
+| MINOR | 🔵 | P2 | 考虑后续处理 |
+| INFO | 🔵 | P3 | 可选改进 |
 
-## Issue Types
+## 问题类型
 
-| Type | Symbol | Description |
+| 类型 | 符号 | 描述 |
 |------|--------|-------------|
-| BUG | 🐛 | Code that is demonstrably wrong |
-| VULNERABILITY | 🛡️ | Security issues |
-| CODE_SMELL | 🧹 | Maintainability issue |
-| SECURITY_HOTSPOT | 🔒 | Security-sensitive code to review |
+| BUG | 🐛 | 明确错误的代码 |
+| VULNERABILITY | 🛡️ | 安全问题 |
+| CODE_SMELL | 🧹 | 可维护性问题 |
+| SECURITY_HOTSPOT | 🔒 | 需审查的安全敏感代码 |
 
-## Cleanup
+## 清理
 
-Always clean up temporary files after execution:
+执行后始终清理临时文件：
 
 ```bash
 rm -f /tmp/fetch_sonar.sh
@@ -235,54 +235,54 @@ rm -f /tmp/sonar_analyze.js
 rm -f /tmp/sonar_analysis_$PR_NUMBER.json
 ```
 
-## Error Handling
+## 错误处理
 
-| Error | Cause | Action |
+| 错误 | 原因 | 操作 |
 |-------|-------|--------|
-| Token not set | `$SONARQUBE_TOKEN` missing | Ask user to export token |
-| 401 Unauthorized | Invalid or expired token | Request new token from SonarCloud |
-| 404 Not Found | PR doesn't exist in SonarCloud | Verify PR number and project key |
-| Empty response | No issues found | Report clean PR, congratulate team |
-| >500 issues | Pagination limit reached | Warn about incomplete data, suggest filtering |
-| Network error | API unreachable | Check internet connection, retry |
+| Token 未设置 | `$SONARQUBE_TOKEN` 缺失 | 要求用户导出 token |
+| 401 未授权 | token 无效或过期 | 从 SonarCloud 申请新 token |
+| 404 未找到 | PR 在 SonarCloud 中不存在 | 验证 PR 编号和项目 key |
+| 空响应 | 未发现问题 | 报告干净的 PR，祝贺团队 |
+| >500 问题 | 超出分页限制 | 警告数据不完整，建议过滤 |
+| 网络错误 | API 不可达 | 检查网络连接，重试 |
 
-## Configuration Options
+## 配置选项
 
-### Project-Level Configuration
+### 项目级配置
 
-Create `.sonarcloud.properties` or add to `CLAUDE.md`:
+创建 `.sonarcloud.properties` 或添加到 `CLAUDE.md`：
 
 ```properties
-# SonarCloud Configuration
+# SonarCloud 配置
 SONAR_ORGANIZATION=your-org
 SONAR_PROJECT_KEY=your-org_your-project
 SONAR_EXCLUSIONS=**/*.test.ts,**/*.spec.ts,**/migrations/**
 SONAR_COVERAGE_EXCLUSIONS=**/*.test.ts,src/test/**
 ```
 
-### API Rate Limits
+### API 速率限制
 
-SonarCloud API limits:
-- Free tier: 10,000 requests/day
-- Paid tier: Unlimited
+SonarCloud API 限制：
+- 免费套餐：10,000 次请求/天
+- 付费套餐：不限
 
-**Tip:** Cache results for repeated queries to same PR.
+**提示：** 对同一 PR 的重复查询缓存结果。
 
-## Integration Examples
+## 集成示例
 
 ### GitHub Actions
 
 ```yaml
-- name: SonarQube Analysis
+- name: SonarQube 分析
   run: |
     export SONARQUBE_TOKEN=${{ secrets.SONAR_TOKEN }}
-    export SONAR_PROJECT_KEY="${{ secrets.SONAR_PROJECT }}"
+    export SONAR_PROJECT_KEY=${{ secrets.SONAR_PROJECT }}
     claude -p "/sonarqube ${{ github.event.pull_request.number }}"
 ```
 
-### Pre-merge Hook
+### 合并前钩子
 
-Add to `.claude/hooks/pre-merge.sh`:
+添加到 `.claude/hooks/pre-merge.sh`：
 
 ```bash
 #!/bin/bash
@@ -290,86 +290,86 @@ PR_NUMBER=$(gh pr view --json number -q .number)
 claude -p "/sonarqube $PR_NUMBER"
 ```
 
-## Red Flags - NEVER Do
+## 红旗——绝不做
 
-**Never:**
-- ❌ Modify code or auto-fix issues (analysis-only command)
-- ❌ Skip token verification (security risk)
-- ❌ Leave temp files in `/tmp` (cleanup required)
-- ❌ Commit SonarQube token to repository (use env vars)
-- ❌ Run without checking token expiration
+**绝不：**
+- ❌ 修改代码或自动修复问题（仅分析命令）
+- ❌ 跳过 token 验证（安全风险）
+- ❌ 将临时文件留在 `/tmp` 中（需要清理）
+- ❌ 将 SonarQube token 提交到仓库（使用环境变量）
+- ❌ 不检查 token 过期就运行
 
-**Always:**
-- ✅ Generate structured, actionable report
-- ✅ Clean up after execution
-- ✅ Handle API errors gracefully
-- ✅ Verify token is valid before API calls
-- ✅ Parse and present data clearly
+**始终：**
+- ✅ 生成结构化、可操作的报告
+- ✅ 执行后清理
+- ✅ 优雅处理 API 错误
+- ✅ 在 API 调用前验证 token 有效
+- ✅ 清晰地解析和呈现数据
 
-## Advanced Usage
+## 高级用法
 
-### Custom Filters
+### 自定义过滤器
 
 ```bash
-# Only show critical/blocker issues
+# 仅显示 critical/blocker 问题
 /sonarqube 123 --severity BLOCKER,CRITICAL
 
-# Only show bugs and vulnerabilities
+# 仅显示 bug 和漏洞
 /sonarqube 123 --types BUG,VULNERABILITY
 
-# Specific file pattern
+# 特定文件模式
 /sonarqube 123 --files "src/services/**"
 ```
 
-### Multiple PRs
+### 多个 PR
 
 ```bash
-# Compare issues across PRs
+# 比较多个 PR 间的问题
 /sonarqube 123,124,125 --compare
 ```
 
-## Troubleshooting
+## 故障排除
 
-### Issue: "curl: (22) The requested URL returned error: 401"
+### 问题："curl: (22) 请求的 URL 返回错误：401"
 
-**Cause:** Invalid or missing token
+**原因：** token 无效或缺失
 
-**Fix:**
+**修复：**
 ```bash
-# Regenerate token in SonarCloud
-# Export new token
+# 在 SonarCloud 中重新生成 token
+# 导出新 token
 export SONARQUBE_TOKEN="new_token_here"
 ```
 
-### Issue: "Empty response or no issues"
+### 问题："空响应或无问题"
 
-**Cause:** Analysis not yet complete or PR not analyzed
+**原因：** 分析尚未完成或 PR 未被分析
 
-**Fix:** Wait for SonarCloud analysis to complete (~2-5 minutes after PR creation)
+**修复：** 等待 SonarCloud 分析完成（PR 创建后约 2-5 分钟）
 
-### Issue: "componentKeys not found"
+### 问题："componentKeys 未找到"
 
-**Cause:** Wrong project key
+**原因：** 项目 key 错误
 
-**Fix:** Verify project key in SonarCloud URL:
+**修复：** 在 SonarCloud URL 中验证项目 key：
 ```
 https://sonarcloud.io/project/overview?id=YOUR_PROJECT_KEY
 ```
 
-## Usage Examples
+## 使用示例
 
 ```bash
-# Basic usage
+# 基本用法
 /sonarqube 170
 
-# With PR prefix
+# 带 PR 前缀
 /sonarqube PR #234
 
-# Using PR URL
+# 使用 PR URL
 /sonarqube https://github.com/org/repo/pull/170
 
-# Custom severity filter (if implemented)
+# 自定义严重性过滤器（如已实现）
 /sonarqube 170 --critical-only
 ```
 
-PR Number: $ARGUMENTS
+PR 编号：$ARGUMENTS

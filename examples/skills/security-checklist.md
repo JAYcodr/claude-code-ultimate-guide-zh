@@ -1,96 +1,96 @@
 ---
 name: security-checklist
-description: Comprehensive security checklist for web applications
+description: Web 应用程序安全清单
 effort: medium
 ---
 
-# Security Checklist Skill
+# Security Checklist 技能
 
-## Quick Security Audit
+## 快速安全审计
 
-### Authentication
-- [ ] Passwords hashed with bcrypt/argon2 (cost factor >= 10)
-- [ ] Session tokens are cryptographically random
-- [ ] JWT tokens have short expiry (15min access, 7d refresh)
-- [ ] Rate limiting on login endpoints
-- [ ] Account lockout after failed attempts
+### 身份认证
+- [ ] 密码使用 bcrypt/argon2 哈希（cost factor >= 10）
+- [ ] 会话令牌为加密随机生成
+- [ ] JWT token 短时效（access 15 分钟，refresh 7 天）
+- [ ] 登录端点限速
+- [ ] 多次失败尝试后锁定账户
 
-### Authorization
-- [ ] Every API endpoint checks permissions
-- [ ] No IDOR (Insecure Direct Object References)
-- [ ] Role-based access control implemented
-- [ ] Sensitive operations require re-authentication
+### 授权
+- [ ] 每个 API 端点检查权限
+- [ ] 无 IDOR（不安全的直接对象引用）
+- [ ] 实现基于角色的访问控制
+- [ ] 敏感操作需要重新认证
 
-### Input Validation
-- [ ] All user input validated server-side
-- [ ] File uploads restricted by type and size
-- [ ] SQL queries use parameterized statements
-- [ ] HTML output encoded to prevent XSS
+### 输入验证
+- [ ] 所有用户输入在服务端验证
+- [ ] 文件上传限制类型和大小
+- [ ] SQL 查询使用参数化语句
+- [ ] HTML 输出编码以防止 XSS
 
-### Data Protection
-- [ ] Sensitive data encrypted at rest
-- [ ] HTTPS enforced everywhere
-- [ ] Secure cookies (HttpOnly, Secure, SameSite)
-- [ ] No sensitive data in URLs or logs
+### 数据保护
+- [ ] 敏感数据静态加密
+- [ ] 全站强制 HTTPS
+- [ ] 安全 cookie（HttpOnly、Secure、SameSite）
+- [ ] URL 和日志中不含敏感数据
 
-### Headers & CORS
-- [ ] Content-Security-Policy header set
+### 头部与 CORS
+- [ ] 设置 Content-Security-Policy 头部
 - [ ] X-Content-Type-Options: nosniff
-- [ ] X-Frame-Options: DENY (or SAMEORIGIN)
-- [ ] Strict-Transport-Security enabled
-- [ ] CORS properly restricted
+- [ ] X-Frame-Options: DENY（或 SAMEORIGIN）
+- [ ] 启用 Strict-Transport-Security
+- [ ] 正确限制 CORS
 
-## Code Patterns
+## 代码模式
 
-### SQL Injection Prevention
+### SQL 注入防护
 ```javascript
-// VULNERABLE
+// 有漏洞
 db.query(`SELECT * FROM users WHERE id = ${userId}`);
 
-// SECURE
+// 安全
 db.query('SELECT * FROM users WHERE id = $1', [userId]);
 ```
 
-### XSS Prevention
+### XSS 防护
 ```javascript
-// VULNERABLE
+// 有漏洞
 element.innerHTML = userInput;
 
-// SECURE
+// 安全
 element.textContent = userInput;
 
-// SECURE (with sanitization)
+// 安全（经过消毒）
 element.innerHTML = DOMPurify.sanitize(userInput);
 ```
 
-### CSRF Protection
+### CSRF 防护
 ```javascript
-// Generate token
+// 生成 token
 const csrfToken = crypto.randomBytes(32).toString('hex');
 session.csrfToken = csrfToken;
 
-// Validate on POST
+// POST 时验证
 if (req.body.csrf !== session.csrfToken) {
-  throw new ForbiddenError('Invalid CSRF token');
+  throw new ForbiddenError('无效的 CSRF token');
 }
 ```
 
-### Secrets Management
+### 密钥管理
 ```javascript
-// NEVER in code
+// 绝不写在代码中
 const API_KEY = 'sk-abc123...';
 
-// Environment variables
+// 用环境变量
 const API_KEY = process.env.API_KEY;
 
-// Secrets manager (production)
+// 用密钥管理器（生产环境）
 const secret = await secretsManager.getSecret('api-key');
 ```
 
-## Security Headers Example
+## 安全头部示例
 
 ```javascript
-// Express middleware
+// Express 中间件
 app.use((req, res, next) => {
   res.setHeader('X-Content-Type-Options', 'nosniff');
   res.setHeader('X-Frame-Options', 'DENY');
@@ -101,26 +101,26 @@ app.use((req, res, next) => {
 });
 ```
 
-## Dependency Security
+## 依赖安全
 
 ```bash
-# Check for vulnerabilities
+# 检查漏洞
 npm audit
 
-# Auto-fix what's possible
+# 自动修复
 npm audit fix
 
-# Check outdated packages
+# 检查过时包
 npm outdated
 
-# Update dependencies
+# 更新依赖
 npm update
 ```
 
-## Logging Security Events
+## 记录安全事件
 
 ```javascript
-// Events to log
+// 需要记录的事件
 logger.security({
   event: 'login_failed',
   ip: req.ip,
@@ -129,20 +129,20 @@ logger.security({
   timestamp: new Date().toISOString()
 });
 
-// Never log
-// - Passwords
-// - Full credit card numbers
-// - Session tokens
-// - Personal data (in production)
+// 绝不记录
+// - 密码
+// - 完整信用卡号
+// - 会话令牌
+// - 个人数据（生产环境）
 ```
 
-## Pre-Deployment Checklist
+## 部署前检查清单
 
-1. [ ] Run `npm audit` - no critical vulnerabilities
-2. [ ] All secrets in environment variables
-3. [ ] Debug mode disabled
-4. [ ] Error messages don't expose internals
-5. [ ] HTTPS only (HTTP redirects to HTTPS)
-6. [ ] Database credentials rotated
-7. [ ] Logging configured (no sensitive data)
-8. [ ] Backup strategy tested
+1. [ ] 运行 `npm audit` — 无严重漏洞
+2. [ ] 所有密钥在环境变量中
+3. [ ] 关闭调试模式
+4. [ ] 错误消息不暴露内部信息
+5. [ ] 仅 HTTPS（HTTP 重定向到 HTTPS）
+6. [ ] 数据库凭证已轮换
+7. [ ] 日志已配置（不记录敏感数据）
+8. [ ] 备份策略已测试

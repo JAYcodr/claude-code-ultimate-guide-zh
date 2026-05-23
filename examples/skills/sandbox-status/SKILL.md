@@ -1,179 +1,180 @@
+<!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
 ---
 name: sandbox-status
-description: Display native sandbox status, configuration, and recent violations
+description: 显示原生沙箱状态、配置和最近违规
 effort: low
 disable-model-invocation: true
 ---
 
-# Sandbox Status Command
+# 沙箱状态命令
 
-Inspect the native Claude Code sandbox state, active configuration, and security events.
+检查原生 Claude Code 沙箱状态、活动配置和安全事件。
 
-## Usage
+## 用法
 
 ```
 /sandbox-status
 ```
 
-## What It Does
+## 功能
 
-1. **Check sandbox availability**
-   - Verify OS primitives installed (bubblewrap on Linux, Seatbelt on macOS)
-   - Display platform support status
+1. **检查沙箱可用性**
+   - 验证 OS 原语是否安装（Linux 上为 bubblewrap，macOS 上为 Seatbelt）
+   - 显示平台支持状态
 
-2. **Show active configuration**
-   - Sandbox mode (Auto-allow vs Regular permissions)
-   - Filesystem policies (allowed writes, denied reads)
-   - Network policies (domain allowlist/denylist)
-   - Excluded commands
+2. **显示活动配置**
+   - 沙箱模式（自动允许 vs 常规权限）
+   - 文件系统策略（允许写入、拒绝读取）
+   - 网络策略（域名允许列表/拒绝列表）
+   - 排除的命令
 
-3. **List recent sandbox violations**
-   - Blocked filesystem access attempts
-   - Blocked network connections
-   - Escape hatch invocations (`dangerouslyDisableSandbox`)
+3. **列出最近的沙箱违规**
+   - 被阻止的文件系统访问尝试
+   - 被阻止的网络连接
+   - 逃生口调用（`dangerouslyDisableSandbox`）
 
-## Implementation
+## 实现
 
 ```bash
 #!/bin/bash
 
-echo "=== Native Sandbox Status ==="
+echo "=== 原生沙箱状态 ==="
 echo
 
-# 1. Platform Check
-echo "Platform:"
+# 1. 平台检查
+echo "平台："
 case "$OSTYPE" in
   darwin*)
-    echo "  ✅ macOS (Seatbelt built-in)"
+    echo "  ✅ macOS（Seatbelt 内置）"
     ;;
   linux*)
     if which bubblewrap >/dev/null 2>&1; then
-      echo "  ✅ Linux (bubblewrap installed)"
+      echo "  ✅ Linux（bubblewrap 已安装）"
       bubblewrap --version 2>/dev/null | head -1
     else
-      echo "  ❌ Linux (bubblewrap NOT installed)"
-      echo "     Install: sudo apt-get install bubblewrap socat"
+      echo "  ❌ Linux（bubblewrap 未安装）"
+      echo "     安装：sudo apt-get install bubblewrap socat"
     fi
     if which socat >/dev/null 2>&1; then
-      echo "  ✅ socat installed"
+      echo "  ✅ socat 已安装"
     else
-      echo "  ❌ socat NOT installed"
+      echo "  ❌ socat 未安装"
     fi
     ;;
   *)
-    echo "  ❌ Unsupported platform: $OSTYPE"
+    echo "  ❌ 不支持的平台：$OSTYPE"
     ;;
 esac
 echo
 
-# 2. Configuration
-echo "Configuration (from settings.json):"
+# 2. 配置
+echo "配置（来自 settings.json）："
 if [ -f .claude/settings.json ]; then
   CONFIG=".claude/settings.json"
 elif [ -f ~/.claude/settings.json ]; then
   CONFIG="~/.claude/settings.json"
 else
-  echo "  ⚠️  No settings.json found"
+  echo "  ⚠️  未找到 settings.json"
   CONFIG=""
 fi
 
 if [ -n "$CONFIG" ]; then
-  echo "  Source: $CONFIG"
+  echo "  来源：$CONFIG"
 
-  # Auto-allow mode
+  # 自动允许模式
   AUTO_ALLOW=$(jq -r '.sandbox.autoAllowMode // "not set"' "$CONFIG" 2>/dev/null)
-  echo "  Auto-allow: $AUTO_ALLOW"
+  echo "  自动允许：$AUTO_ALLOW"
 
-  # Allowed write paths
+  # 允许的写入路径
   WRITE_PATHS=$(jq -r '.sandbox.filesystem.allowedWritePaths[]? // empty' "$CONFIG" 2>/dev/null | tr '\n' ', ')
-  echo "  Allowed writes: ${WRITE_PATHS:-not set}"
+  echo "  允许写入：${WRITE_PATHS:-未设置}"
 
-  # Denied read paths
+  # 拒绝的读取路径
   DENIED_READS=$(jq -r '.sandbox.filesystem.deniedReadPaths[]? // empty' "$CONFIG" 2>/dev/null | tr '\n' ', ')
-  echo "  Denied reads: ${DENIED_READS:-not set}"
+  echo "  拒绝读取：${DENIED_READS:-未设置}"
 
-  # Network policy
+  # 网络策略
   NET_POLICY=$(jq -r '.sandbox.network.policy // "not set"' "$CONFIG" 2>/dev/null)
-  echo "  Network policy: $NET_POLICY"
+  echo "  网络策略：$NET_POLICY"
 
-  # Allowed domains
+  # 允许的域名
   DOMAINS=$(jq -r '.sandbox.network.allowedDomains[]? // empty' "$CONFIG" 2>/dev/null | head -3 | tr '\n' ', ')
   DOMAINS_COUNT=$(jq -r '.sandbox.network.allowedDomains | length' "$CONFIG" 2>/dev/null)
   if [ -n "$DOMAINS" ]; then
-    echo "  Allowed domains: $DOMAINS... ($DOMAINS_COUNT total)"
+    echo "  允许的域名：$DOMAINS...（共 $DOMAINS_COUNT 个）"
   else
-    echo "  Allowed domains: not set"
+    echo "  允许的域名：未设置"
   fi
 
-  # Excluded commands
+  # 排除的命令
   EXCLUDED=$(jq -r '.sandbox.excludedCommands[]? // empty' "$CONFIG" 2>/dev/null | tr '\n' ', ')
-  echo "  Excluded commands: ${EXCLUDED:-not set}"
+  echo "  排除的命令：${EXCLUDED:-未设置}"
 fi
 echo
 
-# 3. Recent Violations (placeholder - actual implementation would read Claude Code logs)
-echo "Recent sandbox violations:"
-echo "  ℹ️  Log inspection not yet implemented"
-echo "  Tip: Check Claude Code session logs for sandbox violation notifications"
+# 3. 最近违规（占位 - 实际实现应读取 Claude Code 日志）
+echo "最近的沙箱违规："
+echo "  ℹ️  日志检查尚未实现"
+echo "  提示：检查 Claude Code 会话日志以获取沙箱违规通知"
 echo
 
-# 4. Open-Source Runtime
-echo "Open-Source Runtime:"
+# 4. 开源运行时
+echo "开源运行时："
 if which npx >/dev/null 2>&1; then
-  echo "  ✅ npx available - can use @anthropic-ai/sandbox-runtime"
-  echo "  Usage: npx @anthropic-ai/sandbox-runtime <command>"
+  echo "  ✅ npx 可用 - 可使用 @anthropic-ai/sandbox-runtime"
+  echo "  用法：npx @anthropic-ai/sandbox-runtime <command>"
 else
-  echo "  ⚠️  npx not found (install Node.js)"
+  echo "  ⚠️  未找到 npx（安装 Node.js）"
 fi
 echo
 
-# 5. Documentation
-echo "Documentation:"
-echo "  Guide: guide/sandbox-native.md"
-echo "  Official: https://code.claude.com/docs/en/sandboxing"
-echo "  Runtime: https://github.com/anthropic-experimental/sandbox-runtime"
+# 5. 文档
+echo "文档："
+echo "  指南：guide/sandbox-native.md"
+echo "  官方：https://code.claude.com/docs/en/sandboxing"
+echo "  运行时：https://github.com/anthropic-experimental/sandbox-runtime"
 ```
 
-## Example Output
+## 示例输出
 
 ```
-=== Native Sandbox Status ===
+=== 原生沙箱状态 ===
 
-Platform:
-  ✅ macOS (Seatbelt built-in)
+平台：
+  ✅ macOS（Seatbelt 内置）
 
-Configuration (from settings.json):
-  Source: .claude/settings.json
-  Auto-allow: true
-  Allowed writes: ${CWD}, /tmp
-  Denied reads: ${HOME}/.ssh, ${HOME}/.aws, ${HOME}/.kube
-  Network policy: deny
-  Allowed domains: api.anthropic.com, registry.npmjs.com, github.com... (9 total)
-  Excluded commands: docker, kubectl, podman
+配置（来自 settings.json）：
+  来源：.claude/settings.json
+  自动允许：true
+  允许写入：${CWD}, /tmp
+  拒绝读取：${HOME}/.ssh, ${HOME}/.aws, ${HOME}/.kube
+  网络策略：deny
+  允许的域名：api.anthropic.com, registry.npmjs.com, github.com...（共 9 个）
+  排除的命令：docker, kubectl, podman
 
-Recent sandbox violations:
-  ℹ️  Log inspection not yet implemented
-  Tip: Check Claude Code session logs for sandbox violation notifications
+最近的沙箱违规：
+  ℹ️  日志检查尚未实现
+  提示：检查 Claude Code 会话日志以获取沙箱违规通知
 
-Open-Source Runtime:
-  ✅ npx available - can use @anthropic-ai/sandbox-runtime
-  Usage: npx @anthropic-ai/sandbox-runtime <command>
+开源运行时：
+  ✅ npx 可用 - 可使用 @anthropic-ai/sandbox-runtime
+  用法：npx @anthropic-ai/sandbox-runtime <command>
 
-Documentation:
-  Guide: guide/sandbox-native.md
-  Official: https://code.claude.com/docs/en/sandboxing
-  Runtime: https://github.com/anthropic-experimental/sandbox-runtime
+文档：
+  指南：guide/sandbox-native.md
+  官方：https://code.claude.com/docs/en/sandboxing
+  运行时：https://github.com/anthropic-experimental/sandbox-runtime
 ```
 
-## Use Cases
+## 用例
 
-- **Pre-deployment**: Verify sandbox config before running autonomous workflows
-- **Debugging**: Investigate why certain commands are blocked
-- **Security audit**: Review allowed domains and filesystem access
-- **Onboarding**: Help new team members understand project sandbox policy
+- **部署前**：在运行自主工作流前验证沙箱配置
+- **调试**：调查为什么某些命令被阻止
+- **安全审计**：审查允许的域名和文件系统访问
+- **新人入职**：帮助新团队成员理解项目沙箱策略
 
-## See Also
+## 另见
 
-- [Native Sandboxing Guide](../../guide/security/sandbox-native.md) - Complete technical reference
-- [Sandbox Validation Hook](../hooks/bash/sandbox-validation.sh) - Pre-command validation
-- [Sandbox Config Example](../config/sandbox-native.json) - Production-ready settings
+- [原生沙箱指南](../../guide/security/sandbox-native.md) — 完整技术参考
+- [沙箱验证钩子](../hooks/bash/sandbox-validation.sh) — 命令前验证
+- [沙箱配置示例](../config/sandbox-native.json) — 生产就绪设置

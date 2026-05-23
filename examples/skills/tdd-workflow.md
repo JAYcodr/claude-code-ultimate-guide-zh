@@ -1,72 +1,73 @@
+<!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
 ---
 name: tdd-workflow
-description: Test-Driven Development workflow and best practices
+description: 测试驱动开发工作流和最佳实践
 effort: low
 ---
 
-# TDD Workflow Skill
+# TDD 工作流技能
 
-## The TDD Cycle
+## TDD 循环
 
 ```
 RED → GREEN → REFACTOR
  ↑__________________|
 ```
 
-### 1. RED: Write a Failing Test
-- Write the smallest test that fails
-- Test should fail for the right reason
-- Ensure the test actually runs
+### 1. RED：编写会失败的测试
+- 编写最小的会失败的测试
+- 测试应因正确的原因失败
+- 确保测试实际运行
 
-### 2. GREEN: Make it Pass
-- Write minimal code to pass the test
-- Don't optimize yet
-- It's okay if the code is ugly
+### 2. GREEN：让它通过
+- 编写最少的代码使测试通过
+- 先不优化
+- 代码丑陋没关系
 
-### 3. REFACTOR: Clean Up
-- Improve code structure
-- Remove duplication
-- Keep tests passing
+### 3. REFACTOR：清理
+- 改进代码结构
+- 消除重复
+- 保持测试通过
 
-## TDD Best Practices
+## TDD 最佳实践
 
-### Test Naming Convention
+### 测试命名约定
 ```
-should_[expected behavior]_when_[condition]
+should_[预期行为]_when_[条件]
 ```
 
-Examples:
+示例：
 - `should_return_empty_array_when_no_items`
 - `should_throw_error_when_invalid_input`
 - `should_calculate_total_when_items_present`
 
-### Test Structure (AAA)
+### 测试结构（AAA）
 ```typescript
 it('should calculate discount when coupon applied', () => {
-  // Arrange - Set up test data
+  // Arrange - 设置测试数据
   const cart = new Cart();
   cart.addItem({ price: 100 });
   const coupon = new Coupon('10OFF', 10);
 
-  // Act - Execute the behavior
+  // Act - 执行行为
   cart.applyCoupon(coupon);
 
-  // Assert - Verify the result
+  // Assert - 验证结果
   expect(cart.total).toBe(90);
 });
 ```
 
-### Test Isolation
-- Each test should be independent
-- No shared state between tests
-- Use `beforeEach` for common setup
-- Clean up in `afterEach`
+### 测试隔离
+- 每个测试应独立
+- 测试间无共享状态
+- 使用 `beforeEach` 进行通用设置
+- 在 `afterEach` 中清理
 
-## TDD Workflow Example
+## TDD 工作流示例
 
-### Feature: Add item to cart
+### 功能：向购物车添加项目
 
-**Step 1: RED**
+**步骤 1：RED**
 ```typescript
 describe('Cart', () => {
   it('should add item to cart', () => {
@@ -76,9 +77,9 @@ describe('Cart', () => {
   });
 });
 ```
-Run test → FAILS (Cart doesn't exist)
+运行测试 → 失败（Cart 不存在）
 
-**Step 2: GREEN**
+**步骤 2：GREEN**
 ```typescript
 class Cart {
   items = [];
@@ -88,9 +89,9 @@ class Cart {
   }
 }
 ```
-Run test → PASSES
+运行测试 → 通过
 
-**Step 3: REFACTOR**
+**步骤 3：REFACTOR**
 ```typescript
 class Cart {
   private _items: CartItem[] = [];
@@ -104,39 +105,39 @@ class Cart {
   }
 }
 ```
-Run test → Still PASSES
+运行测试 → 仍通过
 
-### Next iteration: Calculate total
-Repeat the cycle for each new behavior.
+### 下一轮迭代：计算总额
+为每个新行为重复循环。
 
-## When to Use TDD
+## 何时使用 TDD
 
-### Good for TDD
-- Business logic
-- Complex algorithms
-- API endpoints
-- State management
-- Utility functions
+### 适合 TDD
+- 业务逻辑
+- 复杂算法
+- API 端点
+- 状态管理
+- 工具函数
 
-### Less Suitable
-- UI layout (visual testing better)
-- Database migrations
-- External integrations (use integration tests)
-- Exploratory/prototype code
+### 不太适合
+- UI 布局（视觉测试更好）
+- 数据库迁移
+- 外部集成（使用集成测试）
+- 探索性/原型代码
 
-## Common TDD Mistakes
+## 常见 TDD 错误
 
-1. **Writing too much test** - Start with smallest failing test
-2. **Writing too much code** - Only enough to pass
-3. **Skipping refactor** - Technical debt accumulates
-4. **Testing implementation** - Test behavior, not internals
-5. **Ignoring failing tests** - Fix or delete, never skip
+1. **写了太多测试** — 从最小的失败测试开始
+2. **写了太多代码** — 只写到能通过
+3. **跳过重构** — 技术债务积累
+4. **测试实现** — 测试行为，而非内部
+5. **忽视失败的测试** — 修复或删除，绝不跳过
 
-## Test Doubles
+## 测试替身
 
-| Type | Purpose | Example |
+| 类型 | 用途 | 示例 |
 |------|---------|---------|
-| Stub | Return fixed data | `jest.fn().mockReturnValue(42)` |
-| Mock | Verify interactions | `expect(mock).toHaveBeenCalled()` |
-| Spy | Track calls | `jest.spyOn(obj, 'method')` |
-| Fake | Simplified implementation | In-memory database |
+| Stub | 返回固定数据 | `jest.fn().mockReturnValue(42)` |
+| Mock | 验证交互 | `expect(mock).toHaveBeenCalled()` |
+| Spy | 追踪调用 | `jest.spyOn(obj, 'method')` |
+| Fake | 简化实现 | 内存数据库 |

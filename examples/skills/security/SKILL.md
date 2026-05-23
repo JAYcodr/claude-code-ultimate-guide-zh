@@ -1,168 +1,168 @@
 ---
 name: security
-description: Rapid security assessment focused on OWASP Top 10 vulnerabilities
+description: 针对 OWASP Top 10 漏洞的快速安全评估
 argument-hint: "[path] [--depth quick|full]"
 effort: medium
 disable-model-invocation: true
 ---
 
-# Security Quick Audit
+# 安全快速审计
 
-Rapid security assessment focused on OWASP Top 10 vulnerabilities.
+针对 OWASP Top 10 漏洞的快速安全评估。
 
-## Purpose
+## 目的
 
-Perform a quick security scan to identify common vulnerabilities:
-- Hardcoded secrets and credentials
-- SQL injection risks
-- XSS vulnerabilities
-- Insecure dependencies
-- Authentication/authorization issues
+执行快速安全扫描，识别常见漏洞：
+- 硬编码的密钥和凭据
+- SQL 注入风险
+- XSS 漏洞
+- 不安全的依赖
+- 认证/授权问题
 
-## Instructions
+## 使用说明
 
-### Step 1: Secrets Scan
+### 步骤 1：密钥扫描
 
 ```bash
-# Common secret patterns
+# 常见密钥模式
 grep -rn --include="*.{js,ts,py,go,java,rb,php,env}" \
   -E "(password|secret|api_key|apikey|token|auth|credential).*[=:].*['\"][^'\"]{8,}['\"]" \
   --exclude-dir={node_modules,vendor,.git,dist,build} . 2>/dev/null | head -20
 
-# .env files that might be committed
+# 可能被提交的 .env 文件
 find . -name ".env*" -not -path "*/node_modules/*" -type f 2>/dev/null
 
-# Check if secrets are gitignored
-[ -f ".gitignore" ] && grep -q "\.env" .gitignore && echo "✅ .env in .gitignore" || echo "⚠️ .env NOT in .gitignore"
+# 检查密钥是否在 gitignore 中
+[ -f ".gitignore" ] && grep -q "\.env" .gitignore && echo "✅ .env 在 .gitignore 中" || echo "⚠️ .env 不在 .gitignore 中"
 ```
 
-### Step 2: Injection Vulnerabilities
+### 步骤 2：注入漏洞
 
 ```bash
-# SQL injection patterns (raw queries with string concat)
+# SQL 注入模式（使用字符串拼接的原始查询）
 grep -rn --include="*.{js,ts,py,go,java,php}" \
   -E "(query|execute|raw|sql).*\+.*\$|f['\"].*SELECT|\.format\(.*SELECT" \
   --exclude-dir={node_modules,vendor,.git} . 2>/dev/null | head -15
 
-# Command injection patterns
+# 命令注入模式
 grep -rn --include="*.{js,ts,py,go,rb,php}" \
   -E "(exec|spawn|system|shell_exec|popen)\s*\(" \
   --exclude-dir={node_modules,vendor,.git} . 2>/dev/null | head -15
 ```
 
-### Step 3: XSS Patterns
+### 步骤 3：XSS 模式
 
 ```bash
-# Dangerous innerHTML/dangerouslySetInnerHTML usage
+# 危险的 innerHTML/dangerouslySetInnerHTML 使用
 grep -rn --include="*.{js,ts,jsx,tsx,vue}" \
   -E "(innerHTML|dangerouslySetInnerHTML|v-html)" \
   --exclude-dir={node_modules,.git,dist} . 2>/dev/null | head -15
 
-# Unescaped template literals in HTML context
+# HTML 上下文中未转义的模板字面量
 grep -rn --include="*.{js,ts,jsx,tsx}" \
   -E "\`.*\$\{.*\}.*<" \
   --exclude-dir={node_modules,.git,dist} . 2>/dev/null | head -10
 ```
 
-### Step 4: Dependency Check
+### 步骤 4：依赖检查
 
 ```bash
-# Check for known vulnerabilities in npm packages
+# 检查 npm 包中的已知漏洞
 [ -f "package-lock.json" ] && npm audit --json 2>/dev/null | jq '{vulnerabilities: .metadata.vulnerabilities}' 2>/dev/null
 
-# Check for outdated packages with security issues
+# 检查有安全问题的过时包
 [ -f "package.json" ] && npm outdated --json 2>/dev/null | jq 'to_entries | map(select(.value.current != .value.latest)) | length' 2>/dev/null
 ```
 
-### Step 5: Auth & Session Issues
+### 步骤 5：认证和会话问题
 
 ```bash
-# Hardcoded JWT secrets
+# 硬编码的 JWT 密钥
 grep -rn --include="*.{js,ts,py,go}" \
   -E "(jwt|JWT).*secret.*[=:].*['\"].{8,}['\"]" \
   --exclude-dir={node_modules,vendor,.git} . 2>/dev/null
 
-# Missing CSRF protection patterns
+# 缺少 CSRF 保护模式
 grep -rn --include="*.{js,ts,py}" \
   -E "(POST|PUT|DELETE|PATCH).*fetch|axios\.(post|put|delete|patch)" \
   --exclude-dir={node_modules,vendor,.git} . 2>/dev/null | head -10
 ```
 
-## Output Format
+## 输出格式
 
 ---
 
-### 🛡️ Security Audit Report
+### 🛡️ 安全审计报告
 
-**Scan Date**: [timestamp]
-**Scope**: [directory scanned]
+**扫描日期**：[时间戳]
+**范围**：[扫描的目录]
 
-### 🔴 Critical Issues
+### 🔴 严重问题
 
-| Issue | Location | Description |
+| 问题 | 位置 | 描述 |
 |-------|----------|-------------|
-| [type] | [file:line] | [brief description] |
+| [类型] | [file:line] | [简要描述] |
 
-### 🟠 High Severity
+### 🟠 高严重性
 
-| Issue | Location | Recommendation |
+| 问题 | 位置 | 建议 |
 |-------|----------|----------------|
-| [type] | [file:line] | [fix suggestion] |
+| [类型] | [file:line] | [修复建议] |
 
-### 🟡 Medium Severity
+### 🟡 中严重性
 
-| Issue | Location | Note |
+| 问题 | 位置 | 说明 |
 |-------|----------|------|
-| [type] | [file:line] | [context] |
+| [类型] | [file:line] | [上下文] |
 
-### 📊 Summary
+### 📊 总结
 
-- **Critical**: X issues
-- **High**: X issues
-- **Medium**: X issues
-- **Dependencies**: X vulnerabilities
+- **严重**：X 个
+- **高**：X 个
+- **中**：X 个
+- **依赖**：X 个漏洞
 
-### 🔧 Quick Fixes
+### 🔧 快速修复
 
-1. [Highest priority fix with command/code]
-2. [Second priority]
-3. [Third priority]
+1. [最高优先级的修复及命令/代码]
+2. [第二优先级]
+3. [第三优先级]
 
 ---
 
-## Severity Levels
+## 严重性级别
 
-| Level | Examples | Action |
+| 级别 | 示例 | 操作 |
 |-------|----------|--------|
-| 🔴 Critical | Hardcoded prod secrets, SQL injection | Fix immediately |
-| 🟠 High | Missing auth, XSS vectors | Fix before deploy |
-| 🟡 Medium | Outdated deps, missing CSRF | Plan remediation |
-| 🟢 Low | Best practice violations | Track for improvement |
+| 🔴 严重 | 硬编码的生产密钥、SQL 注入 | 立即修复 |
+| 🟠 高 | 缺少认证、XSS 向量 | 部署前修复 |
+| 🟡 中 | 过时的依赖、缺少 CSRF | 计划修复 |
+| 🟢 低 | 最佳实践违规 | 跟踪改进 |
 
-## Usage
+## 用法
 
-**Full audit:**
+**完整审计：**
 ```
 /security
 ```
 
-**Focus on specific area:**
+**关注特定领域：**
 ```
 /security auth
 /security deps
 /security injection
 ```
 
-**Specific file/directory:**
+**特定文件/目录：**
 ```
 /security src/api/
 ```
 
-## Notes
+## 说明
 
-- This is a quick heuristic scan, not a comprehensive security audit
-- For production systems, complement with dedicated tools (Snyk, SonarQube, OWASP ZAP)
-- False positives are possible - verify findings manually
-- See `examples/hooks/security-hooks.sh` for automated pre-commit security checks
+- 此扫描为启发式快速扫描，非全面安全审计
+- 生产系统请配合专用工具使用（Snyk、SonarQube、OWASP ZAP）
+- 可能存在误报——请手动验证发现
+- 参见 `examples/hooks/security-hooks.sh` 了解自动化的提交前安全检查
 
 $ARGUMENTS

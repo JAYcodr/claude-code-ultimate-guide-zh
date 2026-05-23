@@ -1,115 +1,115 @@
 ---
 name: session-save
-description: Save the current session state — decisions, modified files, current status, and next steps — to a handoff file for later resume.
+description: 保存当前会话状态——决策、修改的文件、当前状态和后续步骤——到交接文件中以便后续恢复。
 effort: low
 disable-model-invocation: true
 ---
 
 # /session-save
 
-Capture the current session into a structured handoff file so you (or another instance) can resume with full context. Creates a timestamped Markdown file in `.claude/sessions/`.
+将当前会话捕获到结构化的交接文件中，以便你（或其他实例）能在完整上下文中恢复。在 `.claude/sessions/` 中创建带时间戳的 Markdown 文件。
 
-## When to Use
+## 何时使用
 
-- Before ending a session that isn't complete
-- Before switching to a different task
-- Before context reaches 75%+ (to preserve the important parts)
-- At natural milestones in a long task (after each phase)
-- To hand off to a second Claude instance
+- 在结束未完成的会话前
+- 在切换到不同任务前
+- 在上下文达到 75%+ 前（以保留重要部分）
+- 在长任务的自然里程碑处（每个阶段完成后）
+- 交接给另一个 Claude 实例
 
-## Instructions
+## 使用说明
 
-Produce a handoff document with the following structure:
+生成具有以下结构的交接文档：
 
 ---
 
-## Session Handoff — [TIMESTAMP]
+## 会话交接 — [时间戳]
 
-### What Was Being Done
-[One paragraph: the goal, the approach, where things stand right now]
+### 正在做什么
+[一段：目标、方法、当前进展]
 
-### Files Modified This Session
-[List every file that was created, edited, or deleted — with the nature of the change]
+### 本会话修改的文件
+[列出创建、编辑或删除的每个文件——附带更改性质]
 
 ```
-path/to/file.ts      — [what changed and why]
-path/to/other.ts     — [what changed and why]
+path/to/file.ts      — [改了啥、为什么]
+path/to/other.ts     — [改了啥、为什么]
 ```
 
-### Key Decisions Made
-[Architectural choices, tradeoffs accepted, approaches rejected and why]
+### 关键决策
+[架构选择、接受的权衡、被拒绝的方法及其原因]
 
-- **Decision**: [What was decided]
-  - **Rationale**: [Why]
-  - **Alternatives rejected**: [What else was considered]
+- **决策**：[决定了什么]
+  - **理由**：[为什么]
+  - **被拒绝的替代方案**：[还考虑了哪些]
 
-### Current Status
-[Where things are right now — what's working, what's broken, what's in-progress]
+### 当前状态
+[当前进展——哪些在运行、哪些有问题、哪些进行中]
 
-- Working: [...]
-- In-progress: [...]
-- Known issues: [...]
+- 正常运行：[...]
+- 进行中：[...]
+- 已知问题：[...]
 
-### Next Steps (Ordered)
-[The exact next actions to take to continue — specific enough that a fresh context can pick up without re-reading everything]
+### 后续步骤（按顺序）
+[确切的下一个操作——具体到新上下文无需重读所有内容即可接手]
 
-1. [First action] — `path/to/file.ts` — [what to do]
-2. [Second action] — [...]
+1. [第一个操作] — `path/to/file.ts` — [做什么]
+2. [第二个操作] — [...]
 3. [...]
 
-### Context to Reload
-[Files that must be read to resume with full understanding — keep this list short]
+### 需重新加载的上下文
+[必须以完整理解恢复的文件——保持短列表]
 
-- `path/to/key-file.ts` — [why it matters]
-- `CLAUDE.md` — project rules
+- `path/to/key-file.ts` — [为什么重要]
+- `CLAUDE.md` — 项目规则
 
-### Blockers / Open Questions
-[Anything unresolved that needs a decision or external input before proceeding]
+### 阻塞项 / 未解决问题
+[需要决策或外部输入才能继续的任何未解决事项]
 
-- [ ] [Question or blocker] — [who/what can resolve it]
+- [ ] [问题或阻塞项] — [谁/什么可以解决]
 
 ---
 
-## Implementation
+## 实现
 
-Save the handoff to `.claude/sessions/handoff-[YYYY-MM-DD-HHMM].md`. Then output the file path so the user knows where to find it.
+将交接保存到 `.claude/sessions/handoff-[YYYY-MM-DD-HHMM].md`。然后输出文件路径，让用户知道在哪找到它。
 
-## Resume Pattern
+## 恢复模式
 
-To resume from a handoff:
+从交接恢复：
 
 ```
 /session-resume .claude/sessions/handoff-YYYY-MM-DD-HHMM.md
 ```
 
-Or manually: read the handoff file, then read the files listed in "Context to Reload" before continuing.
+或手动：读取交接文件，然后在继续前读取"需重新加载的上下文"中列出的文件。
 
-## Examples
+## 示例
 
-### Example 1: Mid-Feature Save
+### 示例 1：功能中期保存
 
 ```
 /session-save
 ```
 
-Claude captures:
-- Auth middleware was being refactored (files: `src/middleware/auth.ts`, `src/middleware/jwt.ts`)
-- Decision: switched from session tokens to JWTs (rationale: scales better across services)
-- Status: JWT validation working, refresh logic in-progress
-- Next: implement `refreshToken()` in `src/services/auth.service.ts`, then update tests
+Claude 捕获：
+- 正在重构认证中间件（文件：`src/middleware/auth.ts`、`src/middleware/jwt.ts`）
+- 决策：从 session token 切换到 JWT（理由：跨服务扩展性更好）
+- 状态：JWT 验证可用，刷新逻辑进行中
+- 下一步：在 `src/services/auth.service.ts` 中实现 `refreshToken()`，然后更新测试
 
-### Example 2: Context-Pressure Save
+### 示例 2：上下文压力保存
 
-When context hits 70%, run `/session-save` before `/compact` to preserve decision context that compaction might lose.
+当上下文达到 70% 时，在 `/compact` 前运行 `/session-save`，保留压缩可能丢失的决策上下文。
 
-## Notes
+## 说明
 
-- Keep "Context to Reload" to 5 files max — the goal is a fast resume, not a full re-read
-- "Next Steps" should be specific enough that a cold-start Claude can execute step 1 without asking questions
-- Don't save tool output or code snippets in the handoff — reference file paths instead
+- "需重新加载的上下文"最多 5 个文件——目标是快速恢复，而非全面重读
+- "后续步骤"应具体到冷启动的 Claude 可以在不提问的情况下执行步骤 1
+- 不要在交接中保存工具输出或代码片段——改为引用文件路径
 
 ---
 
-**See also**:
-- [Session Teleportation](../../guide/ultimate-guide.md#916-session-teleportation) — broader session management patterns
-- [Instinct-Based Learning](../../guide/ultimate-guide.md#924-instinct-based-continuous-learning) — what to extract from sessions before closing
+**另见**：
+- [Session Teleportation](/guide/ultimate-guide.md#916-session-teleportation) — 更广泛的会话管理模式
+- [Instinct-Based Learning](/guide/ultimate-guide.md#924-instinct-based-continuous-learning) — 关闭前从会话中提取的内容

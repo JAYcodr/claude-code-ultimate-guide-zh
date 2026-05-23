@@ -10,7 +10,7 @@
 <!-- Stats -->
 <p align="center">
   <a href="https://github.com/FlorianBruniaux/claude-code-ultimate-guide/stargazers"><img src="https://img.shields.io/github/stars/FlorianBruniaux/claude-code-ultimate-guide?style=for-the-badge" alt="Stars"/></a>
-  <a href="./CHANGELOG.md"><img src="https://img.shields.io/badge/Updated-May_12,_2026_·_v3.40.0-brightgreen?style=for-the-badge" alt="更新日期"/></a>
+  <a href="./CHANGELOG.md"><img src="https://img.shields.io/badge/Updated-_5月_23,_2026_·_v3.41.0-brightgreen?style=for-the-badge" alt="更新日期"/></a>
   <a href="./quiz/"><img src="https://img.shields.io/badge/Quiz-271_questions-orange?style=for-the-badge" alt="测验"/></a>
   <a href="./examples/"><img src="https://img.shields.io/badge/Templates-181-green?style=for-the-badge" alt="模板"/></a>
 </p>
@@ -938,7 +938,7 @@ cd quiz && npm install && npm start
 
 ---
 
-*版本 3.40.0 | 每日更新 · 2026 年 5 月 12 日 | Claude 打造*
+*版本 3.41.0 | 每日更新 · 2026 年 5 月 12 日 | Claude 打造*
 
 <!-- SEO Keywords -->
 <!-- claude code, claude code tutorial, anthropic cli, ai coding assistant, claude code mcp,

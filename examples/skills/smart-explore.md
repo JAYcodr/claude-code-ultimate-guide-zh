@@ -1,126 +1,127 @@
+<!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
 ---
 name: smart-explore
-description: "Progressive code exploration using tree-sitter AST — structure first, drill second. Reduces code reading from 10-15k tokens per file to 200-500 tokens."
+description: "使用 tree-sitter AST 进行渐进式代码探索 — 先结构，后深入。将代码阅读从每文件 10-15k token 减少到 200-500 token。"
 effort: low
 ---
 
-# Smart Explore — Progressive Code Exploration
+# 智能探索 — 渐进式代码探索
 
-> **Skill**: Read code structure before reading code. Show Claude function signatures and types first, then let it drill into specific functions only when needed.
+> **技能**：在阅读代码之前先阅读代码结构。先让 Claude 看到函数签名和类型，然后仅在需要时深入特定函数。
 
-**Inspired by**: Alex Newman (Claude-MEM) + Aider repo map pattern (validated at 40k+ stars)
+**灵感来源**：Alex Newman（Claude-MEM）+ Aider 仓库地图模式（已在 40k+ stars 验证）
 
-## The Problem
+## 问题
 
-When Claude reads files to understand a codebase, it reads everything:
-
-```
-# What actually happens
-Read src/auth.rs    → 400 lines → ~2,800 tokens
-Read src/session.rs → 300 lines → ~2,100 tokens
-Read src/user.rs    → 500 lines → ~3,500 tokens
-# Total: 8,400 tokens for 3 files
-```
-
-Most of that content is irrelevant. Claude needed to know that `auth.rs` has `fn login()` and `fn logout()` — not 400 lines of implementation.
-
-**Progressive exploration fixes this**:
+当 Claude 读取文件以理解代码库时，它会读取所有内容：
 
 ```
-Step 1: What's in auth.rs?       →  ~200 tokens (signatures only)
-Step 2: Show me fn login() body  →  ~350 tokens (one function)
-Step 3: Who calls login()?       →  ~150 tokens (cross-reference)
-# Total: 700 tokens instead of 8,400 — 92% reduction
+# 实际发生的情况
+Read src/auth.rs    → 400 行 → ~2,800 tokens
+Read src/session.rs → 300 行 → ~2,100 tokens
+Read src/user.rs    → 500 行 → ~3,500 tokens
+# 总计：3 个文件 8,400 tokens
 ```
 
-## When to Use
+大部分内容无关紧要。Claude 只需要知道 `auth.rs` 有 `fn login()` 和 `fn logout()` — 而不是 400 行的实现。
 
-| Signal | Use smart-explore | Use standard Read |
+**渐进式探索解决了这个问题**：
+
+```
+步骤 1：auth.rs 里有什么？     →  ~200 tokens（仅签名）
+步骤 2：给我看 fn login() 体  →  ~350 tokens（一个函数）
+步骤 3：谁调用了 login()？     →  ~150 tokens（交叉引用）
+# 总计：700 tokens 替代 8,400 — 减少了 92%
+```
+
+## 何时使用
+
+| 信号 | 使用智能探索 | 使用标准 Read |
 |--------|-------------------|-------------------|
-| "Understand this module/feature" | ✅ | ❌ |
-| Exploring unfamiliar codebase | ✅ | ❌ |
-| Finding where to add a feature | ✅ | ❌ |
-| Need to read one specific function | ❌ | ✅ |
-| Debugging a known line | ❌ | ✅ |
-| File is < 100 lines | ❌ | ✅ (just read it) |
+| "理解这个模块/功能" | ✅ | ❌ |
+| 探索不熟悉的代码库 | ✅ | ❌ |
+| 寻找添加功能的位��� | ✅ | ❌ |
+| 需要读取一个特定函数 | ❌ | ✅ |
+| 调试已知行 | ❌ | ✅ |
+| 文件 < 100 行 | ❌ | ✅（直接读） |
 
-**Don't use for**:
-- Small projects (< 20 files) — overhead not worth it
-- Single-file tasks — Read is faster
-- Already know what to read — go directly
+**不要用于**：
+- 小项目（< 20 个文件）— 开销不值得
+- 单文件任务 — Read 更快
+- 已经知道要读什么 — 直接去
 
-## Decision Tree
+## 决策树
 
 ```
-Exploration task?
-├─ Yes, understand a module
-│  └─ Files > 200 lines each?
-│     ├─ Yes → smart-explore (structure first)
-│     └─ No  → just Read (file is small)
-├─ Search for something specific
-│  └─ By name/pattern → Grep
-│  └─ By meaning → grepai semantic search
-└─ Need one specific function → Read with offset
+探索任务？
+├─ 是，理解一个模块
+│  └─ 每个文件 > 200 行？
+│     ├─ 是 → 智能探索（先结构）
+│     └─ 否 → 直接 Read（文件小）
+├─ 搜索特定内容
+│  └─ 按名称/模式 → Grep
+│  └─ 按含义 → grepai 语义搜索
+└─ 需要一个特定函数 → 带 offset 的 Read
 ```
 
-## Three Approaches (Ascending Setup)
+## 三种方法（设置量递增）
 
-### Approach A: No Setup — Progressive Reading Discipline
+### 方法 A：无需设置 — 渐进式阅读纪律
 
-No installation needed. Just change how you prompt Claude.
+无需安装。只需改变你向 Claude 提问的方式。
 
-**Add to your CLAUDE.md** (or instruct Claude directly):
+**添加到你的 CLAUDE.md**（或直接指导 Claude）：
 
 ```markdown
-## Code Exploration Protocol
+## 代码探索协议
 
-When asked to explore a codebase or understand a module:
+当被要求探索代码库或理解模块时：
 
-1. **Structure first**: Use Grep to find function/class definitions
+1. **先结构**：使用 Grep 查找函数/类定义
 
-   Rust:
+   Rust：
    `rg "^\s*(pub\s+)?(async\s+)?fn |^\s*(pub\s+)?(struct|enum|trait|impl)\s" src/ --no-heading -n`
 
-   Python/TypeScript/JS:
+   Python/TypeScript/JS：
    `rg "^\s*(async\s+)?(def |function |class |export (function|class|const))" src/ --no-heading -n`
 
-   Note: use `^\s*` not `^` — methods inside impl blocks and class bodies are indented.
-   The `^` pattern misses ~70% of Rust methods.
+   注意：使用 `^\s*` 而非 `^` — impl 块和类体内的方法是缩进的。
+   `^` 模式会漏掉约 70% 的 Rust 方法。
 
-2. **Identify relevant symbols**: Based on names, pick 2-3 to read
+2. **识别相关符号**：根据名称，选择 2-3 个阅读
 
-3. **Targeted read**: Use Read with offset/limit to read specific functions
-   - Read lines 45-90 of auth.rs, not the whole file
+3. **有目标地阅读**：使用带 offset/limit 的 Read 来阅读特定函数
+   - 读取 auth.rs 的第 45-90 行，而非整个文件
 
-4. **Cross-reference**: Use Grep to find callers only if needed
+4. **交叉引用**：仅在需要时使用 Grep 查找调用者
    - `rg "fn_name" --type rust -n`
 
-Never read a file start-to-finish when exploring. Always structure first.
+探索时绝不要从头到尾读一个文件。始终先看结构。
 ```
 
-**Works with**: Any Claude Code session, zero dependencies.
+**适用于**：任何 Claude Code 会话，零依赖。
 
 ---
 
-### Approach B: tree-sitter CLI + Extract Script
+### 方法 B：tree-sitter CLI + 提取脚本
 
-Install tree-sitter CLI and use a lightweight Python script to extract signatures.
+安装 tree-sitter CLI 并使用轻量级 Python 脚本提取签名。
 
-**Installation**:
+**安装**：
 
 ```bash
 # macOS
 brew install tree-sitter
 
-# Verify
+# 验证
 tree-sitter --version
 ```
 
-**Extract signatures script** — save as `~/.claude/scripts/extract-signatures.py`:
+**提取签名脚本** — 保存为 `~/.claude/scripts/extract-signatures.py`：
 
 ```python
 #!/usr/bin/env python3
-"""Extract function/class signatures from source files using tree-sitter CLI."""
+"""使用 tree-sitter CLI 从源文件提取函数/类签名。"""
 
 import subprocess
 import sys
@@ -130,10 +131,10 @@ from pathlib import Path
 
 
 def extract_signatures(file_path: str) -> list[str]:
-    """Extract function and type signatures without bodies."""
+    """提取函数和类型签名（不含体）。"""
     path = Path(file_path)
 
-    # Detect language from extension
+    # 从扩展名检测语言
     lang_map = {
         ".rs": "rust", ".py": "python", ".ts": "typescript",
         ".tsx": "tsx", ".js": "javascript", ".jsx": "jsx",
@@ -141,27 +142,27 @@ def extract_signatures(file_path: str) -> list[str]:
     }
     lang = lang_map.get(path.suffix)
     if not lang:
-        return [f"# Unsupported: {path.suffix}"]
+        return [f"# 不支持：{path.suffix}"]
 
-    # Use tree-sitter to parse and get JSON AST
+    # 使用 tree-sitter 解析并获取 JSON AST
     try:
         result = subprocess.run(
             ["tree-sitter", "parse", file_path, "--json"],
             capture_output=True, text=True, timeout=10
         )
         if result.returncode != 0:
-            return [f"# Parse error: {result.stderr[:100]}"]
+            return [f"# 解析错误：{result.stderr[:100]}"]
     except FileNotFoundError:
-        return ["# tree-sitter not installed: brew install tree-sitter"]
+        return ["# 未安装 tree-sitter：brew install tree-sitter"]
     except subprocess.TimeoutExpired:
-        return ["# Parse timeout"]
+        return ["# 解析超时"]
 
-    # Read actual source for signature extraction
+    # 为签名提取读取实际源码
     source_lines = path.read_text().splitlines()
 
     signatures = []
 
-    # Regex-based signature extraction (faster than full AST for this use case)
+    # 基于正则的签名提取（对此用例比完整 AST 更快）
     patterns = {
         "rust": [
             (r"^(\s*(?:pub\s+)?(?:async\s+)?fn\s+\w+[^{]*?)(?:\{|$)", "fn"),
@@ -205,7 +206,7 @@ def extract_signatures(file_path: str) -> list[str]:
 
 
 def explore_directory(directory: str, extensions: list[str] | None = None) -> None:
-    """Print structure of all source files in directory."""
+    """打印目录中所有源文件的结构。"""
     if extensions is None:
         extensions = [".rs", ".py", ".ts", ".tsx", ".js", ".go"]
 
@@ -228,7 +229,7 @@ def explore_directory(directory: str, extensions: list[str] | None = None) -> No
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print("Usage: extract-signatures.py <file_or_dir> [ext1 ext2 ...]")
+        print("用法：extract-signatures.py <file_or_dir> [ext1 ext2 ...]")
         sys.exit(1)
 
     target = sys.argv[1]
@@ -242,26 +243,26 @@ if __name__ == "__main__":
         explore_directory(target, exts)
 ```
 
-**Make executable**:
+**设为可执行**：
 
 ```bash
 chmod +x ~/.claude/scripts/extract-signatures.py
 ```
 
-**Usage**:
+**用法**：
 
 ```bash
-# Single file
+# 单个文件
 python3 ~/.claude/scripts/extract-signatures.py src/auth.rs
 
-# Whole directory
+# 整个目录
 python3 ~/.claude/scripts/extract-signatures.py src/
 
-# Specific extensions
+# 特定扩展名
 python3 ~/.claude/scripts/extract-signatures.py src/ .ts .tsx
 ```
 
-**Sample output** (on a 500-line Rust file):
+**示例输出**（在一个 500 行的 Rust 文件上）：
 
 ```
 src/auth.rs:
@@ -274,50 +275,50 @@ src/auth.rs:
   impl  impl AuthService  (line 140)
 ```
 
-**Tokens**: ~50-150 per file vs 2,000-5,000 for full reads.
+**Tokens**：每文件 ~50-150 vs 完全读取的 2,000-5,000。
 
-**Add to CLAUDE.md** to make this automatic:
+**添加到 CLAUDE.md** 以使其自动化：
 
 ```markdown
-## Code Structure Tool
+## 代码结构工具
 
-Before reading multiple files, run:
+在读取多个文件之前，运行：
 `python3 ~/.claude/scripts/extract-signatures.py <directory>`
 
-This shows all function signatures without file bodies. Use this to identify
-which specific functions to read, then use Read with line offset.
+这会显示所有函数签名（不含文件体）。用此识别
+哪些特定函数需要读取，然后使用带行偏移的 Read。
 ```
 
 ---
 
-### Approach C: MCP Server (Recommended for Large Projects)
+### 方法 C：MCP 服务器（推荐用于大型项目）
 
-For codebases over 50 files, an indexed MCP server provides faster lookups and handles cross-file references.
+对于超过 50 个文件的代码库，索引 MCP 服务器提供更快的查找并处理跨文件引用。
 
-**Best options by use case**:
+**按用例的最佳选项**：
 
-| Use Case | Recommended | Install |
+| 用例 | 推荐 | 安装 |
 |---|---|---|
-| General code exploration | mcp-server-tree-sitter | `pip install mcp-server-tree-sitter` |
-| PR code reviews | code-review-graph | `pip install code-review-graph` |
-| Symbol-heavy workflows | jCodeMunch (non-commercial) | `claude mcp add jcodemunch uvx jcodemunch-mcp` |
+| 通用代码探索 | mcp-server-tree-sitter | `pip install mcp-server-tree-sitter` |
+| PR 代码审查 | code-review-graph | `pip install code-review-graph` |
+| 符号密集型工作流 | jCodeMunch（非商业） | `claude mcp add jcodemunch uvx jcodemunch-mcp` |
 
-#### Option C1: mcp-server-tree-sitter
+#### 选项 C1：mcp-server-tree-sitter
 
 ```bash
 pip install mcp-server-tree-sitter
 
-# Add to Claude Code
+# 添加到 Claude Code
 claude mcp add tree-sitter python -m mcp_server_tree_sitter
 ```
 
-**Available tools once installed**:
-- `get_file_structure` — signatures and types for a file
-- `run_ast_query` — custom tree-sitter query (advanced)
-- `find_symbols` — search by name across codebase
-- `analyze_dependencies` — cross-file reference analysis
+**安装后可用的工具**：
+- `get_file_structure` — 文件的签名和类型
+- `run_ast_query` — 自定义 tree-sitter 查询（高级）
+- `find_symbols` — 按名称跨代码库搜索
+- `analyze_dependencies` — 跨文件引用分析
 
-**Configure in Claude Code** (`~/.claude/settings.json`):
+**在 Claude Code 中配置**（`~/.claude/settings.json`）：
 ```json
 {
   "mcpServers": {
@@ -329,79 +330,79 @@ claude mcp add tree-sitter python -m mcp_server_tree_sitter
 }
 ```
 
-#### Option C2: code-review-graph (best for PR reviews)
+#### 选项 C2：code-review-graph（最适合 PR 审查）
 
 ```bash
 pip install code-review-graph
 code-review-graph install
 ```
 
-**What it adds**: When reviewing a PR, Claude gets the changed files AND their dependency graph automatically. Instead of reading 30 files to understand the impact of a change, Claude sees the 5 files that actually matter.
+**增加的功能**：审查 PR 时，Claude 会同时获取更改的文件及其依赖图。Claude 无需读取 30 个文件来理解变更影响，只需看实际重要的 5 个文件。
 
-**Usage**:
+**用法**：
 
 ```
 /review-pr 123
-# code-review-graph automatically provides:
-# - Changed files
-# - Files that import changed modules
-# - Type definitions affected
-# - Test coverage for changed code
+# code-review-graph 自动提供：
+# - 更改的文件
+# - 导入已更改模块的文件
+# - 受影响的类型定义
+# - 变更代码的测试覆盖
 ```
 
-#### Option C3: jCodeMunch (symbol lookup)
+#### 选项 C3：jCodeMunch（符号查找）
 
 ```bash
 claude mcp add jcodemunch uvx jcodemunch-mcp
 ```
 
-**Note**: Free for personal/OSS projects. $79/developer for commercial use. Check licensing before team adoption.
+**注意**：个人/OSS 项目免费。商业使用 $79/开发者。团队采用前请检查许可证。
 
-Once added, Claude can call:
+添加后，Claude 可调用：
 ```
-get_symbol("login")          → function body
-find_callers("login")         → who calls it
-get_class_hierarchy("User")   → inheritance tree
-get_dependencies("auth.rs")   → what it imports
+get_symbol("login")          → 函数体
+find_callers("login")         → 谁调用它
+get_class_hierarchy("User")   → 继承树
+get_dependencies("auth.rs")   → 它导入什么
 ```
 
 ---
 
-## Workflow Examples
+## 工作流示例
 
-### Example 1: Understand an unfamiliar module
+### 示例 1：理解一个不熟悉的模块
 
-**Old way** (4 reads, ~12k tokens):
+**旧方式**（4 次读取，~12k tokens）：
 ```
-Read src/payments/processor.rs   # 400 lines
-Read src/payments/validator.rs   # 300 lines
-Read src/payments/gateway.rs     # 500 lines
-Read src/payments/types.rs       # 200 lines
+Read src/payments/processor.rs   # 400 行
+Read src/payments/validator.rs   # 300 行
+Read src/payments/gateway.rs     # 500 行
+Read src/payments/types.rs       # 200 行
 ```
 
-**Smart explore way** (1 structure scan + 2 targeted reads, ~1.5k tokens):
+**智能探索方式**（1 次结构扫描 + 2 次目标读取，~1.5k tokens）：
 ```bash
-# Step 1: Get structure (~400 tokens for all 4 files)
+# 步骤 1：获取结构（所有 4 个文件约 400 tokens）
 python3 ~/.claude/scripts/extract-signatures.py src/payments/
 
-# Step 2: Identify what matters from signatures
-# "process_payment() calls validate_amount() — read those two"
+# 步骤 2：从签名中识别关键内容
+# "process_payment() 调用了 validate_amount() — 读这两个"
 
-# Step 3: Read only those functions (with line offsets)
+# 步骤 3：只读那些函数（带行偏移）
 Read src/payments/processor.rs (lines 45-90)   # ~300 tokens
 Read src/payments/validator.rs (lines 12-40)   # ~200 tokens
 ```
 
-**Result**: Same understanding, ~87% fewer tokens.
+**结果**：相同的理解，~87% 更少的 tokens。
 
-### Example 2: Find where to add a feature
+### 示例 2：找到添加功能的位置
 
 ```bash
-# Goal: Add rate limiting to the auth service
-# Step 1: What's in the auth module?
+# 目标：为认证服务添加速率限制
+# 步骤 1：认证模块有什么？
 python3 ~/.claude/scripts/extract-signatures.py src/auth/
 
-# Output:
+# 输出：
 # src/auth/middleware.rs:
 #   fn  pub fn authenticate(req: &Request) -> Result<Claims>  (line 15)
 #   fn  pub fn refresh_token(token: &str) -> Result<String>   (line 45)
@@ -410,100 +411,100 @@ python3 ~/.claude/scripts/extract-signatures.py src/auth/
 #   fn  pub fn validate(claims: &Claims) -> bool  (line 8)
 #   fn  pub async fn login(creds: &Credentials) -> Result<Token>  (line 20)
 
-# Step 2: Rate limiting goes in middleware.rs before authenticate()
-# Read ONLY the authenticate function to understand injection point
+# 步骤 2：速率限制应放在 middleware.rs 的 authenticate() 之前
+# 只读 authenticate 函数以了解注入点
 Read src/auth/middleware.rs lines 15-44
 
-# Step 3: Add feature — done
+# 步骤 3：添加功能 — 完成
 ```
 
-### Example 3: Claude Code CLAUDE.md integration
+### 示例 3：Claude Code CLAUDE.md 集成
 
-Add to your project's `CLAUDE.md`:
+添加到项目的 `CLAUDE.md`：
 
 ```markdown
-## Code Exploration Protocol
+## 代码探索协议
 
-**For any exploration/refactoring task on this codebase:**
+**在此代码库上进行任何探索/重构任务时：**
 
-1. **Never read full files when exploring** — use structure scan first
-2. Run `python3 ~/.claude/scripts/extract-signatures.py <module_dir>`
-3. Identify 2-3 relevant functions from the output
-4. Read only those functions (use Read with line offset from signature output)
-5. For cross-file dependencies: Grep for the function name, don't read the caller file
+1. **探索时绝不要读取完整文件** — 先使用结构扫描
+2. 运行 `python3 ~/.claude/scripts/extract-signatures.py <module_dir>`
+3. 从输出中识别 2-3 个相关函数
+4. 只读那些函数（使用签名输出中的行偏移进行 Read）
+5. 对于跨文件依赖：Grep 函数名，不读取调用者文件
 
-**Rationale**: This codebase has ~80 files averaging 300 lines. Full reads = 15k+ tokens per task. Structure-first = 1-2k tokens.
+**理由**：此代码库有约 80 个文件，平均 300 行。完整读取 = 每任务 15k+ tokens。先结构后读 = 1-2k tokens。
 ```
 
 ---
 
-## Token Benchmarks (Honest)
+## Token 基准（诚实的）
 
-Measured patterns, not marketing:
+实测模式，不是营销数据：
 
-| Operation | Without smart-explore | With smart-explore | Savings |
+| 操作 | 无智能探索 | 有智能探索 | 节省 |
 |---|---|---|---|
-| Understand 5-file module | ~18,000 tokens | ~2,500 tokens | ~86% |
-| Find where to add a feature | ~8,000 tokens | ~800 tokens | ~90% |
-| PR review (10 changed files) | ~25,000 tokens | ~3,500 tokens | ~86% |
-| Single function lookup | ~3,000 tokens | ~350 tokens | ~88% |
+| 理解 5 个文件的模块 | ~18,000 tokens | ~2,500 tokens | ~86% |
+| 找到添加功能的位置 | ~8,000 tokens | ~800 tokens | ~90% |
+| PR 审查（10 个变更文件） | ~25,000 tokens | ~3,500 tokens | ~86% |
+| 单个函数查找 | ~3,000 tokens | ~350 tokens | ~88% |
 
-**Context**: Numbers based on typical files (200-500 lines). Savings scale up for larger files and down for tiny ones. The Aider project (40k+ stars) independently validates this approach produces ~1,000 token summaries for entire large repos.
+**上下文**：数字基于典型文件（200-500 行）。对于更大文件，节省比例增加；对于小文件则减少。Aider 项目（40k+ stars）独立验证此方法可为整个大型仓库生成约 1,000 token 的摘要。
 
 ---
 
-## Comparison with Complementary Tools
+## 与互补工具的对比
 
-| Tool | What it saves | When |
+| 工具 | 节省什么 | 何时 |
 |---|---|---|
-| **RTK** | Command output tokens (git, cargo, npm) | After running CLI commands |
-| **smart-explore** (this skill) | Code reading tokens | Before reading source files |
-| **grepai** | Multiple Grep rounds → single semantic query | When searching by concept/intent |
-| **ast-grep** | Complex structural refactors | Large-scale code transformations |
+| **RTK** | 命令输出 tokens（git、cargo、npm） | 运行 CLI 命令后 |
+| **智能探索**（本技能） | 代码读取 tokens | 读取源文件前 |
+| **grepai** | 多轮 Grep → 单次语义查询 | 按概念/意图搜索时 |
+| **ast-grep** | 复杂结构重构 | 大规模代码变换 |
 
-These are additive, not competing. A typical 30-minute Claude Code session uses all four.
+这些是互补而非竞争的。一个典型的 30 分钟 Claude Code 会话会使用全部四种。
 
 ---
 
-## Troubleshooting
+## 故障排查
 
-**tree-sitter CLI not found**:
+**未找到 tree-sitter CLI**：
 ```bash
 brew install tree-sitter  # macOS
-# or: npm install -g tree-sitter-cli
+# 或：npm install -g tree-sitter-cli
 ```
 
-**Script extracts nothing**:
-- Check file extension is in the supported list
-- Verify the regex patterns match your language's style
-- Add language patterns to the script's `patterns` dict if needed
+**脚本未提取任何内容**：
+- 检查文件扩展名是否在支持列表中
+- 验证正则模式是否匹配你的语言风格
+- 如需要，将语言模式添加到脚本的 `patterns` 字典中
 
-**MCP server not connecting**:
+**MCP 服务器未连接**：
 ```bash
-# Verify install
+# 验证安装
 python -m mcp_server_tree_sitter --help
 
-# Restart Claude Code after adding MCP server
-# Check ~/.claude/settings.json has correct config
+# 添加 MCP 服务器后重启 Claude Code
+# 检查 ~/.claude/settings.json 配置正确
 ```
 
-**Results are too verbose** (too many signatures):
-- Filter to specific subdirectories: `extract-signatures.py src/payments/`
-- Use extensions filter: `extract-signatures.py src/ .rs` (Rust only)
-- For large codebases, query by feature area, not entire src/
+**结果过于冗长**（签名太多）：
+- 过滤到特定子目录：`extract-signatures.py src/payments/`
+- 使用扩展名过滤器：`extract-signatures.py src/ .rs`（仅 Rust）
+- 对于大型代码库，按功能区域而非整个 src/ 查询
 
 ---
 
-## Resources
+## 资源
 
-- [Aider Repo Map Architecture](https://aider.chat/docs/repomap.html) — reference implementation (PageRank + tree-sitter)
-- [mcp-server-tree-sitter](https://github.com/wrale/mcp-server-tree-sitter) — pure MCP approach
-- [code-review-graph](https://github.com/tirth8205/code-review-graph) — PR review focus, MIT, ~2k stars
-- [jCodeMunch](https://github.com/jgravelle/jcodemunch-mcp) — symbol lookup MCP (free non-commercial)
-- [tree-sitter.github.io](https://tree-sitter.github.io/tree-sitter/) — official docs
+- [Aider 仓库地图架构](https://aider.chat/docs/repomap.html) — 参考实现（PageRank + tree-sitter）
+- [mcp-server-tree-sitter](https://github.com/wrale/mcp-server-tree-sitter) — 纯 MCP 方法
+- [code-review-graph](https://github.com/tirth8205/code-review-graph) — PR 审查焦点，MIT，~2k stars
+- [jCodeMunch](https://github.com/jgravelle/jcodemunch-mcp) — 符号查找 MCP（免费非商业）
+- [tree-sitter.github.io](https://tree-sitter.github.io/tree-sitter/) — 官方文档
 
 ---
 
-**Last updated**: March 2026
-**Compatible with**: Claude Code 2.0+
-**Depends on**: tree-sitter CLI (Approach B), Python 3.10+ (script)
+**最后更新**：2026 年 3 月
+**兼容**：Claude Code 2.0+
+**依赖**：tree-sitter CLI（方法 B），Python 3.10+（脚本）

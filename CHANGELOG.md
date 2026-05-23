@@ -6,6 +6,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+
+### Added
+
+- **汉化 ultimate-guide.md TOC 导航页** (`guide/ultimate-guide.md`): 将入口页完整翻译为中文（标题、frontmatter、TL;DR、决策表、完整目录）。
+- **汉化 guide/core/architecture.md + methodologies.md + examples/skills/ + examples/agents/**：P1 批次全部翻译完成，待审查提交。
+- **优化翻译工作流 SKILL.md** (`.agents/skills/zh-translation-workflow/SKILL.md`): 补充 frontmatter metadata（allowed-tools、effort）、更新进度表、精简流程、更新提交策略。
+
+### Fixed
+
+- **润色 P0 译文多处**：§3 标题 `Memory & Settings` → `记忆与设置`；`武器库` → `工具集`；`Founding Engineer` → `创始工程师`；`直接继承` → `会被直接继承`；`的团队` → `团队`。
+- **TRANSLATION_STATUS.md**：更新 P1 实际状态（❌ → 🔄），追加工作日志。
+- **版本同步**：README.md、cheatsheet.md、ultimate-guide.md、reference.yaml 更新至 v3.41.0。
+
 ### Documentation
 
 - **MCP vs CLI guide updated (`guide/ecosystem/mcp-vs-cli.md`)**: Added "MCP vs Skills" section clarifying that skills (markdown workflow instructions) and MCP (execution/auth connectivity) address different layers and are not alternatives. Added OAuth 2.1 subsection explaining why MCP is the only viable option for enterprise SaaS APIs that require browser redirects or server-held refresh tokens — skills cannot originate or manage token flows. Updated mcp2cli Tooling table entry from watch-list status (1.2K stars, 8 days old) to current state (~1.9K stars, Show HN Best of March 2026, independently benchmarked by Firecrawl/Scalekit/CircleCI). Updated "Last updated" date. Added `mcp-vs-cli.md` pointer block to `machine-readable/reference.yaml` (8 new entries).

@@ -61,3 +61,9 @@ mcp-server/node_modules/
 .vitals/
 .worktrees/
 .fastembed_cache/
+
+# Translation plan & progress tracking (local, not for upstream)
+TRANSLATION-PLAN.md
+TRANSLATION_STATUS.md
+GLOSSARY.md
+PROJECT-KICKOFF.md

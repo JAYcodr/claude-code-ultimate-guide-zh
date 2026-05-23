@@ -1,6 +1,6 @@
 ---
 name: audit-agents-skills
-description: "Audit Claude Code agents, skills, and commands for quality and production readiness. Use when evaluating skill quality, checking production readiness scores, or comparing agents against best-practice templates."
+description: "审计 Claude Code 的 agent、技能和命令的质量和生产就绪度。用于评估技能质量、检查生产就绪评分，或将 agent 与最佳实践模板进行比较。"
 allowed-tools: Read Grep Glob Bash Write
 effort: high
 disable-model-invocation: true
@@ -8,93 +8,93 @@ metadata:
   version: 1.0.0
 ---
 
-# Audit Agents/Skills/Commands (Advanced Skill)
+# 审计 Agent/Skills/Commands（高级技能）
 
-Comprehensive quality audit system for Claude Code agents, skills, and commands. Provides quantitative scoring, comparative analysis, and production readiness grading based on industry best practices.
+针对 Claude Code 的 agent、技能和命令的全面质量审计系统。提供基于行业最佳实践的量化评分、对比分析和生产就绪度评级。
 
-## Purpose
+## 目的
 
-**Problem**: Manual validation of agents/skills is error-prone and inconsistent. According to the LangChain Agent Report 2026, 29.5% of organizations deploy agents without systematic evaluation, leading to "agent bugs" as the top challenge (18% of teams).
+**问题**：手动验证 agent/skills 容易出错且不一致。据 LangChain Agent Report 2026，29.5% 的组织在无系统评估的情况下部署 agent，导致"agent bugs"成为首要挑战（18% 的团队）。
 
-**Solution**: Automated quality scoring across 16 weighted criteria with production readiness thresholds (80% = Grade B minimum for production deployment).
+**解决方案**：基于 16 个加权标准的自动化质量评分，含生产就绪度阈值（80% = Grade B，生产部署最低要求）。
 
-**Key Features**:
-- Quantitative scoring (32 points for agents/skills, 20 for commands)
-- Weighted criteria (Identity 3x, Prompt 2x, Validation 1x, Design 2x)
-- Production readiness grading (A-F scale with 80% threshold)
-- Comparative analysis vs reference templates
-- JSON/Markdown dual output for programmatic integration
-- Fix suggestions for failing criteria
+**主要特性**：
+- 量化评分（agent/skills 32 分，commands 20 分）
+- 加权标准（身份 3x、提示词 2x、验证 1x、设计 2x）
+- 生产就绪度评级（A-F 等级，80% 阈值）
+- 与参考模板的对比分析
+- JSON/Markdown 双输出，支持程序化集成
+- 针对失败标准的修复建议
 
 ---
 
-## Modes
+## 模式
 
-| Mode | Usage | Output |
+| 模式 | 用法 | 输出 |
 |------|-------|--------|
-| **Quick Audit** | Top-5 critical criteria only | Fast pass/fail (3-5 min for 20 files) |
-| **Full Audit** | All 16 criteria per file | Detailed scores + recommendations (10-15 min) |
-| **Comparative** | Full + benchmark vs templates | Analysis + gap identification (15-20 min) |
+| **快速审计** | 仅前 5 个关键标准 | 快速通过/失败（20 文件 3-5 分钟） |
+| **完整审计** | 每个文件全部 16 个标准 | 详细评分 + 建议（10-15 分钟） |
+| **对比审计** | 完整审计 + 与模板基准对比 | 分析 + 差距识别（15-20 分钟） |
 
-**Default**: Full Audit (recommended for first run)
-
----
-
-## Methodology
-
-### Why These Criteria?
-
-The 16-criteria framework is derived from:
-1. **Claude Code Best Practices** (Ultimate Guide line 4921: Agent Validation Checklist)
-2. **Industry Data** (LangChain Agent Report 2026: evaluation gaps)
-3. **Production Failures** (Community feedback on hardcoded paths, missing error handling)
-4. **Composition Patterns** (Skills should reference other skills, agents should be modular)
-
-### Scoring Philosophy
-
-**Weight Rationale**:
-- **Identity (3x)**: If users can't find/invoke the agent, quality is irrelevant (discoverability > quality)
-- **Prompt (2x)**: Determines reliability and accuracy of outputs
-- **Validation (1x)**: Improves robustness but is secondary to core functionality
-- **Design (2x)**: Impacts long-term maintainability and scalability
-
-**Grade Standards**:
-- **A (90-100%)**: Production-ready, minimal risk
-- **B (80-89%)**: Good, meets production threshold
-- **C (70-79%)**: Needs improvement before production
-- **D (60-69%)**: Significant gaps, not production-ready
-- **F (<60%)**: Critical issues, requires major refactoring
-
-**Industry Alignment**: The 80% threshold aligns with software engineering best practices for production deployment (e.g., code coverage >80%, security scan pass rates).
+**默认**：完整审计（首次运行推荐）
 
 ---
 
-## Workflow
+## 方法论
 
-### Phase 1: Discovery
+### 为什么是这些标准？
 
-1. **Scan directories**:
+16 标准框架源自：
+1. **Claude Code 最佳实践**（Ultimate Guide 第 4921 行：Agent 验证清单）
+2. **行业数据**（LangChain Agent Report 2026：评估差距）
+3. **生产故障**（社区反馈：硬编码路径、缺失错误处理）
+4. **组合模式**（技能应引用其他技能，agent 应模块化）
+
+### 评分理念
+
+**权重理由**：
+- **身份（3x）**：如果用户找不到/无法调用 agent，质量无从谈起（可发现性 > 质量）
+- **提示词（2x）**：决定输出的可靠性和准确性
+- **验证（1x）**：改进健壮性但次于核心功能
+- **设计（2x）**：影响长期可维护性和可扩展性
+
+**等级标准**：
+- **A（90-100%）**：生产就绪，风险极小
+- **B（80-89%）**：良好，满足生产阈值
+- **C（70-79%）**：需改进后才能投入生产
+- **D（60-69%）**：差距明显，不可用于生产
+- **F（<60%）**：关键问题，需要重大重构
+
+**行业对齐**：80% 阈值与软件工程生产部署最佳实践一致（如代码覆盖率 >80%、安全扫描通过率）。
+
+---
+
+## 工作流
+
+### 阶段 1：发现
+
+1. **扫描目录**：
    ```
    .claude/agents/
    .claude/skills/
    .claude/commands/
-   examples/agents/      (if exists)
-   examples/skills/      (if exists)
-   examples/commands/    (if exists)
+   examples/agents/      （如存在）
+   examples/skills/      （如存在）
+   examples/commands/    （如存在）
    ```
 
-2. **Classify files** by type (agent/skill/command)
+2. **按类型分类文件**（agent/skill/command）
 
-3. **Load reference templates** (for Comparative mode):
+3. **加载参考模板**（对比模式）：
    ```
-   guide/examples/agents/     (benchmark files)
-   guide/examples/skills/     (benchmark files)
-   guide/examples/commands/   (benchmark files)
+   guide/examples/agents/     （基准文件）
+   guide/examples/skills/     （基准文件）
+   guide/examples/commands/   （基准文件）
    ```
 
-### Phase 2: Scoring Engine
+### 阶段 2：评分引擎
 
-Load scoring criteria from `scoring/criteria.yaml`:
+从 `scoring/criteria.yaml` 加载评分标准：
 
 ```yaml
 agents:
@@ -104,49 +104,49 @@ agents:
       weight: 3
       criteria:
         - id: A1.1
-          name: "Clear name"
+          name: "清晰的名称"
           points: 3
-          detection: "frontmatter.name exists and is descriptive"
-        # ... (16 total criteria)
+          detection: "frontmatter.name 存在且具描述性"
+        # ...（共 16 个标准）
 ```
 
-For each file:
-1. Parse frontmatter (YAML)
-2. Extract content sections
-3. Run detection patterns (regex, keyword search)
-4. Calculate score: `(points / max_points) × 100`
-5. Assign grade (A-F)
+对每个文件：
+1. 解析 frontmatter（YAML）
+2. 提取内容章节
+3. 运行检测模式（正则、关键词搜索）
+4. 计算分数：`(points / max_points) × 100`
+5. 分配等级（A-F）
 
-### Phase 3: Comparative Analysis (Comparative Mode Only)
+### 阶段 3：对比分析（仅对比模式）
 
-For each project file:
-1. Find closest matching template (by description similarity)
-2. Compare scores per criterion
-3. Identify gaps: `template_score - project_score`
-4. Flag significant gaps (>10 points difference)
+对每个项目文件：
+1. 找到最匹配的模板（按描述相似度）
+2. 按标准对比分数
+3. 识别差距：`template_score - project_score`
+4. 标记显著差距（>10 分差异）
 
-**Example**:
+**示例**：
 ```
-Project file: .claude/agents/debugging-specialist.md (Score: 78%, Grade C)
-Closest template: examples/agents/debugging-specialist.md (Score: 94%, Grade A)
+项目文件：.claude/agents/debugging-specialist.md（得分：78%，等级 C）
+最匹配模板：examples/agents/debugging-specialist.md（得分：94%，等级 A）
 
-Gaps:
-- Anti-hallucination measures: -2 points (template has, project missing)
-- Edge cases documented: -1 point (template has 5 examples, project has 1)
-- Integration documented: -1 point (template references 3 skills, project none)
+差距：
+- 抗幻觉措施：-2 分（模板有，项目没有）
+- 边缘用例文档化：-1 分（模板有 5 个示例，项目有 1 个）
+- 集成文档化：-1 分（模板引用 3 个技能，项目没有）
 
-Total gap: 16 points (explains C vs A difference)
+总差距：16 分（解释了 C vs A 的差异）
 ```
 
-### Phase 4: Report Generation
+### 阶段 4：报告生成
 
-**Markdown Report** (`audit-report.md`):
-- Summary table (overall + by type)
-- Individual scores with top issues
-- Detailed breakdown per file (collapsible)
-- Prioritized recommendations
+**Markdown 报告**（`audit-report.md`）：
+- 摘要表（总体 + 按类型）
+- 各文件评分及首要问题
+- 每个文件的详细分析（可折叠）
+- 按优先级排列的建议
 
-**JSON Output** (`audit-report.json`):
+**JSON 输出**（`audit-report.json`）：
 ```json
 {
   "metadata": {
@@ -178,101 +178,101 @@ Total gap: 16 points (explains C vs A difference)
       "failed_criteria": [
         {
           "id": "A2.4",
-          "name": "Anti-hallucination measures",
+          "name": "抗幻觉措施",
           "points_lost": 2,
-          "recommendation": "Add section on source verification"
+          "recommendation": "添加关于来源验证的章节"
         }
       ]
     }
   ],
   "top_issues": [
     {
-      "issue": "Missing error handling",
+      "issue": "缺少错误处理",
       "affected_files": 8,
-      "impact": "Runtime failures unhandled",
+      "impact": "运行时故障未处理",
       "priority": "high"
     }
   ]
 }
 ```
 
-### Phase 5: Fix Suggestions (Optional)
+### 阶段 5：修复建议（可选）
 
-For each failing criterion, generate **actionable fix**:
+对每个失败的标准，生成**可操作的修复方案**：
 
 ```markdown
-### File: .claude/agents/debugging-specialist.md
-**Issue**: Missing anti-hallucination measures (2 points lost)
+### 文件：.claude/agents/debugging-specialist.md
+**问题**：缺少抗幻觉措施（丢失 2 分）
 
-**Fix**:
-Add this section after "Methodology":
+**修复**：
+在"方法论"后添加此章节：
 
-## Source Verification
+## 来源验证
 
-- Always cite sources for technical claims
-- Use phrases: "According to [documentation]...", "Based on [tool output]..."
-- If uncertain, state: "I don't have verified information on..."
-- Never invent: statistics, version numbers, API signatures, stack traces
+- 技术声明始终引用来源
+- 使用短语："根据[文档]..."、"基于[工具输出]..."
+- 如果不确定，声明："我没有关于...的已验证信息"
+- 绝不编造：统计数据、版本号、API 签名、堆栈跟踪
 
-**Detection**: Grep for keywords: "verify", "cite", "source", "evidence"
+**检测**：Grep 关键词："verify"、"cite"、"source"、"evidence"
 ```
 
 ---
 
-## Scoring Criteria
+## 评分标准
 
-See `scoring/criteria.yaml` for complete definitions. Summary:
+完整定义见 `scoring/criteria.yaml`。摘要：
 
-### Agents (32 points max)
+### Agents（满分 32 分）
 
-| Category | Weight | Criteria Count | Max Points |
+| 类别 | 权重 | 标准数量 | 满分 |
 |----------|--------|----------------|------------|
-| Identity | 3x | 4 | 12 |
-| Prompt Quality | 2x | 4 | 8 |
-| Validation | 1x | 4 | 4 |
-| Design | 2x | 4 | 8 |
+| 身份 | 3x | 4 | 12 |
+| 提示词质量 | 2x | 4 | 8 |
+| 验证 | 1x | 4 | 4 |
+| 设计 | 2x | 4 | 8 |
 
-**Key Criteria**:
-- Clear name (3 pts): Not generic like "agent1"
-- Description with triggers (3 pts): Contains "when"/"use"
-- Role defined (2 pts): "You are..." statement
-- 3+ examples (1 pt): Usage scenarios documented
-- Single responsibility (2 pts): Focused, not "general purpose"
+**关键标准**：
+- 清晰的名称（3 分）：不通用如"agent1"
+- 含触发器的描述（3 分）：包含"when"/"use"
+- 定义了角色（2 分）："You are..." 声明
+- 3+ 个示例（1 分）：记录了使用场景
+- 单一职责（2 分）：专注，非"通用目的"
 
-### Skills (32 points max)
+### Skills（满分 32 分）
 
-| Category | Weight | Criteria Count | Max Points |
+| 类别 | 权重 | 标准数量 | 满分 |
 |----------|--------|----------------|------------|
-| Structure | 3x | 4 | 12 |
-| Content | 2x | 4 | 8 |
-| Technical | 1x | 4 | 4 |
-| Design | 2x | 4 | 8 |
+| 结构 | 3x | 4 | 12 |
+| 内容 | 2x | 4 | 8 |
+| 技术 | 1x | 4 | 4 |
+| 设计 | 2x | 4 | 8 |
 
-**Key Criteria**:
-- Valid SKILL.md (3 pts): Proper naming
-- Name valid (3 pts): Lowercase, 1-64 chars, no spaces
-- Methodology described (2 pts): Workflow section exists
-- No hardcoded paths (1 pt): No `/Users/`, `/home/`
-- Clear triggers (2 pts): "When to use" section
+**关键标准**：
+- 有效的 SKILL.md（3 分）：正确命名
+- 名称有效（3 分）：小写、1-64 字符、无空格
+- 描述了方法论（2 分）：存在 Workflow 章节
+- 无硬编码路径（1 分）：无 `/Users/`、`/home/`
+- 清晰的触发器（2 分）：有"何时使用"章节
 
-### Commands (20 points max)
+### Commands（满分 20 分）
 
-| Category | Weight | Criteria Count | Max Points |
+| 类别 | 权重 | 标准数量 | 满分 |
 |----------|--------|----------------|------------|
-| Structure | 3x | 4 | 12 |
-| Quality | 2x | 4 | 8 |
+| 结构 | 3x | 4 | 12 |
+| 质量 | 2x | 4 | 8 |
 
-**Key Criteria**:
-- Valid frontmatter (3 pts): name + description
-- Argument hint (3 pts): If uses `$ARGUMENTS`
-- Step-by-step workflow (3 pts): Numbered sections
-- Error handling (2 pts): Mentions failure modes
+**关键标准**：
+- 有效 frontmatter（3 分）：name + description
+- 参数提示（3 分）：如使用 `$ARGUMENTS`
+- 逐步工作流（3 分）：编号章节
+- 错误处理（2 分）：提及失败模式
 
 ---
 
-## Detection Patterns
+## 检测模式
 
-### Frontmatter Parsing
+### Frontmatter 解析
 
 ```python
 import yaml
@@ -285,19 +285,19 @@ def parse_frontmatter(content):
     return None
 ```
 
-### Keyword Detection
+### 关键词检测
 
 ```python
 def has_keywords(text, keywords):
     text_lower = text.lower()
     return any(kw in text_lower for kw in keywords)
 
-# Example
+# 示例
 has_trigger = has_keywords(description, ['when', 'use', 'trigger'])
 has_error_handling = has_keywords(content, ['error', 'failure', 'fallback'])
 ```
 
-### Overlap Detection (Duplication Check)
+### 重叠检测（重复检查）
 
 ```python
 def jaccard_similarity(text1, text2):
@@ -307,241 +307,241 @@ def jaccard_similarity(text1, text2):
     union = words1 | words2
     return len(intersection) / len(union) if union else 0
 
-# Flag if similarity > 0.5 (50% keyword overlap)
+# 如果相似度 > 0.5，标记
 if jaccard_similarity(desc1, desc2) > 0.5:
-    issues.append("High overlap with another file")
+    issues.append("与另一个文件高度重叠")
 ```
 
-### Token Counting (Approximate)
+### Token 计数（近似）
 
 ```python
 def estimate_tokens(text):
-    # Rough estimate: 1 token ≈ 0.75 words
+    # 粗略估计：1 token ≈ 0.75 词
     word_count = len(text.split())
     return int(word_count * 1.3)
 
-# Check budget
+# 检查预算
 tokens = estimate_tokens(file_content)
 if tokens > 5000:
-    issues.append("File too large (>5K tokens)")
+    issues.append("文件过大（>5K tokens）")
 ```
 
 ---
 
-## Industry Context
+## 行业背景
 
-**Source**: LangChain Agent Report 2026 (public report, page 14-22)
+**来源**：LangChain Agent Report 2026（公开报告，第 14-22 页）
 
-**Key Findings**:
-- **29.5%** of organizations deploy agents without systematic evaluation
-- **18%** cite "agent bugs" as their primary challenge
-- **Only 12%** use automated quality checks (88% manual or none)
-- **43%** report difficulty maintaining agent quality over time
-- **Top issues**: Hallucinations (31%), poor error handling (28%), unclear triggers (22%)
+**关键发现**：
+- **29.5%** 的组织在无系统评估的情况下部署 agent
+- **18%** 将"agent bugs"列为首要挑战
+- **仅 12%** 使用自动化质量检查（88% 手动或无检查）
+- **43%** 报告维持 agent 质量随时间推移的困难
+- **首要问题**：幻觉（31%）、错误处理不佳（28%）、触发器不明确（22%）
 
-**Implications**:
-1. **Automation gap**: Most teams rely on manual checklists (error-prone at scale)
-2. **Quality debt**: Agents deployed without validation accumulate technical debt
-3. **Maintenance burden**: 43% struggle with quality over time (no tracking system)
+**影响**：
+1. **自动化差距**：大多数团队依赖手动清单（大规模时容易出错）
+2. **质量债务**：未经验证部署的 agent 积累技术债务
+3. **维护负担**：43% 因缺乏跟踪系统而难以维持质量
 
-**This skill addresses**:
-- Automation: Replaces manual checklists with quantitative scoring
-- Tracking: JSON output enables trend analysis over time
-- Standards: 80% threshold provides clear production gate
+**此技能解决的问题**：
+- 自动化：用量化评分替代手动清单
+- 跟踪：JSON 输出支持随时间趋势分析
+- 标准：80% 阈值提供明确的生产门禁
 
 ---
 
-## Output Examples
+## 输出示例
 
-### Quick Audit (Top-5 Criteria)
+### 快速审计（前 5 个标准）
 
 ```markdown
-# Quick Audit: Agents/Skills/Commands
+# 快速审计：Agents/Skills/Commands
 
-**Files**: 15 (5 agents, 8 skills, 2 commands)
-**Critical Issues**: 3 files fail top-5 criteria
+**文件**：15 个（5 agent、8 skill、2 command）
+**关键问题**：3 个文件未通过前 5 个标准
 
-## Top-5 Criteria (Pass/Fail)
+## 前 5 个标准（通过/失败）
 
-| File | Valid Name | Has Triggers | Error Handling | No Hardcoded Paths | Examples |
+| 文件 | 有效名称 | 有触发器 | 错误处理 | 无硬编码路径 | 示例 |
 |------|------------|--------------|----------------|--------------------|----------|
 | agent1.md | ✅ | ✅ | ❌ | ✅ | ❌ |
 | skill2/ | ✅ | ❌ | ✅ | ❌ | ✅ |
 
-## Action Required
+## 需要采取的行动
 
-1. **Add error handling**: 5 files
-2. **Remove hardcoded paths**: 3 files
-3. **Add usage examples**: 4 files
+1. **添加错误处理**：5 个文件
+2. **移除硬编码路径**：3 个文件
+3. **添加使用示例**：4 个文件
 ```
 
-### Full Audit
+### 完整审计
 
-See Phase 4: Report Generation above for full structure.
+见上方案例 4：报告生成章节的完整结构。
 
-### Comparative (Full + Benchmarks)
+### 对比审计（完整 + 基准）
 
 ```markdown
-# Comparative Audit
+# 对比审计
 
-## Project vs Templates
+## 项目 vs 模板
 
-| File | Project Score | Template Score | Gap | Top Missing |
+| 文件 | 项目评分 | 模板评分 | 差距 | 主要缺失 |
 |------|---------------|----------------|-----|-------------|
-| debugging-specialist.md | 78% (C) | 94% (A) | -16 pts | Anti-hallucination, edge cases |
-| testing-expert/ | 85% (B) | 91% (A) | -6 pts | Integration docs |
+| debugging-specialist.md | 78%（C） | 94%（A） | -16 分 | 抗幻觉措施、边缘用例 |
+| testing-expert/ | 85%（B） | 91%（A） | -6 分 | 集成文档 |
 
-## Recommendations
+## 建议
 
-Focus on these gaps to reach template quality:
-1. **Anti-hallucination measures** (8 files): Add source verification sections
-2. **Edge case documentation** (5 files): Add failure scenario examples
-3. **Integration documentation** (4 files): List compatible agents/skills
+专注于以下差距以达到模板质量：
+1. **抗幻觉措施**（8 个文件）：添加来源验证章节
+2. **边缘用例文档**（5 个文件）：添加失败场景示例
+3. **集成文档**（4 个文件）：列出兼容的 agent/skills
 ```
 
 ---
 
-## Usage
+## 用法
 
-### Basic (Full Audit)
+### 基本用法（完整审计）
 
 ```bash
-# In Claude Code
-Use skill: audit-agents-skills
+# 在 Claude Code 中
+使用技能：audit-agents-skills
 
-# Specify path
-Use skill: audit-agents-skills for ~/projects/my-app
+# 指定路径
+使用技能：audit-agents-skills for ~/projects/my-app
 ```
 
-### With Options
+### 带选项
 
 ```bash
-# Quick audit (fast)
-Use skill: audit-agents-skills with mode=quick
+# 快速审计
+使用技能：audit-agents-skills with mode=quick
 
-# Comparative (benchmark analysis)
-Use skill: audit-agents-skills with mode=comparative
+# 对比审计（基准分析）
+使用技能：audit-agents-skills with mode=comparative
 
-# Generate fixes
-Use skill: audit-agents-skills with fixes=true
+# 生成修复方案
+使用技能：audit-agents-skills with fixes=true
 
-# Custom output path
-Use skill: audit-agents-skills with output=~/Desktop/audit.json
+# 自定义输出路径
+使用技能：audit-agents-skills with output=~/Desktop/audit.json
 ```
 
-### JSON Output Only
+### 仅 JSON 输出
 
 ```bash
-# For programmatic integration
-Use skill: audit-agents-skills with format=json output=audit.json
+# 用于程序化集成
+使用技能：audit-agents-skills with format=json output=audit.json
 ```
 
 ---
 
-## Integration with CI/CD
+## CI/CD 集成
 
-### Pre-commit Hook
+### 预提交钩子
 
 ```bash
 #!/bin/bash
 # .git/hooks/pre-commit
 
-# Run quick audit on changed agent/skill/command files
+# 对已更改的 agent/skill/command 文件运行快速审计
 changed_files=$(git diff --cached --name-only | grep -E "^\.claude/(agents|skills|commands)/")
 
 if [ -n "$changed_files" ]; then
-    echo "Running quick audit on changed files..."
-    # Run audit (requires Claude Code CLI wrapper)
-    # Exit with 1 if any file scores <80%
+    echo "正在对已更改的文件运行快速审计..."
+    # 运行审计（需要 Claude Code CLI 包装器）
+    # 如果有文件评分 <80%，退出码为 1
 fi
 ```
 
 ### GitHub Actions
 
 ```yaml
-name: Audit Agents/Skills
+name: 审计 Agents/Skills
 on: [pull_request]
 jobs:
   audit:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Run quality audit
+      - name: 运行质量审计
         run: |
-          # Run audit skill
-          # Parse JSON output
-          # Fail if overall_score < 80
+          # 运行审计技能
+          # 解析 JSON 输出
+          # 如果 overall_score < 80 则失败
 ```
 
 ---
 
-## Comparison: Command vs Skill
+## 对比：Command vs Skill
 
-| Aspect | Command (`/audit-agents-skills`) | Skill (this file) |
+| 方面 | Command（`/audit-agents-skills`） | Skill（本文件） |
 |--------|----------------------------------|-------------------|
-| **Scope** | Current project only | Multi-project, comparative |
-| **Output** | Markdown report | Markdown + JSON |
-| **Speed** | Fast (5-10 min) | Slower (10-20 min with comparative) |
-| **Depth** | Standard 16 criteria | Same + benchmark analysis |
-| **Fix suggestions** | Via `--fix` flag | Built-in with recommendations |
-| **Programmatic** | Terminal output | JSON for CI/CD integration |
-| **Best for** | Quick checks, dev workflow | Deep audits, quality tracking |
+| **范围** | 仅当前项目 | 多项目、对比 |
+| **输出** | Markdown 报告 | Markdown + JSON |
+| **速度** | 快（5-10 分钟） | 较慢（10-20 分钟含对比） |
+| **深度** | 标准 16 标准 | 同上 + 基准分析 |
+| **修复建议** | 通过 `--fix` 标志 | 内置建议 |
+| **程序化** | 终端输出 | JSON 用于 CI/CD 集成 |
+| **最适合** | 快速检查、开发工作流 | 深度审计、质量跟踪 |
 
-**Recommendation**: Use command for daily checks, skill for release gates and quality tracking.
+**建议**：日常检查用 command，发布门禁和质量跟踪用 skill。
 
 ---
 
-## Maintenance
+## 维护
 
-### Updating Criteria
+### 更新标准
 
-Edit `scoring/criteria.yaml`:
+编辑 `scoring/criteria.yaml`：
 ```yaml
 agents:
   categories:
     identity:
       criteria:
-        - id: A1.5  # New criterion
-          name: "API versioning specified"
+        - id: A1.5  # 新标准
+          name: "指定了 API 版本"
           points: 3
-          detection: "mentions API version or compatibility"
+          detection: "提及 API 版本或兼容性"
 ```
 
-Version bump: Increment `version` in frontmatter when criteria change.
+版本号提升：当标准变化时，递增 frontmatter 中的 `version`。
 
-### Adding File Types
+### 添加文件类型
 
-To support new file types (e.g., "workflows"):
-1. Add to `scoring/criteria.yaml`:
+为支持新的文件类型（如"workflows"）：
+1. 添加到 `scoring/criteria.yaml`：
    ```yaml
    workflows:
      max_points: 24
      categories: [...]
    ```
-2. Update detection logic (file path patterns)
-3. Update report templates
+2. 更新检测逻辑（文件路径模式）
+3. 更新报告模板
 
 ---
 
-## Related
+## 相关
 
-- **Command version**: `.claude/commands/audit-agents-skills.md`
-- **Agent Validation Checklist**: guide line 4921 (manual 16 criteria)
-- **Skill Validation**: guide line 5491 (spec documentation)
-- **Reference templates**: `examples/agents/`, `examples/skills/`, `examples/commands/`
-
----
-
-## Changelog
-
-**v1.0.0** (2026-02-07):
-- Initial release
-- 16-criteria framework (agents/skills/commands)
-- 3 audit modes (quick/full/comparative)
-- JSON + Markdown output
-- Fix suggestions
-- Industry context (LangChain 2026 report)
+- **Command 版本**：`.claude/commands/audit-agents-skills.md`
+- **Agent 验证清单**：guide 第 4921 行（手动 16 标准）
+- **技能验证**：guide 第 5491 行（规范文档）
+- **参考模板**：`examples/agents/`、`examples/skills/`、`examples/commands/`
 
 ---
 
-**Skill ready for use**: `audit-agents-skills`
+## 变更日志
+
+**v1.0.0**（2026-02-07）：
+- 初始版本
+- 16 标准框架（agents/skills/commands）
+- 3 种审计模式（快速/完整/对比）
+- JSON + Markdown 输出
+- 修复建议
+- 行业背景（LangChain 2026 报告）
+
+---
+
+**技能已就绪**：`audit-agents-skills`

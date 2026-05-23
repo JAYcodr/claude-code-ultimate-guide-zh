@@ -1,62 +1,63 @@
+<!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
 ---
 name: pdf-generator
-description: Generate professional PDFs using Quarto/Typst stack with modern design template
+description: 使用 Quarto/Typst 技术栈配合现代设计模板生成专业 PDF
 effort: low
 version: 1.0.0
 ---
 
-# PDF Generator Skill
+# PDF 生成器技能
 
-Generate professional PDFs with modern typography using Quarto + Typst.
+使用 Quarto + Typst 生成具有现代排版的专业 PDF。
 
-## Skill Purpose
+## 技能目的
 
-This skill assists with:
-- Setting up Quarto/Typst projects
-- Creating document templates
-- Generating PDFs from Markdown
-- Troubleshooting rendering issues
-- Customizing design systems
+此技能协助：
+- 设置 Quarto/Typst 项目
+- 创建文档模板
+- 从 Markdown 生成 PDF
+- 排查渲染问题
+- 自定义设计系统
 
-## Stack
+## 技术栈
 
-| Tool | Version | Role |
+| 工具 | 版本 | 角色 |
 |------|---------|------|
-| **Quarto** | ≥1.4.0 | Document rendering engine |
-| **Typst** | 0.13.0 | Modern typography (integrated) |
-| **Pandoc** | 3.x | Markdown conversion (integrated) |
+| **Quarto** | ≥1.4.0 | 文档渲染引擎 |
+| **Typst** | 0.13.0 | 现代排版（集成） |
+| **Pandoc** | 3.x | Markdown 转换（集成） |
 
-### Pipeline de génération
+### 生成管道
 
 ```
-  SOURCE              OUTIL           TEMPLATE              OUTPUT
+  来源              工具             模板                 输出
   ──────              ─────           ────────              ──────
 
   .qmd  ──────────► Quarto ────► --to whitepaper-typst ──► Typst 0.13 ──► .pdf ✅
   (Markdown           │           (_extensions/               (~270K–1.7M,
-  + YAML)             │            typst-template.typ)         stylé)
+  + YAML)             │            typst-template.typ)         精美样式)
                       │
                       └──────► --to epub ──► Pandoc ──────────────────► .epub
                                              + epub-styles.css
 
-  ⚠️  --to pdf (sans template) → PDF petit, non stylé → Toujours préférer --to whitepaper-typst
+  ⚠️  --to pdf（无模板）→ PDF 小、无样式 → 始终优先用 --to whitepaper-typst
 ```
 
-### Formats disponibles
+### 可用格式
 
 ```
   ┌──────────────────────┬────────────────────────┬──────────────────┐
-  │ Format               │ Commande               │ Sortie           │
+  │ 格式                  │ 命令                   │ 输出              │
   ├──────────────────────┼────────────────────────┼──────────────────┤
-  │ PDF stylé ✅         │ --to whitepaper-typst  │ ~270K–1.7M       │
-  │ PDF standard ❌      │ --to pdf               │ ~80-190K, brut   │
+  │ 精美样式 PDF ✅        │ --to whitepaper-typst  │ ~270K–1.7M       │
+  │ 标准 PDF ❌           │ --to pdf               │ ~80-190K，原始    │
   │ EPUB                 │ --to epub              │ epub-output/     │
   └──────────────────────┴────────────────────────┴──────────────────┘
 ```
 
-## Quick Start
+## 快速开始
 
-### Installation
+### 安装
 
 ```bash
 # macOS
@@ -70,26 +71,26 @@ sudo dpkg -i quarto-1.4.555-linux-amd64.deb
 winget install Posit.Quarto
 ```
 
-### Generate PDF
+### 生成 PDF
 
 ```bash
-# Single file
+# 单个文件
 quarto render document.qmd
 
-# All files
+# 所有文件
 quarto render *.qmd
 
-# Preview with hot-reload
+# 带热重载的预览
 quarto preview document.qmd
 ```
 
-## YAML Frontmatter Template
+## YAML 前导模板
 
 ```yaml
 ---
-title: "Document Title"
-subtitle: "Optional subtitle"
-author: "Author Name"
+title: "文档标题"
+subtitle: "可选副标题"
+author: "作者名"
 date: 2026-01-17
 date-format: "MMMM YYYY"
 format:
@@ -101,44 +102,44 @@ lang: en
 ---
 ```
 
-### Available Parameters
+### 可用参数
 
-| Parameter | Type | Description |
+| 参数 | 类型 | 描述 |
 |-----------|------|-------------|
-| `title` | string | Main title (cover page) |
-| `subtitle` | string | Optional subtitle |
-| `author` | string | Author(s) |
-| `date` | date | ISO format (YYYY-MM-DD) |
-| `date-format` | string | Display format (`MMMM YYYY`) |
-| `toc` | boolean | Show table of contents |
-| `toc-depth` | number | TOC depth (1-3) |
-| `section-numbering` | string | Format (`1.1`, `1.a`) |
-| `lang` | string | Language (`fr`, `en`) |
+| `title` | string | 主标题（封面页） |
+| `subtitle` | string | 可选副标题 |
+| `author` | string | 作者 |
+| `date` | date | ISO 格式（YYYY-MM-DD） |
+| `date-format` | string | 显示格式（`MMMM YYYY`） |
+| `toc` | boolean | 显示目录 |
+| `toc-depth` | number | 目录深度（1-3） |
+| `section-numbering` | string | 格式（`1.1`、`1.a`） |
+| `lang` | string | 语言（`fr`、`en`） |
 
-## Project Structure
+## 项目结构
 
 ```
 project/
 ├── _extensions/
 │   └── custom-template/
-│       ├── _extension.yml      # Extension metadata
-│       ├── typst-template.typ  # Main template
-│       └── typst-show.typ      # Quarto → Typst bridge
-├── document.qmd                # Source file
-└── document.pdf                # Generated output
+│       ├── _extension.yml      # 扩展元数据
+│       ├── typst-template.typ  # 主模板
+│       └── typst-show.typ      # Quarto → Typst 桥接
+├── document.qmd                # 源文件
+└── document.pdf                # 生成输出
 ```
 
-## Markdown Syntax
+## Markdown 语法
 
-### Page Breaks
+### 分页
 
 ```markdown
 {{< pagebreak >}}
 ```
 
-### Code Blocks
+### 代码块
 
-Standard fenced blocks with syntax highlighting:
+标准围栏代码块，带语法高亮：
 
 ````markdown
 ```bash
@@ -146,25 +147,25 @@ npm install
 ```
 ````
 
-### Tables
+### 表格
 
 ```markdown
-| Column A | Column B |
+| 列 A | 列 B |
 |----------|----------|
-| Value 1  | Value 2  |
+| 值 1     | 值 2     |
 ```
 
-### Images
+### 图片
 
 ```markdown
-![Caption](path/to/image.png){width=50%}
+![标题](path/to/image.png){width=50%}
 ```
 
-## Custom Template
+## 自定义模板
 
-### Extension Configuration
+### 扩展配置
 
-Create `_extensions/mytemplate/_extension.yml`:
+创建 `_extensions/mytemplate/_extension.yml`：
 
 ```yaml
 title: My Template
@@ -178,19 +179,19 @@ contributes:
         - typst-show.typ
 ```
 
-### Design System (Typst)
+### 设计系统（Typst）
 
 ```typst
-// Colors (Slate + Indigo palette)
-#let primary = rgb("#0f172a")      // Slate 900 - titles
-#let secondary = rgb("#334155")    // Slate 700 - subtitles
-#let accent = rgb("#6366f1")       // Indigo 500 - accents
-#let muted = rgb("#64748b")        // Slate 500 - metadata
-#let light-bg = rgb("#f8fafc")     // Slate 50 - code bg
-#let border-light = rgb("#e2e8f0") // Slate 200 - borders
+// 颜色（Slate + Indigo 色板）
+#let primary = rgb("#0f172a")      // Slate 900 - 标题
+#let secondary = rgb("#334155")    // Slate 700 - 副标题
+#let accent = rgb("#6366f1")       // Indigo 500 - 强调
+#let muted = rgb("#64748b")        // Slate 500 - 元数据
+#let light-bg = rgb("#f8fafc")     // Slate 50 - 代码背景
+#let border-light = rgb("#e2e8f0") // Slate 200 - 边框
 ```
 
-### Typography
+### 排版
 
 ```typst
 #set text(
@@ -203,7 +204,7 @@ contributes:
   justify: true,
 )
 
-// Code blocks
+// 代码块
 #show raw.where(block: true): it => {
   block(
     fill: light-bg,
@@ -215,10 +216,10 @@ contributes:
 }
 ```
 
-### Callout Boxes
+### 提示框
 
 ```typst
-#let info(title: "Note", body) = {
+#let info(title: "注意", body) = {
   block(
     fill: rgb("#E0F2FE"),
     stroke: (left: 3pt + rgb("#0284C7")),
@@ -227,7 +228,7 @@ contributes:
   )
 }
 
-#let warning(title: "Warning", body) = {
+#let warning(title: "警告", body) = {
   block(
     fill: rgb("#FEF3C7"),
     stroke: (left: 3pt + rgb("#D97706")),
@@ -236,7 +237,7 @@ contributes:
   )
 }
 
-#let success(title: "Success", body) = {
+#let success(title: "成功", body) = {
   block(
     fill: rgb("#DCFCE7"),
     stroke: (left: 3pt + rgb("#16A34A")),
@@ -245,7 +246,7 @@ contributes:
   )
 }
 
-#let danger(title: "Danger", body) = {
+#let danger(title: "危险", body) = {
   block(
     fill: rgb("#FEE2E2"),
     stroke: (left: 3pt + rgb("#DC2626")),
@@ -255,99 +256,99 @@ contributes:
 }
 ```
 
-## Troubleshooting
+## 故障排查
 
-### Quick Validation
+### 快速验证
 
 ```bash
-# Check Quarto version
+# 检查 Quarto 版本
 quarto --version  # >= 1.4.0
 
-# Verify extension exists
+# 验证扩展存在
 ls _extensions/*/
 
-# Validate code block pairs (must be even)
+# 验证代码块配对（必须为偶数）
 grep -c '^```' document.qmd
 
-# Check encoding
-file -i document.qmd  # Must show utf-8
+# 检查编码
+file -i document.qmd  # 必须显示 utf-8
 ```
 
-### Common Issues
+### 常见问题
 
-| Issue | Cause | Fix |
+| 问题 | 原因 | 修复 |
 |-------|-------|-----|
-| Nested code blocks break | Inner ` ``` ` closes outer | Use 4+ backticks for outer |
-| Tables render as code | Unmatched ` ``` ` above | Check delimiter count |
-| Extension not found | Wrong directory | Verify `_extensions/` path |
-| Font warnings | Fonts not installed | Normal; uses fallbacks |
-| Characters broken | Wrong encoding | Convert to UTF-8 |
+| 嵌套代码块中断 | 内部 ` ``` ` 关闭了外部的 | 外部使用 4+ 个反引号 |
+| 表格渲染为代码 | 上方 ` ``` ` 不配对 | 检查定界符数量 |
+| 扩展未找到 | 目录错误 | 验证 `_extensions/` 路径 |
+| 字体警告 | 字体未安装 | 正常；会使用后备字体 |
+| 字符损坏 | 编码错误 | 转换为 UTF-8 |
 
-### Nested Code Blocks
+### 嵌套代码块
 
-Use more backticks for outer block:
+外部块使用更多反引号：
 
 `````markdown
 ````markdown
-# This is the outer block
+# 这是外部块
 
 ```bash
-echo "This is nested"
+echo "这是嵌套的"
 ```
 
-Outer continues...
+外部继续...
 ````
 `````
 
-### Validation Script
+### 验证脚本
 
 ```bash
 #!/bin/bash
 for f in *.qmd; do
   count=$(grep -c '^```' "$f")
   if [ $((count % 2)) -ne 0 ]; then
-    echo "ERROR: $f has odd count ($count)"
+    echo "错误：$f 有奇数个代码块（$count）"
   fi
 done
 ```
 
-### Full Validation Pipeline
+### 完整验证管道
 
 ```bash
 #!/bin/bash
 # validate-qmd.sh
 
-echo "=== Validating QMD files ==="
+echo "=== 验证 QMD 文件 ==="
 errors=0
 
 for f in *.qmd; do
-  # Check code block pairs
+  # 检查代码块配对
   count=$(grep -c '^```' "$f")
   if [ $((count % 2)) -ne 0 ]; then
-    echo "ERROR: $f - odd code block count ($count)"
+    echo "错误：$f - 代码块数量为奇数（$count）"
     ((errors++))
   fi
 
-  # Check UTF-8
+  # 检查 UTF-8
   encoding=$(file -i "$f" | grep -o 'charset=[^;]*')
   if [[ "$encoding" != *"utf-8"* ]]; then
-    echo "WARNING: $f - encoding is $encoding"
+    echo "警告：$f - 编码为 $encoding"
   fi
 done
 
-echo "=== Validation complete: $errors errors ==="
+echo "=== 验证完成：$errors 个错误 ==="
 exit $errors
 ```
 
-## Example Use Cases
+## 示例用例
 
-### Technical Documentation
+### 技术文档
 
 ```yaml
 ---
-title: "API Reference"
+title: "API 参考"
 subtitle: "v2.0"
-author: "Engineering Team"
+author: "工程团队"
 date: 2026-01-17
 format:
   typst:
@@ -355,19 +356,19 @@ format:
     toc-depth: 3
 ---
 
-# Authentication
+# 认证
 
-All requests require an API key...
+所有请求都需要 API 密钥...
 ```
 
-### Whitepaper Series
+### 白皮书系列
 
 ```yaml
 ---
-title: "Security Best Practices"
-series: "Engineering Whitepapers"
+title: "安全最佳实践"
+series: "工程白皮书"
 wp-number: "03"
-author: "Security Team"
+author: "安全团队"
 date: 2026-01-17
 format:
   whitepaper-typst:
@@ -375,12 +376,12 @@ format:
 ---
 ```
 
-### Internal Report
+### 内部报告
 
 ```yaml
 ---
-title: "Q1 Performance Report"
-author: "Analytics Team"
+title: "第一季度性能报告"
+author: "分析团队"
 date: 2026-01-17
 date-format: "Q1 YYYY"
 format:
@@ -389,9 +390,9 @@ format:
 ---
 ```
 
-## Resources
+## 资源
 
-- [Quarto Documentation](https://quarto.org/docs/guide/)
-- [Typst Documentation](https://typst.app/docs/)
-- [Quarto + Typst Guide](https://quarto.org/docs/output-formats/typst.html)
-- [Workflow Guide](../../guide/workflows/pdf-generation.md)
+- [Quarto 文档](https://quarto.org/docs/guide/)
+- [Typst 文档](https://typst.app/docs/)
+- [Quarto + Typst 指南](https://quarto.org/docs/output-formats/typst.html)
+- [工作流指南](../../guide/workflows/pdf-generation.md)

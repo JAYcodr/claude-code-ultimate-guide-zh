@@ -1,44 +1,44 @@
 ---
 name: canary
-description: Post-deploy monitoring — watch production after a deploy and alert on regressions
+description: "部署后监控——部署后观察生产环境并在回归时发出告警"
 argument-hint: "[--baseline]"
 effort: medium
 disable-model-invocation: true
 ---
 
-# Canary — Post-Deploy Monitoring
+# 金丝雀——部署后监控
 
-Watch a live application after deployment. Alert on errors and regressions. Compare against a pre-deploy baseline.
+部署后观察实时应用。在错误和回归时发出告警。与部署前基线进行对比。
 
-**Two modes:**
-- `--baseline` — capture the current state BEFORE deploying
-- *(default)* — monitor AFTER deploying and compare against baseline
+**两种模式：**
+- `--baseline` — 在部署前捕获当前状态
+- （默认）— 部署后监控并与基线对比
 
-## Instructions
+## 使用说明
 
-### Phase 1: Setup
+### 阶段 1：设置
 
-Parse the user's arguments and detect the deployment context.
+解析用户参数并检测部署上下文。
 
 ```bash
-# Detect current branch and recent deploy commit
+# 检测当前分支和最近部署提交
 git branch --show-current
 git log --oneline -5
 
-# Auto-detect platform from config files
-[ -f fly.toml ]         && echo "PLATFORM: fly"
-[ -f render.yaml ]      && echo "PLATFORM: render"
-[ -f vercel.json ]      && echo "PLATFORM: vercel"
-[ -f netlify.toml ]     && echo "PLATFORM: netlify"
-[ -f Procfile ]         && echo "PLATFORM: heroku"
-[ -f railway.toml ]     && echo "PLATFORM: railway"
+# 从配置文件自动检测平台
+[ -f fly.toml ]         && echo "平台：fly"
+[ -f render.yaml ]      && echo "平台：render"
+[ -f vercel.json ]      && echo "平台：vercel"
+[ -f netlify.toml ]     && echo "平台：netlify"
+[ -f Procfile ]         && echo "平台：heroku"
+[ -f railway.toml ]     && echo "平台：railway"
 
-# Check for health endpoint
+# 检查健康端点
 curl -sf "${URL}/health" -w "\n%{http_code}" 2>/dev/null | tail -1
 curl -sf "${URL}/api/health" -w "\n%{http_code}" 2>/dev/null | tail -1
 ```
 
-Create the working directory:
+创建工作目录：
 
 ```bash
 mkdir -p .canary/baselines .canary/reports .canary/screenshots
@@ -46,28 +46,28 @@ mkdir -p .canary/baselines .canary/reports .canary/screenshots
 
 ---
 
-### Phase 2: Baseline Capture (`--baseline` mode)
+### 阶段 2：基线捕获（`--baseline` 模式）
 
-Run this BEFORE deploying to capture the current healthy state.
+在部署前运行，捕获当前健康状态。
 
-For each page to monitor, record:
+对每个要监控的页面，记录：
 
-1. **HTTP status** — is the page returning 200?
-2. **Response time** — how long does it take to load?
-3. **Content snapshot** — key text content to detect blank pages later
+1. **HTTP 状态**——页面是否返回 200？
+2. **响应时间**——加载耗时多少？
+3. **内容快照**——关键文本内容，以便后续检测空白页面
 
 ```bash
-# For each page URL
+# 对每个页面 URL
 for PAGE_PATH in "/" "/dashboard" "/settings" "/api/health"; do
   SLUG=$(echo "$PAGE_PATH" | tr '/' '_' | tr -d '?&=')
   RESULT=$(curl -sf -o /dev/null -w "%{http_code}|%{time_total}" "${BASE_URL}${PAGE_PATH}" 2>/dev/null)
   STATUS=$(echo "$RESULT" | cut -d'|' -f1)
   TIME_MS=$(echo "$RESULT" | awk -F'|' '{printf "%.0f", $2 * 1000}')
-  echo "  ${PAGE_PATH}: HTTP ${STATUS}, ${TIME_MS}ms"
+  echo "  ${PAGE_PATH}：HTTP ${STATUS}，${TIME_MS}ms"
 done
 ```
 
-Save baseline to `.canary/baselines/baseline.json`:
+保存基线到 `.canary/baselines/baseline.json`：
 
 ```json
 {
@@ -83,165 +83,165 @@ Save baseline to `.canary/baselines/baseline.json`:
 }
 ```
 
-Then **STOP** and tell the user: "Baseline captured. Deploy your changes, then run `/canary <url>` to monitor."
+然后**停止**并告知用户："基线已捕获。部署你的更改，然后运行 `/canary <url>` 进行监控。"
 
 ---
 
-### Phase 3: Page Discovery
+### 阶段 3：页面发现
 
-If no pages were specified, auto-discover pages to monitor.
+如果未指定页面，自动发现要监控的页面。
 
-**From the application:**
+**从应用中：**
 
 ```bash
-# Check sitemap if available
+# 如有站点地图则检查
 curl -sf "${URL}/sitemap.xml" 2>/dev/null | grep -oP '(?<=<loc>)[^<]+' | head -10
 
-# Check robots.txt for known paths
+# 检查 robots.txt 中的已知路径
 curl -sf "${URL}/robots.txt" 2>/dev/null | grep -i "allow\|disallow" | head -10
 
-# Common paths to always check
-echo "Always check: / /login /dashboard /settings /api/health"
+# 始终检查的常见路径
+echo "始终检查：/ /login /dashboard /settings /api/health"
 ```
 
-Default pages to monitor if nothing found: `/`, and the homepage only.
+如果未找到任何页面，默认监控路径：`/`（仅主页）。
 
 ---
 
-### Phase 4: Monitoring Loop
+### 阶段 4：监控循环
 
-Monitor for the specified duration (default: 10 minutes). Run a check every 60 seconds.
+按指定时长（默认：10 分钟）进行监控。每 60 秒运行一次检查。
 
-**Each check cycle:**
+**每个检查周期：**
 
 ```bash
 TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 CHECK_NUM=$((CHECK_NUM + 1))
 
 for PAGE_PATH in "${PAGES[@]}"; do
-  # Check HTTP status and response time
+  # 检查 HTTP 状态和响应时间
   RESULT=$(curl -sf -o /dev/null -w "%{http_code}|%{time_total}" \
     --max-time 10 "${BASE_URL}${PAGE_PATH}" 2>/dev/null || echo "0|0")
   STATUS=$(echo "$RESULT" | cut -d'|' -f1)
   TIME_MS=$(echo "$RESULT" | awk -F'|' '{printf "%.0f", $2 * 1000}')
 
-  # Compare against baseline
+  # 与基线对比
   BASELINE_STATUS=$(jq -r ".pages[\"${PAGE_PATH}\"].status // 200" .canary/baselines/baseline.json 2>/dev/null)
   BASELINE_TIME=$(jq -r ".pages[\"${PAGE_PATH}\"].time_ms // 1000" .canary/baselines/baseline.json 2>/dev/null)
 
-  echo "  [Check #${CHECK_NUM}] ${PAGE_PATH}: HTTP ${STATUS} (${TIME_MS}ms)"
+  echo "  [检查 #${CHECK_NUM}] ${PAGE_PATH}：HTTP ${STATUS}（${TIME_MS}ms）"
 done
 ```
 
-**Alert levels:**
+**告警级别：**
 
-| Level | Condition | Trigger |
+| 级别 | 条件 | 触发 |
 |-------|-----------|---------|
-| **CRITICAL** | Page load failure | HTTP status is not 2xx, curl timeout, DNS failure |
-| **HIGH** | New errors | Error rate increased vs baseline (console errors, 5xx responses) |
-| **MEDIUM** | Performance regression | Response time exceeds 2x baseline |
-| **LOW** | New broken links | Previously-working routes now return 404 |
+| **严重** | 页面加载失败 | HTTP 状态不是 2xx、curl 超时、DNS 失败 |
+| **高** | 新错误 | 错误率相比基线增加（控制台错误、5xx 响应） |
+| **中** | 性能回归 | 响应时间超过基线 2 倍 |
+| **低** | 新断链 | 之前正常的路由现在返回 404 |
 
-**Key principles:**
-- **Alert on changes, not absolutes.** A page with 3 errors in baseline is fine if still 3. One NEW error is an alert.
-- **Transient tolerance.** Only alert on patterns persisting across 2+ consecutive checks. A single network blip is not an alert.
+**关键原则：**
+- **对变化发出告警，而非绝对值。** 基线中有 3 个错误的页面仍然只有 3 个就没问题。出现 1 个新错误才是告警。
+- **容忍瞬态故障。** 仅在模式持续超过 2 次连续检查时才发出告警。单次网络波动不是告警。
 
-**When a CRITICAL or HIGH alert fires (2 consecutive checks):**
+**当严重或高级别告警触发时（连续 2 次检查）：**
 
 ```
-CANARY ALERT
+金丝雀告警
 ════════════════════════════════════════
-Time:     [check #N at Xs elapsed]
-Page:     [URL]
-Level:    [CRITICAL / HIGH / MEDIUM / LOW]
-Finding:  [what changed — be specific]
-Baseline: [baseline value]
-Current:  [current value]
+时间：     [检查 #N，已过 Xs]
+页面：     [URL]
+级别：     [严重/高/中/低]
+发现：     [什么变了——请具体]
+基线：     [基线值]
+当前：     [当前值]
 ════════════════════════════════════════
-Options:
-  A) Investigate now — stop monitoring, focus on this issue
-  B) Continue monitoring — wait for next check to confirm
-  C) Rollback — revert the deploy
-  D) Dismiss — known issue, continue monitoring
+选项：
+  A) 立即调查——停止监控，聚焦此问题
+  B) 继续监控——等待下次检查确认
+  C) 回滚——撤销此次部署
+  D) 忽略——已知问题，继续监控
 ```
 
 ---
 
-### Phase 5: Health Report
+### 阶段 5：健康报告
 
-After monitoring completes (or user stops), produce a summary.
+监控完成后（或用户停止），生成摘要。
 
 ```
-CANARY REPORT — [url]
+金丝雀报告 — [url]
 ═══════════════════════════════════════════════════
-Duration:    [X minutes]
-Checks:      [N total per page]
-Pages:       [N pages monitored]
-Commit:      [deployed SHA]
-Status:      [HEALTHY / DEGRADED / BROKEN]
+时长：       [X 分钟]
+检查次数：   [每个页面 N 次]
+页面数：     [监控 N 个页面]
+提交：       [部署的 SHA]
+状态：       [健康/退化/损坏]
 
-Per-Page Results:
+各页面结果：
 ─────────────────────────────────────────
-  Page           Status      Avg Time   Alerts
-  /              HEALTHY     450ms      0
-  /dashboard     DEGRADED    1100ms     1 medium (was 450ms)
-  /settings      HEALTHY     380ms      0
-  /api/health    HEALTHY     45ms       0
+  页面           状态       平均时间   告警数
+  /              健康       450ms      0
+  /dashboard     退化       1100ms     1 个中（原 450ms）
+  /settings      健康       380ms      0
+  /api/health    健康       45ms       0
 
-Alerts Fired: [N] (X critical, Y high, Z medium, W low)
+已触发的告警：[N] 次（X 严重、Y 高、Z 中、W 低）
 
-VERDICT: [DEPLOY HEALTHY / DEPLOY HAS ISSUES — see alerts above]
+裁决：[部署健康/部署有问题——见上方告警]
 ═══════════════════════════════════════════════════
 ```
 
-Save report to `.canary/reports/<date>-canary.md`.
+保存报告到 `.canary/reports/<日期>-canary.md`。
 
 ---
 
-### Phase 6: Baseline Update
+### 阶段 6：基线更新
 
-If the deploy is healthy and the user wants to update the baseline:
+如果部署健康且用户希望更新基线：
 
 ```bash
 cp .canary/reports/latest-snapshot.json .canary/baselines/baseline.json
-echo "Baseline updated to commit $(git rev-parse --short HEAD)"
+echo "基线已更新至提交 $(git rev-parse --short HEAD)"
 ```
 
 ---
 
-## Output Format
+## 输出格式
 
-See Phase 5 above for the full CANARY REPORT template.
+见上方阶段 5 的完整金丝雀报告模板。
 
-Inline alert format (during monitoring):
+内联告警格式（监控期间）：
 ```
-[08:42:15] Check #3 — /dashboard: ALERT HIGH — response time 1250ms (baseline: 420ms)
-[08:43:15] Check #4 — /dashboard: ALERT HIGH — response time 1180ms (baseline: 420ms)
-→ Consistent across 2 checks. Firing alert.
+[08:42:15] 检查 #3 — /dashboard：告警 高级 — 响应时间 1250ms（基线：420ms）
+[08:43:15] 检查 #4 — /dashboard：告警 高级 — 响应时间 1180ms（基线：420ms）
+→ 连续 2 次检查一致。发出告警。
 ```
 
-## Usage
+## 用法
 
 ```
-/canary https://app.example.com                # Monitor homepage for 10 min
-/canary https://app.example.com --baseline     # Capture baseline before deploying
-/canary https://app.example.com --duration 5m  # Monitor for 5 minutes
-/canary https://app.example.com --quick        # Single-pass health check (no loop)
+/canary https://app.example.com                # 监控主页 10 分钟
+/canary https://app.example.com --baseline     # 部署前捕获基线
+/canary https://app.example.com --duration 5m  # 监控 5 分钟
+/canary https://app.example.com --quick        # 单次健康检查（不循环）
 /canary https://app.example.com --pages /,/dashboard,/api/health
 ```
 
-## Tips
+## 提示
 
-1. **Always capture a baseline** before deploying to production — run `/canary <url> --baseline`
-2. **Start monitoring immediately** after deploy — the first 5 minutes catch 90% of regressions
-3. **CRITICAL alerts = investigate immediately** — don't wait for the monitoring to finish
-4. **MEDIUM alerts (performance)** — may be cache warming, give it 2-3 more checks before acting
-5. **Keep `.canary/baselines/` in git** — so any team member can run canary against the same baseline
+1. **部署到生产前始终捕获基线**——运行 `/canary <url> --baseline`
+2. **部署后立即开始监控**——前 5 分钟捕获 90% 的回归
+3. **严重告警 = 立即调查**——不要等监控完成
+4. **中告警（性能）**——可能是缓存预热，等待 2-3 次检查后再行动
+5. **将 `.canary/baselines/` 纳入 git**——任何团队成员都可以针对同一基线运行金丝雀检查
 
-## Related Commands
+## 相关命令
 
-- `/ship` — pre-deploy checklist (run before deploying)
-- `/land-and-deploy` — full merge-to-verify pipeline (runs canary automatically)
-- `/qa` — interactive QA testing before shipping
+- `/ship` — 部署前检查清单（部署前运行）
+- `/land-and-deploy` — 完整的合并到验证流水线（自动运行金丝雀）
+- `/qa` — 发布前的交互式 QA 测试
 
 $ARGUMENTS

@@ -1,75 +1,75 @@
 ---
 name: pr
-description: Analyze changes, detect scope issues, and create a well-structured PR
+description: 分析更改、检测范围问题并创建结构良好的 PR
 argument-hint: "[--base <branch>] [--draft]"
 effort: medium
 disable-model-invocation: true
 ---
 
-# Create Pull Request
+# 创建 Pull Request
 
-Analyze changes, detect scope issues, and create a well-structured PR following project conventions.
+分析更改、检测范围问题并创建符合项目约定的结构良好的 PR。
 
-## Process
+## 流程
 
-1. **Analyze Changes**: Calculate complexity score from files, commits, and directories
-2. **Detect Scope Issues**: Warn if PR is too large or mixes unrelated changes
-3. **Suggest Split**: If needed, group commits by scope and propose separate PRs
-4. **Collect Info**: Ask for type, target branch, draft status, labels
-5. **Generate Content**: Create TLDR + description + checklist
-6. **Create PR**: Execute `gh pr create` with proper formatting
-7. **Remind Follow-up**: Display post-PR checklist (SonarQube, Claude Review)
+1. **分析更改**：根据文件、提交和目录计算复杂度评分
+2. **检测范围问题**：如果 PR 过大或混合了不相关的更改则发出警告
+3. **建议拆分**：如需要，按范围分组提交并提出单独的 PR
+4. **收集信息**：询问类型、目标分支、草稿状态、标签
+5. **生成内容**：创建 TLDR + 描述 + 清单
+6. **创建 PR**：执行 `gh pr create` 并正确格式化
+7. **提醒跟进**：显示 PR 后清单（SonarQube、Claude Review）
 
-## Complexity Score
+## 复杂度评分
 
-Calculate PR complexity to detect if split is needed:
+计算 PR 复杂度以检测是否需要拆分：
 
-| Criterion | Weight | Description |
+| 标准 | 权重 | 描述 |
 |-----------|--------|-------------|
-| Code files | x2 | `*.ts, *.tsx` (excluding tests) |
-| Test files | x0.5 | `*.test.ts, *.spec.ts` |
-| Config files | x1 | `*.json, *.yml, *.md` |
-| Directories | x3 | Distinct `src/*` directories |
-| Commits | x1 | Number of commits |
+| 代码文件 | x2 | `*.ts, *.tsx`（不含测试） |
+| 测试文件 | x0.5 | `*.test.ts, *.spec.ts` |
+| 配置文件 | x1 | `*.json, *.yml, *.md` |
+| 目录数 | x3 | 不同的 `src/*` 目录 |
+| 提交数 | x1 | 提交数量 |
 
-**Thresholds**: 0-15 ✅ Normal | 16-25 ⚠️ Large | 26+ 🔴 Split recommended
+**阈值**：0-15 ✅ 正常 | 16-25 ⚠️ 较大 | 26+ 🔴 建议拆分
 
-## Scope Coherence
+## 范围一致性
 
-| Pattern | Verdict |
+| 模式 | 裁决 |
 |---------|---------|
-| Single scope | ✅ OK |
-| Related scopes (sessions + calendar) | ✅ OK |
-| Unrelated scopes (payments + auth) | 🔴 Split |
-| feat + fix same scope | ✅ OK |
-| feat + fix different scopes | 🔴 Split |
+| 单一范围 | ✅ 正常 |
+| 相关范围（sessions + calendar） | ✅ 正常 |
+| 不相关范围（payments + auth） | 🔴 拆分 |
+| feat + fix 同一范围 | ✅ 正常 |
+| feat + fix 不同范围 | 🔴 拆分 |
 
-## Split Suggestion Format
+## 拆分建议格式
 
-When split is recommended, display:
+建议拆分时显示：
 
 ```
-🔴 Scope trop large (score: 32)
+🔴 范围过大（评分：32）
 
-Commits par scope :
-├── payments (5 commits, 8 fichiers)
+按范围分组提交：
+├── payments（5 个提交，8 个文件）
 │   ├── feat(payments): add Stripe checkout
 │   └── fix(payments): handle currency
 │
-└── notifications (3 commits, 6 fichiers)
+└── notifications（3 个提交，6 个文件）
     └── feat(notifications): add email templates
 
-💡 Suggestion :
-1. PR #1 : feature/payments-stripe → Commits payments
-2. PR #2 : feature/notifications → Commits notifications
+💡 建议：
+1. PR #1：feature/payments-stripe → payments 提交
+2. PR #2：feature/notifications → notifications 提交
 
-Options :
-[A] Continuer avec une seule PR (non recommandé)
-[B] Découper (semi-auto - commandes git fournies)
-[C] Voir détail fichiers
+选项：
+[A] 继续用一个 PR（不推荐）
+[B] 拆分（半自动——提供 git 命令）
+[C] 查看文件详情
 ```
 
-**Semi-auto split** provides copy-paste commands:
+**半自动拆分**提供复制粘贴命令：
 ```bash
 git checkout develop
 git checkout -b feature/payments-stripe
@@ -77,122 +77,122 @@ git cherry-pick abc1234 def5678
 git push -u origin feature/payments-stripe
 ```
 
-## Questions to Ask
+## 要问的问题
 
-1. **Type**: feature | fix | tech | docs | security
-2. **Target Branch**: Show recent branches (develop, main, others)
-3. **Draft**: Yes (WIP) | No (ready for review)
-4. **Labels**: Based on type + optional (breaking-change, security)
+1. **类型**：feature | fix | tech | docs | security
+2. **目标分支**：显示最近分支（develop、main 等）
+3. **草稿**：是（WIP）| 否（准备审查）
+4. **标签**：基于类型 + 可选（breaking-change、security）
 
-## PR Title Format
+## PR 标题格式
 
 ```
-<type>(<scope>): <description>
+<类型>(<范围>): <描述>
 ```
 
-Examples:
+示例：
 - `feat(payments): add Stripe checkout integration`
 - `fix(sessions): resolve timezone calculation bug`
 
-## PR Body Template
+## PR 主体模板
 
 ```markdown
 ## TLDR
-<!-- 2 lines max - Executive summary -->
+<!-- 最多 2 行 - 执行摘要 -->
 
 ---
 
-## Type
-{Feature | Fix | Tech | Docs | Security}
+## 类型
+{功能 | 修复 | 技术 | 文档 | 安全}
 
-## Description
-{Context and changes}
+## 描述
+{上下文和改动}
 
-## Technical Changes
-{List of main modifications}
+## 技术改动
+{主要修改清单}
 
-## Tests
-- [ ] Unit tests added/passing
-- [ ] Manual testing completed
+## 测试
+- [ ] 单元测试已添加/通过
+- [ ] 手动测试已完成
 
-## Checklist
-- [ ] Code follows conventions
-- [ ] No console.log left
-- [ ] Types OK (`pnpm typecheck`)
+## 清单
+- [ ] 代码遵循约定
+- [ ] 没有遗留的 console.log
+- [ ] 类型正确（`pnpm typecheck`）
 
 ---
 
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
+🤖 由 [Claude Code](https://claude.com/claude-code) 生成
 
 Co-Authored-By: Claude <noreply@anthropic.com>
 ```
 
-## Available Labels
+## 可用标签
 
-| Label | Color | Use When |
+| 标签 | 颜色 | 何时使用 |
 |-------|-------|----------|
-| `feature` | 🟢 | New functionality |
-| `fix` | 🔴 | Bug fix |
-| `tech` | 🔵 | Refactoring, tech debt |
-| `docs` | 📘 | Documentation only |
-| `security` | 🟣 | Security fix |
-| `breaking-change` | ⚫ | Breaking changes |
-| `WIP` | 🟡 | Work in progress (draft) |
+| `feature` | 🟢 | 新功能 |
+| `fix` | 🔴 | Bug 修复 |
+| `tech` | 🔵 | 重构、技术债务 |
+| `docs` | 📘 | 仅文档 |
+| `security` | 🟣 | 安全修复 |
+| `breaking-change` | ⚫ | 破坏性更改 |
+| `WIP` | 🟡 | 进行中（草稿） |
 
-## Commands to Execute
+## 要执行的命令
 
 ```bash
-# 1. Get base branch (usually develop)
+# 1. 获取基分支（通常是 develop）
 BASE_BRANCH="develop"
 
-# 2. Calculate complexity score
+# 2. 计算复杂度评分
 CODE=$(git diff --name-only $BASE_BRANCH..HEAD | grep -E '\.(ts|tsx)$' | grep -v test | wc -l)
 TESTS=$(git diff --name-only $BASE_BRANCH..HEAD | grep -E '\.test\.|\.spec\.' | wc -l)
 DIRS=$(git diff --name-only $BASE_BRANCH..HEAD | cut -d'/' -f1-2 | sort -u | wc -l)
 COMMITS=$(git rev-list --count $BASE_BRANCH..HEAD)
 SCORE=$((CODE * 2 + TESTS / 2 + DIRS * 3 + COMMITS))
 
-# 3. Get scopes from commits
-git log --oneline $BASE_BRANCH..HEAD --format="%s" | sed -n 's/^\w*(\([^)]*\)).*/\1/p' | sort | uniq -c
+# 3. 从提交中获取范围
+git log --oneline $BASE_BRANCH..HEAD --format="%s" | sed -n 's/^\w*(\([^)]*\))).*/\1/p' | sort | uniq -c
 
-# 4. Recent branches for selection
+# 4. 供选择的最近分支
 git branch --sort=-committerdate --format='%(refname:short)' | head -5
 
-# 5. Create PR
+# 5. 创建 PR
 gh pr create \
-  --title "<type>(<scope>): <description>" \
+  --title "<类型>(<范围>): <描述>" \
   --body "$BODY" \
   --base $BASE_BRANCH \
-  --label "<label>" \
-  --draft  # if WIP
+  --label "<标签>" \
+  --draft  # 如果是 WIP
 ```
 
-## Post-PR Output
+## PR 后输出
 
-After PR creation, ALWAYS display:
+创建 PR 后，始终显示：
 
 ```
-✅ PR créée : https://github.com/org/repo/pull/XXX
+✅ PR 已创建：https://github.com/org/repo/pull/XXX
 
-📋 Prochaines étapes automatiques :
-   • SonarQube analysera la qualité du code (bugs, vulnérabilités, code smells)
-   • Claude Code Review fournira un feedback IA sur votre PR
+📋 后续自动步骤：
+   • SonarQube 将分析代码质量（bug、漏洞、代码异味）
+   • Claude Code Review 将提供 AI 反馈
 
-⏳ Pensez à surveiller ces analyses dans les prochaines minutes.
-   Si des problèmes sont détectés, corrigez-les avant de demander une review humaine.
+⏳ 请注意在接下来几分钟内关注这些分析。
+   如果检测到问题，在请求人工审查前修复它们。
 ```
 
-## Edge Cases
+## 边缘用例
 
-| Situation | Behavior |
+| 情况 | 行为 |
 |-----------|----------|
-| No scope in commits | Analyze by directories |
-| Non-conventional commits | Warn + ask type manually |
-| No commits (same as base) | Error: "Aucun changement" |
-| Single commit | Use commit message as title |
-| Merge commits | Ignore (`--no-merges`) |
+| 提交中无范围 | 按目录分析 |
+| 非 Conventional Commit | 警告 + 手动询问类型 |
+| 无提交（与基分支相同） | 错误："无更改" |
+| 单个提交 | 使用提交消息作为标题 |
+| Merge 提交 | 忽略（`--no-merges`） |
 
-## Usage
+## 用法
 
 ```
 /pr
@@ -200,4 +200,4 @@ After PR creation, ALWAYS display:
 /pr --draft
 ```
 
-Target: $ARGUMENTS (optional: --base, --draft)
+Target：$ARGUMENTS（可选：--base、--draft）

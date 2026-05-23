@@ -1,145 +1,145 @@
 ---
 name: security-audit
-description: Comprehensive security audit with scored posture assessment
+description: 全面的安全审计，含评分的安全态势评估
 argument-hint: "[path] [--owasp] [--verbose]"
 effort: high
 disable-model-invocation: true
 ---
 
-# Security Audit
+# 安全审计
 
-Comprehensive security audit of your project AND Claude Code configuration. Analyzes secrets exposure, injection surfaces, dependencies, hook security, and produces a scored security posture assessment.
+对项目以及 Claude Code 配置的全面安全审计。分析密钥暴露、注入面、依赖、钩子安全，并生成评分的安全态势评估。
 
-**Time**: 2-5 minutes | **Scope**: Full project + Claude Code config
+**时间**：2-5 分钟 | **范围**：完整项目 + Claude Code 配置
 
-> For a quick config-only check, use `/security-check` instead.
+> 如需仅检查配置的快速检查，请使用 `/security-check`。
 
-## Instructions
+## 使用说明
 
-You are a senior application security engineer. Perform a 6-phase security audit and produce a scored report with prioritized remediation plan.
-
----
-
-### Pre-Step: Establish Audit Context
-
-**Before running any checks**, use `AskUserQuestion` to ask:
-
-1. **Environment**: Is this code running in production, staging, or local development?
-2. **Scope**: Full audit or specific areas to prioritize?
-
-This is critical for accurate findings:
-- **Local dev**: `DEBUG=True`, CORS `*`, HTTP without TLS, `.env` files — all normal. Do NOT flag as vulnerabilities. Mention in an "Before going to production" informational section instead.
-- **Staging**: Configs should mirror production. Flag deviations as MEDIUM.
-- **Production**: Any misconfiguration is a real finding with full severity.
-
-If the user doesn't answer or is unsure, default to **production** (conservative).
+你是高级应用安全工程师。执行 6 阶段安全审计，生成带优先级修复计划的评分报告。
 
 ---
 
-### Phase 1: Configuration Security (via /security-check)
+### 前置步骤：建立审计上下文
 
-Execute all checks from `/security-check` (the `examples/skills/security-check/SKILL.md` command). This covers:
-- MCP server audit against CVE database
-- Skills & agents against known malicious entries
-- Hook exfiltration patterns
-- Memory poisoning detection
-- Permissions & settings review
-- Exposed secrets in Claude Code config
+**在运行任何检查前**，使用 `AskUserQuestion` 询问：
 
-Record findings — they contribute to the final score.
+1. **环境**：此代码运行在生产、预发布还是本地开发环境？
+2. **范围**：全面审计还是有特定优先级领域？
+
+这对准确发现至关重要：
+- **本地开发**：`DEBUG=True`、CORS `*`、无 TLS 的 HTTP、`.env` 文件——全部正常。不要标记为漏洞。改为在"投产前需知"信息章节中提及。
+- **预发布**：配置应镜像生产。将偏差标记为中。
+- **生产**：任何配置错误都是真实发现，按完整严重性处理。
+
+如果用户不回答或不确定，默认设为**生产**（保守）。
 
 ---
 
-### Phase 2: Project Secrets Scan
+### 阶段 1：配置安全（通过 /security-check）
 
-Scan the entire project for exposed secrets and credentials:
+执行 `/security-check`（`examples/skills/security-check/SKILL.md` 命令）中的所有检查。涵盖：
+- MCP 服务器对 CVE 数据库的审计
+- 技能和 agent 对已知恶意条目的检查
+- 钩子数据外泄模式
+- 内存投毒检测
+- 权限和设置审查
+- Claude Code 配置中暴露的密钥
+
+记录发现——它们计入最终评分。
+
+---
+
+### 阶段 2：项目密钥扫描
+
+扫描整个项目中暴露的密钥和凭据：
 
 ```bash
-# API keys and tokens
+# API 密钥和 token
 grep -rn --include="*.{js,ts,py,go,java,rb,php,yaml,yml,json,toml,env,cfg,ini,conf}" \
   -E '(?i)(api[_-]?key|apikey|secret|password|passwd|token|bearer|auth)\s*[=:]\s*["'\''"][^"'\'']{8,}["'\''"]\s' \
   --exclude-dir={node_modules,vendor,.git,dist,build,target,__pycache__,.venv} . 2>/dev/null | head -30
 
-# Known provider key patterns
+# 已知提供商密钥模式
 grep -rn -E 'sk-[a-zA-Z0-9]{20,}|sk-ant-[a-zA-Z0-9]{20,}|ghp_[a-zA-Z0-9]{36}|AKIA[A-Z0-9]{16}|xox[bps]-[a-zA-Z0-9\-]{20,}' \
   --exclude-dir={node_modules,vendor,.git,dist,build,target} . 2>/dev/null | head -20
 
-# Private keys
+# 私钥
 grep -rn 'BEGIN.*PRIVATE KEY' --exclude-dir={node_modules,vendor,.git} . 2>/dev/null
 
-# .env files that might be committed
+# 可能被提交的 .env 文件
 find . -name ".env*" -not -path "*/node_modules/*" -not -path "*/.git/*" -type f 2>/dev/null
 
-# Check .gitignore coverage
+# 检查 .gitignore 覆盖情况
 [ -f ".gitignore" ] && {
-  grep -q "\.env" .gitignore && echo "✅ .env in .gitignore" || echo "⚠️ .env NOT in .gitignore"
-  grep -q "\.pem" .gitignore && echo "✅ .pem in .gitignore" || echo "⚠️ .pem NOT in .gitignore"
-  grep -q "\.key" .gitignore && echo "✅ .key in .gitignore" || echo "⚠️ .key NOT in .gitignore"
+  grep -q "\.env" .gitignore && echo "✅ .env 在 .gitignore 中" || echo "⚠️ .env 不在 .gitignore 中"
+  grep -q "\.pem" .gitignore && echo "✅ .pem 在 .gitignore 中" || echo "⚠️ .pem 不在 .gitignore中"
+  grep -q "\.key" .gitignore && echo "✅ .key 在 .gitignore 中" || echo "⚠️ .key 不在 .gitignore中"
 }
 ```
 
-**Anti-false-positive rule — MANDATORY before reporting any secret finding:**
+**反误报规则——报告任何密钥发现前必须执行：**
 
-Before raising a secrets finding, run these verification commands:
+在提出密钥发现前，运行以下验证命令：
 
 ```bash
-# 1. Verify .env is actually in .gitignore (if yes, local .env is NOT a finding)
-grep -n '\.env' .gitignore 2>/dev/null || echo ".env NOT in .gitignore"
+# 1. 确认 .env 确实在 .gitignore 中（如果是，本地的 .env 不是发现）
+grep -n '\.env' .gitignore 2>/dev/null || echo ".env 不在 .gitignore 中"
 
-# 2. Verify secrets were actually committed (empty output = no finding)
+# 2. 确认密钥确实已被提交（空输出 = 无发现）
 git log --all -p -- '*.env' '*.key' '*.pem' '*.secret' 2>/dev/null | grep -E '^\+.*(password|secret|api_key|token)' | head -20
 
-# 3. Check git history for provider-specific patterns
+# 3. 检查 git 历史中的供应商特定模式
 git log --all -p 2>/dev/null | grep -E '^\+(sk-[a-zA-Z0-9]{20,}|AKIA[A-Z0-9]{16}|ghp_[a-zA-Z0-9]{36})' | head -10
 ```
 
-Only report a secret finding if you have **concrete proof from these commands**. A `.env` file present locally is not a finding if it's in `.gitignore`. Never report "secrets may be exposed" based on pattern matching alone.
+仅在你**从这些命令中有具体证据**时才报告密钥发现。本地存在的 `.env` 文件如果在 `.gitignore` 中则不是发现。绝不基于仅模式匹配报告"可能暴露了密钥"。
 
-**Scoring:**
-- 0 secrets found → +20 points
-- 1-3 secrets → +10 points
-- 4+ secrets → 0 points
-- Private key committed → -10 points
+**评分：**
+- 发现 0 个密钥 → +20 分
+- 发现 1-3 个密钥 → +10 分
+- 发现 4+ 个密钥 → 0 分
+- 私钥被提交 → -10 分
 
 ---
 
-### Phase 3: Prompt Injection Surface
+### 阶段 3：Prompt 注入面
 
-Analyze markdown and config files for injection vectors:
+分析 markdown 和配置文件中的注入向量：
 
 ```bash
-# Zero-width characters (invisible instructions)
+# 零宽字符（不可见指令）
 grep -rPn '[\x{200B}-\x{200D}\x{FEFF}]' --include="*.md" --include="*.yaml" --include="*.json" . 2>/dev/null
 
-# Hidden HTML comments with instructions
+# 带指令的隐藏 HTML 注释
 grep -rn '<!--' --include="*.md" . 2>/dev/null | grep -i 'ignore\|system\|admin\|instruction\|override\|forget'
 
-# Base64 in comments (potential hidden payloads)
+# 注释中的 Base64（潜在隐藏 payload）
 grep -rn -E '[#;].*[A-Za-z0-9+/]{20,}={0,2}' --include="*.py" --include="*.js" --include="*.ts" --include="*.md" \
   --exclude-dir={node_modules,vendor,.git} . 2>/dev/null | head -10
 
-# ANSI escape sequences
+# ANSI 转义序列
 grep -rPn '\x1b\[|\x1b\]|\x1b\(' --exclude-dir={node_modules,vendor,.git} . 2>/dev/null | head -10
 
-# Null bytes
+# 空字节
 grep -rPn '\x00' --exclude-dir={node_modules,vendor,.git,dist} . 2>/dev/null | head -5
 
-# Nested command execution in markdown/config
+# markdown/配置中的嵌套命令执行
 grep -rn -E '\$\([^)]+\)|`[^`]+`' --include="*.md" --include="*.yaml" --include="*.json" \
   --exclude-dir={node_modules,vendor,.git} . 2>/dev/null | head -10
 ```
 
-**Scoring:**
-- 0 injection vectors → +15 points
-- 1-2 vectors (likely false positives) → +10 points
-- 3+ vectors → +5 points
-- Confirmed injection in CLAUDE.md → 0 points
+**评分：**
+- 0 个注入向量 → +15 分
+- 1-2 个向量（可能是误报）→ +10 分
+- 3+ 个向量 → +5 分
+- CLAUDE.md 中确认有注入 → 0 分
 
 ---
 
-### Phase 4: Dependency Audit
+### 阶段 4：依赖审计
 
-Run the appropriate package audit for the project:
+为项目运行相应的包审计：
 
 ```bash
 # Node.js
@@ -155,130 +155,130 @@ Run the appropriate package audit for the project:
 [ -f "go.mod" ] && govulncheck ./... 2>/dev/null
 ```
 
-If no package manager detected, note it and skip (no penalty).
+如果未检测到包管理器，注明并跳过（不扣分）。
 
-**Scoring:**
-- 0 vulnerabilities → +20 points
-- 0 critical + 0 high → +15 points
-- 1-3 high → +10 points
-- Any critical → +5 points
-- 10+ high or 3+ critical → 0 points
+**评分：**
+- 0 个漏洞 → +20 分
+- 0 严重 + 0 高危 → +15 分
+- 1-3 高危 → +10 分
+- 有任何严重 → +5 分
+- 10+ 高危或 3+ 严重 → 0 分
 
 ---
 
-### Phase 5: Hook Security Assessment
+### 阶段 5：钩子安全评估
 
-Verify security hooks from `guide/security-hardening.md` are properly installed:
+验证来自 `guide/security-hardening.md` 的安全钩子是否正确安装：
 
 ```bash
-# Check for recommended security hooks
-echo "=== Checking security hooks ==="
+# 检查推荐的安全钩子
+echo "=== 检查安全钩子 ==="
 
-# PreToolUse hooks (should block dangerous patterns)
-ls .claude/hooks/PreToolUse* 2>/dev/null || echo "⚠️ No PreToolUse hooks found"
+# PreToolUse 钩子（应阻止危险模式）
+ls .claude/hooks/PreToolUse* 2>/dev/null || echo "⚠️ 未找到 PreToolUse 钩子"
 
-# PostToolUse hooks (should monitor output)
-ls .claude/hooks/PostToolUse* 2>/dev/null || echo "⚠️ No PostToolUse hooks found"
+# PostToolUse 钩子（应监控输出）
+ls .claude/hooks/PostToolUse* 2>/dev/null || echo "⚠️ 未找到 PostToolUse 钩子"
 
-# Check if prompt injection detector exists
+# 检查 prompt 注入检测器是否存在
 find . -path "*/hooks/*injection*" -o -path "*/hooks/*security*" -o -path "*/hooks/*scanner*" 2>/dev/null
 
-# Check settings for hook configuration
-grep -c "hooks" .claude/settings.json 2>/dev/null || echo "No hooks in settings.json"
+# 检查 settings 中的钩子配置
+grep -c "hooks" .claude/settings.json 2>/dev/null || echo "settings.json 中无钩子配置"
 ```
 
-**Scoring:**
-- PreToolUse security hooks installed → +10 points
-- PostToolUse output scanner installed → +5 points
-- Prompt injection detector hook → +5 points
-- No hooks at all → 0 points
+**评分：**
+- 安装了 PreToolUse 安全钩子 → +10 分
+- 安装了 PostToolUse 输出扫描器 → +5 分
+- 安装了 prompt 注入检测钩子 → +5 分
+- 完全没有钩子 → 0 分
 
 ---
 
-### Phase 6: Posture Score & Report
+### 阶段 6：态势评分与报告
 
-Calculate total score and generate report.
+计算总分并生成报告。
 
-**Scoring Breakdown:**
+**评分细则：**
 
-| Category | Max Points | Source |
+| 类别 | 满分 | 来源 |
 |----------|-----------|--------|
-| Config Security (Phase 1) | 30 | /security-check results |
-| Secrets Scan (Phase 2) | 20 | Secrets found in project |
-| Injection Surface (Phase 3) | 15 | Injection vectors found |
-| Dependencies (Phase 4) | 20 | Vulnerability audit |
-| Hook Security (Phase 5) | 15 | Security hooks installed |
-| **Total** | **100** | |
+| 配置安全（阶段 1） | 30 | /security-check 结果 |
+| 密钥扫描（阶段 2） | 20 | 项目中发现的密钥 |
+| 注入面（阶段 3） | 15 | 发现的注入向量 |
+| 依赖（阶段 4） | 20 | 漏洞审计 |
+| 钩子安全（阶段 5） | 15 | 安装的安全钩子 |
+| **总计** | **100** | |
 
-**Phase 1 scoring detail:**
-- 0 CRITICAL findings → +15 points
-- 0 HIGH findings → +10 points
-- 0 MEDIUM findings → +5 points
-- Any CRITICAL → 0 for that sub-score
+**阶段 1 评分细节：**
+- 0 个严重发现 → +15 分
+- 0 个高危发现 → +10 分
+- 0 个中危发现 → +5 分
+- 有任何严重 → 该子评分 0 分
 
-**Grade Scale:**
+**等级表：**
 
-| Score | Grade | Meaning |
+| 分数 | 等级 | 含义 |
 |-------|-------|---------|
-| 90-100 | A | Excellent — production-ready security posture |
-| 75-89 | B | Good — minor improvements recommended |
-| 60-74 | C | Acceptable — address HIGH issues before production |
-| 40-59 | D | Poor — significant security gaps |
-| 0-39 | F | Critical — do not deploy, address CRITICAL issues immediately |
+| 90-100 | A | 优秀——生产就绪的安全态势 |
+| 75-89 | B | 良好——建议小幅度改进 |
+| 60-74 | C | 可接受——投产前解决高危问题 |
+| 40-59 | D | 较差——安全缺口明显 |
+| 0-39 | F | 严重——请勿部署，立即解决严重问题 |
 
-## Output Format
+## 输出格式
 
 ```
-## 🛡️ Security Audit Report
+## 🛡️ 安全审计报告
 
-**Date**: [timestamp]
-**Project**: [directory name]
-**Scope**: Full project + Claude Code configuration
+**日期**：[时间戳]
+**项目**：[目录名]
+**范围**：完整项目 + Claude Code 配置
 
-### Security Posture Score: [XX]/100 (Grade [X])
+### 安全态势评分：[XX]/100（等级 [X]）
 
-[1-sentence assessment]
+[1 句评估]
 
-### Phase Results
+### 各阶段结果
 
-| Phase | Score | Max | Key Finding |
+| 阶段 | 得分 | 满分 | 关键发现 |
 |-------|-------|-----|-------------|
-| 1. Config Security | XX | 30 | [summary] |
-| 2. Secrets Scan | XX | 20 | [summary] |
-| 3. Injection Surface | XX | 15 | [summary] |
-| 4. Dependencies | XX | 20 | [summary] |
-| 5. Hook Security | XX | 15 | [summary] |
-| **Total** | **XX** | **100** | |
+| 1. 配置安全 | XX | 30 | [摘要] |
+| 2. 密钥扫描 | XX | 20 | [摘要] |
+| 3. 注入面 | XX | 15 | [摘要] |
+| 4. 依赖 | XX | 20 | [摘要] |
+| 5. 钩子安全 | XX | 15 | [摘要] |
+| **总计** | **XX** | **100** | |
 
-### 🔴 Critical Findings
-[Each finding with location, description, and exact fix]
+### 🔴 严重发现
+[每个发现的位置、描述和确切修复方案]
 
-### 🟠 High Findings
-[Each finding with location, description, and fix]
+### 🟠 高危发现
+[每个发现的位置、描述和修复方案]
 
-### 🟡 Medium Findings
-[Each finding with location, description, and fix]
+### 🟡 中危发现
+[每个发现的位置、描述和修复方案]
 
-### 🔧 Remediation Plan (Priority Order)
+### 🔧 修复计划（按优先级）
 
-| # | Action | Severity | Effort | Command/Steps |
+| # | 操作 | 严重性 | 工作量 | 命令/步骤 |
 |---|--------|----------|--------|---------------|
-| 1 | [action] | CRITICAL | [time] | [how] |
-| 2 | [action] | HIGH | [time] | [how] |
+| 1 | [操作] | 严重 | [时间] | [如何] |
+| 2 | [操作] | 高危 | [时间] | [如何] |
 | ... | | | | |
 
-### 📊 Benchmark
+### 📊 基准
 
-Your score vs security-hardening.md recommendations:
-- [X] items from the guide are implemented
-- [X] items are missing
-- Top 3 missing items to implement next: [...]
+你的评分 vs security-hardening.md 建议：
+- 已实现指南中的 [X] 项
+- 缺少 [X] 项
+- 接下来要实施的前 3 项：[...]
 
-### 📚 References
-- Security hardening guide: guide/security-hardening.md
-- Threat database: examples/skills/update-threat-db/threat-db.yaml
-- Quick check: `/security-check`
-- MCP scan tool: `npx mcp-scan` (Snyk)
+### 📚 参考
+- 安全加固指南：guide/security-hardening.md
+- 威胁数据库：examples/skills/update-threat-db/threat-db.yaml
+- 快速检查：`/security-check`
+- MCP 扫描工具：`npx mcp-scan`（Snyk）
 ```
 
 $ARGUMENTS

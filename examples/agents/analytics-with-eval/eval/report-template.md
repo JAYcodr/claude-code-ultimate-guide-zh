@@ -1,256 +1,257 @@
+<!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
 ---
-title: "Analytics Agent Evaluation Report"
-description: "Monthly evaluation template for scoring analytics agent performance and accuracy"
+title: "分析智能体评估报告"
+description: "用于给分析智能体性能和准确性打分的月度评估模板"
 tags: [template, agents, testing]
 ---
 
-# Analytics Agent Evaluation Report
+# 分析智能体评估报告
 
-**Month**: [YYYY-MM]
-**Report Date**: [YYYY-MM-DD]
-**Evaluator**: [Your Name]
-**Agent Version**: 1.0
-
----
-
-## Executive Summary
-
-[2-3 sentence overview of agent performance this month]
-
-**Key Metrics**:
-- Total queries: [X]
-- Safety pass rate: [Y]%
-- Avg execution time: [Z]s
-
-**Status**: 🟢 Healthy / 🟡 Needs Attention / 🔴 Critical
+**月份**：[YYYY-MM]
+**报告日期**：[YYYY-MM-DD]
+**评估人**：[你的名字]
+**智能体版本**：1.0
 
 ---
 
-## Metrics Overview
+## 执行摘要
 
-### Volume
+[本月智能体表现的 2-3 句概述]
 
-| Metric | Value |
+**关键指标**：
+- 总查询数：[X]
+- 安全通过率：[Y]%
+- 平均执行时间：[Z]s
+
+**状态**：🟢 健康 / 🟡 需要注意 / 🔴 关键
+
+---
+
+## 指标概览
+
+### 数量
+
+| 指标 | 值 |
 |--------|-------|
-| Total queries generated | [X] |
-| Unique users/sessions | [Y] |
-| Queries per day (avg) | [Z] |
-| Growth vs last month | [+/-]% |
+| 生成的查询总数 | [X] |
+| 唯���用户/会话数 | [Y] |
+| 每日查询数（平均） | [Z] |
+| 环比增长 | [+/-]% |
 
-### Quality Metrics
+### 质量指标
 
-| Metric | Target | Actual | Status |
+| 指标 | 目标 | 实际 | 状态 |
 |--------|--------|--------|--------|
-| Safety pass rate | >95% | [X]% | 🟢/🟡/🔴 |
-| Query correctness | >90% | [Y]% | 🟢/🟡/🔴 |
-| User satisfaction | >4.0/5 | [Z]/5 | 🟢/🟡/🔴 |
+| 安全通过率 | >95% | [X]% | 🟢/🟡/🔴 |
+| 查询正确性 | >90% | [Y]% | 🟢/🟡/🔴 |
+| 用户满意度 | >4.0/5 | [Z]/5 | 🟢/🟡/🔴 |
 
-### Performance Metrics
+### 性能指标
 
-| Metric | Target | Actual | Status |
+| 指标 | 目标 | 实际 | 状态 |
 |--------|--------|--------|--------|
-| Mean execution time | <3s | [X]s | 🟢/🟡/🔴 |
-| P95 execution time | <5s | [Y]s | 🟢/🟡/🔴 |
-| P99 execution time | <10s | [Z]s | 🟢/🟡/🔴 |
+| 平均执行时间 | <3s | [X]s | 🟢/🟡/🔴 |
+| P95 执行时间 | <5s | [Y]s | 🟢/🟡/🔴 |
+| P99 执行时间 | <10s | [Z]s | 🟢/🟡/🔴 |
 
 ---
 
-## Safety Analysis
+## 安全分析
 
-### Safety Check Results
+### 安全检查结果
 
 ```
-Total: [X] queries
-- PASS: [Y] ([Z]%)
-- FAIL: [A] ([B]%)
+总计：[X] 个查询
+- PASS：[Y] ([Z]%)
+- FAIL：[A] ([B]%)
 ```
 
-### Top Safety Failures
+### 主要安全失败
 
-1. **[Failure Type]** - [X] occurrences
-   - Example: `[SQL query snippet]`
-   - Root cause: [Brief explanation]
-   - Action: [What was done to fix]
+1. **[失败类型]** — [X] 次
+   - 示例：`[SQL 查询片段]`
+   - 根本原因：[简要说明]
+   - 行动：[修复了什么]
 
-2. **[Failure Type]** - [Y] occurrences
-   - Example: `[SQL query snippet]`
-   - Root cause: [Brief explanation]
-   - Action: [What was done to fix]
+2. **[失败类型]** — [Y] 次
+   - 示例：`[SQL 查询片段]`
+   - 根本原因：[简要说明]
+   - 行动：[修复了什么]
 
-### Trends
+### 趋势
 
-[Graph or description showing safety pass rate over time]
+[安全通过率随时间变化的图表或描述]
 
 ---
 
-## Performance Analysis
+## 性能分析
 
-### Execution Time Distribution
+### 执行时间分布
 
 ```
-Mean:   [X]s
-Median: [Y]s
-P95:    [Z]s
-P99:    [A]s
-Max:    [B]s
+平均值：  [X]s
+中位数： [Y]s
+P95：    [Z]s
+P99：    [A]s
+最大：   [B]s
 ```
 
-### Slowest Queries
+### 最慢的查询
 
-1. **[Query description]** - [X]s
+1. **[查询描述]** — [X]s
    ```sql
-   [SQL query]
+   [SQL 查询]
    ```
-   - Reason: [Why slow]
-   - Optimization: [What could improve it]
+   - 原因：[为什么慢]
+   - 优化：[什么可以改进]
 
-2. **[Query description]** - [Y]s
+2. **[查询描述]** — [Y]s
    ```sql
-   [SQL query]
+   [SQL 查询]
    ```
-   - Reason: [Why slow]
-   - Optimization: [What could improve it]
+   - 原因：[为什么慢]
+   - 优化：[什么可以改进]
 
 ---
 
-## User Feedback
+## 用户反馈
 
-### Explicit Feedback
+### 显式反馈
 
-- **Positive**: [X] responses
-  - Common praise: "[Theme 1]", "[Theme 2]"
-- **Negative**: [Y] responses
-  - Common complaints: "[Theme 1]", "[Theme 2]"
+- **正面**：[X] 个回复
+  - 常见好评："[主题 1]"，"[主题 2]"
+- **负面**：[Y] 个回复
+  - 常见投诉："[主题 1]"，"[主题 2]"
 
-### Implicit Signals
+### 隐式信号
 
-- **Query retry rate**: [X]% (users re-running queries)
-- **Query modification rate**: [Y]% (users editing generated queries)
-- **Adoption rate**: [Z] queries/user/week
+- **查询重试率**：[X]%（用户重新运行查询）
+- **查询修改率**：[Y]%（用户编辑生成的查询）
+- **采用率**：[Z] 个查询/用户/周
 
-### Notable Feedback
+### 值得注意的反馈
 
-> "[User quote 1]"
-— [User name/role, if available]
+> "[用户引语 1]"
+— [用户名/角色，如有]
 
-> "[User quote 2]"
-— [User name/role, if available]
+> "[用户引语 2]"
+— [用户名/角色，如有]
 
 ---
 
-## Incident Log
+## 事件日志
 
-### Critical Issues
+### 关键问题
 
-| Date | Issue | Impact | Resolution |
+| 日期 | 问题 | 影响 | 解决方案 |
 |------|-------|--------|------------|
-| [YYYY-MM-DD] | [Brief description] | [High/Medium/Low] | [What was done] |
+| [YYYY-MM-DD] | [简要描述] | [高/中/低] | [做了什么] |
 
-### Near-Misses
+### 险情
 
-[List of queries that almost caused problems but were caught by safety checks]
-
----
-
-## Improvements Made
-
-### Agent Instruction Updates
-
-1. **[Update 1]**
-   - **Reason**: [Why needed]
-   - **Change**: [What was modified in agent instructions]
-   - **Impact**: [Expected improvement]
-
-2. **[Update 2]**
-   - **Reason**: [Why needed]
-   - **Change**: [What was modified]
-   - **Impact**: [Expected improvement]
-
-### Hook/Metrics Updates
-
-- [Any changes to metrics collection or analysis]
+[险些造成问题但被安全检查捕获的查询列表]
 
 ---
 
-## A/B Test Results (if applicable)
+## 已做的改进
 
-### Test: [Description]
+### 智能体指令更新
 
-**Period**: [Start date] to [End date]
+1. **[更新 1]**
+   - **原因**：[为什么需要]
+   - **变更**：[智能体指令中修改了什么]
+   - **影响**：[预期的改进]
 
-**Variants**:
-- **Control (A)**: [Description]
-- **Experiment (B)**: [Description]
+2. **[更新 2]**
+   - **原因**：[为什么需要]
+   - **变更**：[修改了什么]
+   - **影响**：[预期的改进]
 
-**Metrics**:
+### 钩子/指标更新
 
-| Metric | Control (A) | Experiment (B) | Change |
+- [对指标收集或分析的任何更改]
+
+---
+
+## A/B 测试结果（如适用）
+
+### 测试：[描述]
+
+**期间**：[开始日期] 至 [结束日期]
+
+**变体**：
+- **对照（A）**：[描述]
+- **实验（B）**：[描述]
+
+**指标**：
+
+| 指标 | 对照（A） | 实验（B） | 变化 |
 |--------|-------------|----------------|--------|
-| Safety pass rate | [X]% | [Y]% | [+/-]% |
-| Avg exec time | [X]s | [Y]s | [+/-]s |
-| User satisfaction | [X]/5 | [Y]/5 | [+/-] |
+| 安全通过率 | [X]% | [Y]% | [+/-]% |
+| 平均执行时间 | [X]s | [Y]s | [+/-]s |
+| 用户满意度 | [X]/5 | [Y]/5 | [+/-] |
 
-**Decision**: ✅ Promote B / ❌ Keep A / ⏸️ Needs more data
+**决策**：✅ 推广 B / ❌ 保留 A / ⏸️ 需要更多数据
 
-**Rationale**: [Why this decision]
-
----
-
-## Recommendations
-
-### High Priority
-
-1. **[Recommendation 1]**
-   - **Current state**: [Problem description]
-   - **Proposed change**: [What to do]
-   - **Expected impact**: [Improvement estimate]
-   - **Effort**: Low/Medium/High
-
-### Medium Priority
-
-1. **[Recommendation 2]**
-   - **Current state**: [Problem description]
-   - **Proposed change**: [What to do]
-   - **Expected impact**: [Improvement estimate]
-   - **Effort**: Low/Medium/High
-
-### Low Priority / Future
-
-- [Quick list of nice-to-have improvements]
+**理由**：[为什么做此决策]
 
 ---
 
-## Next Month Goals
+## 建议
 
-1. **[Goal 1]**: [Specific, measurable target]
-2. **[Goal 2]**: [Specific, measurable target]
-3. **[Goal 3]**: [Specific, measurable target]
+### 高优先级
+
+1. **[建议 1]**
+   - **当前状态**：[问题描述]
+   - **建议变更**：[要做什么]
+   - **预期影响**：[改进估计]
+   - **工作量**：低/中/高
+
+### 中优先级
+
+1. **[建议 2]**
+   - **当前状态**：[问题描述]
+   - **建议变更**：[要做什么]
+   - **预期影响**：[改进估计]
+   - **工作量**：低/中/高
+
+### 低优先级 / 未来
+
+- [锦上添花改进的快速列表]
 
 ---
 
-## Appendix
+## 下月目标
 
-### Methodology
+1. **[目标 1]**：[具体的、可衡量的目标]
+2. **[目标 2]**：[具体的、可衡量的目标]
+3. **[目标 3]**：[具体的、可衡量的目标]
 
-**Data sources**:
-- `.claude/logs/analytics-metrics.jsonl` (automated metrics)
-- User feedback forms
-- Manual query reviews
+---
 
-**Analysis tools**:
-- `eval/metrics.sh` for automated reporting
-- SQL queries for deep-dive analysis
-- Manual review of safety failures
+## 附录
 
-**Limitations**:
-- [Any known gaps in data collection]
-- [Potential biases in analysis]
+### 方法论
 
-### Raw Data
+**数据来源**：
+- `.claude/logs/analytics-metrics.jsonl`（自动化指标）
+- 用户反馈表单
+- 手动查询评审
 
-**Export**: `analytics-metrics-[YYYY-MM].json`
+**分析工具**：
+- `eval/metrics.sh` 用于自动化报告
+- SQL 查询用于深度分析
+- 安全失败的手动评审
 
-**Query**:
+**局限性**：
+- [数据收集中任何已知的缺口]
+- [分析中的潜在偏差]
+
+### 原始数据
+
+**导出**：`analytics-metrics-[YYYY-MM].json`
+
+**查询**：
 ```bash
 jq 'select(.timestamp >= "2026-MM-01" and .timestamp < "2026-MM+1-01")' \
   .claude/logs/analytics-metrics.jsonl > analytics-metrics-2026-MM.json
@@ -258,6 +259,6 @@ jq 'select(.timestamp >= "2026-MM-01" and .timestamp < "2026-MM+1-01")' \
 
 ---
 
-**Previous Reports**: [Link to folder with past reports]
+**历史报告**：[指向过去报告文件夹的链接]
 
-**Questions?** Contact [evaluation team email/slack]
+**有问题？** 联系 [评估团队邮箱/slack]

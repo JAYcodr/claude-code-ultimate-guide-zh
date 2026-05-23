@@ -1,216 +1,216 @@
 ---
 name: qa
-description: Systematic QA testing of a web application — diff-aware, tiered, with fix-and-verify loop
+description: Web 应用的系统化 QA 测试——感知 diff、分层、含修复与验证循环
 argument-hint: "[path] [--thorough]"
 effort: high
 disable-model-invocation: true
 ---
 
-# QA — Web Application Testing
+# QA — Web 应用测试
 
-Systematically test a web application for bugs, then fix and verify each issue found.
+系统化测试 Web 应用的 bug，然后修复并验证每个发现的问题。
 
-Three tiers of thoroughness. Diff-aware scoping — tests what actually changed.
+三个详尽层级。感知 diff 的范围——仅测试实际更改的内容。
 
-## Instructions
+## 使用说明
 
-### Step 1: Scope Detection
+### 步骤 1：范围检测
 
-Determine which pages and features to test.
+确定要测试的页面和功能。
 
-**Diff-aware mode (default):** Identify affected routes from the current branch changes.
+**Diff 感知模式（默认）：** 从当前分支更改中识别受影响的路由。
 
 ```bash
-# Files changed in this branch
+# 此分支中更改的文件
 git diff --name-only origin/main...HEAD 2>/dev/null || git diff --name-only HEAD~5
 
-# Identify affected routes from changed files
-# e.g., changes in src/pages/dashboard/ → test /dashboard
-# changes in api/payments/ → test payment flows
+# 从更改的文件中识别受影响的路由
+# 例如：src/pages/dashboard/ 中的更改 → 测试 /dashboard
+# api/payments/ 中的更改 → 测试支付流程
 ```
 
-**Full mode** (`/qa --full`): Test the entire application, starting with critical paths.
+**完整模式**（`/qa --full`）：测试整个应用，从关键路径开始。
 
-**Explicit scope** (`/qa /dashboard /settings`): Test specified pages only.
+**明确范围**（`/qa /dashboard /settings`）：仅测试指定页面。
 
 ---
 
-### Step 2: Tier Selection
+### 步骤 2：层级选择
 
-| Tier | Flag | Scope | Use when |
+| 层级 | 标志 | 范围 | 何时使用 |
 |------|------|-------|----------|
-| Quick | `--quick` | Critical + High severity only | Pre-commit fast check |
-| Standard | *(default)* | + Medium severity | Pre-PR review |
-| Exhaustive | `--exhaustive` | + Low + cosmetic | Release candidate |
+| 快速 | `--quick` | 仅关键 + 高严重性 | 提交前的快速检查 |
+| 标准 | *（默认）* | + 中严重性 | PR 前审查 |
+| 详尽 | `--exhaustive` | + 低 + 外观问题 | 发布候选项 |
 
 ---
 
-### Step 3: Clean Working Tree
+### 步骤 3：干净的工作树
 
-Before testing, ensure you can commit fixes atomically.
+测试前，确保可以原子化提交修复。
 
 ```bash
 git status --short
 ```
 
-If there are uncommitted changes: stash them first (`git stash`), or commit them. Testing on a dirty tree makes it impossible to isolate fix commits.
+如果有未提交的更改：先 stash（`git stash`）或提交它们。在脏树上测试会使隔离修复提交变得不可能。
 
 ---
 
-### Step 4: Testing
+### 步骤 4：测试
 
-For each page in scope, systematically check all categories relevant to the selected tier.
+对范围内的每个页面，系统化地检查所选层级的所有相关类别。
 
-#### How to test
+#### 如何测试
 
-Use whatever browser tooling is available:
-- **MCP browser tools** (if configured) — automated navigation and screenshots
-- **Playwright/Puppeteer** (if in the project) — scripted test runs
-- **Manual testing** — navigate to the URL, document findings systematically
+使用任何可用的浏览器工具：
+- **MCP 浏览器工具**（如已配置）——自动导航和截图
+- **Playwright/Puppeteer**（如项目中存在）——脚本化测试运行
+- **手动测试**——导航到 URL，系统化记录发现
 
-For each page, cover:
+对每个页面，覆盖：
 
 ```
-1. Load the page — does it render without errors?
-2. Check console — any uncaught errors, failed requests, warnings?
-3. Test primary user action — the core thing this page is for
-4. Test empty state — what shows when there's no data?
-5. Test error state — what happens when an action fails?
-6. Test on narrow viewport — does it break below 375px?
+1. 加载页面——是否无错误渲染？
+2. 检查控制台——是否有未捕获的错误、失败的请求、警告？
+3. 测试主要用户操作——此页面最核心的用途
+4. 测试空状态——无数据时显示什么？
+5. 测试错误状态——操作失败时发生什么？
+6. 测试窄视口——在 375px 以下是否破坏？
 ```
 
-#### Issue taxonomy
+#### 问题分类
 
-**Visual** (layout, spacing, typography, colors, responsiveness)
-**Functional** (broken interactions, missing features, wrong behavior)
-**UX** (confusing flows, missing feedback, poor error messages)
-**Content** (typos, wrong copy, placeholder text in production)
-**Performance** (slow page loads, layout shifts, unoptimized images)
-**Console** (JavaScript errors, failed network requests, deprecation warnings)
-**Accessibility** (missing alt text, keyboard traps, missing labels, contrast)
+**视觉**（布局、间距、排版、颜色、响应式）
+**功能**（交互失效、缺少功能、行为错误）
+**UX**（流程混乱、缺少反馈、错误消息不佳）
+**内容**（拼写错误、文案错误、生产环境中出现占位文本）
+**性能**（页面加载慢、布局偏移、未优化的图片）
+**控制台**（JavaScript 错误、网络请求失败、弃用警告）
+**无障碍**（缺少 alt 文本、键盘陷阱、缺少标签、对比度）
 
-#### Severity levels
+#### 严重性级别
 
-| Severity | Criteria | Examples |
+| 严重性 | 标准 | 示例 |
 |----------|----------|---------|
-| **Critical** | Feature completely broken or data loss risk | 500 error, blank page, form that loses data |
-| **High** | Major feature degraded, significant UX harm | Wrong data shown, broken primary CTA, mobile layout broken |
-| **Medium** | Minor feature issue, noticeable but workaround exists | Visual glitch, confusing empty state, slow load |
-| **Low** | Cosmetic, barely noticeable | Minor spacing, minor copy issue, low-severity console warning |
+| **关键** | 功能完全崩溃或数据丢失风险 | 500 错误、空白页面、丢失数据的表单 |
+| **高** | 主要功能降级、显著的 UX 损害 | 显示错误数据、主要 CTA 失效、移动版布局损坏 |
+| **中** | 次要功能问题、明显但有变通方案 | 视觉瑕疵、令人困惑的空状态、加载慢 |
+| **低** | 外观问题、几乎不可察觉 | 微小间距、微小文案问题、低严重性控制台警告 |
 
-**Quick tier**: Critical + High only
-**Standard tier**: Critical + High + Medium
-**Exhaustive tier**: All severities
+**快速层级**：仅关键 + 高
+**标准层级**：关键 + 高 + 中
+**详尽层级**：所有严重性
 
 ---
 
-### Step 5: Document Findings
+### 步骤 5：记录发现
 
-Track each issue with a unique ID.
+为每个问题分配唯一 ID 进行跟踪。
 
 ```
 ISSUE-001
-  Severity:  [Critical / High / Medium / Low]
-  Category:  [Visual / Functional / UX / Content / Performance / Console / Accessibility]
-  Page:      [URL or route]
-  Finding:   [What is wrong — specific, not vague]
-  Steps:     [How to reproduce]
-  Expected:  [What should happen]
-  Evidence:  [Screenshot path or console output]
+  严重性：  [关键 / 高 / 中 / 低]
+  类别：    [视觉 / 功能 / UX / 内容 / 性能 / 控制台 / 无障碍]
+  页面：    [URL 或路由]
+  发现：    [出了什么问题——具体不模糊]
+  步骤：    [如何复现]
+  预期：    [应该发生什么]
+  证据：    [截图路径或控制台输出]
 ```
 
 ---
 
-### Step 6: Fix and Verify Loop
+### 步骤 6：修复与验证循环
 
-For each Critical and High issue (and Medium/Low in Standard/Exhaustive tiers):
+对每个关键和高优先级问题（以及标准/详尽层级中的中/低问题）：
 
-1. **Fix the issue** in source code
-2. **Commit atomically** — one commit per fix
+1. **修复问题**（源代码中）
+2. **原子化提交**——每次修复一个提交
 
 ```bash
 git add <changed-files>
-git commit -m "fix: <brief description of what was fixed>"
+git commit -m "fix：<修复内容的简要描述>"
 ```
 
-3. **Re-verify** — navigate to the same page and confirm the issue is resolved
-4. **Update the issue status** to FIXED with the commit hash
+3. **重新验证**——导航到同一页面，确认问题已解决
+4. **将问题状态更新**为 FIXED，附带 commit hash
 
-Do not batch multiple fixes in one commit. Each fix must be individually revertable.
+不要将多个修复批处理到一次提交中。每个修复必须可单独还原。
 
 ---
 
-## Output Format
+## 输出格式
 
 ```
-QA REPORT
+QA 报告
 ════════════════════════════════════════
-Branch:    [current branch]
-Scope:     [pages tested]
-Tier:      [Quick / Standard / Exhaustive]
-Duration:  [time taken]
+分支：    [当前分支]
+范围：    [测试的页面]
+层级：    [快速 / 标准 / 详尽]
+时长：    [花费的时间]
 
-HEALTH SCORES
+健康评分
 ─────────────────────────────────────────
-  Visual        [PASS / WARN / FAIL]  [N issues]
-  Functional    [PASS / WARN / FAIL]  [N issues]
-  UX            [PASS / WARN / FAIL]  [N issues]
-  Content       [PASS / WARN / FAIL]  [N issues]
-  Performance   [PASS / WARN / FAIL]  [N issues]
-  Console       [PASS / WARN / FAIL]  [N issues]
-  Accessibility [PASS / WARN / FAIL]  [N issues]
+  视觉        [通过 / 警告 / 失败]  [N 个问题]
+  功能        [通过 / 警告 / 失败]  [N 个问题]
+  UX          [通过 / 警告 / 失败]  [N 个问题]
+  内容        [通过 / 警告 / 失败]  [N 个问题]
+  性能        [通过 / 警告 / 失败]  [N 个问题]
+  控制台      [通过 / 警告 / 失败]  [N 个问题]
+  无障碍      [通过 / 警告 / 失败]  [N 个问题]
 
-ISSUES FOUND: N (X critical, Y high, Z medium, W low)
-ISSUES FIXED: N
-ISSUES REMAINING: N
+发现的问题：N（X 关键、Y 高、Z 中、W 低）
+已修复的问题：N
+剩余问题：N
 
 ─────────────────────────────────────────
-ISSUE-001 [FIXED | OPEN]
-  Severity:  High
-  Category:  Functional
-  Page:      /dashboard
-  Finding:   Save button does nothing when form has validation errors — no feedback shown
-  Fix:       Added error toast notification (commit abc1234)
+ISSUE-001 [已修复 / 待处理]
+  严重性：  高
+  类别：    功能
+  页面：    /dashboard
+  发现：    表单有验证错误时保存按钮无反应——无反馈显示
+  修复：    添加了错误提示通知（commit abc1234）
 
-ISSUE-002 [OPEN]
-  Severity:  Medium
-  Category:  Visual
-  Page:      /settings
-  Finding:   Input fields overflow container below 375px viewport
+ISSUE-002 [待处理]
+  严重性：  中
+  类别：    视觉
+  页面：    /settings
+  发现：    输入字段在 375px 以下视口溢出容器
   ...
 
 ─────────────────────────────────────────
-SHIP READINESS
-  Critical issues:  [0 remaining / N remaining — BLOCKER]
-  High issues:      [0 remaining / N remaining — CONCERN]
+发布就绪度
+  关键问题：[剩余 0 个 / 剩余 N 个 — 阻塞项]
+  高问题：  [剩余 0 个 / 剩余 N 个 — 关注项]
 
-VERDICT: [READY TO SHIP / NOT READY — address critical and high issues first]
+裁决：[可以发布 / 不可发布——先解决关键和高优先级问题]
 ════════════════════════════════════════
 ```
 
-## Usage
+## 用法
 
 ```
-/qa                          # Standard tier, diff-aware scope
-/qa --quick                  # Quick tier (critical + high only)
-/qa --exhaustive             # Full coverage including cosmetic issues
-/qa --full                   # Standard tier, test entire app (not just diff)
-/qa /dashboard /settings     # Test specific pages
-/qa https://staging.app.com  # Test a specific URL
+/qa                          # 标准层级，diff 感知范围
+/qa --quick                  # 快速层级（仅关键 + 高）
+/qa --exhaustive             # 全面覆盖，包括外观问题
+/qa --full                   # 标准层级，测试整个应用（不仅 diff）
+/qa /dashboard /settings     # 测试特定页面
+/qa https://staging.app.com  # 测试特定 URL
 ```
 
-## Tips
+## 提示
 
-1. **Run after every significant feature** — not just before shipping
-2. **Diff-aware first** — test what changed before expanding scope
-3. **Fix critical and high before continuing** — don't pile up unfixed issues
-4. **Screenshot evidence** — always capture before/after for critical fixes
-5. **Check mobile** — most visual bugs appear at 375px width
+1. **每个重要功能后运行**——不仅是在发布前
+2. **先 diff 感知**——先测试更改的部分，再扩展范围
+3. **先修复关键和高优先级再继续**——不要堆积未修复的问题
+4. **截图证据**——关键修复前后始终截图
+5. **检查移动端**——大多数视觉 bug 出现在 375px 宽度
 
-## Related Commands
+## 相关命令
 
-- `/investigate` — root-cause analysis when QA finds a complex bug
-- `/ship` — pre-deploy checklist (run after QA passes)
-- `/canary` — post-deploy monitoring (run after shipping)
+- `/investigate` — QA 发现复杂 bug 时进行根因分析
+- `/ship` — 部署前检查清单（QA 通过后运行）
+- `/canary` — 部署后监控（发布后运行）
 
 $ARGUMENTS

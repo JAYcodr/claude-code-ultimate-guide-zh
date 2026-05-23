@@ -1,92 +1,92 @@
 ---
 name: generate-tests
-description: Generate comprehensive tests for specified code
-argument-hint: "<file_or_module> [--framework jest|vitest|pytest]"
+description: 为指定代码生成全面的测试
+argument-hint: "<文件或模块> [--framework jest|vitest|pytest]"
 effort: medium
 disable-model-invocation: true
 ---
 
-# Generate Tests
+# 生成测试
 
-Generate comprehensive tests for specified code.
+为指定代码生成全面的测试。
 
-## Instructions
+## 使用说明
 
-1. Read the target file(s)
-2. Identify testable units (functions, classes, methods)
-3. Generate tests following project conventions
-4. Ensure high coverage of edge cases
+1. 读取目标文件
+2. 识别可测试单元（函数、类、方法）
+3. 按照项目约定生成测试
+4. 确保边缘用例的高覆盖率
 
-## Test Generation Process
+## 测试生成流程
 
-### 1. Analyze Target
-- Identify public interfaces
-- Understand dependencies
-- Note edge cases and boundaries
+### 1. 分析目标
+- 识别公共接口
+- 理解依赖关系
+- 注意边缘用例和边界
 
-### 2. Detect Test Framework
-Check for:
+### 2. 检测测试框架
+检查是否存在：
 - `jest.config.js` → Jest
 - `vitest.config.ts` → Vitest
 - `pytest.ini` → pytest
 - `mocha` in package.json → Mocha
 
-### 3. Generate Tests
-Follow the detected framework conventions.
+### 3. 生成测试
+遵循检测到的框架约定。
 
-## Test Categories
+## 测试类别
 
-### Happy Path
-Normal expected behavior with valid input.
+### 正常路径
+有效输入下的预期行为。
 
-### Edge Cases
-- Empty inputs
-- Null/undefined values
-- Boundary values (0, -1, MAX_INT)
-- Single item vs multiple items
+### 边缘用例
+- 空输入
+- 空/未定义值
+- 边界值（0、-1、MAX_INT）
+- 单个项 vs 多个项
 
-### Error Cases
-- Invalid input types
-- Missing required parameters
-- Network/IO failures
-- Timeout scenarios
+### 错误用例
+- 无效输入类型
+- 缺少必需参数
+- 网络/IO 失败
+- 超时场景
 
-### Integration Points
-- Database interactions
-- External API calls
-- File system operations
+### 集成点
+- 数据库交互
+- 外部 API 调用
+- 文件系统操作
 
-## Output Format
+## 输出格式
 
 ```typescript
-describe('[ComponentName]', () => {
-  describe('[methodName]', () => {
-    // Happy path
-    it('should [expected behavior] when [condition]', () => {
+describe('[组件名]', () => {
+  describe('[方法名]', () => {
+    // 正常路径
+    it('当 [条件] 时应 [预期行为]', () => {
       // Arrange
       // Act
       // Assert
     });
 
-    // Edge cases
-    it('should handle empty input', () => {});
-    it('should handle null values', () => {});
+    // 边缘用例
+    it('应处理空输入', () => {});
+    it('应处理空值', () => {});
 
-    // Error cases
-    it('should throw when [invalid condition]', () => {});
+    // 错误用例
+    it('当 [无效条件] 时应抛出异常', () => {});
   });
 });
 ```
 
-## Conventions
+## 约定
 
-- One assertion per test (when practical)
-- Descriptive test names
-- AAA pattern (Arrange-Act-Assert)
-- No test interdependence
-- Mock external dependencies
+- 每个测试一个断言（可行时）
+- 描述性测试名称
+- AAA 模式（Arrange-Act-Assert）
+- 测试间无依赖
+- 模拟外部依赖
 
-## Usage
+## 用法
 
 ```
 /generate-tests src/utils/calculator.ts

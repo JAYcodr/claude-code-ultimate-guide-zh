@@ -1,138 +1,139 @@
+<!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
 ---
 name: mcp-integration-reference
-description: "Template for skills that integrate with an MCP server. Demonstrates the reference file pattern: Claude reads a domain-specific MCP cheatsheet before making any tool calls, reducing query failures caused by server-specific gotchas. Fork this skill and replace the Sentry example with your target MCP."
+description: "与 MCP 服务器集成的技能模板。演示了参考文件模式：Claude 在进行任何工具调用前读取领域特定的 MCP 速查表，减少因服务器特定陷阱导致的查询失败。复刻此技能并将 Sentry 示例替换为你的目标 MCP。"
 allowed-tools: Read mcp__<your-mcp>__*
 effort: high
 metadata:
   version: 1.0.0
 ---
 
-# MCP Integration Reference Pattern
+# MCP 集成参考模式
 
-> This is a template skill. It shows how to structure a skill that wraps an MCP server. Replace `sentry` with your MCP server name and adapt the reference file at `references/sentry-mcp.md`.
+> 这是一个模板技能。它展示了如何构建一个包装 MCP 服务器的技能。将 `sentry` 替换为你的 MCP 服务器名称，并调整 `references/sentry-mcp.md` 中的参考文件。
 
-## What This Pattern Solves
+## 此模式解决的问题
 
-When a skill calls an MCP server without prior context, Claude guesses at the query syntax. This works for simple calls but breaks on anything with non-obvious behavior: pagination quirks, required parameter combinations, rate limits, or subtle format restrictions.
+当技能在没有事先上下文的情况下调用 MCP 服务器时，Claude 会猜测查询语法。这对于简单调用有效，但在任何具有不直观行为的地方会出错：分页细节、必需参数组合、速率限制或微妙的格式限制。
 
-The fix: a `references/<mcp-name>.md` file that captures all the gotchas. The skill reads this file before making any MCP call. Zero guessing.
+解决方法：一个 `references/<mcp-name>.md` 文件捕获所有陷阱。技能在进行任何 MCP 调用前读取此文件。零猜测。
 
-Three types of content go in the reference file:
-1. Parameter semantics that differ from what the tool name implies
-2. Known error patterns and their root causes
-3. Working query examples (copy-paste, no thinking required)
+参考文件中包含三种类型的内容：
+1. 与工具名称暗示不同的参数语义
+2. 已知错误模式及其根本原因
+3. 可用的查询示例（复制粘贴，无需思考）
 
 ---
 
-## Step 1: Read the MCP Reference File
+## 步骤 1：读取 MCP 参考文件
 
-**Before doing anything else**, read the full MCP reference:
+**在做任何其他事之前**，先读取完整的 MCP 参考：
 
 ```
 Read: references/sentry-mcp.md
 ```
 
-This file contains query syntax, known gotchas, and working examples for the Sentry MCP. Do not skip this step.
+此文件包含 Sentry MCP 的查询语法、已知陷阱和可用示例。不要跳过此步骤。
 
 ---
 
-## Step 2: Gather Scope from User
+## 步骤 2：从用户处收集范围
 
-Ask the user:
+询问用户：
 
-- **Time range**: Last 24h? 7 days? Custom range?
-- **Environments**: `production`, `staging`, or both?
-- **Projects**: All projects or specific ones? (Default: all)
+- **时间范围**：最近 24 小时？7 天？自定义范围？
+- **环境**：`production`、`staging` 还是两者？
+- **项目**：所有项目还是特定项目？（默认：所有）
 
-If the user says "just run it with defaults", use:
-- Time range: last 72 hours
-- Environment: `production` only
-- Projects: all
-
----
-
-## Step 3: Fetch Error Data
-
-Using the tool knowledge from Step 1, fetch:
-
-1. **Issue list**: Active unresolved issues, ordered by frequency
-2. **Event details**: Full stack traces for the top 5 issues by event count
-
-Cap results at 50 issues. If more exist, note the count and focus on the highest-frequency items.
+如果用户说"使用默认值运行"，则使用：
+- 时间范围：最近 72 小时
+- 环境：仅 `production`
+- 项目：全部
 
 ---
 
-## Step 4: Group and Analyze
+## 步骤 3：获取错误数据
 
-Group issues by root cause, not by error message. Two issues with different messages can share the same underlying cause (shared code path, same external dependency, same config).
+使用步骤 1 中的工具知识，获取：
 
-For each group:
-- Count of issues in the group
-- Earliest first-seen date
-- Affected users count (if available)
-- Most likely root cause (one sentence, evidence-based)
-- Relevant file paths from the stack trace
+1. **问题列表**：活跃的未解决问题，按频率排序
+2. **事件详情**：按事件数排序的前 5 个问题的完整堆栈跟踪
+
+结果上限为 50 个问题。如果存在更多，记录数量并专注于最高频的项目。
 
 ---
 
-## Step 5: Generate Report
+## 步骤 4：分组和分析
 
-Output a markdown report with this structure:
+按根本原因分组问题，而非按错误消息。两个具有不同消息的问题可能共享相同的根本原因（共享代码路径、相同的外部依赖、相同的配置）。
+
+对每组：
+- 组中的问题数
+- 最早首次出现日期
+- 受影响的用户数（如有）
+- 最可能的根本原因（一句话，基于证据）
+- 来自堆栈跟踪的相关文件路径
+
+---
+
+## 步骤 5：生成报告
+
+输出具有此结构的 markdown 报告：
 
 ```markdown
-# Error Report: [Project or Scope]
+# 错误报告：[项目或范围]
 
-**Period**: [start] to [end]
-**Environment**: [env]
-**Total active issues**: [N]
+**期间**：[开始] 至 [结束]
+**环境**：[环境]
+**总活跃问题**：[N]
 
-## Summary
+## 总结
 
-[2-3 sentences: what is the overall health picture?]
+[2-3 句：整体健康情况如何？]
 
-## Issue Groups
+## 问题组
 
-### Group 1: [Root Cause Label]
+### 组 1：[根本原因标签]
 
-| Attribute      | Value                    |
+| 属性           | 值                     |
 |----------------|--------------------------|
-| Issues         | N                        |
-| Total events   | N                        |
-| Affected users | N                        |
-| First seen     | YYYY-MM-DD               |
-| Key file       | path/to/file.py:line     |
+| 问题数         | N                        |
+| 总事件数       | N                        |
+| 受影响用户数   | N                        |
+| 首次出现       | YYYY-MM-DD               |
+| 关键文件       | path/to/file.py:line     |
 
-**Root cause**: [One paragraph. Specific, evidence-based. Point to file and line.]
+**根本原因**：[一段。具体、基于证据。指向文件和行号。]
 
-**Suggested investigation**: [One or two concrete next steps.]
+**建议调查**：[一两个具体的后续步骤。]
 
 ---
 
-[Repeat for each group]
+[对每组重复]
 
-## Out of Scope
+## 范围外
 
-[List issues explicitly excluded and why. Example: "404s on /static/ excluded - expected behavior for SPA asset versioning."]
+[明确列出排除的问题及原因。示例："排除 /static/ 上的 404 - SPA 资源版本控制的预期行为。"]
 ```
 
 ---
 
-## Scope Rules
+## 范围规则
 
-- This skill detects and describes issues. It does not modify code or create tickets.
-- If an issue is ambiguous, flag it as "needs investigation" rather than guessing.
-- Do not include informational logs or warnings unless they correlate directly with errors.
+- 此技能检测和描述问题。它不修改代码或创建票据。
+- 如果问题不明确，标记为"需要调查"而非猜测。
+- 不要包含信息性日志或警告，除非它们直接与错误相关。
 
 ---
 
-## Adapting This Template
+## 适配此模板
 
-To fork this skill for a different MCP:
+要为不同的 MCP 复刻此技能：
 
-1. Copy this directory: `cp -r examples/skills/mcp-integration-reference examples/skills/<your-skill>/`
-2. Rename `references/sentry-mcp.md` to `references/<your-mcp>.md`
-3. Replace the reference file content with your MCP's gotchas
-4. Update `allowed-tools` in the frontmatter to match your MCP tool names
-5. Adjust the analysis steps to match your data domain
+1. 复制此目录：`cp -r examples/skills/mcp-integration-reference examples/skills/<your-skill>/`
+2. 将 `references/sentry-mcp.md` 重命名为 `references/<your-mcp>.md`
+3. 用你的 MCP 陷阱替换参考文件内容
+4. 更新 frontmatter 中的 `allowed-tools` 以匹配你的 MCP 工具名称
+5. 调整分析步骤以匹配你的数据领域
 
-The pattern works for any MCP that has non-obvious query behavior: Datadog, PagerDuty, Linear, Jira, Posthog, Mixpanel, etc.
+此模式适用于任何具有不直观查询行为的 MCP：Datadog、PagerDuty、Linear、Jira、Posthog、Mixpanel 等。

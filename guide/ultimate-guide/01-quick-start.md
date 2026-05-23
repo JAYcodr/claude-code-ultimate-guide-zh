@@ -102,7 +102,7 @@ Claude Code 有两种形态：CLI（本指南重点）和 Claude 桌面应用的
 
 **桌面版不支持的**（仅 CLI）：第三方 API 提供商、脚本标志（`--print`、`--output-format`）、`--allowedTools`/`--disallowedTools`、Agent 团队、`--verbose`、Linux。
 
-**共享配置**：桌面版和 CLI 读取相同的文件——CLAUDE.md、MCP 服务器（通过 `~/.claude.json` 或 `.mcp.json`）、钩子、技能和设置。你的 CLI 配置直接继承。
+**共享配置**：桌面版和 CLI 读取相同的文件——CLAUDE.md、MCP 服务器（通过 `~/.claude.json` 或 `.mcp.json`）、钩子、技能和设置。你的 CLI 配置会被直接继承。
 
 > **迁移小技巧**：在终端中运行 `/desktop` 可将活动中的 CLI 会话移至桌面应用。仅限 macOS 和 Windows。
 

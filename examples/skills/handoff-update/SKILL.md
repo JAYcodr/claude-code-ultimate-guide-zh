@@ -1,51 +1,51 @@
 ---
 name: handoff-update
-description: "Update an existing handoff document with current session progress. Applies section-specific merge rules: append-only for Work Done (never deletes history), replace for Status and Next Steps, merge for Files and Discoveries. Falls back to creating a new handoff if no source file is found."
-argument-hint: "[handoff-file-path]"
+description: "用当前会话进度更新现有的交接文档。应用章节特定的合并规则：已完成工作仅追加（从不删除历史）、状态和下一步替换、文件和发现合并。如果找不到源文件则回退创建新交接文档。"
+argument-hint: "[交接文档路径]"
 effort: low
 disable-model-invocation: true
 ---
 
-Update an existing handoff document with this session's progress.
+用当前会话的进度更新现有的交接文档。
 
-## Step 1: Resolve the Handoff File
+## 步骤 1：确认交接文件
 
-Determine which file to update, in this priority order:
+按优先级确定要更新的文件：
 
-1. If `$ARGUMENTS[0]` was provided, use it as the file path.
-2. If this session was started via `/handoff:resume`, look in conversation history for the argument that was passed to it.
-3. If neither is found, fall back to creating a new file: `claudedocs/handoffs/handoff_YYYYMMDD_HHMMSS.md`. Inform the user that no existing handoff was found.
+1. 如果提供了 `$ARGUMENTS[0]`，将其作为文件路径。
+2. 如果此会话是通过 `/handoff:resume` 启动的，在对话历史中查找传递给它的参数。
+3. 如果两者均未找到，回退创建新文件：`claudedocs/handoffs/handoff_YYYYMMDD_HHMMSS.md`。告知用户未找到已有交接文档。
 
-## Step 2: Read the Existing File
+## 步骤 2：读取现有文件
 
-Read the resolved file completely. Parse all sections as the baseline for the merge.
+完整读取已确认的文件。解析所有章节作为合并基准。
 
-## Step 3: Apply Section Merge Rules
+## 步骤 3：应用章节合并规则
 
-Rewrite the file with updated content using these merge rules:
+使用以下合并规则用更新内容重写文件：
 
-| Section | Rule | Notes |
+| 章节 | 规则 | 说明 |
 |---------|------|-------|
-| **Task** | Keep original | Update only if scope fundamentally changed |
-| **Scope** | Keep or refine | Narrow it if new understanding emerged |
-| **Files** | Merge | Add new files touched in this session. Keep originals. Use `path:line` format |
-| **Discoveries** | Append | Add new findings below existing list. Never remove prior discoveries |
-| **Work Done** | **Append only** | Add new completed items below existing list. Never remove entries. Include commit hashes |
-| **Status** | **Replace** | Write the current state: what is done now, what remains, test status |
-| **Next Steps** | **Replace** | Write the updated actionable checklist |
-| **Code** | Update | Replace with the most relevant snippets from the current state |
+| **任务** | 保留原文 | 仅当范围根本变化时更新 |
+| **范围** | 保留或细化 | 如果有新的理解可缩小范围 |
+| **文件** | 合并 | 添加本会话中新涉及的文件。保留原有。使用 `path:line` 格式 |
+| **发现** | 追加 | 在现有发现下方添加新发现。永不删除原有发现 |
+| **已完成工作** | **仅追加** | 在现有已完成项下方添加新完成的项。永不删除条目。包含 commit hash |
+| **状态** | **替换** | 写入当前状态：现在完成了什么、还有哪些待办、测试状态 |
+| **下一步** | **替换** | 写入更新后的可操作清单 |
+| **代码** | 更新 | 替换为当前状态最相关的代码片段 |
 
-**The append-only rule for Work Done is strict.** Even if a previous entry describes work that was later revised, keep it. The history is the record. Add a new entry describing the revision instead of removing the old one.
+**已完成工作的仅追加规则很严格。** 即使旧的条目描述了后来被修订的工作，也要保留它。历史就是记录。添加描述修订的新条目，而非删除旧条目。
 
-## Step 4: Confirm
+## 步骤 4：确认
 
-After saving, confirm:
-- File path updated
-- How many new Work Done items were added
-- The updated Status (one line)
-- How many Next Steps remain
+保存后，确认：
+- 更新的文件路径
+- 新增了多少条已完成工作
+- 更新后的状态（一行）
+- 还剩下多少条下一步
 
 ---
 
-> This command implements the Handoff Triad pattern documented in this guide's Session Handoff Pattern section.
-> Template inspired by [Packmind's handoff commands](https://github.com/packmind/packmind) (Apache 2.0).
+> 此命令实现了本指南会话交接模式章节中记录的 Handoff Triad 模式。
+> 模板灵感来自 [Packmind 的 handoff 命令](https://github.com/packmind/packmind)（Apache 2.0）。

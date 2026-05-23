@@ -1,173 +1,173 @@
 ---
 name: explain
-description: Explain code, concepts, or system behavior with adjustable depth levels
-argument-hint: <file_or_concept>
+description: 以可调节的深度级别解释代码、概念或系统行为
+argument-hint: <文件或概念>
 effort: low
 ---
 
-# Code Explainer
+# 代码解释器
 
-Explain code, concepts, or system behavior with adjustable depth levels.
+以可调节的深度级别解释代码、概念或系统行为。
 
-## Purpose
+## 目的
 
-Get clear explanations of:
-- How specific code works
-- Why certain patterns are used
-- What a system/module does
-- Architectural decisions and trade-offs
+获取清晰的解释：
+- 特定代码如何工作
+- 为什么使用某些模式
+- 系统/模块的功能
+- 架构决策和权衡
 
-## Instructions
+## 使用说明
 
-### Step 1: Determine Scope
+### 步骤 1：确定范围
 
-Identify what needs explanation:
-- **File**: Entire file structure and purpose
-- **Function/Method**: Specific implementation details
-- **Concept**: Architectural pattern or design decision
-- **Flow**: How data/control moves through the system
+确定需要解释的内容：
+- **文件**：整个文件的结构和目的
+- **函数/方法**：具体实现细节
+- **概念**：架构模式或设计决策
+- **流程**：数据/控制如何在系统中流转
 
-### Step 2: Assess Complexity
+### 步骤 2：评估复杂度
 
 ```
-Simple (1-2 min read)     → Quick summary, key points only
-Standard (3-5 min read)   → Purpose, how it works, key decisions
-Deep (10+ min read)       → Full breakdown, alternatives, trade-offs
+简单（1-2 分钟阅读）     → 快速摘要，仅关键点
+标准（3-5 分钟阅读）     → 目的、工作原理、关键决策
+深入（10+ 分钟阅读）     → 全面拆解、替代方案、权衡
 ```
 
-### Step 3: Gather Context
+### 步骤 3：收集上下文
 
 ```bash
-# For file explanations
-head -50 "$FILE"  # See imports and structure
+# 文件解释
+head -50 "$FILE"  # 查看导入和结构
 
-# For function explanations
+# 函数解释
 grep -A 30 "function $NAME\|def $NAME\|fn $NAME" "$FILE"
 
-# For module explanations
+# 模块解释
 ls -la "$DIR"
 cat "$DIR/index.ts" 2>/dev/null || cat "$DIR/__init__.py" 2>/dev/null
 ```
 
-### Step 4: Structure the Explanation
+### 步骤 4：组织解释结构
 
-## Output Format
+## 输出格式
 
 ---
 
-### 📖 Explanation: [Target]
+### 📖 解释：[目标]
 
-**Scope**: [file/function/concept/flow]
-**Depth**: [simple/standard/deep]
+**范围**：[文件/函数/概念/流程]
+**深度**：[简单/标准/深入]
 
-### What It Does
+### 功能说明
 
-[1-3 sentences describing the purpose]
+[1-3 句描述目的]
 
-### How It Works
+### 工作原理
 
-[Step-by-step breakdown appropriate to depth level]
+[按深度级别逐步拆解]
 
-### Key Decisions
+### 关键决策
 
-| Decision | Why | Alternative |
+| 决策 | 原因 | 替代方案 |
 |----------|-----|-------------|
-| [choice made] | [reasoning] | [what else could work] |
+| [所做选择] | [理由] | [其他可行方案] |
 
-### Example Usage
+### 使用示例
 
 ```typescript
-// How to use this correctly
+// 如何正确使用
 ```
 
-### Related Code
+### 相关代码
 
-- `path/to/related.ts` - [relationship]
-- `path/to/dependency.ts` - [relationship]
+- `path/to/related.ts` - [关系]
+- `path/to/dependency.ts` - [关系]
 
-### 💡 Learning Notes (if --learn flag)
+### 💡 学习笔记（带 --learn 标志时）
 
-[Additional context for understanding the broader pattern]
+[理解更广泛模式的额外上下文]
 
 ---
 
-## Depth Levels
+## 深度级别
 
-### Simple (`/explain --simple`)
+### 简单（`/explain --simple`）
 
 ```markdown
-**validateUser()** checks if the user object has required fields
-(email, password) and returns a boolean. Uses regex for email format.
+**validateUser()** 检查用户对象是否包含必填字段
+（email、password）并返回布尔值。使用正则验证邮箱格式。
 ```
 
-### Standard (`/explain` - default)
+### 标准（`/explain` - 默认）
 
 ```markdown
 **validateUser(user: User): ValidationResult**
 
-**Purpose**: Validates user input before database operations.
+**目的**：在数据库操作前验证用户输入。
 
-**Flow**:
-1. Check required fields exist (email, password)
-2. Validate email format with regex
-3. Check password meets requirements (8+ chars, special char)
-4. Return { valid: boolean, errors: string[] }
+**流程**：
+1. 检查必填字段是否存在（email、password）
+2. 用正则验证邮箱格式
+3. 检查密码符合要求（8+ 字符、特殊字符）
+4. 返回 { valid: boolean, errors: string[] }
 
-**Used by**: signup(), updateProfile()
+**被以下函数使用**：signup()、updateProfile()
 ```
 
-### Deep (`/explain --deep`)
+### 深入（`/explain --deep`）
 
 ```markdown
-[All of standard, plus:]
+[标准模式的所有内容，外加：]
 
-**Design Decisions**:
-- Returns ValidationResult instead of throwing to allow batch validation
-- Regex chosen over library for zero dependencies
-- Password rules configurable via config.ts
+**设计决策**：
+- 返回 ValidationResult 而非抛异常，以支持批量验证
+- 选择正则而非库，实现零依赖
+- 密码规则通过 config.ts 可配置
 
-**Trade-offs**:
-- Pro: Fast, no dependencies
-- Con: Regex email validation isn't RFC-compliant
+**权衡**：
+- 优点：快速，无依赖
+- 缺点：正则邮箱验证不符合 RFC
 
-**Alternatives Considered**:
-- Zod schema: More powerful but adds 50KB
-- Class-validator: Better for decorators but OOP-heavy
+**曾考虑的替代方案**：
+- Zod schema：更强大但增加 50KB
+- Class-validator：适合装饰器但偏 OOP
 ```
 
-## Usage Examples
+## 使用示例
 
-**Explain a file:**
+**解释文件：**
 ```
 /explain src/auth/middleware.ts
 ```
 
-**Explain a function:**
+**解释函数：**
 ```
-/explain the handleWebhook function in payments.ts
-```
-
-**Explain a concept:**
-```
-/explain how our event sourcing works
+/explain payments.ts 中的 handleWebhook 函数
 ```
 
-**Explain with specific depth:**
+**解释概念：**
 ```
-/explain --deep the authentication flow
-/explain --simple what useCallback does
-```
-
-**Explain for learning:**
-```
-/explain --learn the repository pattern used here
+/explain 我们的事件溯源如何工作
 ```
 
-## Tips
+**指定深度解释：**
+```
+/explain --deep 认证流程
+/explain --simple useCallback 的作用
+```
 
-1. **Be specific**: "Explain line 45-60" > "Explain this file"
-2. **State your level**: "I'm new to TypeScript" helps calibrate
-3. **Ask follow-ups**: "Why not use X instead?" deepens understanding
-4. **Request analogies**: "Explain like I'm familiar with Python but not TS"
+**为学习而解释：**
+```
+/explain --learn 这里使用的仓库模式
+```
+
+## 提示
+
+1. **具体化**："解释第 45-60 行" > "解释这个文件"
+2. **说明你的水平**："我是 TypeScript 新手" 有助于校准
+3. **追问跟进**："为什么不用 X？" 加深理解
+4. **请求类比**："我熟悉 Python 但不熟悉 TS" 帮助类比
 
 $ARGUMENTS

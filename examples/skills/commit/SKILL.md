@@ -1,6 +1,6 @@
 ---
 name: commit
-description: Generate a conventional commit message for staged changes
+description: 为暂存更改生成符合 Conventional Commit 规范的提交信息
 argument-hint: "[--amend] [message]"
 effort: low
 disable-model-invocation: true
@@ -8,40 +8,40 @@ disable-model-invocation: true
 
 # Conventional Commit
 
-Generate a conventional commit message for staged changes.
+为暂存更改生成符合 Conventional Commit 规范的提交信息。
 
-## Instructions
+## 使用说明
 
-1. Run `git diff --cached` to see staged changes
-2. Analyze the nature of changes
-3. Generate a commit message following the format below
+1. 运行 `git diff --cached` 查看暂存的更改
+2. 分析更改的性质
+3. 按以下格式生成提交信息
 
-## Commit Format
+## 提交信息格式
 
 ```
-<type>(<scope>): <subject>
+<类型>(<范围>): <标题>
 
-[optional body]
+[可选正文]
 
-[optional footer]
+[可选脚注]
 ```
 
-### Types
-- `feat`: New feature
-- `fix`: Bug fix
-- `docs`: Documentation only
-- `style`: Formatting, missing semicolons, etc.
-- `refactor`: Code change that neither fixes nor adds feature
-- `perf`: Performance improvement
-- `test`: Adding missing tests
-- `chore`: Maintenance tasks
+### 类型
+- `feat`：新功能
+- `fix`：Bug 修复
+- `docs`：仅文档
+- `style`：格式调整、缺少分号等
+- `refactor`：既不修复 bug 也不增加功能的代码更改
+- `perf`：性能改进
+- `test`：补充缺失的测试
+- `chore`：维护任务
 
-### Rules
-- Subject: imperative mood, no period, max 50 chars
-- Body: explain WHAT and WHY, not HOW
-- Footer: breaking changes, issue references
+### 规则
+- 标题：祈使句，无句号，最多 50 个字符
+- 正文：解释做了什么和为什么，而非怎么做
+- 脚注：破坏性变更、问题引用
 
-## Examples
+## 示例
 
 ```
 feat(auth): add password reset functionality
@@ -68,9 +68,8 @@ No functional changes. Improves testability and
 separates concerns for future discount feature.
 ```
 
-## Execution
+## 执行
 
-After analyzing staged changes, suggest a commit message.
-Ask for confirmation before executing `git commit -m "..."`.
+分析暂存的更改后，建议一条提交信息。在执行 `git commit -m "..."` 前要求确认。
 
 $ARGUMENTS
