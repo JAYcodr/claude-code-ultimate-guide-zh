@@ -1,4 +1,6 @@
-# Claude Code Ultimate Guide
+# Claude Code 终极指南（中文版）
+
+> 本仓库是 [FlorianBruniaux/claude-code-ultimate-guide](https://github.com/FlorianBruniaux/claude-code-ultimate-guide) 的中文翻译版。原版作者 [Florian Bruniaux](https://github.com/FlorianBruniaux)。
 
 <!-- Website CTA -->
 <p align="center">
@@ -8,34 +10,34 @@
 <!-- Stats -->
 <p align="center">
   <a href="https://github.com/FlorianBruniaux/claude-code-ultimate-guide/stargazers"><img src="https://img.shields.io/github/stars/FlorianBruniaux/claude-code-ultimate-guide?style=for-the-badge" alt="Stars"/></a>
-  <a href="./CHANGELOG.md"><img src="https://img.shields.io/badge/Updated-May_12,_2026_·_v3.40.0-brightgreen?style=for-the-badge" alt="Last Update"/></a>
-  <a href="./quiz/"><img src="https://img.shields.io/badge/Quiz-271_questions-orange?style=for-the-badge" alt="Quiz"/></a>
-  <a href="./examples/"><img src="https://img.shields.io/badge/Templates-181-green?style=for-the-badge" alt="Templates"/></a>
+  <a href="./CHANGELOG.md"><img src="https://img.shields.io/badge/Updated-May_12,_2026_·_v3.40.0-brightgreen?style=for-the-badge" alt="更新日期"/></a>
+  <a href="./quiz/"><img src="https://img.shields.io/badge/Quiz-271_questions-orange?style=for-the-badge" alt="测验"/></a>
+  <a href="./examples/"><img src="https://img.shields.io/badge/Templates-181-green?style=for-the-badge" alt="模板"/></a>
 </p>
 
 <!-- Features -->
 <p align="center">
-  <a href="./guide/security/security-hardening.md"><img src="https://img.shields.io/badge/🛡️_Threat_DB-28_vulnerabilities_·_655_malicious_skills-red?style=for-the-badge" alt="Threat Database"/></a>
-  <a href="./mcp-server/"><img src="https://img.shields.io/badge/MCP_Server-npx_ready-blueviolet?style=for-the-badge" alt="MCP Server"/></a>
+  <a href="./guide/security/security-hardening.md"><img src="https://img.shields.io/badge/🛡️_Threat_DB-28_vulnerabilities_·_655_malicious_skills-red?style=for-the-badge" alt="威胁数据库"/></a>
+  <a href="./mcp-server/"><img src="https://img.shields.io/badge/MCP_Server-npx_ready-blueviolet?style=for-the-badge" alt="MCP 服务器"/></a>
 </p>
 
 <!-- Downloads -->
 <p align="center">
-  <a href="https://github.com/FlorianBruniaux/claude-code-ultimate-guide/releases/latest/download/guide-export.pdf"><img src="https://img.shields.io/badge/📄_Full_Guide-Download_PDF-dc2626?style=for-the-badge" alt="Download PDF"/></a>
-  <a href="https://github.com/FlorianBruniaux/claude-code-ultimate-guide/releases/latest/download/guide-export.epub"><img src="https://img.shields.io/badge/📚_Full_Guide-Download_EPUB-7c3aed?style=for-the-badge" alt="Download EPUB"/></a>
+  <a href="https://github.com/FlorianBruniaux/claude-code-ultimate-guide/releases/latest/download/guide-export.pdf"><img src="https://img.shields.io/badge/📄_Full_Guide-Download_PDF-dc2626?style=for-the-badge" alt="下载 PDF"/></a>
+  <a href="https://github.com/FlorianBruniaux/claude-code-ultimate-guide/releases/latest/download/guide-export.epub"><img src="https://img.shields.io/badge/📚_Full_Guide-Download_EPUB-7c3aed?style=for-the-badge" alt="下载 EPUB"/></a>
 </p>
 
 <!-- Meta -->
 <p align="center">
-  <a href="https://github.com/hesreallyhim/awesome-claude-code"><img src="https://awesome.re/mentioned-badge-flat.svg" alt="Mentioned in Awesome Claude Code"/></a>
-  <a href="https://creativecommons.org/licenses/by-sa/4.0/"><img src="https://img.shields.io/badge/License-CC%20BY--SA%204.0-blue.svg" alt="License: CC BY-SA 4.0"/></a>
-  <a href="https://skills.palebluedot.live/owner/FlorianBruniaux"><img src="https://img.shields.io/badge/SkillHub-9_skills-8b5cf6.svg" alt="SkillHub Skills"/></a>
+  <a href="https://github.com/hesreallyhim/awesome-claude-code"><img src="https://awesome.re/mentioned-badge-flat.svg" alt="收录于 Awesome Claude Code"/></a>
+  <a href="https://creativecommons.org/licenses/by-sa/4.0/"><img src="https://img.shields.io/badge/License-CC%20BY--SA%204.0-blue.svg" alt="许可证: CC BY-SA 4.0"/></a>
+  <a href="https://skills.palebluedot.live/owner/FlorianBruniaux"><img src="https://img.shields.io/badge/SkillHub-9_skills-8b5cf6.svg" alt="SkillHub 技能"/></a>
   <a href="https://zread.ai/FlorianBruniaux/claude-code-ultimate-guide"><img src="https://img.shields.io/badge/Ask_Zread-_.svg?style=flat&color=00b0aa&labelColor=000000&logo=data%3Aimage%2Fsvg%2Bxml%3Bbase64%2CPHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTQuOTYxNTYgMS42MDAxSDIuMjQxNTZDMS44ODgxIDEuNjAwMSAxLjYwMTU2IDEuODg2NjQgMS42MDE1NiAyLjI0MDFWNC45NjAxQzEuNjAxNTYgNS4zMTM1NiAxLjg4ODEgNS42MDAxIDIuMjQxNTYgNS42MDAxSDQuOTYxNTZDNS4zMTUwMiA1LjYwMDEgNS42MDE1NiA1LjMxMzU2IDUuNjAxNTYgNC45NjAxVjIuMjQwMUM1LjYwMTU2IDEuODg2NjQgNS4zMTUwMiAxLjYwMDEgNC45NjE1NiAxLjYwMDFaIiBmaWxsPSIjZmZmIi8%2BCjxwYXRoIGQ9Ik00Ljk2MTU2IDEwLjM5OTlIMi4yNDE1NkMxLjg4ODEgMTAuMzk5OSAxLjYwMTU2IDEwLjY4NjQgMS42MDE1NiAxMS4wMzk5VjEzLjc1OTlDMS42MDE1NiAxNC4xMTM0IDEuODg4MSAxNC4zOTk5IDIuMjQxNTYgMTQuMzk5OUg0Ljk2MTU2QzUuMzE1MDIgMTQuMzk5OSA1LjYwMTU2IDE0LjExMzQgNS42MDE1NiAxMy43NTk5VjExLjAzOTlDNS42MDE1NiAxMC42ODY0IDUuMzE1MDIgMTAuMzk5OSA0Ljk2MTU2IDEwLjM5OTlaIiBmaWxsPSIjZmZmIi8%2BCjxwYXRoIGQ9Ik0xMy43NTg0IDEuNjAwMUgxMS4wMzg0QzEwLjY4NSAxLjYwMDEgMTAuMzk4NCAxLjg4NjY0IDEwLjM5ODQgMi4yNDAxVjQuOTYwMUMxMC4zOTg0IDUuMzEzNTYgMTAuNjg1IDUuNjAwMSAxMS4wMzg0IDUuNjAwMUgxMy43NTg0QzE0LjExMTkgNS42MDAxIDE0LjM5ODQgNS4zMTM1NiAxNC4zOTg0IDQuOTYwMVYyLjI0MDFDMTQuMzk4NCAxLjg4NjY0IDE0LjExMTkgMS42MDAxIDEzLjc1ODQgMS42MDAxWiIgZmlsbD0iI2ZmZiIvPgo8cGF0aCBkPSJNNCAxMkwxMiA0TDQgMTJaIiBmaWxsPSIjZmZmIi8%2BCjxwYXRoIGQ9Ik00IDEyTDEyIDQiIHN0cm9rZT0iI2ZmZiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8L3N2Zz4K&logoColor=ffffff" alt="Ask Zread"/></a>
 </p>
 
-> **6 months of daily practice** distilled into a guide that teaches you the WHY, not just the what. From core concepts to production security, you learn to design your own agentic workflows instead of copy-pasting configs.
+> **6 个月天天用 Claude Code 干活**攒出来的经验。不教你怎么配，教你怎么想——从核心概念到生产安全，学会自己设计工作流，而不是到处复制粘贴。
 
-> **If this guide helps you, [give it a star ⭐](https://github.com/FlorianBruniaux/claude-code-ultimate-guide/stargazers)** — it helps others discover it too.
+> **觉得有用？[点个 Star ⭐](https://github.com/FlorianBruniaux/claude-code-ultimate-guide/stargazers)**——帮更多人找到它。
 
 ---
 
@@ -45,109 +47,109 @@
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="https://starmapper.bruniaux.com/api/map-image/FlorianBruniaux/claude-code-ultimate-guide?theme=dark" />
     <source media="(prefers-color-scheme: light)" srcset="https://starmapper.bruniaux.com/api/map-image/FlorianBruniaux/claude-code-ultimate-guide?theme=light" />
-    <img alt="StarMapper — see who stars this repo on a world map" src="https://starmapper.bruniaux.com/api/map-image/FlorianBruniaux/claude-code-ultimate-guide" />
+    <img alt="StarMapper — 看看给这个仓库点过 Star 的人都在世界的哪个角落" src="https://starmapper.bruniaux.com/api/map-image/FlorianBruniaux/claude-code-ultimate-guide" />
   </picture>
 </a>
 
 ---
 
-## Choose Your Path
+## 按身份选路
 
-| Who you are | Your guide |
+| 你是谁 | 走哪条路 |
 |---|---|
-| 🏗️ **Tech Lead / Engineering Manager** | [Deploying Claude Code across your team →](docs/for-tech-leads.md) |
-| 📊 **CTO / Decision Maker** | [ROI, security posture, team adoption →](docs/for-cto.md) |
-| 💼 **CIO / CEO** | [Budget, risk, what to ask your tech team (3 min) →](docs/for-cio-ceo.md) |
-| 🎨 **Product Manager / Designer** | [Vibe coding, working with AI-assisted dev teams →](docs/for-product-managers.md) |
-| ✍️ **Writer / Ops / Manager** | [Claude Cowork Guide (separate repo) →](https://github.com/FlorianBruniaux/claude-cowork-guide) |
-| 👨‍💻 **Developer (all levels)** | You're in the right place — read on ↓ |
-| 🧭 **Career pivot / new AI role** | [AI Roles & Career Paths →](guide/roles/ai-roles.md) |
+| 🏗️ **技术负责人 / 工程经理** | [在团队里推广 Claude Code →](docs/for-tech-leads.md) |
+| 📊 **CTO / 决策者** | [ROI、安全评估、团队落地 →](docs/for-cto.md) |
+| 💼 **CIO / CEO** | [预算、风险、该问技术团队什么（3 分钟看完）→](docs/for-cio-ceo.md) |
+| 🎨 **产品经理 / 设计师** | [Vibe Coding、怎么跟 AI 辅助开发团队配合 →](docs/for-product-managers.md) |
+| ✍️ **写作者 / 运营 / 管理者** | [Claude Cowork 指南（另开仓库）→](https://github.com/FlorianBruniaux/claude-cowork-guide) |
+| 👨‍💻 **开发者（不分水平）** | 来对地方了，往下看 ↓ |
+| 🧭 **转行 / 新 AI 岗位** | [AI 相关岗位与职业路线 →](guide/roles/ai-roles.md) |
 
 ---
 
-## 🎯 What You'll Learn
+## 🎯 你能学到什么
 
-**This guide teaches you to think differently about AI-assisted development:**
-- ✅ **Understand trade-offs** — When to use agents vs skills vs commands (not just how to configure them)
-- ✅ **Build mental models** — How Claude Code works internally (architecture, context flow, tool orchestration)
-- ✅ **Visualize concepts** — 48 Mermaid diagrams covering model selection, master loop, memory hierarchy, multi-agent patterns, security threats, AI fluency paths
-- ✅ **Master methodologies** — TDD, SDD, BDD with AI collaboration (not just templates)
-- ✅ **Security mindset** — Threat modeling for AI systems (only guide with 28 CVEs + 655 malicious skills database)
-- ✅ **Test your knowledge** — 271-question quiz to validate understanding (no other resource offers this)
+**这本指南让你换种思路做 AI 辅助开发：**
+- ✅ **搞清取舍** — 什么时候用智能体（Agent）、什么时候用技能（Skill）、什么时候用命令（Command），不只是告诉你"怎么配"
+- ✅ **建立心智模型** — Claude Code 内部怎么运转（架构、上下文流转、工具调度）
+- ✅ **看图理解** — 48 张 Mermaid 图覆盖模型选择、主循环、记忆层级、多智能体模式、安全威胁、AI 使用熟练度
+- ✅ **掌握方法论** — TDD、SDD、BDD 跟 AI 配合（不只是套模板）
+- ✅ **安全思维** — 给 AI 系统做威胁建模（市面上唯一带 28 个 CVE + 655 个恶意技能数据库的指南）
+- ✅ **检验水平** — 271 道测验题帮你验证理解程度（别处找不到）
 
-**Outcome**: Go from copy-pasting configs to designing your own agentic workflows with confidence.
+**最终效果**：从复制粘贴配置，到有信心自己设计智能体工作流。
 
 ---
 
-## 📊 When to Use This Guide vs Everything-CC
+## 📊 本指南 vs Everything-CC 怎么选
 
-Both guides serve different needs. Choose based on your priority.
+两套指南各有所长，按你的优先级来选。
 
-| Your Goal | This Guide | everything-claude-code |
-|-----------|------------|------------------------|
-| **Understand why** patterns work | Deep explanations + architecture | Config-focused |
-| **Quick setup** for projects | Available but not the priority | Battle-tested production configs |
-| **Learn trade-offs** (agents vs skills) | Decision frameworks + comparisons | Lists patterns, no trade-off analysis |
-| **Security hardening** | Only threat database (28 CVEs) | Basic patterns only |
-| **Test understanding** | 271-question quiz | Not available |
-| **Methodologies** (TDD/SDD/BDD) | Full workflow guides | Not covered |
-| **Copy-paste ready** templates | 181 templates | 200+ templates |
+| 你在乎什么 | 本指南 | everything-claude-code |
+|---|---|---|
+| **理解模式为什么这么设计** | 深入解释 + 架构剖析 | 以配置为主 |
+| **快速搭项目** | 有但优先级不高 | 经过生产捶打的配置 |
+| **权衡分析（智能体 vs 技能）** | 决策框架 + 方案对比 | 只列模式，不谈取舍 |
+| **安全加固** | 唯一带威胁数据库（28 CVE） | 只覆盖基础模式 |
+| **检验理解深度** | 271 道测验题 | 没有 |
+| **方法论（TDD/SDD/BDD）** | 完整工作流程指南 | 没涉及 |
+| **拿来就能用的模板** | 181 个 | 200+ 个 |
 
-### Ecosystem Positioning
+### 生态位
 
 ```
-                    EDUCATIONAL DEPTH
+                     教育深度
                            ▲
                            │
-                           │  ★ This Guide
-                           │  Security + Methodologies + 24K+ lines
+                           │  ★ 本指南
+                           │  安全 + 方法论 + 24K+ 行
                            │
                            │  [Everything-You-Need-to-Know]
-                           │  SDLC/BMAD beginner
-  ─────────────────────────┼─────────────────────────► READY-TO-USE
+                           │  SDLC/BMAD 入门
+  ─────────────────────────┼─────────────────────────► 开箱即用
   [awesome-claude-code]    │            [everything-claude-code]
-  (discovery, curation)    │            (plugin, 1-cmd install)
+  （发现、精选）            │            （插件，一键安装）
                            │
                            │  [claude-code-studio]
-                           │  Context management
+                           │  上下文管理
                            │
-                      SPECIALIZED
+                       专业领域
 ```
 
-**5 unique gaps no competitor covers:**
-1. **Security-First** — 28 CVEs + 655 malicious skills tracked (no competitor has this depth)
-2. **Methodology Workflows** — TDD/SDD/BDD comparison + step-by-step guides
-3. **Comprehensive Reference** — 24K+ lines across 16 specialized guides (24× more reference material than everything-cc)
-4. **Educational Progression** — 271-question quiz + 7-module structured learning path (beginner → advanced)
-5. **Interactive Assessment** — `/self-assessment` skill with personalized learning path recommendations
+**5 个别人覆盖不了的点：**
+1. **安全第一** — 追踪 28 个 CVE + 655 个恶意技能（没人做这么深）
+2. **方法论工作流** — TDD/SDD/BDD 逐项对比 + 分步教程
+3. **参考资料量** — 16 篇专项指南，总共 24K+ 行（参考材料是 everything-cc 的 24 倍）
+4. **循序渐进** — 271 道测验 + 7 个模块的结构化学习路径（入门到进阶）
+5. **互动评估** — `/self-assessment` 技能可以给你推荐个性化学习路线
 
-**Recommended workflow:**
-1. Learn concepts here (mental models, trade-offs, security)
-2. Use battle-tested configs there (quick project setup)
-3. Return here for deep dives (when something doesn't work or to design custom workflows)
+**推荐用法：**
+1. 在本指南学概念（心智模型、取舍、安全）
+2. 在那边用经过验证的配置（快速搭项目）
+3. 遇到问题或要设计自定义工作流时，再回这里深入
 
-**Both resources are complementary, not competitive.** Use what fits your current need.
+**两个是互补关系，不是竞争关系。** 哪个顺手用哪个。
 
 ---
 
-## ⚡ Quick Start
+## ⚡ 快速开始
 
-**New to Claude Code?** → [**7-Module Learning Path**](./guide/learning-path/README.md) — 8-11 hours, beginner to advanced
+**第一次用 Claude Code？** → [**7 模块学习路径**](./guide/learning-path/README.md) — 8-11 小时，从入门到进阶
 
-**Quickest path**: [Cheat Sheet](./guide/cheatsheet.md) — 1 printable page with daily essentials
+**最快上手**：[速查表](./guide/cheatsheet.md) — 1 页纸，打印出来放桌上
 
-**Interactive onboarding** (no setup needed):
+**互动式入门**（零配置）：
 ```bash
 claude "Fetch and follow the onboarding instructions from: https://raw.githubusercontent.com/FlorianBruniaux/claude-code-ultimate-guide/main/tools/onboarding-prompt.md"
 ```
 
-**Browse directly**: [Full Guide](./guide/ultimate-guide.md) | [Learning Path](./guide/learning-path/) | [Visual Diagrams](./guide/diagrams/) | [Examples](./examples/) | [Quiz](./quiz/)
+**直接翻阅**：[完整指南](./guide/ultimate-guide.md) | [学习路径](./guide/learning-path/) | [图解](./guide/diagrams/) | [示例](./examples/) | [测验](./quiz/)
 
 ---
 
-## 🔌 MCP Server — Use the guide from any Claude Code session
+## 🔌 MCP 服务器 — 在任何 Claude Code 会话里查本指南
 
-No cloning needed. Add to `~/.claude.json` and ask questions directly from any session:
+不用克隆。加到 `~/.claude.json` 后，在任何会话里直接提问：
 
 ```json
 {
@@ -161,30 +163,30 @@ No cloning needed. Add to `~/.claude.json` and ask questions directly from any s
 }
 ```
 
-17 tools: `search_guide`, `read_section`, `get_cheatsheet`, `get_digest`, `get_example`, `list_examples`, `search_examples`, `get_release`, `get_changelog`, `compare_versions`, `list_topics`, `get_threat`, `list_threats`, plus `init_official_docs`, `refresh_official_docs`, `diff_official_docs`, `search_official_docs` (v1.1.0 — official Anthropic docs tracker) — plus 13 slash commands `/ccguide:*` and a Haiku agent.
+17 个工具：`search_guide`、`read_section`、`get_cheatsheet`、`get_digest`、`get_example`、`list_examples`、`search_examples`、`get_release`、`get_changelog`、`compare_versions`、`list_topics`、`get_threat`、`list_threats`，还有 `init_official_docs`、`refresh_official_docs`、`diff_official_docs`、`search_official_docs`（v1.1.0 —— 官方 Anthropic 文档追踪）—— 外加 13 个 slash 命令 `/ccguide:*` 和一个 Haiku 智能体。
 
-**Onboarding one-liner** (once MCP is configured):
+**一句搞定入门**（配好 MCP 后）：
 ```bash
 claude "Use the claude-code-guide MCP server. Activate the claude-code-expert prompt, then run a personalized onboarding: ask me 3 questions about my goal, experience level, and preferred tone — then build a custom learning path using search_guide and read_section to navigate the guide with live source links."
 ```
 
-→ [MCP Server README](./mcp-server/README.md)
+→ [MCP 服务器说明](./mcp-server/README.md)
 
 ---
 
-## 📁 Repository Structure
+## 📁 仓库结构
 
 ```mermaid
 graph LR
-    root[📦 Repository<br/>Root]
+    root[📦 仓库根目录]
 
-    root --> guide[📖 guide/<br/>24K+ lines]
-    root --> learning[🎓 learning-path/<br/>7 modules]
-    root --> examples[📋 examples/<br/>181 templates]
-    root --> quiz[🧠 quiz/<br/>271 questions]
-    root --> tools[🔧 tools/<br/>utils]
-    root --> machine[🤖 machine-readable/<br/>AI index]
-    root --> docs[📚 docs/<br/>151 evaluations]
+    root --> guide[📖 guide/<br/>24K+ 行]
+    root --> learning[🎓 learning-path/<br/>7 个模块]
+    root --> examples[📋 examples/<br/>181 个模板]
+    root --> quiz[🧠 quiz/<br/>271 题]
+    root --> tools[🔧 tools/<br/>工具]
+    root --> machine[🤖 machine-readable/<br/>AI 索引]
+    root --> docs[📚 docs/<br/>151 份评估]
 
     style root fill:#d35400,stroke:#e67e22,stroke-width:3px,color:#fff
     style guide fill:#2980b9,stroke:#3498db,stroke-width:2px,color:#fff
@@ -197,389 +199,389 @@ graph LR
 ```
 
 <details>
-<summary><strong>Detailed Structure (Text View)</strong></summary>
+<summary><strong>详细结构（文字版）</strong></summary>
 
 ```
 📦 claude-code-ultimate-guide/
 │
-├─ 📖 guide/              Core Documentation (24K+ lines)
-│  ├─ learning-path/      7-Module Learning Path (beginners → advanced)
-│  ├─ ultimate-guide.md   Complete reference, 10 sections
-│  ├─ cheatsheet.md       1-page printable
-│  ├─ architecture.md     How Claude Code works internally
-│  ├─ methodologies.md    TDD, SDD, BDD workflows
-│  ├─ diagrams/           48 Mermaid diagrams (10 thematic files)
-│  ├─ third-party-tools.md  Community tools (RTK, ccusage, Entire CLI)
-│  ├─ mcp-servers-ecosystem.md  Official & community MCP servers
-│  └─ workflows/          Step-by-step guides
+├─ 📖 guide/              核心文档（24K+ 行）
+│  ├─ learning-path/      7 模块学习路径（入门 → 进阶）
+│  ├─ ultimate-guide.md   完整参考，10 个章节
+│  ├─ cheatsheet.md       1 页可打印速查表
+│  ├─ architecture.md     Claude Code 内部工作原理
+│  ├─ methodologies.md    TDD、SDD、BDD 工作流
+│  ├─ diagrams/           48 张 Mermaid 图（10 个主题文件）
+│  ├─ third-party-tools.md  社区工具（RTK、ccusage、Entire CLI）
+│  ├─ mcp-servers-ecosystem.md  官方和社区 MCP 服务器
+│  └─ workflows/          分步操作指南
 │
-├─ 📋 examples/           181 Production Templates
-│  ├─ CATALOG.md          Auto-generated index by complexity, time, domain
-│  ├─ agents/             23 custom AI personas
-│  ├─ commands/           redirect stubs (migrated to skills/ in CC 2.1.3)
-│  ├─ hooks/              37 hooks (bash + PowerShell)
-│  ├─ skills/             64 skills (9 on SkillHub)
-│  └─ scripts/            Utility scripts (audit, search)
+├─ 📋 examples/           181 个生产级模板
+│  ├─ CATALOG.md          按复杂度、耗时、领域自动生成的索引
+│  ├─ agents/             23 个自定义 AI 角色
+│  ├─ commands/           重定向占位（CC 2.1.3 起已迁移到 skills/）
+│  ├─ hooks/              37 个钩子（bash + PowerShell）
+│  ├─ skills/             64 个技能（9 个已发布到 SkillHub）
+│  └─ scripts/            实用脚本（审计、搜索）
 │
-├─ 🧠 quiz/               271 Questions
-│  ├─ 9 categories        Setup, Agents, MCP, Trust, Advanced...
-│  ├─ 4 profiles          Junior, Senior, Power User, PM
-│  └─ Instant feedback    Doc links + score tracking
+├─ 🧠 quiz/               271 道题
+│  ├─ 9 个分类            安装、智能体、MCP、信任、高级模式……
+│  ├─ 4 种角色画像        初级、高级、深度用户、产品经理
+│  └─ 即时反馈            附带文档链接 + 得分追踪
 │
-├─ 🔧 tools/              Interactive Utilities
-│  ├─ onboarding-prompt   Personalized guided tour
-│  └─ audit-prompt        Setup audit & recommendations
+├─ 🔧 tools/              交互工具
+│  ├─ onboarding-prompt   个性化引导
+│  └─ audit-prompt        安装审计 + 建议
 │
-├─ 🤖 machine-readable/   AI-Optimized Index
-│  ├─ reference.yaml      Structured index (~2K tokens) — powers landing site CMD+K search
-│  ├─ claude-code-releases.yaml  Structured releases changelog
-│  └─ llms.txt            Standard LLM context file
+├─ 🤖 machine-readable/   AI 优化索引
+│  ├─ reference.yaml      结构化索引（~2K tokens）—— 落地页 CMD+K 搜索的数据源
+│  ├─ claude-code-releases.yaml  结构化发布日志
+│  └─ llms.txt            标准 LLM 上下文文件
 │
-└─ 📚 docs/               151 Resource Evaluations
-   └─ resource-evaluations/  5-point scoring, source attribution
+└─ 📚 docs/               151 份资源评估
+   └─ resource-evaluations/  5 分制评分 + 来源标注
 ```
 
 </details>
 
 ---
 
-## 🎯 What Makes This Guide Unique
+## 🎯 本指南有什么不一样
 
-### 🎓 Deep Understanding Over Configuration
+### 🎓 重理解，轻配置
 
-**Outcome**: Design your own workflows instead of copy-pasting blindly.
+**效果**：能自己设计工作流，而不是闭着眼复制粘贴。
 
-**We teach how Claude Code works and why patterns matter**:
-- [Architecture](./guide/core/architecture.md) — Internal mechanics (context flow, tool orchestration, memory management)
-- [Trade-offs](./guide/ultimate-guide.md#when-to-use-what) — Decision frameworks for agents vs skills vs commands
-- [Configuration Decision Guide](./guide/ultimate-guide.md#27-configuration-decision-guide) — Unified "which mechanism for what?" map across all 7 config layers
-- [Pitfalls](./guide/ultimate-guide.md#common-mistakes) — Common failure modes + prevention strategies
+**我们讲的是 Claude Code 怎么工作的、模式为什么有效**：
+- [架构](./guide/core/architecture.md) — 内部机制（上下文流转、工具编排、内存管理）
+- [如何取舍](./guide/ultimate-guide.md#when-to-use-what) — 智能体 vs 技能 vs 命令的决策框架
+- [配置决策指南](./guide/ultimate-guide.md#27-configuration-decision-guide) — 7 个配置层各管什么，一张图说清楚
+- [常见坑](./guide/ultimate-guide.md#common-mistakes) — 容易翻车的地方 + 怎么避开
 
-**What this means for you**: Troubleshoot issues independently, optimize for your specific use case, know when to deviate from patterns.
-
----
-
-### 🖼️ Visual Diagrams Series (48 Mermaid Diagrams)
-
-**Outcome**: Grasp complex concepts instantly through visual mental models.
-
-**48 interactive diagrams** across 10 thematic files — GitHub-native Mermaid rendering + ASCII fallback for every diagram:
-- [Foundations](./guide/diagrams/01-foundations.md) — 4-layer context model, 9-step pipeline, permission modes
-- [Architecture](./guide/diagrams/04-architecture-internals.md) — Master loop, tool categories, system prompt assembly
-- [Multi-Agent](./guide/diagrams/07-multi-agent-patterns.md) — 3 topologies, worktrees, dual-instance, horizontal scaling
-- [Security](./guide/diagrams/08-security-and-production.md) — 3-layer defense, MCP rug pull attack chain, verification paradox
-- [Cost & Models](./guide/diagrams/09-cost-and-optimization.md) — Model selection tree, token reduction pipeline
-
-[Browse all 48 diagrams →](./guide/diagrams/)
-
-**What this means for you**: Understand the master loop before reading 24K+ lines, see multi-agent topologies at a glance, share visual security threat models with your team.
+**对你有什么好处**：能自己排查问题、针对自己的场景做优化、知道什么时候可以不按套路来。
 
 ---
 
-### 🛡️ Security Threat Intelligence (Only Comprehensive Database)
+### 🖼️ 图解系列（48 张 Mermaid 图）
 
-**Outcome**: Protect production systems from AI-specific attacks.
+**效果**：看一眼图，复杂的逻辑立刻清晰。
 
-**Only guide with systematic threat tracking**:
-- **28 CVE-mapped vulnerabilities** — Prompt injection, data exfiltration, code injection
-- **655 malicious skills catalogued** — Unicode injection, hidden instructions, auto-execute patterns
-- **Production hardening workflows** — MCP vetting, injection defense, audit automation
+**10 个主题文件，48 张交互图**——GitHub 原生渲染，每张还配了文字版：
+- [基础](./guide/diagrams/01-foundations.md) — 4 层上下文模型、9 步流水线、权限模式
+- [架构](./guide/diagrams/04-architecture-internals.md) — 主循环、工具分类、系统提示词组装
+- [多智能体](./guide/diagrams/07-multi-agent-patterns.md) — 3 种拓扑、worktree、双实例、水平扩展
+- [安全](./guide/diagrams/08-security-and-production.md) — 3 层防御、MCP rug pull 攻击链路、验证悖论
+- [成本与模型](./guide/diagrams/09-cost-and-optimization.md) — 模型选择树、Token 缩减流水线
 
-[Threat Database →](./examples/skills/update-threat-db/threat-db.yaml) | [Security Guide →](./guide/security/security-hardening.md)
+[看全部 48 张 →](./guide/diagrams/)
 
-**What this means for you**: Vet MCP servers before trusting them, detect attack patterns in configs, comply with security audits.
-
----
-
-### 📝 271-Question Knowledge Validation (Unique in Ecosystem)
-
-**Outcome**: Verify your understanding + identify knowledge gaps.
-
-**Only comprehensive assessment available** — test across 9 categories:
-- Setup & Configuration, Agents & Sub-Agents, MCP Servers, Trust & Verification, Advanced Patterns
-
-**Features**: 4 skill profiles (Junior/Senior/Power User/PM), instant feedback with doc links, weak area identification
-
-[Try Quiz Online →](https://florianbruniaux.github.io/claude-code-ultimate-guide-landing/quiz/) | [Run Locally](./quiz/)
-
-**What this means for you**: Know what you don't know, track learning progress, prepare for team adoption discussions.
+**对你有什么好处**：不用硬啃 24K+ 行文字，先看图掌握主循环；多智能体拓扑一眼看懂；安全威胁模型可以直接发给团队。
 
 ---
 
-### 🤖 Agent Teams Coverage (v2.1.32+ Experimental)
+### 🛡️ 安全威胁情报（独家数据库）
 
-**Outcome**: Parallelize work on large codebases (Fountain: 50% faster, CRED: 2x speed).
+**效果**：真正保护你的生产系统不被 AI 特有的攻击方式搞垮。
 
-**Only comprehensive guide to Anthropic's multi-agent coordination**:
-- Production metrics from real companies (autonomous C compiler, 500K hours saved)
-- 5 validated workflows (multi-layer review, parallel debugging, large-scale refactoring)
-- Decision framework: Teams vs Multi-Instance vs Dual-Instance vs Beads
+**唯一做了系统化威胁追踪的指南**：
+- **28 个已映射 CVE 的漏洞** — 提示注入、数据窃取、代码注入
+- **655 个恶意技能已入库** — Unicode 注入、隐藏指令、自动执行
+- **生产环境加固工作流** — MCP 审查、注入防御、审计自动化
 
-[Agent Teams Workflow →](./guide/workflows/agent-teams.md) | [Section 9.20 →](./guide/ultimate-guide.md#920-agent-teams-multi-agent-coordination)
+[威胁数据库 →](./examples/skills/update-threat-db/threat-db.yaml) | [安全指南 →](./guide/security/security-hardening.md)
 
-**What this means for you**: Break monolithic tasks into parallelizable work, coordinate multi-file refactors, review your own AI-generated code.
-
----
-
-### 🔬 Methodologies (Structured Development Workflows)
-
-**Outcome**: Maintain code quality while working with AI.
-
-Complete guides with rationale and examples:
-- [TDD](./guide/core/methodologies.md#1-tdd-test-driven-development-with-claude) — Test-Driven Development (Red-Green-Refactor with AI)
-- [SDD](./guide/core/methodologies.md#2-sdd-specification-driven-development) — Specification-Driven Development (Design before code)
-- [BDD](./guide/core/methodologies.md#3-bdd-behavior-driven-development) — Behavior-Driven Development (User stories → tests)
-- [GSD](./guide/core/methodologies.md#gsd-get-shit-done) — Get Shit Done (Pragmatic delivery)
-
-**What this means for you**: Choose the right workflow for your team culture, integrate AI into existing processes, avoid technical debt from AI over-reliance.
+**对你有什么好处**：信任 MCP 服务器之前先审查一遍、能从配置里发现攻击模式、安全审计不发怵。
 
 ---
 
-### 📚 181 Annotated Templates
+### 📝 271 道知识测验（独家）
 
-**Outcome**: Learn patterns, not just configs.
+**效果**：确认自己真懂了，顺便找出薄弱环节。
 
-Educational templates with explanations:
-- Agents (23), Skills (74), Hooks (37)
-- Comments explaining **why** each pattern works (not just what it does)
-- Gradual complexity progression (simple → advanced)
+**市面上唯一成体系的能力评估**——覆盖 9 个类别：
+- 安装配置、智能体与子智能体、MCP 服务器、信任与验证、高级模式
 
-[Browse Catalog →](./examples/)
+**特点**：4 种角色画像（初级/高级/深度用户/产品经理）、选完立刻给反馈附带文档链接、自动标出弱项
 
-**What this means for you**: Understand the reasoning behind patterns, adapt templates to your context, create your own custom patterns.
+[在线做题 →](https://florianbruniaux.github.io/claude-code-ultimate-guide-landing/quiz/) | [本地跑 →](./quiz/)
 
----
-
-### 🔍 151 Resource Evaluations
-
-**Outcome**: Trust our recommendations are evidence-based.
-
-Systematic assessment of external resources (5-point scoring):
-- Articles, videos, tools, frameworks
-- Honest assessments with source attribution (no marketing fluff)
-- Integration recommendations with trade-offs
-
-[See Evaluations →](./docs/resource-evaluations/)
-
-**What this means for you**: Save time vetting resources, understand limitations before adopting tools, make informed decisions.
+**对你有什么好处**：知道自己哪里还不行、追踪学习进度、跟团队讨论怎么推广时心里有底。
 
 ---
 
-## 🎯 Learning Paths
+### 🤖 智能体团队（v2.1.32+ 实验功能）
+
+**效果**：大项目可以并行干（Fountain 提速 50%，CRED 快了 2 倍）。
+
+**市面上最全的 Anthropic 多智能体协调指南**：
+- 真实公司的生产数据（自主写 C 编译器、省了 50 万小时）
+- 5 个验证过的工作流（多层审查、并行调试、大规模重构）
+- 决策框架：Teams vs Multi-Instance vs Dual-Instance vs Beads
+
+[智能体团队工作流 →](./guide/workflows/agent-teams.md) | [第 9.20 节 →](./guide/ultimate-guide.md#920-agent-teams-multi-agent-coordination)
+
+**对你有什么好处**：把大任务拆成能并行的小块、协调多文件重构、审阅自己 AI 写的代码。
+
+---
+
+### 🔬 方法论（结构化开发工作流）
+
+**效果**：跟 AI 配合写代码，质量依然在线。
+
+完整指南，有思路也有实例：
+- [TDD](./guide/core/methodologies.md#1-tdd-test-driven-development-with-claude) — 测试驱动开发（红-绿-重构 + AI）
+- [SDD](./guide/core/methodologies.md#2-sdd-specification-driven-development) — 规范驱动开发（先设计再写代码）
+- [BDD](./guide/core/methodologies.md#3-bdd-behavior-driven-development) — 行为驱动开发（用户故事 → 测试）
+- [GSD](./guide/core/methodologies.md#gsd-get-shit-done) — 务实干活
+
+**对你有什么好处**：根据团队文化选合适的工作流、把 AI 嵌入现有流程、不会因为过度依赖 AI 欠下技术债。
+
+---
+
+### 📚 181 个带注释的模板
+
+**效果**：学模式，不是学配置。
+
+每个模板都配了解释：
+- 智能体（23）、技能（74）、钩子（37）
+- 注释不光说"干什么"，更说**为什么这样设计**
+- 难度递进（简单 → 复杂）
+
+[浏览目录 →](./examples/)
+
+**对你有什么好处**：理解模式背后的思路、把模板改成自己需要的、学会创造自己的模式。
+
+---
+
+### 🔍 151 份资源评估
+
+**效果**：我们推荐的东西都有据可查，可以放心用。
+
+系统化评估外部资源（5 分制）：
+- 文章、视频、工具、框架
+- 不吹不黑，来源标注清楚
+- 集成建议附带缺点
+
+[看评估 →](./docs/resource-evaluations/)
+
+**对你有什么好处**：不用自己一个个试、用之前知道工具的局限、做决策更靠谱。
+
+---
+
+## 🎯 学习路径
 
 <details>
-<summary><strong>Junior Developer</strong> — Foundation path (7 steps)</summary>
+<summary><strong>初级开发者</strong> — 基础路线（7 步）</summary>
 
-1. [Quick Start](./guide/ultimate-guide.md#1-quick-start-day-1) — Install & first workflow
-2. [Essential Commands](./guide/ultimate-guide.md#13-essential-commands) — The 7 commands
-3. [Context Management](./guide/ultimate-guide.md#22-context-management) — Critical concept
-4. [Memory Files](./guide/ultimate-guide.md#31-memory-files-claudemd) — Your first CLAUDE.md
-5. [Learning with AI](./guide/roles/learning-with-ai.md) — Use AI without becoming dependent ⭐
-6. [TDD Workflow](./guide/workflows/tdd-with-claude.md) — Test-first development
-7. [Cheat Sheet](./guide/cheatsheet.md) — Print this
+1. [快速上手](./guide/ultimate-guide.md#1-quick-start-day-1) — 安装 + 跑通第一个工作流
+2. [必备命令](./guide/ultimate-guide.md#13-essential-commands) — 7 个核心命令
+3. [上下文管理](./guide/ultimate-guide.md#22-context-management) — 最关键的概念
+4. [记忆文件](./guide/ultimate-guide.md#31-memory-files-claudemd) — 写你的第一个 CLAUDE.md
+5. [跟 AI 一起学](./guide/roles/learning-with-ai.md) — 用 AI 但不依赖 AI ⭐
+6. [TDD 工作流](./guide/workflows/tdd-with-claude.md) — 测试先行
+7. [速查表](./guide/cheatsheet.md) — 打印出来贴墙上
 
 </details>
 
 <details>
-<summary><strong>Senior Developer</strong> — Intermediate path (6 steps)</summary>
+<summary><strong>高级开发者</strong> — 中级路线（6 步）</summary>
 
-1. [Core Concepts](./guide/ultimate-guide.md#2-core-concepts) — Mental model
-2. [Plan Mode](./guide/ultimate-guide.md#23-plan-mode) — Safe exploration
-3. [Methodologies](./guide/core/methodologies.md) — TDD, SDD, BDD reference
-4. [Agents](./guide/ultimate-guide.md#4-agents) — Custom AI personas
-5. [Hooks](./guide/ultimate-guide.md#7-hooks) — Event automation
-6. [CI/CD Integration](./guide/ultimate-guide.md#93-cicd-integration) — Pipelines
-
-</details>
-
-<details>
-<summary><strong>Power User</strong> — Comprehensive path (8 steps)</summary>
-
-1. [Complete Guide](./guide/ultimate-guide.md) — End-to-end
-2. [Architecture](./guide/core/architecture.md) — How Claude Code works
-3. [Security Hardening](./guide/security/security-hardening.md) — MCP vetting, injection defense
-4. [MCP Servers](./guide/ultimate-guide.md#8-mcp-servers) — Extended capabilities
-5. [Trinity Pattern](./guide/ultimate-guide.md#91-the-trinity) — Advanced workflows
-6. [Observability](./guide/ops/observability.md) — Monitor costs & sessions
-7. [Agent Teams](./guide/workflows/agent-teams.md) — Multi-agent coordination (Opus 4.7+ experimental)
-8. [Examples](./examples/) — Production templates
+1. [核心概念](./guide/ultimate-guide.md#2-core-concepts) — 建立心智模型
+2. [计划模式](./guide/ultimate-guide.md#23-plan-mode) — 放心探索，不怕搞乱
+3. [方法论](./guide/core/methodologies.md) — TDD/SDD/BDD 参考
+4. [智能体](./guide/ultimate-guide.md#4-agents) — 定制你自己的 AI 角色
+5. [钩子](./guide/ultimate-guide.md#7-hooks) — 事件驱动自动化
+6. [CI/CD 集成](./guide/ultimate-guide.md#93-cicd-integration) — 接入流水线
 
 </details>
 
 <details>
-<summary><strong>Product Manager / DevOps / Designer</strong></summary>
+<summary><strong>深度用户</strong> — 全面路线（8 步）</summary>
 
-**Product Manager** (5 steps):
-1. [What's Inside](#-whats-inside) — Scope overview
-2. [Golden Rules](#-golden-rules) — Key principles
-3. [Data Privacy](./guide/security/data-privacy.md) — Retention & compliance
-4. [Adoption Approaches](./guide/roles/adoption-approaches.md) — Team strategies
-5. [PM FAQ](./guide/ultimate-guide.md#can-product-managers-use-claude-code) — Code-adjacent vs non-coding PMs
-
-**Note**: Non-coding PMs should consider [Claude Cowork Guide](https://github.com/FlorianBruniaux/claude-cowork-guide) instead.
-
-**DevOps / SRE** (5 steps):
-1. [DevOps & SRE Guide](./guide/ops/devops-sre.md) — FIRE framework
-2. [K8s Troubleshooting](./guide/ops/devops-sre.md#kubernetes-troubleshooting) — Symptom-based prompts
-3. [Incident Response](./guide/ops/devops-sre.md#pattern-incident-response) — Workflows
-4. [IaC Patterns](./guide/ops/devops-sre.md#pattern-infrastructure-as-code) — Terraform, Ansible
-5. [Guardrails](./guide/ops/devops-sre.md#guardrails--adoption) — Security boundaries
-
-**Product Designer** (5 steps):
-1. [Working with Images](./guide/ultimate-guide.md#24-working-with-images) — Image analysis
-2. [Wireframing Tools](./guide/ultimate-guide.md#wireframing-tools) — ASCII/Excalidraw
-3. [Figma MCP](./guide/ultimate-guide.md#figma-mcp) — Design file access
-4. [Design-to-Code Workflow](./guide/workflows/design-to-code.md) — Figma → Claude
-5. [Cheat Sheet](./guide/cheatsheet.md) — Print this
+1. [完整指南](./guide/ultimate-guide.md) — 从头撸到尾
+2. [架构](./guide/core/architecture.md) — Claude Code 到底怎么跑起来的
+3. [安全加固](./guide/security/security-hardening.md) — MCP 审查、注入防御
+4. [MCP 服务器](./guide/ultimate-guide.md#8-mcp-servers) — 扩展能力
+5. [三一模式](./guide/ultimate-guide.md#91-the-trinity) — 高阶工作流
+6. [可观测性](./guide/ops/observability.md) — 成本监控和会话追踪
+7. [智能体团队](./guide/workflows/agent-teams.md) — 多智能体协同（Opus 4.7+ 实验功能）
+8. [示例](./examples/) — 生产级模板
 
 </details>
 
-### Progressive Journey
+<details>
+<summary><strong>产品经理 / DevOps / 设计师</strong></summary>
 
-- **Week 1**: Foundations (install, CLAUDE.md, first agent)
-- **Week 2**: Core Features (skills, hooks, trust calibration)
-- **Week 3**: Advanced (MCP servers, methodologies)
-- **Month 2+**: Production mastery (CI/CD, observability)
+**产品经理**（5 步）：
+1. [有什么](#-whats-inside) — 概览
+2. [黄金法则](#-golden-rules) — 核心原则
+3. [数据隐私](./guide/security/data-privacy.md) — 保留策略与合规
+4. [推广方法](./guide/roles/adoption-approaches.md) — 怎么让团队用起来
+5. [PM 常见问题](./guide/ultimate-guide.md#can-product-managers-use-claude-code) — 写代码的 PM vs 不写代码的 PM
+
+**注意**：不写代码的 PM 建议看 [Claude Cowork 指南](https://github.com/FlorianBruniaux/claude-cowork-guide)。
+
+**DevOps / SRE**（5 步）：
+1. [DevOps & SRE 指南](./guide/ops/devops-sre.md) — FIRE 框架
+2. [K8s 排障](./guide/ops/devops-sre.md#kubernetes-troubleshooting) — 按症状出提示词
+3. [故障响应](./guide/ops/devops-sre.md#pattern-incident-response) — 工作流程
+4. [IaC 模式](./guide/ops/devops-sre.md#pattern-infrastructure-as-code) — Terraform、Ansible
+5. [安全护栏](./guide/ops/devops-sre.md#guardrails--adoption) — 安全边界
+
+**产品设计师**（5 步）：
+1. [用图片](./guide/ultimate-guide.md#24-working-with-images) — 图片分析
+2. [画线框图](./guide/ultimate-guide.md#wireframing-tools) — ASCII/Excalidraw
+3. [Figma MCP](./guide/ultimate-guide.md#figma-mcp) — 读取设计文件
+4. [设计稿转代码](./guide/workflows/design-to-code.md) — Figma → Claude
+5. [速查表](./guide/cheatsheet.md) — 打印出来
+
+</details>
+
+### 时间线
+
+- **第 1 周**：打基础（安装、CLAUDE.md、第一个智能体）
+- **第 2 周**：核心功能（技能、钩子、建立信任感）
+- **第 3 周**：进阶（MCP 服务器、方法论）
+- **第 2 个月起**：生产级掌握（CI/CD、可观测性）
 
 ---
 
-## 🔧 Rate Limits & Cost Savings
+## 🔧 限流 & 省钱
 
-**cc-copilot-bridge** routes Claude Code through GitHub Copilot Pro+ for flat-rate access ($10/month instead of per-token billing).
+**cc-copilot-bridge** 把 Claude Code 接到 GitHub Copilot Pro+，每月固定 $10 随便用，不用按 token 付费。
 
 ```bash
-# Install
+# 安装
 git clone https://github.com/FlorianBruniaux/cc-copilot-bridge.git && cd cc-copilot-bridge && ./install.sh
 
-# Use
-ccc   # Copilot mode (flat $10/month)
-ccd   # Direct Anthropic mode (per-token)
-cco   # Offline mode (Ollama, 100% local)
+# 使用
+ccc   # Copilot 模式（固定 $10/月）
+ccd   # 原生 Anthropic 模式（按 token）
+cco   # 离线模式（Ollama，纯本地）
 ```
 
-**Benefits**: Multi-provider switching, rate limit bypass, 99%+ cost savings on heavy usage.
+**优势**：多家供应商随便切、绕过限流、重度用能省 99%+。
 
 → **[cc-copilot-bridge](https://github.com/FlorianBruniaux/cc-copilot-bridge)**
 
 ---
 
-## 🔑 Golden Rules
+## 🔑 黄金法则
 
-### 1. Verify Trust Before Use
+### 1. 先用再信
 
-Claude Code can generate 1.75x more logic errors than human-written code ([ACM 2025](https://dl.acm.org/doi/10.1145/3716848)). Every output must be verified. Use `/insights` commands and verify patterns through tests.
+Claude Code 写出的逻辑错误比人手写的多 1.75 倍（[ACM 2025](https://dl.acm.org/doi/10.1145/3716848)）。每个输出都要验证。用 `/insights` 命令、写测试来确认。
 
-**Strategy:** Solo dev (verify logic + edge cases). Team (systematic peer review). Production (mandatory gating tests).
-
----
-
-### 2. Never Approve MCPs from Unknown Sources
-
-28 CVEs identified in Claude Code ecosystem. 655 malicious skills in supply chain. MCP servers can read/write your codebase.
-
-**Strategy:** Systematic audit (5-min checklist). Community-vetted MCP Safe List. Vetting workflow documented in guide.
+**怎么落地**：个人开发者（核验逻辑 + 边界条件）。团队（系统化的同行评审）。生产环境（强制关卡测试）。
 
 ---
 
-### 3. Context Pressure Changes Behavior
+### 2. 来路不明的 MCP 绝不批准
 
-At 70% context, Claude starts losing precision. At 85%, hallucinations increase. At 90%+, responses become erratic.
+Claude Code 生态里已经发现了 28 个 CVE。供应链上有 655 个恶意技能。MCP 服务器能读写你的代码库。
 
-**Strategy:** 0-50% (work freely). 50-70% (attention). 70-90% (`/compact`). 90%+ (`/clear` mandatory).
-
----
-
-### 4. Start Simple, Scale Smart
-
-Start with basic CLAUDE.md + a few commands. Test in production for 2 weeks. Add agents/skills only if need is proven.
-
-**Strategy:** Phase 1 (basic). Phase 2 (commands + hooks if needed). Phase 3 (agents if multi-context). Phase 4 (MCP servers if truly required).
+**怎么落地**：系统化审计（5 分钟清单）。社区整理好的 MCP 安全名单。审查流程在指南里写得清清楚楚。
 
 ---
 
-### 5. Methodologies Matter More with AI
+### 3. 上下文压力会改变表现
 
-TDD/SDD/BDD are not optional with Claude Code. AI accelerates bad code as much as good code.
+上下文到 70% 时 Claude 就开始丢精度了。85% 幻觉变多。90% 以上回答开始飘。
 
-**Strategy:** TDD (critical logic). SDD (architecture upfront). BDD (PM/dev collaboration). GSD (throwaway prototypes).
-
----
-
-### Quick Reference
-
-| # | Rule | Key Metric | Action |
-|---|------|------------|--------|
-| 1 | Verify Trust | 1.75x more logic errors | Test everything, peer review |
-| 2 | Vet MCPs | 28 CVEs, 655 malicious skills | 5-min audit checklist |
-| 3 | Manage Context | 70% = precision loss | `/compact` at 70%, `/clear` at 90% |
-| 4 | Start Simple | 2-week test period | Phase 1→4 progressive adoption |
-| 5 | Use Methodologies | AI amplifies good AND bad | TDD/SDD/BDD by context |
-
-> Context management is critical. See the [Cheat Sheet](./guide/cheatsheet.md#context-management-critical) for thresholds and actions.
+**怎么管**：0-50%（放心干）。50-70%（盯着点）。70-90%（`/compact`）。90%+（必须 `/clear`）。
 
 ---
 
-## 🤖 For AI Assistants
+### 4. 从小做起，聪明扩张
 
-| Resource | Purpose | Tokens |
+先搭个简单的 CLAUDE.md + 几个命令。在生产环境跑 2 周。确实有需要再加智能体和技能。
+
+**分阶段**：第一阶段（基础）。第二阶段（命令 + 按需加钩子）。第三阶段（多上下文就加智能体）。第四阶段（真有必要再加 MCP 服务器）。
+
+---
+
+### 5. AI 时代方法论更重要
+
+用 Claude Code 时 TDD/SDD/BDD 不是可选项。AI 加速烂代码跟加速好代码一样快。
+
+**怎么选**：TDD（关键逻辑）。SDD（架构先行）。BDD（PM 和开发对齐）。GSD（一次性原型）。
+
+---
+
+### 速查
+
+| # | 规则 | 关键数据 | 行动 |
+|---|------|-------------|--------|
+| 1 | 先信先测 | 逻辑错误多 1.75 倍 | 全测、同级评审 |
+| 2 | 审查 MCP | 28 CVE、655 个恶意技能 | 5 分钟审计清单 |
+| 3 | 管好上下文 | 70% = 精度下降 | 70% 时 `/compact`，90% 时 `/clear` |
+| 4 | 从简起步 | 先试 2 周 | 阶段一到阶段四逐渐加码 |
+| 5 | 方法论用起来 | AI 好坏都放大 | 按场景选 TDD/SDD/BDD |
+
+> 上下文管理是命门。详见[速查表](./guide/cheatsheet.md#context-management-critical)里的阈值和操作。
+
+---
+
+## 🤖 给 AI 助手的资源
+
+| 资源 | 用途 | Token 数 |
 |----------|---------|--------|
-| **[llms.txt](./machine-readable/llms.txt)** | Standard context file | ~1K |
-| **[reference.yaml](./machine-readable/reference.yaml)** | Structured index with line numbers | ~2K |
+| **[llms.txt](./machine-readable/llms.txt)** | 标准上下文文件 | ~1K |
+| **[reference.yaml](./machine-readable/reference.yaml)** | 带行号的结构化索引 | ~2K |
 
-**Quick load**: `curl -sL https://raw.githubusercontent.com/FlorianBruniaux/claude-code-ultimate-guide/main/machine-readable/reference.yaml`
+**快速加载**：`curl -sL https://raw.githubusercontent.com/FlorianBruniaux/claude-code-ultimate-guide/main/machine-readable/reference.yaml`
 
-### reference.yaml — Structure & Landing Site Search
+### reference.yaml — 结构和落地页搜索
 
-`reference.yaml` is organized into several top-level sections:
+`reference.yaml` 分这几个顶层部分：
 
-| Section | Content |
+| 部分 | 内容 |
 |---------|---------|
-| `lines` | Line number references for key sections in `ultimate-guide.md` |
-| `deep_dive` | Key → file path mappings for all guides, examples, hooks, agents, commands |
-| `decide` | Decision tree (when to use what) |
-| `stats` | Counters (templates, questions, CVEs…) |
+| `lines` | `ultimate-guide.md` 里关键章节的行号 |
+| `deep_dive` | 所有指南、示例、钩子、智能体、命令的"关键词 → 文件路径"映射 |
+| `decide` | 决策树（什么时候用什么） |
+| `stats` | 计数器（模板数、题数、CVE 数……） |
 
-**The `deep_dive` section powers the [landing site](https://cc.bruniaux.com) CMD+K search.** The build script (`scripts/build-guide-index.mjs`) parses it to generate 160 search entries.
+**`deep_dive` 段驱动了[落地页](https://cc.bruniaux.com)的 CMD+K 搜索。** 构建脚本（`scripts/build-guide-index.mjs`）解析它生成 160 个搜索条目。
 
-#### How the search index works
+#### 搜索索引怎么工作的
 
-The CMD+K search on the landing site is an **explicit index** — not a full-text search. Only entries listed in `deep_dive` are indexed. Keywords are derived mechanically from the key name and file path, not from the file content.
+落地页的 CMD+K 搜索是**显式索引**——不是全文搜索。只有 `deep_dive` 里列出的条目才会被索引。关键词是从键名和文件路径里机械提取的，不是从文件内容里提取的。
 
-**Consequence**: adding a new guide section requires explicitly adding an entry to `deep_dive`, then running `pnpm build:search` in the landing repo.
+**后果**：加了新的指南章节，必须显式在 `deep_dive` 加一条，然后在落地仓库里跑 `pnpm build:search`。
 
-#### Maintaining reference.yaml
+#### 维护 reference.yaml
 
-**Adding a new entry** to `deep_dive`:
+**向 `deep_dive` 加新条目**：
 ```yaml
 deep_dive:
-  # existing entries...
-  my_new_section: "guide/my-new-file.md"          # local guide file
-  my_hook_example: "examples/hooks/bash/foo.sh"   # example file
-  my_section_ref: "guide/ultimate-guide.md:1234"  # with line number anchor
+  # 已有条目……
+  my_new_section: "guide/my-new-file.md"          # 本地指南文件
+  my_hook_example: "examples/hooks/bash/foo.sh"   # 示例文件
+  my_section_ref: "guide/ultimate-guide.md:1234"  # 带行号锚点
 ```
 
-**Critical: avoid duplicate keys.** If a key appears twice in `deep_dive`, the YAML parser fails and the landing site search index becomes empty (0 entries). The build exits with a warning but no hard error:
+**关键：别重复键。** `deep_dive` 里一旦出现重复键，YAML 解析就挂了，落地页搜索索引变空（0 条）。构建时会有警告但不报硬错：
 
 ```
 [build-guide-index] ERROR: Failed to parse YAML: duplicated mapping key
 [build-guide-index] Generating empty guide-search-entries.ts
 ```
 
-Use distinct names — e.g. if you need both a line-number reference and a file path for the same concept, suffix the line-number key with `_line`:
+名字取不一样——比如同一个概念既要行号引用又要文件路径，行号那个加个 `_line` 后缀：
 ```yaml
-security_gate_hook_line: 6907                              # line number ref
-security_gate_hook: "examples/hooks/bash/security-gate.sh" # file path ref
+security_gate_hook_line: 6907                              # 行号引用
+security_gate_hook: "examples/hooks/bash/security-gate.sh" # 文件路径引用
 ```
 
 ---
 
-## 📄 Whitepapers (FR + EN)
+## 📄 白皮书（法文 + 英文）
 
-11 focused whitepapers covering Claude Code in depth — PDF + EPUB, available in French and English. 472 pages total.
+11 篇深入白皮书，PDF + EPUB 格式，法文和英文。共 472 页。
 
-> **Coming soon** — currently in private access. Public release planned.
+> **即将发布**——目前内测中。
 
-| # | FR | EN | Pages |
+| # | 法文 | 英文 | 页数 |
 |---|----|----|-------|
 | **00** | *De Zéro à Productif* | *From Zero to Productive* | 20 |
 | **01** | *Prompts qui Marchent* | *Prompts That Work* | 40 |
@@ -590,263 +592,263 @@ security_gate_hook: "examples/hooks/bash/security-gate.sh" # file path ref
 | **06** | *Privacy & Compliance* | *Privacy & Compliance* | 29 |
 | **07** | *Guide de Référence* | *Reference Guide* | 87 |
 | **08** | *Agent Teams* | *Agent Teams* | 42 |
-| **09** | *Apprendre avec l'IA* | *Learning with AI* — UVAL protocol, comprehension debt | 49 |
-| **10** | *Convaincre son Employeur* | *Making the Case for AI* — ROI dossier for CEO/CTO/CFO | 27 |
+| **09** | *Apprendre avec l'IA* | *Learning with AI* — UVAL 协议、理解力债务 | 49 |
+| **10** | *Convaincre son Employeur* | *Making the Case for AI* — 给 CEO/CTO/CFO 看的 ROI 材料 | 27 |
 
-## 🗂️ Recap Cards (FR, EN coming)
+## 🗂️ 速查卡片（法文，英文制作中）
 
-57 single-page A4 reference cards — printable, one concept per card. Available in French; English version in progress.
+57 张 A4 单页速查卡——可打印，一张卡一个概念。目前是法文版，英文版在做了。
 
-> **Browse online**: [cc.bruniaux.com/cheatsheets/](https://cc.bruniaux.com/cheatsheets/)
+> **在线浏览**：[cc.bruniaux.com/cheatsheets/](https://cc.bruniaux.com/cheatsheets/)
 
-- **Technique (22 cards)** — Commands, permissions, configuration, MCP, models, context window
-- **Méthodologie (22 cards)** — Daily workflow, agents, hooks, CI/CD, multi-agent, debug
-- **Conception (13 cards)** — Mental models, prompting, security by design, cost patterns
+- **技术类（22 张）** — 命令、权限、配置、MCP、模型、上下文窗口
+- **方法论类（22 张）** — 日常工作流、智能体、钩子、CI/CD、多智能体、调试
+- **设计类（13 张）** — 心智模型、提示词、安全设计、成本模式
 
 ---
 
-## 🌍 Ecosystem
+## 🌍 生态
 
-### Claude Cowork (Non-Developers)
+### Claude Cowork（非开发者）
 
-**Claude Cowork** is the companion guide for non-technical users (knowledge workers, assistants, managers).
+**Claude Cowork** 是非技术用户（知识工作者、助理、管理者）的配套指南。
 
-Same agentic capabilities as Claude Code, but through a visual interface with no coding required.
+跟 Claude Code 一样的智能体能力，但走可视化界面，不用写代码。
 
-→ **[Claude Cowork Guide](https://github.com/FlorianBruniaux/claude-cowork-guide)** — File organization, document generation, automated workflows
+→ **[Claude Cowork 指南](https://github.com/FlorianBruniaux/claude-cowork-guide)** — 文件组织、文档生成、工作流自动化
 
-**Status**: Research preview (Pro $20/mo or Max $100-200/mo, macOS only, **VPN incompatible**)
+**状态**：研究预览（Pro $20/月 or Max $100-200/月，仅 macOS，**不兼容 VPN**）
 
-### Claude Code Plugins (Marketplace)
+### Claude Code 插件（市场）
 
-All 181 templates from this guide packaged as installable Claude Code plugins — hooks auto-wired, no manual config:
+本指南 181 个模板打包成可直接安装的 Claude Code 插件——钩子自动连好，不用手动配：
 
 ```bash
-# Add the marketplace
+# 添加市场
 claude plugin marketplace add FlorianBruniaux/claude-code-plugins
 
-# Install the plugins you need
-claude plugin install security-suite       # OWASP auditing, cyber-defense pipeline, 13 hooks
-claude plugin install devops-pipeline      # CI/CD, git worktrees, GitHub Actions
-claude plugin install release-automation   # Changelog + release notes + social content
-claude plugin install code-quality         # SOLID refactoring, TDD, GoF patterns, 6 agents
-claude plugin install pr-workflow          # Planning gates, PR/issue triage, handoffs
-claude plugin install session-tools        # ccboard monitoring, voice refinement, 11 hooks
-claude plugin install ai-methodology       # Scaffolding, 6-stage talk pipeline, context-engineering
-claude plugin install session-summary      # Session analytics dashboard (15 sections)
+# 装你需要的
+claude plugin install security-suite       # OWASP 审计、网络防御流水线、13 个钩子
+claude plugin install devops-pipeline      # CI/CD、git worktrees、GitHub Actions
+claude plugin install release-automation   # 变更日志 + 发布说明 + 社交内容
+claude plugin install code-quality         # SOLID 重构、TDD、GoF 模式、6 个智能体
+claude plugin install pr-workflow          # 规划关卡、PR/问题分类、交接
+claude plugin install session-tools        # ccboard 监控、语音打磨、11 个钩子
+claude plugin install ai-methodology       # 脚手架、6 阶段对话流水线、上下文工程
+claude plugin install session-summary      # 会话分析仪表盘（15 个板块）
 ```
 
-> **[FlorianBruniaux/claude-code-plugins](https://github.com/FlorianBruniaux/claude-code-plugins)** — 8 plugins, 181 templates, one marketplace
+> **[FlorianBruniaux/claude-code-plugins](https://github.com/FlorianBruniaux/claude-code-plugins)** — 8 个插件、181 个模板、一个市场
 
-### Complementary Resources
+### 互补资源
 
-| Project | Focus | Best For |
+| 项目 | 定位 | 最适合谁 |
 |---------|-------|----------|
-| [everything-claude-code](https://github.com/affaan-m/everything-claude-code) | Production configs (45k+ stars) | Quick setup, battle-tested patterns |
-| [claude-code-templates](https://github.com/davila7/claude-code-templates) | Distribution (200+ templates) | CLI installation (17k stars) |
-| [anthropics/skills](https://github.com/anthropics/skills) | Official Anthropic skills (60K+ stars) | Documents, design, dev templates |
-| [anthropics/claude-plugins-official](https://skills.sh/anthropics/claude-plugins-official) | Plugin dev tools (3.1K installs) | CLAUDE.md audit, automation discovery |
-| [skills.sh](https://skills.sh/) | Skills marketplace | One-command install (Vercel Labs) |
-| [awesome-claude-code](https://github.com/hesreallyhim/awesome-claude-code) | Curation | Resource discovery |
-| [youtube-skills](https://github.com/ZeroPointRepo/youtube-skills) | 12 YouTube skills (search, transcripts, chapters) | Claude Code, Cursor, Windsurf, Cline |
-| [awesome-claude-skills](https://github.com/BehiSecc/awesome-claude-skills) | Skills taxonomy | 62 skills across 12 categories |
-| [awesome-claude-md](https://github.com/josix/awesome-claude-md) | CLAUDE.md examples | Annotated configs with scoring |
-| [ctop](https://github.com/aakashadesara/ctop) | Session monitoring (htop for AI agents) | Real-time CPU, memory, tokens, costs |
-| [AI Coding Agents Matrix](https://coding-agents-matrix.dev) | Technical comparison | Comparing 23+ alternatives |
+| [everything-claude-code](https://github.com/affaan-m/everything-claude-code) | 生产配置（45k+ star） | 快速搭项目、用成熟模式 |
+| [claude-code-templates](https://github.com/davila7/claude-code-templates) | 分发（200+ 模板） | 一键 CLI 安装（17k star） |
+| [anthropics/skills](https://github.com/anthropics/skills) | Anthropic 官方技能（60K+ star） | 文档、设计、开发模板 |
+| [anthropics/claude-plugins-official](https://skills.sh/anthropics/claude-plugins-official) | 插件开发工具（3.1K 安装量） | CLAUDE.md 审计、自动化发现 |
+| [skills.sh](https://skills.sh/) | 技能市场 | 一键安装（Vercel Labs） |
+| [awesome-claude-code](https://github.com/hesreallyhim/awesome-claude-code) | 精选列表 | 找资源 |
+| [youtube-skills](https://github.com/ZeroPointRepo/youtube-skills) | 12 个 YouTube 技能（搜索、字幕、章节） | Claude Code、Cursor、Windsurf、Cline |
+| [awesome-claude-skills](https://github.com/BehiSecc/awesome-claude-skills) | 技能分类 | 62 个技能跨 12 个类别 |
+| [awesome-claude-md](https://github.com/josix/awesome-claude-md) | CLAUDE.md 示例 | 带评分的注释配置 |
+| [ctop](https://github.com/aakashadesara/ctop) | 会话监控（AI 智能体的 htop） | 实时 CPU、内存、Token、费用 |
+| [AI Coding Agents Matrix](https://coding-agents-matrix.dev) | 技术对比 | 比较 23+ 个替代方案 |
 
-**Community**: 🇫🇷 [Dev With AI](https://www.devw.ai/) — 1500+ devs on Slack, meetups in Paris, Bordeaux, Lyon
+**社区**：🇫🇷 [Dev With AI](https://www.devw.ai/) — Slack 上 1500+ 开发者，巴黎/波尔多/里昂有 meetup
 
-→ **[AI Ecosystem Guide](./guide/ecosystem/ai-ecosystem.md)** — Complete integration patterns with complementary AI tools
+→ **[AI 生态指南](./guide/ecosystem/ai-ecosystem.md)** — 跟其他 AI 工具的完整集成方案
 
 ---
 
-## 🛡️ Security
+## 🛡️ 安全
 
-**Comprehensive MCP security coverage** — the only guide with a threat intelligence database and production hardening workflows.
+**覆盖最全的 MCP 安全文档**——唯一带威胁情报数据库和生产加固工作流的指南。
 
-### Official Security Tools
+### 官方安全工具
 
-| Tool | Purpose | Maintained By |
+| 工具 | 用途 | 维护方 |
 |------|---------|---------------|
-| [claude-code-security-review](https://github.com/anthropics/claude-code-security-review) | GitHub Action for automated security scanning | Anthropic (official) |
-| This Guide's Threat DB | Intelligence layer (28 CVEs, 655 malicious skills) | Community |
+| [claude-code-security-review](https://github.com/anthropics/claude-code-security-review) | 自动安全扫描的 GitHub Action | Anthropic（官方） |
+| 本指南的威胁数据库 | 情报层（28 CVE、655 个恶意技能） | 社区 |
 
-**Workflow**: Use GitHub Action for automation → Consult Threat DB for threat intelligence.
+**工作流**：GitHub Action 做自动化扫描 → 查威胁数据库获取情报。
 
-### Threat Database
+### 威胁数据库
 
-**28 CVE-mapped vulnerabilities** and **655 malicious skills** tracked in [`examples/skills/update-threat-db/threat-db.yaml`](./examples/skills/update-threat-db/threat-db.yaml):
+**28 个已映射 CVE 的漏洞**和 **655 个恶意技能**，全在 [`examples/skills/update-threat-db/threat-db.yaml`](./examples/skills/update-threat-db/threat-db.yaml) 里：
 
-| Threat Category | Count | Examples |
+| 威胁类型 | 数量 | 举例 |
 |----------------|-------|----------|
-| **Code/Command Injection** | 5 CVEs | CLI bypass (CVE-2025-66032), child_process exec |
-| **Path Traversal & Access** | 4 CVEs | Symlink escape (CVE-2025-53109), prefix bypass |
-| **RCE & Prompt Hijacking** | 4 CVEs | MCP Inspector RCE (CVE-2025-49596), session hijack |
-| **SSRF & DNS Rebinding** | 4 CVEs | WebFetch SSRF (CVE-2026-24052), DNS rebinding |
-| **Data Leakage** | 1 CVE | Cross-client response leak (CVE-2026-25536) |
-| **Malicious Skills** | 655 patterns | Unicode injection, hidden instructions, auto-execute |
+| **代码/命令注入** | 5 CVE | CLI 绕过（CVE-2025-66032）、child_process exec |
+| **路径遍历与越权** | 4 CVE | 符号链接逃逸（CVE-2025-53109）、前缀绕过 |
+| **RCE 与提示劫持** | 4 CVE | MCP Inspector RCE（CVE-2025-49596）、会话劫持 |
+| **SSRF 与 DNS 重绑定** | 4 CVE | WebFetch SSRF（CVE-2026-24052）、DNS 重绑定 |
+| **数据泄露** | 1 CVE | 跨客户端响应泄露（CVE-2026-25536） |
+| **恶意技能** | 655 种模式 | Unicode 注入、隐藏指令、自动执行 |
 
-**Taxonomies**: 10 attack surfaces × 11 threat types × 8 impact levels
+**分类**：10 个攻击面 × 11 种威胁类型 × 8 个影响级别
 
-### Hardening Resources
+### 加固资源
 
-| Resource | Purpose | Time |
+| 资源 | 用途 | 时间 |
 |----------|---------|------|
-| **[Security Hardening Guide](./guide/security/security-hardening.md)** | MCP vetting, injection defense, audit workflow | 25 min |
-| **[Data Privacy Guide](./guide/security/data-privacy.md)** | Retention policies (5yr → 30d → 0), GDPR compliance | 10 min |
-| **[Sandbox Isolation](./guide/security/sandbox-isolation.md)** | Docker sandboxes for untrusted MCP servers | 10 min |
-| **[Production Safety](./guide/security/production-safety.md)** | Infrastructure locks, port stability, DB safety | 20 min |
+| **[安全加固指南](./guide/security/security-hardening.md)** | MCP 审查、注入防御、审计流程 | 25 分钟 |
+| **[数据隐私指南](./guide/security/data-privacy.md)** | 数据保留策略（5 年 → 30 天 → 0）、GDPR | 10 分钟 |
+| **[沙箱隔离](./guide/security/sandbox-isolation.md)** | 不信任的 MCP 服务器用 Docker 沙箱隔离 | 10 分钟 |
+| **[生产安全](./guide/security/production-safety.md)** | 基础设施锁定、端口稳定、数据库保护 | 20 分钟 |
 
-### Security Commands
+### 安全命令
 
 ```bash
-/security-check      # Quick scan config vs known threats (~30s)
-/security-audit      # Full 6-phase audit with score /100 (2-5min)
-/update-threat-db    # Research & update threat intelligence
-/audit-agents-skills # Quality audit with security checks
+/security-check      # 快速扫一下配置有没有已知威胁（~30秒）
+/security-audit      # 完整 6 阶段审计，评分 /100（2-5 分钟）
+/update-threat-db    # 查最新威胁情报并更新数据库
+/audit-agents-skills # 带安全审查的质量审计
 ```
 
-### Security Hooks
+### 安全钩子
 
-**37 production hooks** (bash + PowerShell) in [`examples/hooks/`](./examples/hooks/):
+**37 个生产级钩子**（bash + PowerShell）在 [`examples/hooks/`](./examples/hooks/) 里：
 
-| Hook | Purpose |
+| 钩子 | 作用 |
 |------|---------|
-| [dangerous-actions-blocker](./examples/hooks/bash/dangerous-actions-blocker.sh) | Block `rm -rf`, force-push, production ops |
-| [prompt-injection-detector](./examples/hooks/bash/prompt-injection-detector.sh) | Detect injection patterns in CLAUDE.md/prompts |
-| [unicode-injection-scanner](./examples/hooks/bash/unicode-injection-scanner.sh) | Detect hidden Unicode (zero-width, RTL override) |
-| [output-secrets-scanner](./examples/hooks/bash/output-secrets-scanner.sh) | Prevent API keys/tokens in Claude responses |
+| [dangerous-actions-blocker](./examples/hooks/bash/dangerous-actions-blocker.sh) | 阻止 `rm -rf`、force push、生产操作 |
+| [prompt-injection-detector](./examples/hooks/bash/prompt-injection-detector.sh) | 检测 CLAUDE.md/提示词里的注入模式 |
+| [unicode-injection-scanner](./examples/hooks/bash/unicode-injection-scanner.sh) | 检测隐藏 Unicode（零宽字符、RTL 覆盖） |
+| [output-secrets-scanner](./examples/hooks/bash/output-secrets-scanner.sh) | 防止 API 密钥/Token 出现在 Claude 回答里 |
 
-**[Browse All Security Hooks →](./examples/hooks/)**
+**[看全部安全钩子 →](./examples/hooks/)**
 
-### MCP Vetting Workflow
+### MCP 审查流程
 
-**Systematic evaluation before trusting MCP servers:**
+**信任一个 MCP 服务器之前，按这几步系统化评估：**
 
-1. **Provenance**: GitHub verified, 100+ stars, active maintenance
-2. **Code Review**: Minimal privileges, no obfuscation, open-source
-3. **Permissions**: Whitelist-only filesystem access, network restrictions
-4. **Testing**: Isolated Docker sandbox first, monitor tool calls
-5. **Monitoring**: Session logs, error tracking, regular re-audits
+1. **来源**：GitHub 验证账号、100+ star、活跃维护
+2. **代码审查**：权限最小化、没混淆、开源
+3. **权限**：文件系统只开放白名单、网络有限制
+4. **测试**：先在 Docker 沙箱里隔离跑，观察工具调用
+5. **监控**：会话日志、错误追踪、定期重新审计
 
-**[Full MCP Security Workflow →](./guide/security/security-hardening.md#vetting-mcp-servers)**
+**[完整的 MCP 安全审查流程 →](./guide/security/security-hardening.md#vetting-mcp-servers)**
 
 ---
 
-## 📖 About
+## 📖 关于
 
-This guide is the result of **6 months of daily practice** with Claude Code. The goal isn't to be exhaustive (the tool evolves too fast), but to share what works in production.
+这本指南是作者 **连续 6 个月天天用 Claude Code 干活**后攒出来的。目标不是面面俱到（工具更新太快了），而是分享生产环境里真正管用的东西。
 
-**What you'll find:**
-- Patterns verified in production (not theory)
-- Trade-off explanations (not just "here's how to do it")
-- Security first (28 CVEs tracked)
-- Transparency on limitations (Claude Code isn't magic)
+**你能看到：**
+- 经过生产验证的模式（不是理论）
+- 讲清楚取舍（不是只告诉你"怎么配"）
+- 安全优先（28 个 CVE 追踪）
+- 坦诚面对局限性（Claude Code 不是万能的）
 
-**What you won't find:**
-- Definitive answers (tool is too new)
-- Universal configs (every project is different)
-- Marketing promises (zero bullshit)
+**你不会看到：**
+- 绝对答案（工具还太新）
+- 万能配置（每个项目都不一样）
+- 营销吹嘘（一句废话都没有）
 
-Use this guide critically. Experiment. Share what works for you.
+批判着看。多试。有你觉得好用的回来分享。
 
-**Feedback welcome:** [GitHub Issues](https://github.com/FlorianBruniaux/claude-code-ultimate-guide/issues)
+**欢迎反馈：** [GitHub Issues](https://github.com/FlorianBruniaux/claude-code-ultimate-guide/issues)
 
-### About the Author
+### 关于作者
 
-**Florian Bruniaux** — Founding Engineer @ [Méthode Aristote](https://methode-aristote.fr) (EdTech + AI). 12 years in tech (Dev → Lead → EM → VP Eng → CTO). Current focus: Rust CLI tools, MCP servers, AI developer tooling.
+**Florian Bruniaux** — [Méthode Aristote](https://methode-aristote.fr)（EdTech + AI）创始工程师。干了 12 年技术（Dev → Lead → EM → VP Eng → CTO）。目前专注：Rust CLI 工具、MCP 服务器、AI 开发者工具。
 
-| Project | Description | Links |
+| 项目 | 介绍 | 链接 |
 |---------|-------------|-------|
-| **RTK** | CLI proxy — 60-90% LLM token reduction | [GitHub](https://github.com/rtk-ai/rtk) · [Site](https://www.rtk-ai.app/) |
-| **ccboard** | Real-time TUI/Web dashboard for Claude Code | [GitHub](https://github.com/FlorianBruniaux/ccboard) · [Demo](https://ccboard.bruniaux.com/) |
-| **Claude Cowork Guide** | 26 business workflows for non-coders | [GitHub](https://github.com/FlorianBruniaux/claude-cowork-guide) · [Site](https://cowork.bruniaux.com/) |
-| **cc-copilot-bridge** | Bridge between Claude Code & GitHub Copilot | [GitHub](https://github.com/FlorianBruniaux/cc-copilot-bridge) · [Site](https://ccbridge.bruniaux.com/) |
-| **Agent Academy** | MCP server for AI agent learning | [GitHub](https://github.com/FlorianBruniaux/agent-academy) |
-| **techmapper** | Tech stack mapping & visualization | [GitHub](https://github.com/FlorianBruniaux/techmapper) |
+| **RTK** | CLI 代理——省 60-90% LLM Token | [GitHub](https://github.com/rtk-ai/rtk) · [网站](https://www.rtk-ai.app/) |
+| **ccboard** | Claude Code 实时 TUI/Web 仪表盘 | [GitHub](https://github.com/FlorianBruniaux/ccboard) · [演示](https://ccboard.bruniaux.com/) |
+| **Claude Cowork 指南** | 不会写代码的人也能用的 26 个工作流 | [GitHub](https://github.com/FlorianBruniaux/claude-cowork-guide) · [网站](https://cowork.bruniaux.com/) |
+| **cc-copilot-bridge** | 连接 Claude Code 和 GitHub Copilot | [GitHub](https://github.com/FlorianBruniaux/cc-copilot-bridge) · [网站](https://ccbridge.bruniaux.com/) |
+| **Agent Academy** | AI 智能体学习用的 MCP 服务器 | [GitHub](https://github.com/FlorianBruniaux/agent-academy) |
+| **techmapper** | 技术栈映射可视化 | [GitHub](https://github.com/FlorianBruniaux/techmapper) |
 
-[GitHub](https://github.com/FlorianBruniaux) · [LinkedIn](https://www.linkedin.com/in/florian-bruniaux-43408b83/) · [Portfolio](https://florian.bruniaux.com/)
+[GitHub](https://github.com/FlorianBruniaux) · [LinkedIn](https://www.linkedin.com/in/florian-bruniaux-43408b83/) · [作品集](https://florian.bruniaux.com/)
 
 ---
 
-## 📚 What's Inside
+## 📚 里面都有什么
 
-### Core Documentation
+### 核心文档
 
-| File | Purpose | Time |
+| 文件 | 用途 | 阅读时间 |
 |------|---------|------|
-| **[Ultimate Guide](./guide/ultimate-guide.md)** | Complete reference (24K+ lines), 10 sections | 30-40h (full) • Most consult sections |
-| **[Cheat Sheet](./guide/cheatsheet.md)** | 1-page printable reference | 5 min |
-| **[Visual Reference](./guide/core/visual-reference.md)** | 20 ASCII diagrams for key concepts | 5 min |
-| **[Architecture](./guide/core/architecture.md)** | How Claude Code works internally | 25 min |
-| **[Methodologies](./guide/core/methodologies.md)** | TDD, SDD, BDD reference | 20 min |
-| **[Workflows](./guide/workflows/)** | Practical guides (TDD, Plan-Driven, Task Management) | 30 min |
-| **[Data Privacy](./guide/security/data-privacy.md)** | Retention & compliance | 10 min |
-| **[Security Hardening](./guide/security/security-hardening.md)** | MCP vetting, injection defense | 25 min |
-| **[Sandbox Isolation](./guide/security/sandbox-isolation.md)** | Docker Sandboxes, cloud alternatives, safe autonomy | 10 min |
-| **[Production Safety](./guide/security/production-safety.md)** | Port stability, DB safety, infrastructure lock | 20 min |
-| **[DevOps & SRE](./guide/ops/devops-sre.md)** | FIRE framework, K8s troubleshooting, incident response | 30 min |
-| **[AI Ecosystem](./guide/ecosystem/ai-ecosystem.md)** | Complementary AI tools & integration patterns | 20 min |
-| **[AI Traceability](./guide/ops/ai-traceability.md)** | Code attribution & provenance tracking | 15 min |
-| **[Search Tools Cheatsheet](./guide/cheatsheet.md)** | Grep, Serena, ast-grep, grepai comparison | 5 min |
-| **[Learning with AI](./guide/roles/learning-with-ai.md)** | Use AI without becoming dependent | 15 min |
-| **[Claude Code Releases](./guide/core/claude-code-releases.md)** | Official release history | 10 min |
-| **[Credits](./guide/core/credits.md)** | Open-source inspirations and pattern attributions | 2 min |
+| **[完整指南](./guide/ultimate-guide.md)** | 完整参考（24K+ 行），10 个章节 | 30-40 小时（全文）• 多数人挑章节看 |
+| **[速查表](./guide/cheatsheet.md)** | 1 页可打印速查 | 5 分钟 |
+| **[可视化参考](./guide/core/visual-reference.md)** | 20 张 ASCII 图解关键概念 | 5 分钟 |
+| **[架构](./guide/core/architecture.md)** | Claude Code 内部原理 | 25 分钟 |
+| **[方法论](./guide/core/methodologies.md)** | TDD、SDD、BDD 参考 | 20 分钟 |
+| **[工作流](./guide/workflows/)** | 实战指南（TDD、计划驱动、任务管理） | 30 分钟 |
+| **[数据隐私](./guide/security/data-privacy.md)** | 保留策略与合规 | 10 分钟 |
+| **[安全加固](./guide/security/security-hardening.md)** | MCP 审查、注入防御 | 25 分钟 |
+| **[沙箱隔离](./guide/security/sandbox-isolation.md)** | Docker 沙箱、云替代方案、安全自治 | 10 分钟 |
+| **[生产安全](./guide/security/production-safety.md)** | 端口稳定、数据库安全、基础设施锁定 | 20 分钟 |
+| **[DevOps & SRE](./guide/ops/devops-sre.md)** | FIRE 框架、K8s 排障、故障响应 | 30 分钟 |
+| **[AI 生态](./guide/ecosystem/ai-ecosystem.md)** | 互补 AI 工具和集成方案 | 20 分钟 |
+| **[AI 可追溯性](./guide/ops/ai-traceability.md)** | 代码归属和来源追踪 | 15 分钟 |
+| **[搜索工具速查](./guide/cheatsheet.md)** | Grep、Serena、ast-grep、grepai 对比 | 5 分钟 |
+| **[跟 AI 一起学](./guide/roles/learning-with-ai.md)** | 用 AI 但不依赖 AI | 15 分钟 |
+| **[Claude Code 发版记录](./guide/core/claude-code-releases.md)** | 官方发布历史 | 10 分钟 |
+| **[致谢](./guide/core/credits.md)** | 开源灵感和模式归属 | 2 分钟 |
 
 <details>
-<summary><strong>Examples Library</strong> (181 templates)</summary>
+<summary><strong>示例库</strong>（181 个模板）</summary>
 
-**Agents** (23): [code-reviewer](./examples/agents/code-reviewer.md), [test-writer](./examples/agents/test-writer.md), [security-auditor](./examples/agents/security-auditor.md), [refactoring-specialist](./examples/agents/refactoring-specialist.md), [output-evaluator](./examples/agents/output-evaluator.md), [devops-sre](./examples/agents/devops-sre.md) ⭐
+**智能体**（23）：[code-reviewer](./examples/agents/code-reviewer.md)、[test-writer](./examples/agents/test-writer.md)、[security-auditor](./examples/agents/security-auditor.md)、[refactoring-specialist](./examples/agents/refactoring-specialist.md)、[output-evaluator](./examples/agents/output-evaluator.md)、[devops-sre](./examples/agents/devops-sre.md) ⭐
 
-**Skills** (74): [/pr](./examples/skills/pr/SKILL.md), [/commit](./examples/skills/commit/SKILL.md), [/release-notes](./examples/skills/release-notes/SKILL.md), [/diagnose](./examples/skills/diagnose/SKILL.md), [/security](./examples/skills/security/SKILL.md), [/security-check](./examples/skills/security-check/SKILL.md) **, [/security-audit](./examples/skills/security-audit/SKILL.md) **, [/update-threat-db](./examples/skills/update-threat-db/SKILL.md) **, [/refactor](./examples/skills/refactor/SKILL.md), [/explain](./examples/skills/explain/SKILL.md), [/optimize](./examples/skills/optimize/SKILL.md), [/ship](./examples/skills/ship/SKILL.md)...
+**技能**（74）：[/pr](./examples/skills/pr/SKILL.md)、[/commit](./examples/skills/commit/SKILL.md)、[/release-notes](./examples/skills/release-notes/SKILL.md)、[/diagnose](./examples/skills/diagnose/SKILL.md)、[/security](./examples/skills/security/SKILL.md)、[/security-check](./examples/skills/security-check/SKILL.md)、[/security-audit](./examples/skills/security-audit/SKILL.md)、[/update-threat-db](./examples/skills/update-threat-db/SKILL.md)、[/refactor](./examples/skills/refactor/SKILL.md)、[/explain](./examples/skills/explain/SKILL.md)、[/optimize](./examples/skills/optimize/SKILL.md)、[/ship](./examples/skills/ship/SKILL.md)……
 
-**Security Hooks** (37): [dangerous-actions-blocker](./examples/hooks/bash/dangerous-actions-blocker.sh), [prompt-injection-detector](./examples/hooks/bash/prompt-injection-detector.sh), [unicode-injection-scanner](./examples/hooks/bash/unicode-injection-scanner.sh), [output-secrets-scanner](./examples/hooks/bash/output-secrets-scanner.sh)...
+**安全钩子**（37）：[dangerous-actions-blocker](./examples/hooks/bash/dangerous-actions-blocker.sh)、[prompt-injection-detector](./examples/hooks/bash/prompt-injection-detector.sh)、[unicode-injection-scanner](./examples/hooks/bash/unicode-injection-scanner.sh)、[output-secrets-scanner](./examples/hooks/bash/output-secrets-scanner.sh)……
 
-**Skills** (64): [Claudeception](https://github.com/blader/Claudeception) — Meta-skill that auto-generates skills from session discoveries ⭐
+**技能**（64）：[Claudeception](https://github.com/blader/Claudeception) —— 元技能，能在会话中发现行为并自动生成技能 ⭐
 
-**Plugins** (1): [SE-CoVe](./examples/plugins/se-cove.md) — Chain-of-Verification for independent code review (Meta AI, ACL 2024)
+**插件**（1）：[SE-CoVe](./examples/plugins/se-cove.md) —— 独立代码审查的验证链（Meta AI, ACL 2024）
 
-**Utility Scripts**: [session-search.sh](./examples/scripts/session-search.sh), [audit-scan.sh](./examples/scripts/audit-scan.sh)
+**实用脚本**：[session-search.sh](./examples/scripts/session-search.sh)、[audit-scan.sh](./examples/scripts/audit-scan.sh)
 
-**GitHub Actions**: [claude-pr-auto-review.yml](./examples/github-actions/claude-pr-auto-review.yml), [claude-security-review.yml](./examples/github-actions/claude-security-review.yml), [claude-issue-triage.yml](./examples/github-actions/claude-issue-triage.yml)
+**GitHub Actions**：[claude-pr-auto-review.yml](./examples/github-actions/claude-pr-auto-review.yml)、[claude-security-review.yml](./examples/github-actions/claude-security-review.yml)、[claude-issue-triage.yml](./examples/github-actions/claude-issue-triage.yml)
 
-**Integrations** (1): [Agent Vibes TTS](./examples/integrations/agent-vibes/) - Text-to-speech narration for Claude Code responses
+**集成**（1）：[Agent Vibes TTS](./examples/integrations/agent-vibes/) —— 把 Claude Code 的响应转成语音
 
-**[Browse Complete Catalog](./examples/README.md)** | **[Interactive Catalog](./examples/index.html)**
+**[浏览完整目录](./examples/README.md)** | **[交互目录](./examples/index.html)**
 
 </details>
 
 <details>
-<summary><strong>Knowledge Quiz</strong> (271 questions)</summary>
+<summary><strong>知识测验</strong>（271 题）</summary>
 
-Test your Claude Code knowledge with an interactive CLI quiz covering all guide sections.
+用交互式 CLI 测验测试你对 Claude Code 的了解，覆盖所有指南章节。
 
 ```bash
 cd quiz && npm install && npm start
 ```
 
-**Features**: 4 profiles (Junior/Senior/Power User/PM), 10 topic categories, immediate feedback with doc links, score tracking with weak area identification.
+**特点**：4 种角色（初级/高级/深度用户/产品经理）、10 个主题分类、答完立刻反馈带链接、得分追踪定位薄弱点。
 
-**[Quiz Documentation](./quiz/README.md)** | **[Contribute Questions](./quiz/templates/question-template.yaml)**
+**[测验说明](./quiz/README.md)** | **[贡献题目](./quiz/templates/question-template.yaml)**
 
 </details>
 
 <details>
-<summary><strong>Resource Evaluations</strong> (151 assessments)</summary>
+<summary><strong>资源评估</strong>（151 份）</summary>
 
-Systematic evaluation of external resources (tools, methodologies, articles) before integration into the guide.
+集成到指南之前，对外部资源（工具、方法论、文章）做系统化评估。
 
-**Methodology**: 5-point scoring system (Critical → Low) with technical review and challenge phase for objectivity.
+**方法**：5 分制（关键 → 低分），含技术审查和挑战环节确保客观。
 
-**Evaluations**: GSD methodology, Worktrunk, Boris Cowork video, AST-grep, ClawdBot analysis, and more.
+**已评估**：GSD 方法论、Worktrunk、Boris Cowork 视频、AST-grep、ClawdBot 分析 等。
 
-**[Browse Evaluations](./docs/resource-evaluations/)** | **[Evaluation Methodology](./docs/resource-evaluations/README.md)**
+**[浏览评估](./docs/resource-evaluations/)** | **[评估方法](./docs/resource-evaluations/README.md)**
 
 </details>
 
 ---
 
-## ⭐ Star History
+## ⭐ Star 历史
 
 [![Star History Chart](https://api.star-history.com/svg?repos=FlorianBruniaux/claude-code-ultimate-guide&type=Date)](https://www.star-history.com/#FlorianBruniaux/claude-code-ultimate-guide&Date)
 
@@ -855,91 +857,91 @@ Systematic evaluation of external resources (tools, methodologies, articles) bef
     <picture>
       <source media="(prefers-color-scheme: dark)" srcset="https://starmapper.bruniaux.com/api/map-image/FlorianBruniaux/claude-code-ultimate-guide?theme=dark" />
       <source media="(prefers-color-scheme: light)" srcset="https://starmapper.bruniaux.com/api/map-image/FlorianBruniaux/claude-code-ultimate-guide?theme=light" />
-      <img alt="StarMapper — see who stars this repo on a world map" src="https://starmapper.bruniaux.com/api/map-image/FlorianBruniaux/claude-code-ultimate-guide" />
+      <img alt="StarMapper — 看看给这个仓库点过 Star 的人都在世界的哪个角落" src="https://starmapper.bruniaux.com/api/map-image/FlorianBruniaux/claude-code-ultimate-guide" />
     </picture>
   </a>
 </p>
 
 ---
 
-## 🤝 Contributing
+## 🤝 参与贡献
 
-We welcome:
-- ✅ Corrections and clarifications
-- ✅ New quiz questions
-- ✅ Methodologies and workflows
-- ✅ Resource evaluations (see [process](./docs/resource-evaluations/README.md))
-- ✅ Educational content improvements
+我们欢迎：
+- ✅ 纠错和澄清
+- ✅ 新的测验题目
+- ✅ 方法论和工作流
+- ✅ 资源评估（见[流程](./docs/resource-evaluations/README.md)）
+- ✅ 教学内容的改进
 
-See [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines.
+详见 [CONTRIBUTING.md](./CONTRIBUTING.md)。
 
-**Ways to Help**: Star the repo • Report issues • Submit PRs • Share workflows in [Discussions](../../discussions)
-
----
-
-## 📄 License & Support
-
-**Guide**: [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) — Educational content is open for reuse with attribution.
-
-**Templates**: [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) — Copy-paste freely, no attribution needed.
-
-**Author**: [Florian BRUNIAUX](https://github.com/FlorianBruniaux) | Founding Engineer [@Méthode Aristote](https://methode-aristote.fr)
-
-**Stay Updated**: [Watch releases](../../releases) | [Discussions](../../discussions) | [Connect on LinkedIn](https://www.linkedin.com/in/florian-bruniaux-43408b83/)
+**帮上忙的方式**：Star · 报 issue · 提 PR · 在[讨论区](../../discussions)分享你的工作流
 
 ---
 
-## 📚 Further Reading
+## 📄 许可 & 支持
 
-### This Guide
-- **[CHANGELOG](./CHANGELOG.md)** — Guide version history (what's new in each release)
-- [Claude Code Releases](./guide/core/claude-code-releases.md) — Official Claude Code release tracking
+**指南**：[CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) —— 教育内容，署名后随便用。
 
-### Official Resources
-- [Claude Code CLI](https://code.claude.com) — Official website
-- [Documentation](https://code.claude.com/docs) — Official docs
-- [Anthropic CHANGELOG](https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md) — Official Claude Code changelog
-- [GitHub Issues](https://github.com/anthropics/claude-code/issues) — Bug reports & feature requests
+**模板**：[CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) —— 自由复制粘贴，不需署名。
 
-### Research & Industry Reports
+**作者**：[Florian BRUNIAUX](https://github.com/FlorianBruniaux) | 创始工程师 [@Méthode Aristote](https://methode-aristote.fr)
 
-- **[2026 Agentic Coding Trends Report](https://resources.anthropic.com/hubfs/2026%20Agentic%20Coding%20Trends%20Report.pdf)** (Anthropic, Feb 2026)
-  - 8 trends prospectifs (foundation/capability/impact)
-  - Case studies: Fountain (50% faster), Rakuten (7h autonomous), CRED (2x speed), TELUS (500K hours saved)
-  - Research data: 60% AI usage, 0-20% full delegation, 67% more PRs merged/day
-  - **Evaluation**: [`docs/resource-evaluations/anthropic-2026-agentic-coding-trends.md`](docs/resource-evaluations/anthropic-2026-agentic-coding-trends.md) (score 4/5)
-  - **Integration**: Diffused across sections 9.17 (Multi-Instance ROI), 9.20 (Agent Teams adoption), 9.11 (Enterprise Anti-Patterns), Section 9 intro
-
-- **[AI Fluency Index](https://www.anthropic.com/research/AI-fluency-index)** (Anthropic, Feb 23, 2026)
-  - Research on 9,830 Claude.ai conversations: iteration multiplies fluency behaviors 2× (2.67 vs 1.33)
-  - **Artifact Paradox**: polished outputs (code, files) reduce critical evaluation — −5.2pp missing context, −3.7pp fact-checking, −3.1pp reasoning challenge
-  - Only 30% of users set collaboration terms explicitly — CLAUDE.md addresses this structurally
-  - **Evaluation**: [`docs/resource-evaluations/2026-02-23-anthropic-ai-fluency-index.md`](docs/resource-evaluations/2026-02-23-anthropic-ai-fluency-index.md) (score 4/5)
-  - **Integration**: 3 callouts in §2.3 (plan review), §3.1 (CLAUDE.md), §9.11 (Artifact Paradox) + [diagram](./guide/diagrams/06-development-workflows.md#ai-fluency--high-vs-low-fluency-paths)
-
-- **[Outcome Engineering — o16g Manifesto](https://o16g.com/)** (Cory Ondrejka, Feb 2026)
-  - 16 principles for shifting from "software engineering" to "outcome engineering"
-  - Author: CTO Onebrief, co-creator Second Life, ex-VP Google/Meta
-  - Cultural positioning: numeronym naming (o16g like i18n, k8s), Honeycomb endorsement
-  - **Status**: Emerging — on [watch list](./docs/resource-evaluations/watch-list.md) for community adoption tracking
-
-### Community Resources
-- [everything-claude-code](https://github.com/affaan-m/everything-claude-code) — Production configs (45k+⭐)
-- [awesome-claude-code](https://github.com/hesreallyhim/awesome-claude-code) — Curated links
-- [SuperClaude Framework](https://github.com/SuperClaude-Org/SuperClaude_Framework) — Behavioral modes
-
-### Tools
-- [Ask Zread](https://zread.ai/FlorianBruniaux/claude-code-ultimate-guide) — Ask questions about this guide
-- [Interactive Quiz](./quiz/) — 271 questions
-- [Landing Site](https://cc.bruniaux.com) — Visual navigation, cheat sheets, ebooks, quiz
-- [RSS Feed](https://cc.bruniaux.com/rss.xml) — Subscribe to guide updates, new content, and CC releases
+**保持关注**：[Watch 发版](../../releases) | [讨论区](../../discussions) | [LinkedIn](https://www.linkedin.com/in/florian-bruniaux-43408b83/)
 
 ---
 
-*Version 3.40.0 | Updated daily · May 12, 2026 | Crafted with Claude*
+## 📚 延伸阅读
+
+### 本指南相关
+- **[变更日志](./CHANGELOG.md)** — 指南版本历史（每个版本更新了什么）
+- [Claude Code 发版记录](./guide/core/claude-code-releases.md) — 官方 Claude Code 版本追踪
+
+### 官方资源
+- [Claude Code CLI](https://code.claude.com) — 官方网站
+- [文档](https://code.claude.com/docs) — 官方文档
+- [Anthropic 变更日志](https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md) — 官方 Claude Code changelog
+- [GitHub Issues](https://github.com/anthropics/claude-code/issues) — 提 bug 和功能需求
+
+### 研究与行业报告
+
+- **[2026 年代理编码趋势报告](https://resources.anthropic.com/hubfs/2026%20Agentic%20Coding%20Trends%20Report.pdf)**（Anthropic, 2026 年 2 月）
+  - 8 个趋势洞察（基础/能力/影响）
+  - 案例：Fountain（提速 50%）、Rakuten（自主运行 7 小时）、CRED（速度 2 倍）、TELUS（省了 50 万小时）
+  - 数据：60% 的人在用 AI、0-20% 完全委托、每天 PR 合并量增加 67%
+  - **评估**：[`docs/resource-evaluations/anthropic-2026-agentic-coding-trends.md`](docs/resource-evaluations/anthropic-2026-agentic-coding-trends.md)（4/5 分）
+  - **分布**：散落在 9.17（多实例 ROI）、9.20（智能体团队推广）、9.11（企业反模式）、第 9 章引言
+
+- **[AI 使用熟练度指数](https://www.anthropic.com/research/AI-fluency-index)**（Anthropic, 2026 年 2 月 23 日）
+  - 分析了 9,830 段 Claude.ai 对话：迭代能让熟练行为翻倍（2.67 vs 1.33）
+  - **成品悖论**：输出越是精美（代码、文件），人就越不会批判性审视——缺上下文 −5.2pp、核查事实 −3.7pp、挑战推理 −3.1pp
+  - 只有 30% 的用户会明确设定协作方式——CLAUDE.md 正是从结构上解决这个问题的
+  - **评估**：[`docs/resource-evaluations/2026-02-23-anthropic-ai-fluency-index.md`](docs/resource-evaluations/2026-02-23-anthropic-ai-fluency-index.md)（4/5 分）
+  - **分布**：在 §2.3（计划审查）、§3.1（CLAUDE.md）、§9.11（成品悖论）三处引用 + [图表](./guide/diagrams/06-development-workflows.md#ai-fluency--high-vs-low-fluency-paths)
+
+- **[成果工程 — o16g 宣言](https://o16g.com/)**（Cory Ondrejka, 2026 年 2 月）
+  - 从"软件工程"转向"成果工程"的 16 条原则
+  - 作者：Onebrief CTO、Second Life 联合创始人、前 Google/Meta VP
+  - 命名法：numeronym（o16g 就像 i18n、k8s），被 Honeycomb 认可
+  - **状态**：新兴 —— 在[观察列表](./docs/resource-evaluations/watch-list.md)里关注社区采纳趋势
+
+### 社区资源
+- [everything-claude-code](https://github.com/affaan-m/everything-claude-code) — 生产配置（45k+⭐）
+- [awesome-claude-code](https://github.com/hesreallyhim/awesome-claude-code) — 精选链接
+- [SuperClaude Framework](https://github.com/SuperClaude-Org/SuperClaude_Framework) — 行为模式
+
+### 工具
+- [Ask Zread](https://zread.ai/FlorianBruniaux/claude-code-ultimate-guide) — 对本指南提问
+- [交互式测验](./quiz/) — 271 道
+- [落地页](https://cc.bruniaux.com) — 可视化导航、速查卡片、电子书、测验
+- [RSS Feed](https://cc.bruniaux.com/rss.xml) — 订阅指南更新、新内容、Claude Code 发版
+
+---
+
+*版本 3.40.0 | 每日更新 · 2026 年 5 月 12 日 | Claude 打造*
 
 <!-- SEO Keywords -->
 <!-- claude code, claude code tutorial, anthropic cli, ai coding assistant, claude code mcp,
 claude code agents, claude code hooks, claude code skills, agentic coding, ai pair programming,
-tdd ai, test driven development ai, sdd spec driven development, bdd claude, development methodologies,
-claude code architecture, data privacy anthropic, claude code workflows, ai coding workflows -->
+ai coding workflow, ai agent guide, claude code production, mcp security, prompt injection,
+ai coding best practices, claude code architecture, claude code memory, claude code context -->
