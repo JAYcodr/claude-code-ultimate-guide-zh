@@ -97,4 +97,4 @@
 | 2026-05-23 | workflows Batch 2（6 文件）| 批量翻译 | b23a768 |
 | 2026-05-23 | workflows 润色 README + tdd + plan-driven | 去除机翻感 | d3500b6 |
 | 2026-05-23 | workflows 润色第二批（10 文件）| 去除机翻感 | 69bb599 |
-| 2026-05-23 | TRANSLATION_STATUS.md | 更新 P2 workflows 状态 | (待提交) |
+| 2026-05-23 | TRANSLATION_STATUS.md | 更新 P2 workflows 状态 | f4d0072 |

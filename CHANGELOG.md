@@ -9,12 +9,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- **汉化 workflows 目录 16/24 文件** (`guide/workflows/`): Batch 1+2 批量翻译 + 润色。包含 README、code-review、changelog-fragments、skeleton-projects、gstack-workflow、event-driven-agents、exploration-workflow、team-ai-instructions、tdd-with-claude、og-image-generation、tts-setup、plan-pipeline、github-actions、plan-driven、pdf-generation、talk-pipeline。
 - **汉化 ultimate-guide.md TOC 导航页** (`guide/ultimate-guide.md`): 将入口页完整翻译为中文（标题、frontmatter、TL;DR、决策表、完整目录）。
 - **汉化 guide/core/architecture.md + methodologies.md**：P1 翻译完成，术语统一，中文流畅。
 - **优化翻译工作流 SKILL.md** (`.agents/skills/zh-translation-workflow/SKILL.md`): 补充 frontmatter metadata（allowed-tools、effort）、更新进度表、精简流程、更新提交策略。
 
 ### Fixed
+
 - **清理 CI**: 删除上游英文版专属的 trigger-landing-deploy.yml 和 rebuild-guide-exports.yml，保留 link-check.yml。
+- **润色 workflows 译文**：去除机翻感，简化冗余句式，统一表达风格（16 文件）。
 
 
 - **润色 P0 译文多处**：§3 标题 `Memory & Settings` → `记忆与设置`；`武器库` → `工具集`；`Founding Engineer` → `创始工程师`；`直接继承` → `会被直接继承`；`的团队` → `团队`。
