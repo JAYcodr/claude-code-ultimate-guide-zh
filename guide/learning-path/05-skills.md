@@ -1,31 +1,33 @@
-# Module 05: Skills & Automation
+<!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
 
-**Time**: 1.5 hours | **Complexity**: ⭐⭐ Intermediate
+# 模块 05：技能与自动化
 
-## Goal
+**时间**: 1.5 小时 | **难度**: ⭐⭐ 初级
 
-Create reusable skills that give Claude domain-specific knowledge. Package solutions for repeated problems.
+## 目标
 
----
-
-## What You'll Learn
-
-- What skills are and why they're powerful
-- Creating skills with SKILL.md
-- Skill frontmatter and metadata
-- Auto-invoking skills
-- Building a knowledge base
-- Bundling skills with your projects
+创建可复用的技能，让 Claude 拥有领域专有知识。把对重复问题的解决方案打包。
 
 ---
 
-## What Are Skills?
+## 你将学到
 
-A **skill** is a reusable knowledge module. It teaches Claude how to do something specific.
+- 什么是技能，为什么它很强
+- 用 SKILL.md 创建技能
+- 技能的 frontmatter 和元数据
+- 技能的自动调用
+- 构建知识库
+- 将技能与项目捆绑
 
-### Example: Testing Skill
+---
 
-Instead of explaining your testing approach every session, you create a skill:
+## 什么是技能？
+
+**技能（Skill）** 是一个可复用的知识模块。它教会 Claude 如何做特定的事情。
+
+### 示例：测试技能
+
+与其在每个会话中解释你的测试方法，不如创建一个技能：
 
 ```markdown
 # Testing Best Practices for Our Project
@@ -33,39 +35,39 @@ Instead of explaining your testing approach every session, you create a skill:
 ## Framework: Jest
 
 ## Style
-- Descriptive names: "should validate email with + symbols"
-- Arrange-Act-Assert pattern
-- Mock external dependencies
-- Test behavior, not implementation
+- 描述性名称："should validate email with + symbols"
+- Arrange-Act-Assert 模式
+- Mock 外部依赖
+- 测试行为，不测试实现
 
 ## Coverage Target
-Minimum 80%
+最低 80%
 ```
 
-Now, whenever Claude helps with testing, it reads this skill and follows your approach.
+现在，每当 Claude 帮忙写测试时，它会读取这个技能并遵循你的方法。
 
-### Skills vs Agents
+### 技能 vs 智能体
 
-| Aspect | Skill | Agent |
-|--------|-------|-------|
-| Purpose | Teach knowledge | Execute tasks |
-| Scope | Domain knowledge | Specialized workflow |
-| Persistence | Remembered each session | Called explicitly |
-| Auto-invoke | Yes (optional) | Manual only |
-| Example | "How we test code" | "The test-writer agent" |
+| 对比项 | 技能 | 智能体 |
+|--------|------|--------|
+| 目的 | 传授知识 | 执行任务 |
+| 范围 | 领域知识 | 专业化工作流 |
+| 持久性 | 每次会话都会记住 | 显式调用 |
+| 自动调用 | 可以（可选） | 只能手动 |
+| 示例 | "我们怎么写测试" | "测试写手智能体" |
 
 ---
 
-## Creating Your First Skill
+## 创建你的第一个技能
 
-Skills are markdown files in `.claude/skills/`.
+技能是 `.claude/skills/` 目录下的 Markdown 文件。
 
-### Basic Structure
+### 基本结构
 
 ```markdown
 ---
 name: testing-standards
-description: Our project's testing practices and conventions
+description: 我们项目的测试实践和约定
 triggers: [test, testing, jest, spec]
 auto_invoke: false
 keywords: [jest, unit-test, integration-test, mocking]
@@ -78,15 +80,15 @@ version: 1.0.0
 Jest with @testing-library/react
 
 ## File Organization
-- Tests live next to source code
-- Naming: `[Component].test.tsx`
-- Fixtures in `__fixtures__/`
-- Mocks in `__mocks__/`
+- 测试放在源码旁边
+- 命名：`[Component].test.tsx`
+- 测试数据放在 `__fixtures__/`
+- Mock 文件放在 `__mocks__/`
 
 ## Test Structure (AAA)
-1. **Arrange**: Set up test data
-2. **Act**: Call the function/component
-3. **Assert**: Check results
+1. **Arrange**：准备测试数据
+2. **Act**：调用函数/组件
+3. **Assert**：检查结果
 
 ## Example
 
@@ -106,24 +108,24 @@ describe('validateEmail', () => {
 ```
 
 ## Coverage Requirements
-- Target: 80% minimum
-- Critical paths: 100%
-- Types of coverage: line, branch, function
+- 目标：最低 80%
+- 关键路径：100%
+- 覆盖类型：行、分支、函数
 
 ## Mocking Strategy
-- External APIs: use jest.mock()
-- Database: use test fixtures
-- Timers: use jest.useFakeTimers()
+- 外部 API：用 jest.mock()
+- 数据库：用测试夹具
+- 定时器：用 jest.useFakeTimers()
 
 ## Running Tests
 ```bash
-npm test                 # Run all tests
-npm test -- --coverage   # With coverage report
-npm test -- --watch      # Watch mode
+npm test                 # 运行所有测试
+npm test -- --coverage   # 带覆盖率报告
+npm test -- --watch      # 监听模式
 ```
 ```
 
-### File Location
+### 文件位置
 
 ```
 my-project/
@@ -134,11 +136,11 @@ my-project/
 
 ---
 
-## Skill Features
+## 技能特性
 
-### Triggers
+### 触发器
 
-Automatically invoke the skill when Claude sees certain keywords:
+当 Claude 看到特定关键词时，自动调用技能：
 
 ```markdown
 ---
@@ -146,9 +148,9 @@ triggers: [test, jest, spec, coverage, mock]
 ---
 ```
 
-If Claude sees "add tests to this function", it automatically reads the testing skill.
+如果 Claude 看到"给这个函数加测试"，它会自动读取测试技能。
 
-### Auto-Invoke
+### 自动调用
 
 ```markdown
 ---
@@ -156,11 +158,11 @@ auto_invoke: true
 ---
 ```
 
-When `true`, Claude loads the skill at session start (without you asking). Use for critical rules.
+设为 `true` 时，Claude 在会话启动时自动加载这个技能（无需你手动触发）。适用于关键规则。
 
-### Keywords
+### 关键词
 
-Help Claude's search find the skill:
+帮助 Claude 搜索找到这个技能：
 
 ```markdown
 ---
@@ -168,9 +170,9 @@ keywords: [testing, jest, unit-test, mocking, assertions]
 ---
 ```
 
-### Version
+### 版本
 
-Track skill versions:
+追踪技能版本：
 
 ```markdown
 ---
@@ -178,13 +180,13 @@ version: 1.0.0
 ---
 ```
 
-Update when the skill changes significantly.
+技能有重大变化时更新。
 
 ---
 
-## Common Skill Patterns
+## 常用技能模式
 
-### Pattern 1: Coding Standards
+### 模式 1：编码规范
 
 ```markdown
 ---
@@ -195,14 +197,14 @@ triggers: [python, flask, django]
 # Python Coding Standards
 
 ## Style
-- PEP 8 compliance (max 100 chars)
-- Type hints on all functions
-- Docstrings in Google format
+- PEP 8 规范（最长 100 字符）
+- 所有函数加类型注解
+- 文档字符串用 Google 格式
 
 ## Testing
-- pytest for unit tests
-- 80% minimum coverage
-- Mock external dependencies
+- 用 pytest 做单元测试
+- 最低 80% 覆盖率
+- Mock 外部依赖
 
 ## File Organization
 src/
@@ -213,44 +215,44 @@ src/
 
 ## Imports
 ```python
-# ✅ Good: specific imports
+# ✅ 好：具体导入
 from models import User
 from services.auth import authenticate
 
-# ❌ Bad: wildcard imports
+# ❌ 不好：通配符导入
 from models import *
 ```
 ```
 
-### Pattern 2: Domain Knowledge
+### 模式 2：领域知识
 
 ```markdown
 ---
 name: payment-processing
-description: Payment system rules and edge cases
+description: 支付系统规则和边界情况
 auto_invoke: true
 ---
 
 # Payment Processing Rules
 
 ## PCI Compliance
-- Never log card numbers
-- Use tokenization (Stripe)
-- Encrypt sensitive data
-- Audit all transactions
+- 绝不能记录卡号
+- 使用令牌化（Stripe）
+- 加密敏感数据
+- 审计所有交易
 
 ## Common Issues
-1. Partial charges: Retry with exponential backoff
-2. Currency conversion: Always round to 2 decimals
-3. Timezone handling: Store all times in UTC
+1. 部分扣款：用指数退避重试
+2. 货币转换：始终保留 2 位小数
+3. 时区处理：所有时间用 UTC 存储
 
 ## Edge Cases
-- Declined cards: Provide clear error message
-- Expired cards: Suggest updating payment method
-- 3D Secure: Handle verification flow
+- 卡被拒：给出清晰的错误信息
+- 卡过期：建议更新支付方式
+- 3D Secure：处理验证流程
 ```
 
-### Pattern 3: Process Documentation
+### 模式 3：流程文档
 
 ```markdown
 ---
@@ -261,35 +263,35 @@ triggers: [review, pull request, pr]
 # Code Review Checklist
 
 ## Before Requesting Review
-- [ ] Tests pass locally
-- [ ] No console.log statements
-- [ ] No secrets in code
-- [ ] Commit messages are clear
+- [ ] 本地测试通过
+- [ ] 没有 console.log
+- [ ] 代码中没有密钥
+- [ ] 提交信息清晰
 
 ## Security Checks
-- [ ] No SQL injection vulnerabilities
-- [ ] No XSS vulnerabilities
-- [ ] No exposed API keys
-- [ ] Input is validated
+- [ ] 没有 SQL 注入漏洞
+- [ ] 没有 XSS 漏洞
+- [ ] 没有泄露的 API 密钥
+- [ ] 输入已做校验
 
 ## Performance
-- [ ] No N+1 queries
-- [ ] No infinite loops
-- [ ] Load times acceptable
+- [ ] 没有 N+1 查询
+- [ ] 没有无限循环
+- [ ] 加载时间可接受
 
 ## Testing
-- [ ] Unit tests added
-- [ ] Integration tests updated
-- [ ] Coverage >80%
+- [ ] 添加了单元测试
+- [ ] 更新了集成测试
+- [ ] 覆盖率 >80%
 ```
 
 ---
 
-## Bundling Skills
+## 打包技能
 
-You can package multiple related skills together.
+你可以将多个相关技能打包在一起。
 
-### Project Skill Bundle
+### 项目技能包
 
 ```
 my-project/
@@ -301,44 +303,44 @@ my-project/
         └── security-checklist.md
 ```
 
-In CLAUDE.md, reference them:
+在 CLAUDE.md 中引用它们：
 
 ```markdown
 ## Available Skills
-Our custom skills are loaded automatically:
-- **testing-standards**: How we write tests
-- **api-design**: REST API conventions
-- **database-patterns**: Common queries and migrations
-- **security-checklist**: Security review process
+我们的自定义技能会自动加载：
+- **testing-standards**：我们怎么写测试
+- **api-design**：REST API 规范
+- **database-patterns**：常见查询和迁移
+- **security-checklist**：安全审查流程
 ```
 
-### Distributing Skills
+### 分发技能
 
-To share skills with your team, version control them in git:
+与团队共享技能，将其纳入版本管理：
 
 ```bash
 git add .claude/skills/
-git commit -m "Add testing and API design skills"
+git commit -m "添加测试和 API 设计技能"
 git push
 ```
 
-Teammates checkout the project and get the skills automatically.
+团队成员签出项目后自动获得这些技能。
 
 ---
 
-## Exercise: Create a Domain Skill
+## 练习：创建一个领域技能
 
-### Scenario
+### 场景
 
-You're building an e-commerce site. You want Claude to understand your product data model.
+你在建一个电商网站。想让 Claude 理解你的产品数据模型。
 
-### Step 1: Create the Skill
+### 第一步：创建技能
 
 ```bash
 cat > .claude/skills/product-data-model.md << 'EOF'
 ---
 name: product-data-model
-description: E-commerce product data structure and rules
+description: 电商产品数据结构和规则
 triggers: [product, catalog, sku, price, inventory]
 auto_invoke: false
 version: 1.0.0
@@ -353,7 +355,7 @@ version: 1.0.0
 {
   id: UUID,
   name: string,
-  slug: string,  // URL-friendly
+  slug: string,  // URL 友好
   description: string,
   category_id: UUID,
   created_at: timestamp,
@@ -366,23 +368,23 @@ version: 1.0.0
 {
   id: UUID,
   product_id: UUID,
-  sku: string,  // e.g., "BLUE-XL-001"
-  price: decimal,  // Always 2 decimals
+  sku: string,  // 例如 "BLUE-XL-001"
+  price: decimal,  // 始终 2 位小数
   cost: decimal,
   inventory: integer,
-  weight: float,  // In kg
+  weight: float,  // 单位 kg
 }
 ```
 
 ### Inventory Rules
-- Decrement on order placement
-- Increment on return
-- Low stock alert: <5 units
-- Reorder level: Set per product
+- 下单时扣减库存
+- 退货时增加库存
+- 低库存提醒：<5 件
+- 补货阈值：按产品设置
 
 ## Common Queries
 
-### Get product with all SKUs
+### 获取产品及所有 SKU
 ```sql
 SELECT p.*, s.* 
 FROM products p 
@@ -390,103 +392,103 @@ JOIN skus s ON p.id = s.product_id
 WHERE p.slug = ?
 ```
 
-### Check inventory
+### 检查库存
 ```sql
 SELECT sum(inventory) FROM skus WHERE product_id = ?
 ```
 
 ## Edge Cases
-1. Out of stock: Return 404 or "unavailable"
-2. Variant selection: Show price per SKU
-3. Price changes: Update in SKU, not Product
+1. 缺货：返回 404 或 "unavailable"
+2. 变体选择：按 SKU 显示价格
+3. 价格变动：在 SKU 层级更新，不是 Product 层级
 EOF
 ```
 
-### Step 2: Reference in CLAUDE.md
+### 第二步：在 CLAUDE.md 中引用
 
 ```markdown
 ## Skills
-- **product-data-model**: Understanding our product structure
+- **product-data-model**：了解我们的产品结构
 ```
 
-### Step 3: Use It
+### 第三步：使用它
 
-In a session:
+在一个会话中：
 
 ```
-Add a query to find all products with low inventory (< 5 units)
+写一个查询，找出所有低库存（<5 件）的产品
 ```
 
-Claude will:
-1. Read the product-data-model skill
-2. Understand your schema
-3. Write the correct SQL
+Claude 会：
+1. 读取 product-data-model 技能
+2. 理解你的数据结构
+3. 写出正确的 SQL
 
 ---
 
-## Best Practices
+## 最佳实践
 
-### DO
+### 应该
 
-✅ Create skills for things you repeat
+✅ 为重复做的事创建技能
 
-✅ Keep skills focused (one domain per skill)
+✅ 保持技能专注（一个技能一个领域）
 
-✅ Version control your skills
+✅ 将技能纳入版本管理
 
-✅ Include examples in skills
+✅ 在技能中包含示例
 
-✅ Update skills when requirements change
+✅ 需求变化时更新技能
 
-✅ Share skills with your team
+✅ 与团队分享技能
 
-### DON'T
+### 不应该
 
-❌ Create skills for one-time knowledge (use CLAUDE.md instead)
+❌ 为一次性知识创建技能（用 CLAUDE.md 代替）
 
-❌ Make skills too long (>500 lines = break into multiple skills)
+❌ 让技能太长（>500 行就拆成多个技能）
 
-❌ Use skills for temporary instructions (use CLAUDE.md or AGENT.md)
+❌ 用技能存放临时指令（用 CLAUDE.md 或 AGENT.md）
 
-❌ Assume skills are comprehensive documentation
-
----
-
-## Skill Lifecycle
-
-1. **Create**: Identify repeated pattern or domain knowledge
-2. **Document**: Write the skill with examples
-3. **Test**: Use it in a session and verify Claude follows it
-4. **Refine**: Update based on feedback
-5. **Share**: Commit to git for team access
-6. **Maintain**: Update as your practices evolve
+❌ 以为技能本身就是完整的文档
 
 ---
 
-## Validation: You're Ready If...
+## 技能生命周期
 
-✓ You've created at least one custom skill
-
-✓ You understand triggers and auto-invoke
-
-✓ You know the difference between skills and agents
-
-✓ You can explain when to use a skill vs CLAUDE.md
-
-✓ Your skill has been tested in a real session
+1. **创建**：识别重复的模式或领域知识
+2. **记录**：写下技能，包含示例
+3. **测试**：在会话中使用并验证 Claude 遵循了它
+4. **优化**：根据反馈更新
+5. **分享**：提交到 git，供团队使用
+6. **维护**：随着实践发展而更新
 
 ---
 
-## What's Next?
+## 验证：完成本模块的标志
 
-**Module 06: Hooks & Events** covers:
-- Automating responses to system events
-- Pre-commit validation
-- Post-action notifications
-- Building safe automation
+✓ 你至少创建了一个自定义技能
 
-This teaches you how to automate repetitive tasks without manual intervention.
+✓ 你理解触发器和自动调用
+
+✓ 你知道技能和智能体的区别
+
+✓ 你能说明什么时候用技能，什么时候用 CLAUDE.md
+
+✓ 你的技能在真实会话中测试过
 
 ---
 
-**Completed Module 05?** → Ready for Module 06: Hooks & Events
+## 下一步
+
+**模块 06：钩子与事件**讲的是：
+- 自动化系统事件的响应
+- 提交前验证
+- 操作后通知
+- 构建安全的自动化
+
+这教你如何让重复性任务自动完成，无需人工介入。
+
+---
+
+**已完成模块 05？** → 准备进入模块 06：钩子与事件
