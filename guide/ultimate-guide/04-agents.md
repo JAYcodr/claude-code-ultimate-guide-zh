@@ -1,628 +1,624 @@
 <!-- 中文翻译版 · 基于上游 commit: dbeb30c -->
-# 4. Agents
+# 4. 智能体
 
-_Quick jump:_ [What Are Agents](#41-what-are-agents) · [Creating Custom Agents](#42-creating-custom-agents) · [Agent Template](#43-agent-template) · [Best Practices](#44-best-practices) · [Agent Examples](#45-agent-examples)
-
----
-
-## 📌 Section 4 TL;DR (60 seconds)
-
-**What are Agents**: Specialized AI personas for specific tasks (think "expert consultants")
-
-**When to create one**:
-- ✅ Task repeats often (security reviews, API design)
-- ✅ Requires specialized knowledge domain
-- ✅ Needs consistent behavior/tone
-- ❌ One-off tasks (just ask Claude directly)
-
-**Quick Start**:
-1. Create `.claude/agents/my-agent.md`
-2. Add YAML frontmatter (name, description, tools, model)
-3. Write instructions
-4. Use: `@my-agent "task description"`
-
-**Popular agent types**: Security auditor, Test generator, Code reviewer, API designer
-
-**Read this section if**: You have repeating tasks or need domain expertise
-**Skip if**: All your tasks are one-off exploratory work
+_快速跳转：_ [什么是智能体](#41-什么是智能体) · [创建自定义智能体](#42-创建自定义智能体) · [智能体模板](#43-智能体模板) · [最佳实践](#44-最佳实践) · [智能体示例](#45-智能体示例)
 
 ---
 
-**Reading time**: 20 minutes
-**Skill level**: Week 1-2
-**Goal**: Create specialized AI assistants
+## 📌 第 4 章速览（60 秒）
 
-## 4.1 What Are Agents
+**什么是智能体**：用于特定任务的专用 AI 角色（可理解为"专家顾问"）
 
-Agents are specialized sub-processes that Claude can delegate tasks to.
+**何时创建智能体**：
+- ✅ 任务重复率高（安全审计、API 设计）
+- ✅ 需要特定领域的专业知识
+- ✅ 需要一致的行为/语调
+- ❌ 一次性任务（直接问 Claude 即可）
 
-### Why Use Agents?
+**快速开始**：
+1. 创建 `.claude/agents/my-agent.md`
+2. 添加 YAML frontmatter（name、description、tools、model）
+3. 编写指令
+4. 使用：`@my-agent "任务描述"`
 
-| Without Agents | With Agents |
+**常用智能体类型**：安全审计员、测试生成器、代码评审员、API 设计师
+
+**阅读本章如果**：你有重复性任务或需要领域专业知识
+**跳过如果**：你的任务都是一次性探索性工作
+
+---
+
+**阅读时间**：20 分钟
+**技能级别**：第 1-2 周
+**目标**：创建专用 AI 助手
+
+## 4.1 什么是智能体
+
+智能体是 Claude 可以将任务委托给它们的专用子进程。
+
+### 为什么要用智能体？
+
+| 不用智能体 | 用智能体 |
 |----------------|-------------|
-| One Claude doing everything | Specialized experts for each domain |
-| Context gets cluttered | Each agent has focused context |
-| Generic responses | Domain-specific expertise |
-| Manual tool selection | Pre-configured tool access |
+| 一个 Claude 做所有事 | 每个领域有专属专家 |
+| 上下文变得杂乱 | 每个智能体有专注的上下文 |
+| 通用回复 | 领域专业知识 |
+| 手动选择工具 | 预配置的工具访问 |
 
-### Agent vs Direct Prompt
+### 智能体 vs 直接提示词
 
 ```
-Direct Prompt:
-You: Review this code for security issues, focusing on OWASP Top 10,
-     checking for SQL injection, XSS, CSRF, and authentication vulnerabilities...
+直接提示词：
+你：审查这段代码的安全问题，关注 OWASP Top 10，
+    检查 SQL 注入、XSS、CSRF 和身份验证漏洞...
 
-With Agent:
-You: Use the security-reviewer agent to audit this code
+使用智能体：
+你：使用 security-reviewer 智能体审计这段代码
 ```
 
-The agent encapsulates all that expertise.
+智能体封装了所有这些专业知识。
 
-### Built-in vs Custom Agents
+### 内置 vs 自定义智能体
 
-| Type | Source | Example |
+| 类型 | 来源 | 示例 |
 |------|--------|---------|
-| Built-in | Claude Code default | Explore, Plan |
-| Custom | Your `.claude/agents/` | Backend architect, Code reviewer |
+| 内置 | Claude Code 默认 | Explore、Plan |
+| 自定义 | 你的 `.claude/agents/` | 后端架构师、代码评审员 |
 
-## 4.2 Creating Custom Agents
+## 4.2 创建自定义智能体
 
-Agents are markdown files in `.claude/agents/` with YAML frontmatter.
+智能体是 `.claude/agents/` 中的 markdown 文件，带有 YAML frontmatter。
 
-### Agent File Structure
+### 智能体文件结构
 
 ```markdown
 ---
 name: agent-name
-description: Clear activation trigger (50-100 chars)
+description: 清晰的激活触发条件（50-100 字符）
 model: sonnet
 tools: Read, Write, Edit, Bash, Grep, Glob
 ---
 
-[Markdown instructions for the agent]
+[智能体的 Markdown 指令]
 ```
 
-### Frontmatter Fields
+### Frontmatter 字段
 
-All official fields supported by Claude Code ([source](https://code.claude.com/docs/en/sub-agents)):
+所有 Claude Code 支持的官方字段（[来源](https://code.claude.com/docs/en/sub-agents)）：
 
-| Field | Required | Description |
+| 字段 | 必填 | 描述 |
 |-------|----------|-------------|
-| `name` | ✅ | Kebab-case identifier |
-| `description` | ✅ | When to activate this agent (use "PROACTIVELY" for auto-invocation) |
-| `model` | ❌ | `sonnet` (default), `opus`, `haiku`, or `inherit` |
-| `tools` | ❌ | Allowed tools (comma-separated). Supports `Task(agent_type)` syntax to restrict spawnable subagents |
-| `disallowedTools` | ❌ | Tools to deny, removed from inherited or specified list |
-| `permissionMode` | ❌ | `default`, `acceptEdits`, `dontAsk`, `bypassPermissions`, or `plan` |
-| `maxTurns` | ❌ | Maximum agentic turns before the subagent stops |
-| `skills` | ❌ | Skills to preload into agent context at startup (full content injected, not just available) |
-| `mcpServers` | ❌ | MCP servers for this subagent — server name strings or inline configs |
-| `hooks` | ❌ | Lifecycle hooks scoped to this subagent (`PreToolUse`, `PostToolUse`, `Stop`) |
-| `memory` | ❌ | Persistent memory scope: `user`, `project`, or `local` |
-| `background` | ❌ | `true` to always run as a background task (default: `false`) |
-| `isolation` | ❌ | `worktree` to run in a temporary git worktree (auto-cleaned if no changes) |
-| `color` | ❌ | CLI output color for visual distinction (e.g., `green`, `magenta`) |
+| `name` | ✅ | Kebab-case 标识符 |
+| `description` | ✅ | 何时激活此智能体（使用 "PROACTIVELY" 可自动调用） |
+| `model` | ❌ | `sonnet`（默认）、`opus`、`haiku` 或 `inherit` |
+| `tools` | ❌ | 允许的工具（逗号分隔）。支持 `Task(agent_type)` 语法限制可派生的子智能体 |
+| `disallowedTools` | ❌ | 禁止的工具，从继承或指定的列表中移除 |
+| `permissionMode` | ❌ | `default`、`acceptEdits`、`dontAsk`、`bypassPermissions` 或 `plan` |
+| `maxTurns` | ❌ | 子智能体停止前的最大轮次 |
+| `skills` | ❌ | 启动时预加载到智能体上下文的技能（注入完整内容，不只是可用） |
+| `mcpServers` | ❌ | 此子智能体的 MCP 服务器——服务器名称字符串或内联配置 |
+| `hooks` | ❌ | 限定于此子智能体的生命周期钩子（`PreToolUse`、`PostToolUse`、`Stop`） |
+| `memory` | ❌ | 持久记忆范围：`user`、`project` 或 `local` |
+| `background` | ❌ | `true` 为始终以后台任务运行（默认：`false`） |
+| `isolation` | ❌ | `worktree` 在临时 git worktree 中运行（无变更则自动清理） |
+| `color` | ❌ | CLI 输出颜色以视觉区分（如 `green`、`magenta`） |
 
-**Memory scopes** — choose based on how broadly the knowledge should apply:
+**记忆范围** — 根据知识的应用范围选择：
 
-| Scope | Storage | Use when |
+| 范围 | 存储位置 | 适用场景 |
 |-------|---------|----------|
-| `user` | `~/.claude/agent-memory/<name>/` | Cross-project learning |
-| `project` | `.claude/agent-memory/<name>/` | Project-specific, shareable via git |
-| `local` | `.claude/agent-memory-local/<name>/` | Project-specific, not committed |
+| `user` | `~/.claude/agent-memory/<name>/` | 跨项目学习 |
+| `project` | `.claude/agent-memory/<name>/` | 项目专用，可通过 git 共享 |
+| `local` | `.claude/agent-memory-local/<name>/` | 项目专用，不提交 |
 
-> Full coverage of agent memory — 200-line injection limit, MEMORY.md structure, scope selection guide — in [§4.5 Agent Memory](#45-agent-memory).
+> 智能体记忆的完整覆盖 — 200 行注入限制、MEMORY.md 结构、范围选择指南 — 见 [§4.5 智能体记忆](#45-智能体记忆)。
 
-### Model Selection
+### 模型选择
 
-| Model | Best For | Speed | Cost |
+| 模型 | 适用场景 | 速度 | 成本 |
 |-------|----------|-------|------|
-| `haiku` | Quick tasks, simple changes | Fast | Low |
-| `sonnet` | Most tasks (default) | Balanced | Medium |
-| `opus` | Complex reasoning, architecture | Slow | High |
+| `haiku` | 快速任务、简单修改 | 快 | 低 |
+| `sonnet` | 大多数任务（默认） | 均衡 | 中 |
+| `opus` | 复杂推理、架构 | 慢 | 高 |
 
-## 4.3 Agent Template
+## 4.3 智能体模板
 
-Copy this template to create your own agent:
+复制此模板创建你自己的智能体：
 
 ```markdown
 ---
 name: your-agent-name
-description: Use this agent when [specific trigger description]
+description: 在 [具体触发描述] 时使用此智能体
 model: sonnet
 tools: Read, Write, Edit, Bash, Grep, Glob
 skills: []
 ---
 
-# Your Agent Name
+# 你的智能体名称
 
-## Role Definition
+## 角色定义
 
-You are an expert in [domain]. Your responsibilities include:
-- [Responsibility 1]
-- [Responsibility 2]
-- [Responsibility 3]
+你是一名 [领域] 专家。你的职责包括：
+- [职责 1]
+- [职责 2]
+- [职责 3]
 
-## Activation Triggers
+## 激活触发条件
 
-Use this agent when:
-- [Trigger 1]
-- [Trigger 2]
-- [Trigger 3]
+在以下情况下使用此智能体：
+- [触发条件 1]
+- [触发条件 2]
+- [触发条件 3]
 
-## Methodology
+## 方法论
 
-When given a task, you should:
-1. [Step 1]
-2. [Step 2]
-3. [Step 3]
-4. [Step 4]
+收到任务时，你应该：
+1. [步骤 1]
+2. [步骤 2]
+3. [步骤 3]
+4. [步骤 4]
 
-## Output Format
+## 输出格式
 
-Your deliverables should include:
-- [Output 1]
-- [Output 2]
+你的交付物应包括：
+- [输出 1]
+- [输出 2]
 
-## Constraints
+## 约束条件
 
-- [Constraint 1]
-- [Constraint 2]
+- [约束 1]
+- [约束 2]
 
-## Examples
+## 示例
 
-### Example 1: [Scenario Name]
+### 示例 1：[场景名称]
 
-**User**: [Example prompt]
+**用户**：[示例提示词]
 
-**Your approach**:
-1. [What you do first]
-2. [What you do next]
-3. [Final output]
+**你的方法**：
+1. [你先做什么]
+2. [你接下来做什么]
+3. [最终输出]
 ```
 
-## 4.4 Best Practices
+## 4.4 最佳实践
 
-### Do's and Don'ts
+### 做与不做
 
-| ✅ Do | ❌ Don't |
+| ✅ 做 | ❌ 不做 |
 |-------|----------|
-| Make agents specialists | Create generalist agents |
-| Define clear triggers | Use vague descriptions |
-| Include concrete examples | Leave activation ambiguous |
-| Limit tool access | Give all tools to all agents |
-| Compose via skills | Duplicate expertise |
+| 让智能体专精 | 创建全能型智能体 |
+| 定义清晰的触发条件 | 使用模糊描述 |
+| 包含具体示例 | 让激活条件模糊不清 |
+| 限制工具访问 | 给所有智能体开放所有工具 |
+| 通过技能组合 | 复制专业知识 |
 
-### Specialization Over Generalization
+### 专精优于通用
 
-**Good**: An agent for each concern
+**好**：每个关注点一个智能体
 ```
-backend-architect    → API design, database, performance
-security-reviewer    → OWASP, auth, encryption
-test-engineer        → Test strategy, coverage, TDD
-```
-
-**Bad**: One agent for everything
-```
-full-stack-expert    → Does everything (poorly)
+backend-architect    → API 设计、数据库、性能
+security-reviewer    → OWASP、认证、加密
+test-engineer        → 测试策略、覆盖率、TDD
 ```
 
-### Explicit Activation Triggers
+**差**：一个智能体做所有事
+```
+full-stack-expert    → 什么都做（做得很差）
+```
 
-**Good description**:
+### 明确的激活触发条件
+
+**好的描述**：
 ```yaml
-description: Use when designing APIs, reviewing database schemas, or optimizing backend performance
+description: 在设计 API、审查数据库 schema 或优化后端性能时使用
 ```
 
-**Bad description**:
+**差的描述**：
 ```yaml
-description: Backend stuff
+description: 后端相关
 ```
 
-### Skill Composition
+### 技能组合
 
-Instead of duplicating knowledge:
+不要复制知识：
 
 ```yaml
 # security-reviewer.md
 skills:
-  - security-guardian  # Inherits OWASP knowledge
+  - security-guardian  # 继承 OWASP 知识
 ```
 
-### Agent Validation Checklist
+### 智能体验证检查清单
 
-Before deploying a custom agent, validate against these criteria:
+部署自定义智能体前，按以下标准验证：
 
-**Efficacy** (Does it work?)
-- [ ] Tested on 3+ real use cases from your project
-- [ ] Output matches expected format consistently
-- [ ] Handles edge cases gracefully (empty input, errors, timeouts)
-- [ ] Integrates correctly with existing workflows
+**有效性**（它能工作吗？）
+- [ ] 在项目的 3+ 个真实用例上测试过
+- [ ] 输出格式始终符合预期
+- [ ] 能优雅处理边缘情况（空输入、错误、超时）
+- [ ] 与现有工作流正确集成
 
-**Efficiency** (Is it cost-effective?)
-- [ ] <5000 tokens per typical execution
-- [ ] <30 seconds for standard tasks
-- [ ] Doesn't duplicate work done by other agents/skills
-- [ ] Justifies its existence vs. native Claude capabilities
+**效率**（它划算吗？）
+- [ ] 典型执行 <5000 tokens
+- [ ] 标准任务 <30 秒
+- [ ] 不重复其他智能体/技能的工作
+- [ ] 与原生 Claude 能力相比值得存在
 
-**Security** (Is it safe?)
-- [ ] Tools restricted to minimum necessary
-- [ ] No Bash access unless absolutely required
-- [ ] File access limited to relevant directories
-- [ ] No credentials or secrets in agent definition
+**安全**（它安全吗？）
+- [ ] 工具限制在最小必要范围
+- [ ] 除非绝对必要否则不开放 Bash 访问
+- [ ] 文件访问限制在相关目录
+- [ ] 智能体定义中无凭据或密钥
 
-**Maintainability** (Will it last?)
-- [ ] Clear, descriptive name and description
-- [ ] Explicit activation triggers documented
-- [ ] Examples show common usage patterns
-- [ ] Version compatibility noted if framework-dependent
+**可维护性**（它能持久吗？）
+- [ ] 名称和描述清晰、有描述性
+- [ ] 激活触发条件有文档记录
+- [ ] 示例展示常见用法
+- [ ] 如依赖框架则注明版本兼容性
 
-> 💡 **Rule of Three**: If an agent doesn't save significant time on at least 3 recurring tasks, it's probably over-engineering. Start with skills, graduate to agents only when complexity demands it.
+> 💡 **三原则**：如果一个智能体不能在至少 3 个重复任务上节省大量时间，它可能过度设计了。从技能开始，只有在复杂度需要时才升级到智能体。
 
-> **Automated audit**: Run `/audit-agents-skills` for a comprehensive quality audit across all agents, skills, and commands. Scores each file on 16 criteria with weighted grading (32 points for agents/skills, 20 for commands). See `examples/skills/audit-agents-skills/` for the full scoring methodology.
+> **自动审计**：运行 `/audit-agents-skills` 对所有智能体、技能和命令进行全面的质量审计。按 16 个标准评分，加权评级（智能体/技能 32 分，命令 20 分）。见 `examples/skills/audit-agents-skills/` 获取完整评分方法。
 
-### Background Subagents
+### 后台子智能体
 
-Subagents can run in the background without blocking the main session. This is useful for fire-and-forget tasks like running tests, linting, or notifications.
+子智能体可以在后台运行而不阻塞主会话。这对"即发即忘"任务很有用，如运行测试、代码检查或通知。
 
-| Mode | Behavior | Use when |
+| 模式 | 行为 | 适用场景 |
 |------|----------|----------|
-| Default | Parent waits for agent output | Need result before continuing |
-| Background | Agent runs in parallel, parent continues | Fire-and-forget (tests, linting, notifications) |
+| 默认 | 父进程等待智能体输出 | 需要结果才能继续 |
+| 后台 | 智能体并行运行，父进程继续 | 即发即忘（测试、lint、通知） |
 
-**Managing background agents:**
+**管理后台智能体：**
 
 ```bash
-# List running agents + kill overlay
-ctrl+f    # Opens agent manager overlay
+# 列出正在运行的智能体 + 终止覆盖层
+ctrl+f    # 打开智能体管理器覆盖层
 
-# Cancel main thread only (background agents keep running)
+# 仅取消主线程（后台智能体继续运行）
 ESC
 ctrl+c
 ```
 
+## 4.5 智能体记忆
 
-## 4.5 Agent Memory
+**Claude Code v2.1.33**（2026 年 2 月）引入的 `memory` frontmatter 字段，赋予子智能体持久的、基于 markdown 的知识，使其能跨会话存活。在此之前，每次智能体调用都从空白开始。
 
-Introduced in **Claude Code v2.1.33** (February 2026), the `memory` frontmatter field gives subagents persistent, markdown-based knowledge that survives across sessions. Before this, every agent invocation started with a blank slate regardless of previous runs.
+### 为什么智能体记忆重要
 
-### Why Agent Memory Matters
+没有记忆，一个发现团队偏好 early-return 模式而非嵌套 `if` 的代码评审员智能体，无法将这一观察传递下去。下一次调用从头开始。智能体记忆解决了这个问题：智能体将其发现写入结构化文件，后续调用从上次的断点继续。
 
-Without memory, a code-reviewer agent that discovers your team prefers early-return patterns over nested `if` blocks has no way to carry that observation forward. The next invocation starts cold. Agent memory fixes this: the agent writes its findings to a structured file, and future invocations pick up where the last one left off.
+这与 Claude Code 中的其他记忆系统不同。每个系统服务于不同目的：
 
-This is distinct from the other memory systems in Claude Code. Each serves a different purpose:
-
-| System | Written by | Read by | Scope | Persists |
+| 系统 | 写入者 | 读取者 | 范围 | 持久性 |
 |--------|------------|---------|-------|----------|
-| **CLAUDE.md** | You (manually) | Main Claude + all agents | Project or global | Git-tracked |
-| **Auto-memory** | Main Claude (automatic) | Main Claude only | Per-project per-user | Gitignored |
-| **Agent memory** | The agent itself | That specific agent only | Configurable | Depends on scope |
+| **CLAUDE.md** | 你（手动） | 主 Claude + 所有智能体 | 项目或全局 | Git 追踪 |
+| **自动记忆** | 主 Claude（自动） | 仅主 Claude | 每个项目每个用户 | Git 忽略 |
+| **智能体记忆** | 智能体本身 | 仅该特定智能体 | 可配置 | 取决于范围 |
 
-An agent reads both `CLAUDE.md` (shared project context) and its own memory (agent-specific accumulated knowledge). The two layers are complementary.
+智能体同时读取 `CLAUDE.md`（共享项目上下文）和自己的记忆（智能体特有的累积知识）。两层互补。
 
-### Memory Scopes
+### 记忆范围
 
-Choose a scope based on where the knowledge is useful:
+根据知识的有用位置选择范围：
 
-| Scope | Storage location | Version controlled | Best for |
+| 范围 | 存储位置 | 版本控制 | 适用场景 |
 |-------|-----------------|-------------------|----------|
-| `user` | `~/.claude/agent-memory/<agent-name>/` | No | Cross-project learning — a code reviewer that builds up pattern knowledge across every repo |
-| `project` | `.claude/agent-memory/<agent-name>/` | Yes (committed) | Project-specific knowledge the whole team should share — e.g., API conventions discovered by a scaffolding agent |
-| `local` | `.claude/agent-memory-local/<agent-name>/` | No (gitignored) | Project-specific knowledge that is personal and should not be committed |
+| `user` | `~/.claude/agent-memory/<agent-name>/` | 否 | 跨项目学习 — 一个代码评审员在各仓库积累模式知识 |
+| `project` | `.claude/agent-memory/<agent-name>/` | 是（提交） | 项目特有知识，整个团队应共享 — 例如脚手架智能体发现的 API 约定 |
+| `local` | `.claude/agent-memory-local/<agent-name>/` | 否（git 忽略） | 项目特有知识，是个人的，不应提交 |
 
-These scopes mirror the settings hierarchy (`~/.claude/settings.json` → `.claude/settings.json` → `.claude/settings.local.json`), making the mental model consistent across the whole system.
+这些范围镜像了设置层级（`~/.claude/settings.json` → `.claude/settings.json` → `.claude/settings.local.json`），使整个系统的心智模型一致。
 
-Activate memory by adding one line to the agent frontmatter:
+通过在智能体 frontmatter 中添加一行来激活记忆：
 
 ```yaml
 ---
 name: code-reviewer
-description: Reviews code for quality, security, and consistency
+description: 评审代码质量、安全性和一致性
 tools: Read, Grep, Glob
 memory: user
 ---
 ```
 
-### How the 200-Line Injection Works
+### 200 行注入如何工作
 
-When an agent starts, Claude Code reads the first 200 lines of `MEMORY.md` in the agent's memory directory and injects them directly into the agent's system prompt. This is automatic — no explicit tool call needed.
+当智能体启动时，Claude Code 读取智能体记忆目录中 `MEMORY.md` 的前 200 行，并将其直接注入智能体的系统提示词。这是自动的——无需显式工具调用。
 
 ```
 ~/.claude/agent-memory/code-reviewer/
-├── MEMORY.md                   ← First 200 lines injected at startup
-├── react-patterns.md           ← Topic-specific file, loaded on demand
-└── security-checklist.md       ← Topic-specific file, loaded on demand
+├── MEMORY.md                   ← 启动时注入前 200 行
+├── react-patterns.md           ← 主题特定文件，按需加载
+└── security-checklist.md       ← 主题特定文件，按需加载
 ```
 
-Once `MEMORY.md` exceeds 200 lines the agent should move detailed content into topic-specific files and keep `MEMORY.md` as a concise index with references. The agent manages this itself — `Read`, `Write`, and `Edit` are automatically available to any agent with `memory` set.
+一旦 `MEMORY.md` 超过 200 行，智能体应将详细内容移到主题特定文件，并将 `MEMORY.md` 保持为简洁索引加引用。智能体自行管理这个——任何设置了 `memory` 的智能体自动获得 `Read`、`Write` 和 `Edit`。
 
-**Practical implication**: structure `MEMORY.md` like a smart summary, not an append-only log. High-signal entries at the top, topic files for depth.
+**实际影响**：将 `MEMORY.md` 结构化为智能摘要，而非追加日志。顶部是高信号条目，主题文件用于深度。
 
-### MEMORY.md Structure
+### MEMORY.md 结构
 
-A well-structured agent memory file makes the injected content immediately useful:
+结构良好的智能体记忆文件使注入的内容立即有用：
 
 ```markdown
-# code-reviewer memory
-Last updated: 2026-03-10
+# code-reviewer 记忆
+最后更新：2026-03-10
 
-## Project conventions (confirmed)
-- Early return over nested conditionals (consistent across 12 reviews)
-- `zod` for all API boundary validation — never `joi` or raw type checks
-- Auth middleware must be applied before any controller logic
+## 项目约定（已确认）
+- 优先使用 early return 而非嵌套条件（12 次评审中一致）
+- 所有 API 边界验证使用 `zod`——从不使用 `joi` 或原始类型检查
+- 认证中间件必须在任何控制器逻辑之前应用
 
-## Recurring issues
-- Missing `await` on async DB calls in `/src/services/` (seen 4× this month)
-- `any` casts in migration scripts accepted as a known exception
+## 常见问题
+- `/src/services/` 中缺少 async DB 调用的 `await`（本月已见 4 次）
+- 迁移脚本中的 `any` 类型转换被接受为已知例外
 
-## Patterns to watch
-- New contributors tend to skip error boundary wrapping in React trees
+## 需关注的模式
+- 新贡献者往往跳过 React 树的错误边界包装
 
-## Topic files
-- [react-patterns.md](react-patterns.md) — component structure, hook usage, memoization rules
-- [security-checklist.md](security-checklist.md) — OWASP Top 10 per-category notes
+## 主题文件
+- [react-patterns.md](react-patterns.md) — 组件结构、hook 使用、记忆化规则
+- [security-checklist.md](security-checklist.md) — OWASP Top 10 按类别笔记
 ```
 
-### Prompting Agents to Use Their Memory
+### 提示智能体使用其记忆
 
-Memory is only useful if the agent reads and writes it consistently. Explicit prompting in the agent body makes a large difference:
+记忆只有在智能体持续读写时才有用。在智能体主体中明确提示会产生很大差异：
 
 ```yaml
 ---
 name: api-developer
-description: Implement API endpoints following team conventions
+description: 按照团队约定实现 API 端点
 tools: Read, Write, Edit, Bash
 memory: project
 ---
 
-Before starting any task, review your memory for relevant conventions and
-past decisions. After completing a task, update your memory with new patterns,
-architectural decisions, or recurring issues you observed. Keep MEMORY.md
-under 200 lines — move detailed notes to topic-specific files.
+在开始任何任务前，查阅你的记忆以获取相关约定和过去的决策。完成任务后，用你观察到的新模式、架构决策或常见问题更新你的记忆。保持 MEMORY.md 在 200 行以下——将详细笔记移到主题特定文件。
 ```
 
-This pattern — skills for static startup knowledge, memory for dynamic accumulated knowledge — gives agents the best of both worlds. Skills inject curated reference material at first run; memory carries forward what the agent discovers on its own.
+这种模式——技能用于静态启动知识，记忆用于动态累积知识——让智能体兼得两者优势。技能在首次运行时注入精选参考材料；记忆携带智能体自己发现的内容。
 
-### Choosing the Right Scope
+### 选择正确的范围
 
-| Situation | Recommended scope |
+| 情况 | 推荐范围 |
 |-----------|------------------|
-| Generic code reviewer used across multiple projects | `user` — knowledge accumulates globally |
-| API scaffolding agent that learns your team's endpoint conventions | `project` — commit the memory so teammates benefit |
-| Personal refactoring agent with your preferred style preferences | `local` — stays on your machine only |
-| Agent for a client project you do not want to mix with personal knowledge | `local` — isolated, not committed |
+| 跨多个项目使用的通用代码评审员 | `user` — 知识全局累积 |
+| 学习团队端点约定的 API 脚手架智能体 | `project` — 提交记忆让队友受益 |
+| 有你个人风格偏好的个人重构智能体 | `local` — 仅在你机器上 |
+| 你不想与个人知识混合的客户项目智能体 | `local` — 隔离，不提交 |
 
-> **Sources**: [Create custom subagents](https://code.claude.com/docs/en/sub-agents) · [Manage Claude's memory](https://code.claude.com/docs/en/memory) · Claude Code v2.1.33 release notes
+> **来源**：[创建自定义子智能体](https://code.claude.com/docs/en/sub-agents) · [管理 Claude 的记忆](https://code.claude.com/docs/en/memory) · Claude Code v2.1.33 发布说明
 
 ---
 
-## 4.6 Agent Examples
+## 4.6 智能体示例
 
-### Example 1: Code Reviewer Agent
+### 示例 1：代码评审员智能体
 
 ```markdown
 ---
 name: code-reviewer
-description: Use for code quality reviews, security audits, and performance analysis
+description: 用于代码质量评审、安全审计和性能分析
 model: sonnet
 tools: Read, Grep, Glob
 skills:
   - security-guardian
 ---
 
-# Code Reviewer
+# 代码评审员
 
-## Scope Definition
+## 范围定义
 
-Perform comprehensive code reviews with isolated context, focusing on:
-- Code quality and maintainability
-- Security best practices (OWASP Top 10)
-- Performance optimization
-- Test coverage analysis
+在隔离上下文中进行全面的代码评审，专注于：
+- 代码质量和可维护性
+- 安全最佳实践（OWASP Top 10）
+- 性能优化
+- 测试覆盖率分析
 
-Scope: Code review analysis only. Provide findings without implementing fixes.
+范围：仅代码评审分析。提供发现但不实施修复。
 
-## Activation Triggers
+## 激活触发条件
 
-Use this agent when:
-- Completing a feature before PR (need fresh eyes on code)
-- Reviewing someone else's code (isolated review context)
-- Auditing security-sensitive code (security-focused scope)
-- Analyzing performance bottlenecks (performance-focused scope)
+在以下情况下使用此智能体：
+- 功能完成前提交 PR（需要新鲜眼光审视代码）
+- 评审他人的代码（隔离评审上下文）
+- 审计安全敏感代码（安全专注范围）
+- 分析性能瓶颈（性能专注范围）
 
-## Methodology
+## 方法论
 
-1. **Understand Context**: Read the code and understand its purpose
-2. **Check Quality**: Evaluate readability, maintainability, DRY principles
-3. **Security Scan**: Look for OWASP Top 10 vulnerabilities
-4. **Performance Review**: Identify potential bottlenecks
-5. **Provide Feedback**: Structured report with severity levels
+1. **理解上下文**：阅读代码并理解其目的
+2. **检查质量**：评估可读性、可维护性、DRY 原则
+3. **安全扫描**：查找 OWASP Top 10 漏洞
+4. **性能评审**：识别潜在瓶颈
+5. **提供反馈**：带严重性级别的结构化报告
 
-## Output Format
+## 输出格式
 
-### Code Review Report
+### 代码评审报告
 
-**Summary**: [1-2 sentence overview]
+**摘要**：[1-2 句概述]
 
-**Critical Issues** (Must Fix):
-- [Issue with file:line reference]
+**关键问题**（必须修复）：
+- [问题及文件:行号引用]
 
-**Warnings** (Should Fix):
-- [Issue with file:line reference]
+**警告**（应该修复）：
+- [问题及文件:行号引用]
 
-**Suggestions** (Nice to Have):
-- [Improvement opportunity]
+**建议**（最好修复）：
+- [改进机会]
 
-**Positive Notes**:
-- [What was done well]
+**正面笔记**：
+- [做得好的是什么]
 ```
 
-### Example 2: Debugger Agent
+### 示例 2：调试员智能体
 
 ```markdown
 ---
 name: debugger
-description: Use when encountering errors, test failures, or unexpected behavior
+description: 遇到错误、测试失败或意外行为时使用
 model: sonnet
 tools: Read, Bash, Grep, Glob
 ---
 
-# Debugger
+# 调试员
 
-## Scope Definition
+## 范围定义
 
-Perform systematic debugging with isolated context:
-- Investigate root causes, not symptoms
-- Use evidence-based debugging approach
-- Verify rather than assume (always review output—LLMs can make mistakes)
+在隔离上下文中进行系统性调试：
+- 调查根本原因，而非症状
+- 使用基于证据的调试方法
+- 验证而非假设（始终审查输出——LLM 可能犯错）
 
-Scope: Debugging analysis only. Focus on root cause identification without context pollution from previous debugging attempts.
+范围：仅调试分析。专注于根因识别，不受之前调试尝试的上下文污染。
 
-## Methodology
+## 方法论
 
-1. **Reproduce**: Confirm the issue exists
-2. **Isolate**: Narrow down to smallest reproducible case
-3. **Analyze**: Read code, check logs, trace execution
-4. **Hypothesize**: Form theories about the cause
-5. **Test**: Verify hypothesis with minimal changes
-6. **Fix**: Implement the solution
-7. **Verify**: Confirm fix works and doesn't break other things
+1. **复现**：确认问题存在
+2. **隔离**：缩小到最小可复现案例
+3. **分析**：阅读代码、检查日志、追踪执行
+4. **假设**：形成关于原因的 theories
+5. **测试**：用最小变更验证假设
+6. **修复**：实施解决方案
+7. **验证**：确认修复有效且不破坏其他功能
 
-## Output Format
+## 输出格式
 
-### Debug Report
+### 调试报告
 
-**Issue**: [Description]
-**Root Cause**: [What's actually wrong]
-**Evidence**: [How you know]
-**Fix**: [What to change]
-**Verification**: [How to confirm it works]
+**问题**：[描述]
+**根本原因**：[实际错误是什么]
+**证据**：[你怎么知道]
+**修复**：[改什么]
+**验证**：[如何确认有效]
 ```
 
-### Example 3: Backend Architect Agent
+### 示例 3：后端架构师智能体
 
 ```markdown
 ---
 name: backend-architect
-description: Use for API design, database optimization, and system architecture decisions
+description: 用于 API 设计、数据库优化和系统架构决策
 model: opus
 tools: Read, Write, Edit, Bash, Grep
 skills:
   - backend-patterns
 ---
 
-# Backend Architect
+# 后端架构师
 
-## Scope Definition
+## 范围定义
 
-Analyze backend architecture with isolated context, focusing on:
-- API design (REST, GraphQL, tRPC)
-- Database modeling and optimization
-- System scalability
-- Clean architecture patterns
+在隔离上下文中分析后端架构，专注于：
+- API 设计（REST、GraphQL、tRPC）
+- 数据库建模和优化
+- 系统可扩展性
+- 清晰架构模式
 
-Scope: Backend architecture analysis only. Focus on design decisions without frontend or DevOps considerations.
+范围：仅后端架构分析。专注于设计决策，不考虑前端或 DevOps。
 
-## Activation Triggers
+## 激活触发条件
 
-Use this agent when:
-- Designing new API endpoints (need architecture-focused analysis)
-- Optimizing database queries (database scope isolation)
-- Planning system architecture (system design scope)
-- Refactoring backend code (backend-only scope)
+在以下情况下使用此智能体：
+- 设计新 API 端点（需要架构聚焦分析）
+- 优化数据库查询（数据库范围隔离）
+- 规划系统架构（系统设计范围）
+- 重构后端代码（仅后端范围）
 
-## Methodology
+## 方法论
 
-1. **Requirements Analysis**: Understand the business need
-2. **Architecture Review**: Check current system state
-3. **Design Options**: Propose 2-3 approaches with trade-offs
-4. **Recommendation**: Suggest best approach with rationale
-5. **Implementation Plan**: Break down into actionable steps
+1. **需求分析**：理解业务需求
+2. **架构评审**：检查当前系统状态
+3. **设计方案**：提出 2-3 个带有权衡的方法
+4. **推荐**：建议最佳方案并说明理由
+5. **实施计划**：分解为可操作的步骤
 
-## Constraints
+## 约束条件
 
-- Follow existing project patterns
-- Prioritize backward compatibility
-- Consider performance implications
-- Document architectural decisions
+- 遵循现有项目模式
+- 优先考虑向后兼容性
+- 考虑性能影响
+- 记录架构决策
 ```
 
-## 4.7 Advanced Agent Patterns
+## 4.7 高级智能体模式
 
-### Tool SEO - Optimizing Agent Descriptions
+### 工具 SEO - 优化智能体描述
 
-The `description` field determines when Claude auto-activates your agent. Optimize it like SEO:
+`description` 字段决定 Claude 何时自动激活你的智能体。像 SEO 一样优化它：
 
 ```yaml
-# ❌ Bad description
+# ❌ 差的描述
 description: Reviews code
 
-# ✅ Good description (Tool SEO)
+# ✅ 好的描述（工具 SEO）
 description: |
-  Security code reviewer - use PROACTIVELY when:
-  - Reviewing authentication/authorization code
-  - Analyzing API endpoints
-  - Checking input validation
-  - Auditing data handling
-  Triggers: security, auth, vulnerability, OWASP, injection
+  安全代码评审员 - PROACTIVELY 在以下情况使用：
+  - 评审身份验证/授权代码
+  - 分析 API 端点
+  - 检查输入验证
+  - 审计数据处理
+  触发词：security、auth、vulnerability、OWASP、injection
 ```
 
-**Tool SEO Techniques**:
-1. **"use PROACTIVELY"**: Encourages automatic activation
-2. **Explicit triggers**: Keywords that trigger the agent
-3. **Listed contexts**: When the agent is relevant
-4. **Short nicknames**: `sec-1`, `perf-a`, `doc-gen`
+**工具 SEO 技术**：
+1. **"use PROACTIVELY"**：鼓励自动激活
+2. **显式触发词**：触发智能体的关键词
+3. **列出的上下文**：智能体相关的场景
+4. **短昵称**：`sec-1`、`perf-a`、`doc-gen`
 
-### Agent Weight Classification
+### 智能体权重分类
 
-| Category | Tokens | Init Time | Optimal Use |
+| 类别 | Tokens | 初始化时间 | 最优使用场景 |
 |----------|--------|-----------|-------------|
-| **Lightweight** | <3K | <1s | Frequent tasks, workers |
-| **Medium** | 10-15K | 2-3s | Analysis, reviews |
-| **Heavy** | 25K+ | 5-10s | Architecture, full audits |
+| **轻量级** | <3K | <1s | 频繁任务、worker |
+| **中等** | 10-15K | 2-3s | 分析、评审 |
+| **重量级** | 25K+ | 5-10s | 架构、全审计 |
 
-**Golden Rule**: A lightweight agent used 100x > A heavy agent used 10x
+**黄金法则**：轻量级智能体用 100 次 > 重量级智能体用 10 次
 
-### The 7-Parallel-Task Method
+### 7 并行任务法
 
-Launch 7 scope-focused sub-agents in parallel for complete features:
+为完整功能并行启动 7 个范围聚焦的子智能体：
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │   PARALLEL FEATURE IMPLEMENTATION                           │
 │                                                             │
 │   Task 1: Components     → Create React components          │
-│   Task 2: Styles         → Generate Tailwind styles         │
+│   Task 2: Styles         → Generate Tailwind styles        │
 │   Task 3: Tests          → Write unit tests                 │
 │   Task 4: Types          → Define TypeScript types          │
 │   Task 5: Hooks          → Create custom hooks              │
-│   Task 6: Integration    → Connect with API/state           │
+│   Task 6: Integration    → Connect with API/state          │
 │   Task 7: Config         → Update configurations            │
 │                                                             │
-│   All in parallel → Final consolidation                     │
+│   All in parallel → Final consolidation                    │
 └─────────────────────────────────────────────────────────────┘
 ```
 
-**Example Prompt**:
+**示例提示词**：
 ```
-Implement the "User Profile" feature using 7 parallel sub-agents:
+使用 7 个并行子智能体实现"用户资料"功能：
 
-1. COMPONENTS: Create UserProfile.tsx, UserAvatar.tsx, UserStats.tsx
-2. STYLES: Define Tailwind classes in a styles file
-3. TESTS: Write tests for each component
-4. TYPES: Create types in types/user-profile.ts
-5. HOOKS: Create useUserProfile and useUserStats hooks
-6. INTEGRATION: Connect with existing tRPC router
-7. CONFIG: Update exports and routing
+1. COMPONENTS: 创建 UserProfile.tsx、UserAvatar.tsx、UserStats.tsx
+2. STYLES: 在样式文件中定义 Tailwind 类
+3. TESTS: 为每个组件编写测试
+4. TYPES: 在 types/user-profile.ts 中创建类型
+5. HOOKS: 创建 useUserProfile 和 useUserStats hooks
+6. INTEGRATION: 与现有 tRPC router 连接
+7. CONFIG: 更新导出和路由
 
-Launch all agents in parallel.
+并行启动所有智能体。
 ```
 
-### Split Role Sub-Agents
+### 分角色子智能体
 
-**Concept**: Multi-perspective analysis in parallel.
+**概念**：并行多视角分析。
 
-**Process**:
+**流程**：
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │   SPLIT ROLE ANALYSIS                                       │
@@ -631,104 +627,103 @@ Launch all agents in parallel.
 │   └─ Activate Plan Mode (thinking enabled by default)       │
 │                                                             │
 │   Step 2: Role Suggestion                                   │
-│   └─ "What expert roles would analyze this code?"           │
-│      Claude suggests: Security, Performance, UX, etc.       │
+│   └─ "哪些专家角色会分析这段代码？"                           │
+│      Claude 建议：安全、性能、UX 等                          │
 │                                                             │
-│   Step 3: Selection                                         │
-│   └─ "Use: Security Expert, Senior Dev, Code Reviewer"      │
+│   Step 3: Selection                                          │
+│   └─ "使用：安全专家、高级开发、代码评审员"                 │
 │                                                             │
-│   Step 4: Parallel Analysis                                 │
-│   ├─ Security Agent: [Vulnerability analysis]               │
-│   ├─ Senior Agent: [Architecture analysis]                  │
-│   └─ Reviewer Agent: [Readability analysis]                 │
+│   Step 4: Parallel Analysis                                  │
+│   ├─ 安全智能体：[漏洞分析]                                 │
+│   ├─ 高级智能体：[架构分析]                                  │
+│   └─ 评审员智能体：[可读性分析]                             │
 │                                                             │
 │   Step 5: Consolidation                                     │
-│   └─ Synthesize 3 reports into recommendations              │
+│   └─ 综合 3 份报告为建议                                    │
 └─────────────────────────────────────────────────────────────┘
 ```
 
-**Code Review Prompt** (scope-focused):
+**代码评审提示词**（范围聚焦）：
 ```
-Analyze this PR with isolated scopes:
-1. Architecture Scope: Design patterns, SOLID principles, modularity
-2. Security Scope: Vulnerabilities, injection risks, auth/authz flaws
-3. Performance Scope: Database queries, algorithmic complexity, caching
-4. Maintainability Scope: Code clarity, documentation, naming conventions
-5. Testing Scope: Test coverage, edge cases, testability
+用隔离范围分析这个 PR：
+1. 架构范围：设计模式、SOLID 原则、模块化
+2. 安全范围：漏洞、注入风险、auth/authz 缺陷
+3. 性能范围：数据库查询、算法复杂度、缓存
+4. 可维护性范围：代码清晰度、文档、命名约定
+5. 测试范围：测试覆盖率、边缘情况、可测试性
 
-Context: src/**, tests/**, only files changed in PR
-```
-
-**UX Review Prompt** (scope-focused):
-```
-Evaluate this interface with isolated scopes:
-1. Visual Design Scope: Consistency with design system, spacing, typography
-2. Usability Scope: Discoverability, user flow, cognitive load
-3. Efficiency Scope: Keyboard shortcuts, power user features, quick actions
-4. Accessibility Scope: WCAG 2.1 AA compliance, screen reader, keyboard nav
-5. Responsive Scope: Mobile breakpoints, touch targets, viewport handling
-
-Context: src/components/**, styles/**, only UI-related files
+上下文：src/**、tests/**，仅 PR 中变更的文件
 ```
 
-**Production Example: Multi-Agent Code Review** (Pat Cullen, Jan 2026):
+**UX 评审提示词**（范围聚焦）：
+```
+用隔离范围评估这个界面：
+1. 视觉设计范围：与设计系统的一致性、间距、排版
+2. 可用性范围：可发现性、用户流程、认知负荷
+3. 效率范围：键盘快捷键、高级用户功能、快速操作
+4. 无障碍范围：WCAG 2.1 AA 合规、屏幕阅读器、键盘导航
+5. 响应式范围：移动断点、触摸目标、视口处理
 
-Scope-focused agents for comprehensive PR review:
+上下文：src/components/**、styles/**，仅 UI 相关文件
+```
 
-1. **Consistency Scope**: Duplicate logic, pattern violations, DRY compliance (context: full PR diff)
-2. **SOLID Scope**: SRP violations, nested conditionals (>3 levels), cyclomatic complexity >10 (context: changed classes/functions)
-3. **Defensive Code Scope**: Silent catches, swallowed exceptions, hidden fallbacks (context: error handling code)
+**生产示例：多智能体代码评审**（Pat Cullen，2026 年 1 月）：
 
-**Key patterns** (beyond generic Split Role):
+用于全面 PR 评审的范围聚焦智能体：
 
-- **Pre-flight check**: `git log --oneline -10 | grep "Co-Authored-By: Claude"` to detect follow-up passes and avoid repeating suggestions
-- **Anti-hallucination**: Use `Grep`/`Glob` to verify patterns before recommending them (occurrence rule: >10 = established, <3 = not established)
-- **Reconciliation**: Prioritize existing project patterns over ideal patterns, skip suggestions with documented reasoning
-- **Severity classification**: 🔴 Must Fix (blockers) / 🟡 Should Fix (improvements) / 🟢 Can Skip (nice-to-haves)
-- **Convergence loop**: Review → fix → re-review → repeat (max 3 iterations) until only optional improvements remain
+1. **一致性范围**：重复逻辑、模式违反、DRY 合规性（上下文：完整 PR diff）
+2. **SOLID 范围**：SRP 违反、嵌套条件（>3 层）、圈复杂度 >10（上下文：变更的类/函数）
+3. **防御性代码范围**：静默 catch、吞掉的异常、隐藏回退（上下文：错误处理代码）
 
-**Production safeguards**:
+**关键模式**（超越通用分角色）：
+- **起飞前检查**：用 `git log --oneline -10 | grep "Co-Authored-By: Claude"` 检测后续通过，避免重复建议
+- **反幻觉**：用 `Grep`/`Glob` 在推荐前验证模式（出现规则：>10 = 已建立，<3 = 未建立）
+- **调和**：优先现有项目模式而非理想模式，跳过有文档记录推理的可选建议
+- **严重性分类**：🔴 必须修复（阻塞） / 🟡 应该修复（改进） / 🟢 可以跳过（最好有）
+- **收敛循环**：评审 → 修复 → 重新评审 → 重复（最多 3 次迭代）直到只剩可选改进
 
-- Read full file context (not just diff lines)
-- Conditional context loading based on diff content (DB queries → check indexes, API routes → check auth middleware)
-- Protected files skip list (package.json, migrations, .env)
-- Quality gates: `tsc && lint` validation before each iteration
+**生产保护措施**：
 
-**Source**: [Pat Cullen's Final Review](https://gist.github.com/patyearone/c9a091b97e756f5ed361f7514d88ef0b)
-**Implementation**: See `/review-pr` advanced section, `examples/agents/code-reviewer.md`, `guide/workflows/iterative-refinement.md` (Review Auto-Correction Loop)
+- 阅读完整文件上下文（不只是 diff 行）
+- 基于 diff 内容的条件上下文加载（数据库查询 → 检查索引，API 路由 → 检查认证中间件）
+- 保护文件跳过列表（package.json、迁移、.env）
+- 质量门禁：每次迭代前 `tsc && lint` 验证
 
-### Named Perspective Agents
+**来源**：[Pat Cullen 的最终评审](https://gist.github.com/patyearone/c9a091b97e756f5ed361f7514d88ef0b)
+**实现**：见 `/review-pr` 高级部分、`examples/agents/code-reviewer.md`、`guide/workflows/iterative-refinement.md`（评审自动修正循环）
 
-The guide lists "roleplaying expertise personas" as a bad reason to use agents (see §3.x, When NOT to use agents). Named Perspective Agents are a different pattern and should not be confused with it.
+### 命名视角智能体
 
-**The distinction**:
+该指南将"角色扮演专业知识人格"列为使用智能体的坏理由（见 §3.x，何时不使用智能体）。命名视角智能体是不同的模式，不应与之混淆。
 
-| Pattern | What it is | Problem |
-|---------|-----------|---------|
-| Persona roleplay (anti-pattern) | "You are a senior backend developer with 10 years of experience" | Generic role, adds nothing over a good prompt |
-| Named Perspective | "Review from DHH's perspective" | Encodes a specific, recognizable set of engineering opinions |
+**区别**：
 
-A Named Perspective Agent uses a well-known engineering name as a compressed prompt. Naming an agent "DHH" bundles the following without spelling it out: fat models, thin controllers, REST conventions over configuration, skepticism of premature abstraction, Rails pragmatism. The name is a shortcut to a distinct opinionated style, not a costume.
+| 模式 | 是什么 | 问题 |
+|---------|-----------|------|
+| 角色扮演（反模式） | "你是一名有 10 年经验的高级后端开发人员" | 通用角色，相比好的提示词没有增加价值 |
+| 命名视角 | "从 DHH 的视角评审代码" | 编码了一套特定的、可识别的工程意见 |
 
-**When it works**: Only for engineers whose views Claude has been trained on and whose opinions map to a stable, recognizable style. DHH (Rails), Kent Beck (TDD, simplicity), Martin Fowler (refactoring, patterns) are good candidates. Random names are not.
+命名视角智能体使用知名工程名称作为压缩提示词。将智能体命名为"DHH"捆绑了以下内容而无需说明：fat models、thin controllers、REST 约定优于配置、对过早抽象的怀疑、Rails 务实主义。这个名字是通往独特有主见风格的捷径，而非一种伪装。
 
-**Example** (from Every.to compound-engineering plugin):
+**何时有效**：仅适用于 Claude 已训练过其观点且观点映射到稳定、可识别风格的工程师。DHH（Rails）、Kent Beck（TDD、简洁）、Martin Fowler（重构、模式）是好的候选。随机名字不行。
+
+**示例**（来自 Every.to compound-engineering 插件）：
 
 ```markdown
 ---
 name: dhh-reviewer
-description: Review code from DHH's perspective. Prioritize Rails conventions, fat models, thin controllers, pragmatic REST, and skepticism of unnecessary abstraction.
+description: 从 DHH 的视角评审代码。优先考虑 Rails 约定、fat models、thin controllers、务实的 REST 和对不必要抽象的怀疑。
 allowed-tools: Read, Grep
 ---
 ```
 
-The agent's value is in surfacing a coherent perspective that might disagree with your default approach, not in simulating a person.
+智能体的价值在于呈现一种可能与你默认方法不同的连贯视角，而非模拟一个人。
 
-**Caveat**: Named Perspective Agents can drift as Claude's training evolves. Treat the name as a convenient shorthand, not a guarantee that the agent will track a real person's current opinions.
+**警告**：命名视角智能体可能随 Claude 训练演变而漂移。将名称视为方便简写，而非智能体将跟踪真实人物当前观点的保证。
 
-*Source: Every.to compound-engineering plugin (2026)*
+*来源：Every.to compound-engineering 插件（2026）*
 
-### Parallelization Decision Matrix
+### 并行化决策矩阵
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -741,32 +736,32 @@ The agent's value is in surfacing a coherent perspective that might disagree wit
 │                 Max efficiency         Plan Mode first      │
 │                                                             │
 │   Dependent     ⚠️ SEQUENTIAL         ❌ CAREFUL            │
-│                 Order matters          Risk of conflicts    │
+│                 Order matters          Risk of conflicts     │
 │                                                             │
 └─────────────────────────────────────────────────────────────┘
 ```
 
-**✅ Perfectly parallelizable**:
+**✅ 完全可并行化**：
 ```
-"Search 8 different GitHub repos for best practices on X"
-"Analyze these 5 files for vulnerabilities (without modifying)"
-"Compare 4 libraries and produce a comparative report"
-```
-
-**⚠️ Sequential recommended**:
-```
-"Refactor these 3 files (they depend on each other)"
-"Migrate DB schema then update models then update routers"
+"搜索 8 个不同的 GitHub 仓库寻找 X 的最佳实践"
+"分析这 5 个文件的漏洞（不修改）"
+"比较 4 个库并生成比较报告"
 ```
 
-**❌ Needs extra care**:
+**⚠️ 建议顺序执行**：
 ```
-"Modify these 10 files in parallel"
-→ Risk: conflicts if files share imports/exports
-→ Solution: Plan Mode → Identify dependencies → Sequence if needed
+"重构这 3 个文件（它们相互依赖）"
+"迁移数据库 schema 然后更新模型然后更新路由"
 ```
 
-### Multi-Agent Orchestration Pattern
+**❌ 需要额外注意**：
+```
+"并行修改这 10 个文件"
+→ 风险：如果文件共享导入/导出则冲突
+→ 解决方案：计划模式 → 识别依赖 → 必要时排序
+```
+
+### 多智能体编排模式
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -798,57 +793,57 @@ The agent's value is in surfacing a coherent perspective that might disagree wit
 └─────────────────────────────────────────────────────────────┘
 ```
 
-### Tactical Model Selection Matrix
+### 战术模型选择矩阵
 
-> See [Section 2.5 Model Selection & Thinking Guide](#25-model-selection--thinking-guide) for the canonical decision table with effort levels and cost estimates.
+> 带有工作量和成本估算的规范决策表，见 [第 2.5 节 模型选择与思考指南](#25-模型选择--思考指南)。
 
-**Cost Optimization Example**:
+**成本优化示例**：
 ```
-Scenario: Refactoring 100 files
+场景：重构 100 个文件
 
-❌ Naive approach:
-- Opus for everything
-- Cost: ~$50-100
-- Time: 2-3h
+❌ 朴素方法：
+- 所有地方都用 Opus
+- 成本：~$50-100
+- 时间：2-3h
 
-✅ Optimized approach:
-- Sonnet: Analysis and plan (1x)
-- Haiku: Parallel workers (100x)
-- Sonnet: Final validation (1x)
-- Cost: ~$5-15
-- Time: 1h (parallelized)
+✅ 优化方法：
+- Sonnet：分析和计划（1x）
+- Haiku：并行 worker（100x）
+- Sonnet：最终验证（1x）
+- 成本：~$5-15
+- 时间：1h（并行化）
 
-Estimated savings: significant (varies by project)
+预计节省：显著（因项目而异）
 ```
 
 ---
 
-### The Self-Evolving Agent Pattern
+### 自我演进智能体模式
 
-An agent that updates its own skills after each execution. Instead of manually maintaining documentation, the agent reads the current state of its domain and rewrites the knowledge injected into itself.
+一个在每次执行后更新自身技能的智能体。智能体读取其领域的当前状态并重写注入到自身的知识，而不是手动维护文档。
 
-**When to use**: Long-lived agents whose domain evolves — presentation editors, API clients tracking schema changes, agents managing living documents.
+**何时使用**：领域会演变的长期智能体——演示文稿编辑器、跟踪 schema 变化的 API 客户端、管理活文档的智能体。
 
-**Core mechanism** (in agent system prompt):
+**核心机制**（在智能体系统提示词中）：
 
 ```markdown
-### Step N: Self-Evolution (after every execution)
+### 第 N 步：自我演进（每次执行后）
 
-After completing your main task, update your preloaded skills to stay in sync:
+完成主要任务后，更新你的预加载技能以保持同步：
 
-1. Read the current state of [the domain you modified]
-2. Update `.claude/skills/<your-skill>/SKILL.md` to reflect reality
-3. Log what changed and why in a "## Learnings" section of this agent file
+1. 阅读 [你修改的领域] 的当前状态
+2. 更新 `.claude/skills/<your-skill>/SKILL.md` 以反映现实
+3. 在此智能体文件的 "## Learnings" 部分记录变更内容和原因
 
-This prevents knowledge drift between what you know and what is.
+这防止了你知道的和实际之间知识漂移。
 ```
 
-**Full example** — a presentation curator agent that keeps its own layout/weight knowledge fresh:
+**完整示例** — 一个保持自身布局/权重知识新鲜的演示文稿策展智能体：
 
 ```yaml
 ---
 name: presentation-curator
-description: PROACTIVELY use when updating slides, structure, or weights
+description: PROACTIVELY 在更新幻灯片、结构或权重时使用
 tools: Read, Write, Edit, Grep, Glob
 model: sonnet
 color: magenta
@@ -857,24 +852,23 @@ skills:
   - presentation/styling
 ---
 
-## Step 5: Self-Evolution (after every execution)
+## 第 5 步：自我演进（每次执行后）
 
-Read presentation/index.html and update your skills:
-- slide-structure skill: update section ranges, weight table, slide count
-- styling skill: update CSS patterns if new ones were introduced
-- Append new findings to the "## Learnings" section below
+读取 presentation/index.html 并更新你的技能：
+- slide-structure 技能：更新章节范围、权重表、幻灯片计数
+- styling 技能：如果引入了新模式则更新 CSS 模式
+- 在下方的 "## Learnings" 部分追加新发现
 
 ## Learnings
-_Each run appends findings here. Future invocations start informed._
-- Slide badges are JS-injected — never hardcode them in HTML.
+_每次运行在此追加发现。未来调用从informed开始。_
+- 幻灯片徽章是 JS 注入的——永不在 HTML 中硬编码。
 ```
 
-**Why it works**: The `skills:` frontmatter injects skill content at agent startup. By writing back to those files after each run, the agent's next invocation starts with current knowledge. No human maintenance required.
+**为什么有效**：`skills:` frontmatter 在智能体启动时注入技能内容。通过每次运行后写回这些文件，智能体的下一次调用从当前知识开始。无需人工维护。
 
-**Key constraints**:
-- Scope updates narrowly — only update what actually changed
-- Keep a `## Learnings` log so the agent builds cumulative knowledge over sessions
-- Pair with `memory: project` for cross-session persistence of broader context
+**关键约束**：
+- 范围狭窄地更新——仅更新实际变更的内容
+- 保持 `## Learnings` 日志，以便智能体跨会话累积知识
+- 与 `memory: project` 配对以跨会话持久化更广泛的上下文
 
 ---
-
